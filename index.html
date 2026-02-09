@@ -1,754 +1,366 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" dir="ltr" prefix="og: https://ogp.me/ns#">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>TAAGC - Triple A Ahal Global Concept</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <style>
-        /* Base & Variables */
-        :root {
-            --primary: #0A2540;
-            --secondary: #D4AF37;
-            --accent: #2E8B57;
-            --light: #F8F9FA;
-            --dark: #212529;
-            --gray: #6C757D;
-            --light-gray: #E9ECEF;
-            --border-radius: 4px;
-            --box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
-            --transition: all 0.3s ease;
-        }
-        
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-        }
-        
-        html {
-            scroll-behavior: smooth;
-        }
-        
-        body {
-            line-height: 1.6;
-            color: var(--dark);
-            background-color: white;
-            overflow-x: hidden;
-        }
-        
-        .container {
-            width: 100%;
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 0 20px;
-        }
-        
-        /* Typography */
-        h1, h2, h3, h4 {
-            font-weight: 700;
-            line-height: 1.2;
-            margin-bottom: 1rem;
-        }
-        
-        h1 {
-            font-size: 2.5rem;
-            line-height: 1.1;
-        }
-        
-        h2 {
-            font-size: 2rem;
-            text-align: center;
-            margin-bottom: 2.5rem;
-            position: relative;
-        }
-        
-        h2:after {
-            content: '';
-            position: absolute;
-            width: 60px;
-            height: 4px;
-            background-color: var(--secondary);
-            bottom: -12px;
-            left: 50%;
-            transform: translateX(-50%);
-        }
-        
-        h3 {
-            font-size: 1.3rem;
-        }
-        
-        p {
-            margin-bottom: 1rem;
-            color: var(--gray);
-            font-size: 1rem;
-        }
-        
-        /* Buttons */
-        .btn {
-            display: inline-block;
-            padding: 14px 28px;
-            border-radius: var(--border-radius);
-            text-decoration: none;
-            font-weight: 600;
-            font-size: 1rem;
-            transition: var(--transition);
-            cursor: pointer;
-            border: none;
-            text-align: center;
-            width: 100%;
-            max-width: 280px;
-        }
-        
-        .btn-primary {
-            background-color: var(--secondary);
-            color: var(--primary);
-        }
-        
-        .btn-primary:hover, .btn-primary:focus {
-            background-color: #c19b2c;
-            transform: translateY(-3px);
-            box-shadow: var(--box-shadow);
-        }
-        
-        .btn-secondary {
-            background-color: transparent;
-            color: var(--light);
-            border: 2px solid var(--light);
-        }
-        
-        .btn-secondary:hover, .btn-secondary:focus {
-            background-color: rgba(255, 255, 255, 0.1);
-        }
-        
-        /* Header - Mobile Optimized */
-        header {
-            background-color: var(--primary);
-            color: white;
-            padding: 15px 0;
-            position: sticky;
-            top: 0;
-            z-index: 1000;
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-            width: 100%;
-        }
-        
-        .header-content {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            width: 100%;
-        }
-        
-        .logo {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            flex-shrink: 0;
-        }
-        
-        .logo-icon {
-            background-color: var(--secondary);
-            color: var(--primary);
-            width: 45px;
-            height: 45px;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-weight: 800;
-            font-size: 1.5rem;
-            flex-shrink: 0;
-        }
-        
-        .logo-text {
-            font-size: 1.5rem;
-            font-weight: 700;
-            white-space: nowrap;
-        }
-        
-        .logo-text span {
-            color: var(--secondary);
-        }
-        
-        /* Mobile Navigation */
-        .mobile-toggle {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            width: 44px;
-            height: 44px;
-            font-size: 1.5rem;
-            cursor: pointer;
-            color: white;
-            z-index: 1001;
-            background: transparent;
-            border: none;
-        }
-        
-        nav {
-            position: fixed;
-            top: 0;
-            right: -100%;
-            width: 85%;
-            max-width: 320px;
-            height: 100vh;
-            background-color: var(--primary);
-            padding: 80px 30px 30px;
-            transition: var(--transition);
-            z-index: 1000;
-            box-shadow: -5px 0 15px rgba(0, 0, 0, 0.1);
-            overflow-y: auto;
-        }
-        
-        nav.active {
-            right: 0;
-        }
-        
-        nav ul {
-            list-style: none;
-            display: flex;
-            flex-direction: column;
-            gap: 0;
-        }
-        
-        nav li {
-            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-        }
-        
-        nav a {
-            color: white;
-            text-decoration: none;
-            font-weight: 500;
-            transition: var(--transition);
-            display: block;
-            padding: 18px 0;
-            font-size: 1.1rem;
-            width: 100%;
-        }
-        
-        nav a:hover, nav a:focus {
-            color: var(--secondary);
-            padding-left: 10px;
-        }
-        
-        .nav-overlay {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background-color: rgba(0, 0, 0, 0.5);
-            z-index: 999;
-            opacity: 0;
-            visibility: hidden;
-            transition: var(--transition);
-        }
-        
-        .nav-overlay.active {
-            opacity: 1;
-            visibility: visible;
-        }
-        
-        /* Hero Section - Mobile Optimized */
-        .hero {
-            background: linear-gradient(rgba(10, 37, 64, 0.9), rgba(10, 37, 64, 0.9)), url('https://images.unsplash.com/photo-1497366754035-f200968a6e72?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2069&q=80');
-            background-size: cover;
-            background-position: center;
-            color: white;
-            padding: 80px 0 100px;
-            text-align: center;
-            min-height: 100vh;
-            display: flex;
-            align-items: center;
-        }
-        
-        .hero-content {
-            max-width: 800px;
-            margin: 0 auto;
-            width: 100%;
-        }
-        
-        .hero h1 {
-            margin-bottom: 1.5rem;
-            font-size: 2.2rem;
-        }
-        
-        .hero p {
-            font-size: 1.1rem;
-            color: rgba(255, 255, 255, 0.85);
-            margin-bottom: 2.5rem;
-            max-width: 100%;
-            margin-left: auto;
-            margin-right: auto;
-            line-height: 1.6;
-        }
-        
-        .cta-buttons {
-            display: flex;
-            flex-direction: column;
-            gap: 20px;
-            align-items: center;
-            margin-top: 40px;
-        }
-        
-        /* Sectors Section - Mobile Grid */
-        .sectors {
-            padding: 80px 0;
-        }
-        
-        .sector-grid {
-            display: grid;
-            grid-template-columns: 1fr;
-            gap: 25px;
-        }
-        
-        .sector-card {
-            background-color: white;
-            border-radius: var(--border-radius);
-            padding: 25px 20px;
-            text-align: center;
-            box-shadow: var(--box-shadow);
-            transition: var(--transition);
-            border: 1px solid var(--light-gray);
-        }
-        
-        .sector-card:hover {
-            transform: translateY(-5px);
-        }
-        
-        .sector-icon {
-            width: 65px;
-            height: 65px;
-            background-color: var(--light-gray);
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin: 0 auto 20px;
-            color: var(--primary);
-            font-size: 1.6rem;
-        }
-        
-        .sector-card:nth-child(1) .sector-icon {
-            color: var(--accent);
-        }
-        
-        .sector-card:nth-child(2) .sector-icon {
-            color: #E67E22;
-        }
-        
-        .sector-card:nth-child(3) .sector-icon {
-            color: #3498DB;
-        }
-        
-        .sector-card:nth-child(4) .sector-icon {
-            color: #9B59B6;
-        }
-        
-        .sector-card:nth-child(5) .sector-icon {
-            color: #E74C3C;
-        }
-        
-        /* Testimonials - Mobile Optimized */
-        .testimonials {
-            padding: 80px 0;
-            background-color: var(--light);
-        }
-        
-        .testimonial-slider {
-            width: 100%;
-            margin: 0 auto;
-            position: relative;
-            overflow: hidden;
-        }
-        
-        .testimonial {
-            background-color: white;
-            border-radius: var(--border-radius);
-            padding: 30px 25px;
-            box-shadow: var(--box-shadow);
-            text-align: center;
-            display: none;
-            width: 100%;
-            margin: 0 auto;
-        }
-        
-        .testimonial.active {
-            display: block;
-        }
-        
-        .testimonial-content {
-            font-size: 1.1rem;
-            font-style: italic;
-            margin-bottom: 25px;
-            color: var(--dark);
-            line-height: 1.5;
-        }
-        
-        .testimonial-author {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 15px;
-            flex-wrap: wrap;
-        }
-        
-        .author-avatar {
-            width: 55px;
-            height: 55px;
-            border-radius: 50%;
-            background-color: var(--light-gray);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 1.3rem;
-            color: var(--primary);
-            flex-shrink: 0;
-        }
-        
-        .author-info {
-            text-align: left;
-        }
-        
-        .author-info h4 {
-            font-size: 1.1rem;
-            margin-bottom: 5px;
-        }
-        
-        .author-info p {
-            font-size: 0.9rem;
-            color: var(--gray);
-            margin-bottom: 0;
-        }
-        
-        .slider-controls {
-            display: flex;
-            justify-content: center;
-            gap: 10px;
-            margin-top: 30px;
-        }
-        
-        .slider-dot {
-            width: 12px;
-            height: 12px;
-            border-radius: 50%;
-            background-color: var(--gray);
-            cursor: pointer;
-            transition: var(--transition);
-            border: none;
-        }
-        
-        .slider-dot.active {
-            background-color: var(--secondary);
-            transform: scale(1.2);
-        }
-        
-        /* Contact Form - Mobile Optimized */
-        .contact {
-            padding: 80px 0;
-        }
-        
-        .contact-form {
-            width: 100%;
-            margin: 0 auto;
-            background-color: white;
-            padding: 30px 25px;
-            border-radius: var(--border-radius);
-            box-shadow: var(--box-shadow);
-            border: 1px solid var(--light-gray);
-        }
-        
-        .form-group {
-            margin-bottom: 20px;
-        }
-        
-        .form-group label {
-            display: block;
-            margin-bottom: 8px;
-            font-weight: 600;
-            font-size: 0.95rem;
-        }
-        
-        .form-control {
-            width: 100%;
-            padding: 15px;
-            border: 1px solid var(--light-gray);
-            border-radius: var(--border-radius);
-            font-size: 1rem;
-            transition: var(--transition);
-            -webkit-appearance: none;
-            appearance: none;
-        }
-        
-        .form-control:focus {
-            outline: none;
-            border-color: var(--secondary);
-            box-shadow: 0 0 0 3px rgba(212, 175, 55, 0.1);
-        }
-        
-        select.form-control {
-            background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%230A2540' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
-            background-repeat: no-repeat;
-            background-position: right 15px center;
-            background-size: 16px;
-            padding-right: 45px;
-        }
-        
-        textarea.form-control {
-            min-height: 140px;
-            resize: vertical;
-        }
-        
-        /* Footer - Mobile Optimized */
-        footer {
-            background-color: var(--primary);
-            color: white;
-            padding: 60px 0 30px;
-        }
-        
-        .footer-content {
-            display: grid;
-            grid-template-columns: 1fr;
-            gap: 40px;
-            margin-bottom: 40px;
-        }
-        
-        .footer-logo .logo-text {
-            font-size: 1.8rem;
-            margin-bottom: 20px;
-            display: inline-block;
-        }
-        
-        .footer-about p {
-            color: rgba(255, 255, 255, 0.7);
-            font-size: 1rem;
-            line-height: 1.6;
-        }
-        
-        .footer-links h3, .footer-contact h3 {
-            font-size: 1.3rem;
-            margin-bottom: 20px;
-            color: white;
-        }
-        
-        .footer-links ul {
-            list-style: none;
-        }
-        
-        .footer-links li {
-            margin-bottom: 12px;
-        }
-        
-        .footer-links a {
-            color: rgba(255, 255, 255, 0.7);
-            text-decoration: none;
-            transition: var(--transition);
-            display: inline-block;
-            padding: 5px 0;
-            font-size: 1rem;
-        }
-        
-        .footer-links a:hover, .footer-links a:focus {
-            color: var(--secondary);
-            transform: translateX(5px);
-        }
-        
-        .footer-contact p {
-            color: rgba(255, 255, 255, 0.7);
-            margin-bottom: 15px;
-            display: flex;
-            align-items: flex-start;
-            gap: 10px;
-            font-size: 1rem;
-        }
-        
-        .footer-contact i {
-            margin-top: 3px;
-            flex-shrink: 0;
-        }
-        
-        .copyright {
-            text-align: center;
-            padding-top: 30px;
-            border-top: 1px solid rgba(255, 255, 255, 0.1);
-            color: rgba(255, 255, 255, 0.6);
-            font-size: 0.9rem;
-        }
-        
-        /* Back to Top Button */
-        .back-to-top {
-            position: fixed;
-            bottom: 25px;
-            right: 25px;
-            width: 50px;
-            height: 50px;
-            background-color: var(--secondary);
-            color: var(--primary);
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 1.2rem;
-            cursor: pointer;
-            z-index: 99;
-            opacity: 0;
-            visibility: hidden;
-            transition: var(--transition);
-            border: none;
-            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.2);
-        }
-        
-        .back-to-top.visible {
-            opacity: 1;
-            visibility: visible;
-        }
-        
-        .back-to-top:hover, .back-to-top:focus {
-            background-color: #c19b2c;
-            transform: translateY(-3px);
-        }
-        
-        /* Tablet and Desktop Styles */
-        @media (min-width: 768px) {
-            h1 {
-                font-size: 3rem;
-            }
-            
-            h2 {
-                font-size: 2.3rem;
-            }
-            
-            .btn {
-                width: auto;
-            }
-            
-            .cta-buttons {
-                flex-direction: row;
-                justify-content: center;
-            }
-            
-            .sector-grid {
-                grid-template-columns: repeat(2, 1fr);
-            }
-            
-            .footer-content {
-                grid-template-columns: repeat(3, 1fr);
-            }
-            
-            .hero p {
-                font-size: 1.2rem;
-            }
-        }
-        
-        @media (min-width: 992px) {
-            .mobile-toggle {
-                display: none;
-            }
-            
-            nav {
-                position: static;
-                width: auto;
-                height: auto;
-                background-color: transparent;
-                padding: 0;
-                box-shadow: none;
-                overflow: visible;
-            }
-            
-            nav ul {
-                flex-direction: row;
-                gap: 30px;
-            }
-            
-            nav li {
-                border-bottom: none;
-            }
-            
-            nav a {
-                padding: 8px 0;
-                font-size: 1rem;
-                position: relative;
-            }
-            
-            nav a:hover, nav a:focus {
-                padding-left: 0;
-                transform: none;
-            }
-            
-            nav a:after {
-                content: '';
-                position: absolute;
-                width: 0;
-                height: 2px;
-                background-color: var(--secondary);
-                bottom: 0;
-                left: 0;
-                transition: var(--transition);
-            }
-            
-            nav a:hover:after, nav a:focus:after {
-                width: 100%;
-            }
-            
-            .sector-grid {
-                grid-template-columns: repeat(5, 1fr);
-            }
-            
-            .testimonial {
-                padding: 40px;
-            }
-            
-            .contact-form {
-                padding: 40px;
-            }
-        }
-        
-        /* Large Mobile */
-        @media (min-width: 576px) and (max-width: 767px) {
-            .sector-grid {
-                grid-template-columns: repeat(2, 1fr);
-            }
-            
-            .hero h1 {
-                font-size: 2.5rem;
-            }
-        }
-        
-        /* Small Mobile */
-        @media (max-width: 360px) {
-            h1 {
-                font-size: 2rem;
-            }
-            
-            h2 {
-                font-size: 1.7rem;
-            }
-            
-            .logo-text {
-                font-size: 1.3rem;
-            }
-            
-            .hero {
-                padding: 70px 0 90px;
-            }
-        }
-        
-        /* Touch-friendly improvements */
-        button, .btn, .slider-dot, nav a {
-            -webkit-tap-highlight-color: transparent;
-        }
-        
-        button:focus, .btn:focus, .slider-dot:focus, nav a:focus {
-            outline: 2px solid var(--secondary);
-            outline-offset: 2px;
-        }
-    </style>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <meta name="description" content="TAAGC (Triple A Ahal Global Concept) delivers world-class solutions in General Agriculture, Grain Processing, ICT, General Contracts, and General Merchandise. Global excellence across five sectors.">
+    <meta name="keywords" content="agriculture, grain processing, ICT, general contracts, merchandise, global business, TAAGC">
+    <meta name="author" content="TAAGC - Triple A Ahal Global Concept">
+    <meta name="robots" content="index, follow">
+    
+    <!-- Open Graph / Social Media -->
+    <meta property="og:title" content="TAAGC - Triple A Ahal Global Concept">
+    <meta property="og:description" content="Global excellence in Agriculture, Grain Processing, ICT, Contracts & Merchandise">
+    <meta property="og:image" content="https://taagc.com/assets/images/logo/taagc-og-image.jpg">
+    <meta property="og:url" content="https://taagc.com">
+    <meta property="og:type" content="website">
+    <meta property="og:site_name" content="TAAGC">
+    
+    <!-- Twitter Card -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="TAAGC - Triple A Ahal Global Concept">
+    <meta name="twitter:description" content="Global excellence across five sectors">
+    <meta name="twitter:image" content="https://taagc.com/assets/images/logo/taagc-twitter-card.jpg">
+    
+    <!-- Favicon -->
+    <link rel="icon" type="image/x-icon" href="assets/images/logo/taagc-favicon.ico">
+    <link rel="icon" type="image/png" sizes="32x32" href="assets/images/logo/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="assets/images/logo/favicon-16x16.png">
+    <link rel="apple-touch-icon" sizes="180x180" href="assets/images/logo/apple-touch-icon.png">
+    <link rel="manifest" href="assets/images/logo/site.webmanifest">
+    
+    <!-- Canonical URL -->
+    <link rel="canonical" href="https://taagc.com">
+    
+    <!-- Preload critical resources -->
+    <link rel="preload" href="assets/fonts/inter/inter-regular.woff2" as="font" type="font/woff2" crossorigin>
+    <link rel="preload" href="assets/css/main.min.css" as="style">
+    <link rel="preload" href="assets/js/main.min.js" as="script">
+    
+    <!-- CSS -->
+    <link rel="stylesheet" href="assets/css/main.min.css">
+    <link rel="stylesheet" href="assets/css/responsive.min.css">
+    
+    <!-- Font Awesome for icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" integrity="sha512-iecdLmaskl7CVkqkXNQ/ZH/XLlvWZOJyj7Yy7tcenmpD1ypASozpmT/E0iPtmFIB46ZmdtAc9eNBvH0H/ZpiBw==" crossorigin="anonymous" referrerpolicy="no-referrer">
+    
+    <!-- Structured Data -->
+    <script type="application/ld+json">
+    {
+        "@context": "https://schema.org",
+        "@type": "Organization",
+        "name": "TAAGC - Triple A Ahal Global Concept",
+        "url": "https://taagc.com",
+        "logo": "https://taagc.com/assets/images/logo/taagc-logo.svg",
+        "description": "Global excellence in Agriculture, Grain Processing, ICT, General Contracts and General Merchandise",
+        "address": {
+            "@type": "PostalAddress",
+            "streetAddress": "123 Global Avenue",
+            "addressLocality": "Business District",
+            "addressCountry": "Global"
+        },
+        "contactPoint": {
+            "@type": "ContactPoint",
+            "telephone": "+1-555-123-4567",
+            "contactType": "Customer Service"
+        }
+    }
+    </script>
+    
+    <title>TAAGC - Triple A Ahal Global Concept | Global Excellence Across Five Sectors</title>
 </head>
 <body>
-    <!-- Header -->
-    <header>
-        <div class="container header-content">
-            <div class=
+    <!-- Skip to main content for accessibility -->
+    <a href="#main-content" class="skip-to-content">Skip to main content</a>
+    
+    <!-- Header Component -->
+    <header class="main-header" role="banner">
+        <div class="container header-container">
+            <!-- Logo -->
+            <div class="logo-wrapper">
+                <a href="/" class="logo-link" aria-label="TAAGC Home">
+                    <div class="logo-icon" aria-hidden="true">T</div>
+                    <div class="logo-text">
+                        <span class="logo-part-1">TA</span>
+                        <span class="logo-part-2">AGC</span>
+                    </div>
+                </a>
+            </div>
+            
+            <!-- Main Navigation -->
+            <nav class="main-navigation" role="navigation" aria-label="Main Navigation">
+                <button class="mobile-menu-toggle" aria-label="Toggle menu" aria-expanded="false">
+                    <span class="menu-icon" aria-hidden="true"></span>
+                </button>
+                
+                <ul class="nav-menu">
+                    <li class="nav-item">
+                        <a href="/" class="nav-link active" aria-current="page">Home</a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="/pages/about-us.html" class="nav-link">About Us</a>
+                    </li>
+                    <li class="nav-item dropdown">
+                        <a href="/pages/sectors.html" class="nav-link dropdown-toggle">Our Sectors</a>
+                        <ul class="dropdown-menu">
+                            <li><a href="/pages/sectors.html#agriculture">General Agriculture</a></li>
+                            <li><a href="/pages/sectors.html#grain-processing">Grain Processing</a></li>
+                            <li><a href="/pages/sectors.html#ict">ICT Solutions</a></li>
+                            <li><a href="/pages/sectors.html#contracts">General Contracts</a></li>
+                            <li><a href="/pages/sectors.html#merchandise">General Merchandise</a></li>
+                        </ul>
+                    </li>
+                    <li class="nav-item">
+                        <a href="/pages/services.html" class="nav-link">Services</a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="#testimonials" class="nav-link">Testimonials</a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="/pages/contact-us.html" class="nav-link">Contact Us</a>
+                    </li>
+                </ul>
+            </nav>
+            
+            <!-- Auth Buttons -->
+            <div class="header-actions">
+                <button class="btn btn-login" id="loginButton">Login</button>
+                <button class="btn btn-register" id="registerButton">Register</button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main id="main-content" role="main">
+        <!-- Hero Section -->
+        <section class="hero-section" aria-labelledby="hero-title">
+            <div class="container hero-container">
+                <div class="hero-content">
+                    <h1 id="hero-title" class="hero-title">Global Excellence Across Five Sectors</h1>
+                    <p class="hero-description">
+                        TAAGC (Triple A Ahal Global Concept) delivers world-class solutions in General Agriculture, 
+                        Grain Processing, ICT, General Contracts, and General Merchandise, driving innovation and 
+                        sustainable growth worldwide.
+                    </p>
+                    <div class="hero-actions">
+                        <a href="/pages/contact-us.html" class="btn btn-primary btn-large">
+                            Partner With Us
+                            <i class="fas fa-arrow-right" aria-hidden="true"></i>
+                        </a>
+                        <a href="#sectors" class="btn btn-secondary btn-large">
+                            Explore Our Sectors
+                            <i class="fas fa-chevron-down" aria-hidden="true"></i>
+                        </a>
+                    </div>
+                </div>
+                <div class="hero-visual" aria-hidden="true">
+                    <!-- Background image via CSS -->
+                </div>
+            </div>
+        </section>
+
+        <!-- Sectors Section -->
+        <section id="sectors" class="sectors-section" aria-labelledby="sectors-title">
+            <div class="container">
+                <div class="section-header">
+                    <h2 id="sectors-title" class="section-title">Our Core Sectors</h2>
+                    <p class="section-subtitle">Driving excellence across five key industries</p>
+                </div>
+                
+                <div class="sectors-grid">
+                    <!-- Agriculture -->
+                    <div class="sector-card">
+                        <div class="sector-icon" aria-hidden="true">
+                            <i class="fas fa-tractor"></i>
+                        </div>
+                        <h3 class="sector-title">General Agriculture</h3>
+                        <p class="sector-description">
+                            Modern farming solutions, sustainable practices, and agricultural technology 
+                            for global food security and environmental stewardship.
+                        </p>
+                        <a href="/pages/sectors.html#agriculture" class="sector-link">
+                            Learn More
+                            <i class="fas fa-arrow-right" aria-hidden="true"></i>
+                        </a>
+                    </div>
+                    
+                    <!-- Grain Processing -->
+                    <div class="sector-card">
+                        <div class="sector-icon" aria-hidden="true">
+                            <i class="fas fa-wheat-awn"></i>
+                        </div>
+                        <h3 class="sector-title">Grain Processing</h3>
+                        <p class="sector-description">
+                            State-of-the-art processing facilities and quality control systems delivering 
+                            premium grains to international markets.
+                        </p>
+                        <a href="/pages/sectors.html#grain-processing" class="sector-link">
+                            Learn More
+                            <i class="fas fa-arrow-right" aria-hidden="true"></i>
+                        </a>
+                    </div>
+                    
+                    <!-- ICT Solutions -->
+                    <div class="sector-card">
+                        <div class="sector-icon" aria-hidden="true">
+                            <i class="fas fa-laptop-code"></i>
+                        </div>
+                        <h3 class="sector-title">ICT Solutions</h3>
+                        <p class="sector-description">
+                            Cutting-edge technology services, digital transformation, and communication 
+                            infrastructure for the modern enterprise.
+                        </p>
+                        <a href="/pages/sectors.html#ict" class="sector-link">
+                            Learn More
+                            <i class="fas fa-arrow-right" aria-hidden="true"></i>
+                        </a>
+                    </div>
+                    
+                    <!-- General Contracts -->
+                    <div class="sector-card">
+                        <div class="sector-icon" aria-hidden="true">
+                            <i class="fas fa-hard-hat"></i>
+                        </div>
+                        <h3 class="sector-title">General Contracts</h3>
+                        <p class="sector-description">
+                            Comprehensive contracting services for construction, engineering, and 
+                            infrastructure projects with global reach.
+                        </p>
+                        <a href="/pages/sectors.html#contracts" class="sector-link">
+                            Learn More
+                            <i class="fas fa-arrow-right" aria-hidden="true"></i>
+                        </a>
+                    </div>
+                    
+                    <!-- General Merchandise -->
+                    <div class="sector-card">
+                        <div class="sector-icon" aria-hidden="true">
+                            <i class="fas fa-boxes-stacked"></i>
+                        </div>
+                        <h3 class="sector-title">General Merchandise</h3>
+                        <p class="sector-description">
+                            Diverse range of quality products and supplies for retail, wholesale, 
+                            and industrial clients worldwide.
+                        </p>
+                        <a href="/pages/sectors.html#merchandise" class="sector-link">
+                            Learn More
+                            <i class="fas fa-arrow-right" aria-hidden="true"></i>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Testimonials Section -->
+        <section id="testimonials" class="testimonials-section" aria-labelledby="testimonials-title">
+            <div class="container">
+                <div class="section-header">
+                    <h2 id="testimonials-title" class="section-title">Client Testimonials</h2>
+                    <p class="section-subtitle">What our global partners say about us</p>
+                </div>
+                
+                <div class="testimonials-slider">
+                    <!-- Testimonial 1 -->
+                    <div class="testimonial-slide active">
+                        <div class="testimonial-content">
+                            <p class="testimonial-text">
+                                "TAAGC transformed our agricultural operations with their innovative approach 
+                                and cutting-edge technology. Their expertise in grain processing has increased 
+                                our yield by 40% while reducing environmental impact."
+                            </p>
+                            <div class="testimonial-author">
+                                <div class="author-avatar" aria-hidden="true">
+                                    <i class="fas fa-user"></i>
+                                </div>
+                                <div class="author-info">
+                                    <h4 class="author-name">Michael Rodriguez</h4>
+                                    <p class="author-title">Agricultural Director, GreenFields Inc.</p>
+                                    <div class="author-rating" aria-label="Rating: 5 out of 5 stars">
+                                        <i class="fas fa-star" aria-hidden="true"></i>
+                                        <i class="fas fa-star" aria-hidden="true"></i>
+                                        <i class="fas fa-star" aria-hidden="true"></i>
+                                        <i class="fas fa-star" aria-hidden="true"></i>
+                                        <i class="fas fa-star" aria-hidden="true"></i>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Testimonial 2 -->
+                    <div class="testimonial-slide">
+                        <div class="testimonial-content">
+                            <p class="testimonial-text">
+                                "The ICT solutions provided by TAAGC have revolutionized our business operations. 
+                                Their team delivered a seamless digital transformation ahead of schedule, 
+                                resulting in 30% operational efficiency improvement."
+                            </p>
+                            <div class="testimonial-author">
+                                <div class="author-avatar" aria-hidden="true">
+                                    <i class="fas fa-user"></i>
+                                </div>
+                                <div class="author-info">
+                                    <h4 class="author-name">Sarah Chen</h4>
+                                    <p class="author-title">CTO, TechForward Global</p>
+                                    <div class="author-rating" aria-label="Rating: 5 out of 5 stars">
+                                        <i class="fas fa-star" aria-hidden="true"></i>
+                                        <i class="fas fa-star" aria-hidden="true"></i>
+                                        <i class="fas fa-star" aria-hidden="true"></i>
+                                        <i class="fas fa-star" aria-hidden="true"></i>
+                                        <i class="fas fa-star" aria-hidden="true"></i>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Testimonial 3 -->
+                    <div class="testimonial-slide">
+                        <div class="testimonial-content">
+                            <p class="testimonial-text">
+                                "From construction to merchandise supply, TAAGC has been an invaluable partner. 
+                                Their professionalism, attention to detail, and commitment to quality are 
+                                unmatched in the industry."
+                            </p>
+                            <div class="testimonial-author">
+                                <div class="author-avatar" aria-hidden="true">
+                                    <i class="fas fa-user"></i>
+                                </div>
+                                <div class="author-info">
+                                    <h4 class="author-name">James Okafor</h4>
+                                    <p class="author-title">CEO, Continental Builders Ltd.</p>
+                                    <div class="author-rating" aria-label="Rating: 5 out of 5 stars">
+                                        <i class="fas fa-star" aria-hidden="true"></i>
+                                        <i class="fas fa-star" aria-hidden="true"></i>
+                                        <i class="fas fa-star" aria-hidden="true"></i>
+                                        <i class="fas fa-star" aria-hidden="true"></i>
+                                        <i class="fas fa-star" aria-hidden="true"></i>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Slider Controls -->
+                <div class="slider-controls">
+                    <button class="slider-prev" aria-label="Previous testimonial">
+                        <i class="fas fa-chevron-left" aria-hidden="true"></i>
+                    </button>
+                    <div class="slider-dots">
+                        <button class="slider-dot active" aria-label="Go to testimonial 1"></button>
+                        <button class="slider-dot" aria-label="Go to testimonial 2"></button>
+                        <button class="slider-dot" aria-label="Go to testimonial 3"></button>
+                    </div>
+                    <button class="slider-next" aria-label="Next testimonial">
+                        <i class="fas fa-chevron-right" aria-hidden="true"></i>
+                    </button>
+                </div>
+            </div>
+        </section>
+
+        <!-- Contact Section -->
+        <section id="contact" class="contact-section" aria-labelledby="contact-title">
+            <div class="container">
+                <div class="contact-wrapper">
+                    <div class="con
