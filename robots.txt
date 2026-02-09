@@ -1,0 +1,8 @@
+User-agent: *
+Allow: /
+Disallow: /admin/
+Disallow: /config/
+Disallow: /assets/js/
+Disallow: /assets/css/
+
+Sitemap: https://taagc.website/sitemap.xml
