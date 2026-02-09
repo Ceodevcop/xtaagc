@@ -2,15 +2,16 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>TAAGC - Triple A Ahal Global Concept</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         /* Base & Variables */
         :root {
-            --primary: #0A2540; /* Deep blue for professionalism */
-            --secondary: #D4AF37; /* Gold for accent & luxury */
-            --accent: #2E8B57; /* Agriculture green */
+            --primary: #0A2540;
+            --secondary: #D4AF37;
+            --accent: #2E8B57;
             --light: #F8F9FA;
             --dark: #212529;
             --gray: #6C757D;
@@ -27,10 +28,15 @@
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
         }
         
+        html {
+            scroll-behavior: smooth;
+        }
+        
         body {
             line-height: 1.6;
             color: var(--dark);
             background-color: white;
+            overflow-x: hidden;
         }
         
         .container {
@@ -48,40 +54,42 @@
         }
         
         h1 {
-            font-size: 3.5rem;
+            font-size: 2.5rem;
+            line-height: 1.1;
         }
         
         h2 {
-            font-size: 2.5rem;
+            font-size: 2rem;
             text-align: center;
-            margin-bottom: 3rem;
+            margin-bottom: 2.5rem;
             position: relative;
         }
         
         h2:after {
             content: '';
             position: absolute;
-            width: 80px;
+            width: 60px;
             height: 4px;
             background-color: var(--secondary);
-            bottom: -15px;
+            bottom: -12px;
             left: 50%;
             transform: translateX(-50%);
         }
         
         h3 {
-            font-size: 1.5rem;
+            font-size: 1.3rem;
         }
         
         p {
             margin-bottom: 1rem;
             color: var(--gray);
+            font-size: 1rem;
         }
         
         /* Buttons */
         .btn {
             display: inline-block;
-            padding: 14px 32px;
+            padding: 14px 28px;
             border-radius: var(--border-radius);
             text-decoration: none;
             font-weight: 600;
@@ -89,6 +97,9 @@
             transition: var(--transition);
             cursor: pointer;
             border: none;
+            text-align: center;
+            width: 100%;
+            max-width: 280px;
         }
         
         .btn-primary {
@@ -96,7 +107,7 @@
             color: var(--primary);
         }
         
-        .btn-primary:hover {
+        .btn-primary:hover, .btn-primary:focus {
             background-color: #c19b2c;
             transform: translateY(-3px);
             box-shadow: var(--box-shadow);
@@ -108,59 +119,103 @@
             border: 2px solid var(--light);
         }
         
-        .btn-secondary:hover {
+        .btn-secondary:hover, .btn-secondary:focus {
             background-color: rgba(255, 255, 255, 0.1);
         }
         
-        /* Header */
+        /* Header - Mobile Optimized */
         header {
             background-color: var(--primary);
             color: white;
-            padding: 20px 0;
+            padding: 15px 0;
             position: sticky;
             top: 0;
-            z-index: 100;
+            z-index: 1000;
             box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            width: 100%;
         }
         
         .header-content {
             display: flex;
             justify-content: space-between;
             align-items: center;
+            width: 100%;
         }
         
         .logo {
             display: flex;
             align-items: center;
-            gap: 15px;
+            gap: 12px;
+            flex-shrink: 0;
         }
         
         .logo-icon {
             background-color: var(--secondary);
             color: var(--primary);
-            width: 50px;
-            height: 50px;
+            width: 45px;
+            height: 45px;
             border-radius: 50%;
             display: flex;
             align-items: center;
             justify-content: center;
             font-weight: 800;
-            font-size: 1.8rem;
+            font-size: 1.5rem;
+            flex-shrink: 0;
         }
         
         .logo-text {
-            font-size: 1.8rem;
+            font-size: 1.5rem;
             font-weight: 700;
+            white-space: nowrap;
         }
         
         .logo-text span {
             color: var(--secondary);
         }
         
-        nav ul {
+        /* Mobile Navigation */
+        .mobile-toggle {
             display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 44px;
+            height: 44px;
+            font-size: 1.5rem;
+            cursor: pointer;
+            color: white;
+            z-index: 1001;
+            background: transparent;
+            border: none;
+        }
+        
+        nav {
+            position: fixed;
+            top: 0;
+            right: -100%;
+            width: 85%;
+            max-width: 320px;
+            height: 100vh;
+            background-color: var(--primary);
+            padding: 80px 30px 30px;
+            transition: var(--transition);
+            z-index: 1000;
+            box-shadow: -5px 0 15px rgba(0, 0, 0, 0.1);
+            overflow-y: auto;
+        }
+        
+        nav.active {
+            right: 0;
+        }
+        
+        nav ul {
             list-style: none;
-            gap: 30px;
+            display: flex;
+            flex-direction: column;
+            gap: 0;
+        }
+        
+        nav li {
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
         }
         
         nav a {
@@ -168,97 +223,105 @@
             text-decoration: none;
             font-weight: 500;
             transition: var(--transition);
-            padding: 8px 0;
-            position: relative;
-        }
-        
-        nav a:hover {
-            color: var(--secondary);
-        }
-        
-        nav a:after {
-            content: '';
-            position: absolute;
-            width: 0;
-            height: 2px;
-            background-color: var(--secondary);
-            bottom: 0;
-            left: 0;
-            transition: var(--transition);
-        }
-        
-        nav a:hover:after {
+            display: block;
+            padding: 18px 0;
+            font-size: 1.1rem;
             width: 100%;
         }
         
-        .mobile-toggle {
-            display: none;
-            font-size: 1.5rem;
-            cursor: pointer;
+        nav a:hover, nav a:focus {
+            color: var(--secondary);
+            padding-left: 10px;
         }
         
-        /* Hero Section */
+        .nav-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            z-index: 999;
+            opacity: 0;
+            visibility: hidden;
+            transition: var(--transition);
+        }
+        
+        .nav-overlay.active {
+            opacity: 1;
+            visibility: visible;
+        }
+        
+        /* Hero Section - Mobile Optimized */
         .hero {
             background: linear-gradient(rgba(10, 37, 64, 0.9), rgba(10, 37, 64, 0.9)), url('https://images.unsplash.com/photo-1497366754035-f200968a6e72?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2069&q=80');
             background-size: cover;
             background-position: center;
             color: white;
-            padding: 100px 0;
+            padding: 80px 0 100px;
             text-align: center;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
         }
         
         .hero-content {
             max-width: 800px;
             margin: 0 auto;
+            width: 100%;
         }
         
         .hero h1 {
             margin-bottom: 1.5rem;
+            font-size: 2.2rem;
         }
         
         .hero p {
-            font-size: 1.2rem;
-            color: rgba(255, 255, 255, 0.8);
+            font-size: 1.1rem;
+            color: rgba(255, 255, 255, 0.85);
             margin-bottom: 2.5rem;
-            max-width: 700px;
+            max-width: 100%;
             margin-left: auto;
             margin-right: auto;
+            line-height: 1.6;
         }
         
         .cta-buttons {
             display: flex;
+            flex-direction: column;
             gap: 20px;
-            justify-content: center;
+            align-items: center;
             margin-top: 40px;
         }
         
-        /* Sectors Section */
+        /* Sectors Section - Mobile Grid */
         .sectors {
-            padding: 100px 0;
+            padding: 80px 0;
         }
         
         .sector-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-            gap: 30px;
+            grid-template-columns: 1fr;
+            gap: 25px;
         }
         
         .sector-card {
             background-color: white;
             border-radius: var(--border-radius);
-            padding: 30px 25px;
+            padding: 25px 20px;
             text-align: center;
             box-shadow: var(--box-shadow);
             transition: var(--transition);
+            border: 1px solid var(--light-gray);
         }
         
         .sector-card:hover {
-            transform: translateY(-10px);
+            transform: translateY(-5px);
         }
         
         .sector-icon {
-            width: 70px;
-            height: 70px;
+            width: 65px;
+            height: 65px;
             background-color: var(--light-gray);
             border-radius: 50%;
             display: flex;
@@ -266,7 +329,7 @@
             justify-content: center;
             margin: 0 auto 20px;
             color: var(--primary);
-            font-size: 1.8rem;
+            font-size: 1.6rem;
         }
         
         .sector-card:nth-child(1) .sector-icon {
@@ -289,25 +352,28 @@
             color: #E74C3C;
         }
         
-        /* Testimonials */
+        /* Testimonials - Mobile Optimized */
         .testimonials {
-            padding: 100px 0;
+            padding: 80px 0;
             background-color: var(--light);
         }
         
         .testimonial-slider {
-            max-width: 800px;
+            width: 100%;
             margin: 0 auto;
             position: relative;
+            overflow: hidden;
         }
         
         .testimonial {
             background-color: white;
             border-radius: var(--border-radius);
-            padding: 40px;
+            padding: 30px 25px;
             box-shadow: var(--box-shadow);
             text-align: center;
             display: none;
+            width: 100%;
+            margin: 0 auto;
         }
         
         .testimonial.active {
@@ -315,10 +381,11 @@
         }
         
         .testimonial-content {
-            font-size: 1.2rem;
+            font-size: 1.1rem;
             font-style: italic;
-            margin-bottom: 30px;
+            margin-bottom: 25px;
             color: var(--dark);
+            line-height: 1.5;
         }
         
         .testimonial-author {
@@ -326,18 +393,35 @@
             align-items: center;
             justify-content: center;
             gap: 15px;
+            flex-wrap: wrap;
         }
         
         .author-avatar {
-            width: 60px;
-            height: 60px;
+            width: 55px;
+            height: 55px;
             border-radius: 50%;
             background-color: var(--light-gray);
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 1.5rem;
+            font-size: 1.3rem;
             color: var(--primary);
+            flex-shrink: 0;
+        }
+        
+        .author-info {
+            text-align: left;
+        }
+        
+        .author-info h4 {
+            font-size: 1.1rem;
+            margin-bottom: 5px;
+        }
+        
+        .author-info p {
+            font-size: 0.9rem;
+            color: var(--gray);
+            margin-bottom: 0;
         }
         
         .slider-controls {
@@ -354,6 +438,7 @@
             background-color: var(--gray);
             cursor: pointer;
             transition: var(--transition);
+            border: none;
         }
         
         .slider-dot.active {
@@ -361,50 +446,63 @@
             transform: scale(1.2);
         }
         
-        /* Contact Form */
+        /* Contact Form - Mobile Optimized */
         .contact {
-            padding: 100px 0;
+            padding: 80px 0;
         }
         
         .contact-form {
-            max-width: 700px;
+            width: 100%;
             margin: 0 auto;
             background-color: white;
-            padding: 50px;
+            padding: 30px 25px;
             border-radius: var(--border-radius);
             box-shadow: var(--box-shadow);
+            border: 1px solid var(--light-gray);
         }
         
         .form-group {
-            margin-bottom: 25px;
+            margin-bottom: 20px;
         }
         
         .form-group label {
             display: block;
             margin-bottom: 8px;
             font-weight: 600;
+            font-size: 0.95rem;
         }
         
         .form-control {
             width: 100%;
-            padding: 14px;
+            padding: 15px;
             border: 1px solid var(--light-gray);
             border-radius: var(--border-radius);
             font-size: 1rem;
             transition: var(--transition);
+            -webkit-appearance: none;
+            appearance: none;
         }
         
         .form-control:focus {
             outline: none;
             border-color: var(--secondary);
+            box-shadow: 0 0 0 3px rgba(212, 175, 55, 0.1);
+        }
+        
+        select.form-control {
+            background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%230A2540' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
+            background-repeat: no-repeat;
+            background-position: right 15px center;
+            background-size: 16px;
+            padding-right: 45px;
         }
         
         textarea.form-control {
-            min-height: 150px;
+            min-height: 140px;
             resize: vertical;
         }
         
-        /* Footer */
+        /* Footer - Mobile Optimized */
         footer {
             background-color: var(--primary);
             color: white;
@@ -413,7 +511,7 @@
         
         .footer-content {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            grid-template-columns: 1fr;
             gap: 40px;
             margin-bottom: 40px;
         }
@@ -426,11 +524,13 @@
         
         .footer-about p {
             color: rgba(255, 255, 255, 0.7);
+            font-size: 1rem;
+            line-height: 1.6;
         }
         
         .footer-links h3, .footer-contact h3 {
             font-size: 1.3rem;
-            margin-bottom: 25px;
+            margin-bottom: 20px;
             color: white;
         }
         
@@ -446,19 +546,28 @@
             color: rgba(255, 255, 255, 0.7);
             text-decoration: none;
             transition: var(--transition);
+            display: inline-block;
+            padding: 5px 0;
+            font-size: 1rem;
         }
         
-        .footer-links a:hover {
+        .footer-links a:hover, .footer-links a:focus {
             color: var(--secondary);
-            padding-left: 5px;
+            transform: translateX(5px);
         }
         
         .footer-contact p {
             color: rgba(255, 255, 255, 0.7);
             margin-bottom: 15px;
             display: flex;
-            align-items: center;
+            align-items: flex-start;
             gap: 10px;
+            font-size: 1rem;
+        }
+        
+        .footer-contact i {
+            margin-top: 3px;
+            flex-shrink: 0;
         }
         
         .copyright {
@@ -469,93 +578,172 @@
             font-size: 0.9rem;
         }
         
-        /* Responsive */
-        @media (max-width: 992px) {
+        /* Back to Top Button */
+        .back-to-top {
+            position: fixed;
+            bottom: 25px;
+            right: 25px;
+            width: 50px;
+            height: 50px;
+            background-color: var(--secondary);
+            color: var(--primary);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+            cursor: pointer;
+            z-index: 99;
+            opacity: 0;
+            visibility: hidden;
+            transition: var(--transition);
+            border: none;
+            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.2);
+        }
+        
+        .back-to-top.visible {
+            opacity: 1;
+            visibility: visible;
+        }
+        
+        .back-to-top:hover, .back-to-top:focus {
+            background-color: #c19b2c;
+            transform: translateY(-3px);
+        }
+        
+        /* Tablet and Desktop Styles */
+        @media (min-width: 768px) {
             h1 {
-                font-size: 2.8rem;
+                font-size: 3rem;
             }
             
             h2 {
-                font-size: 2.2rem;
-            }
-        }
-        
-        @media (max-width: 768px) {
-            .mobile-toggle {
-                display: block;
-            }
-            
-            nav ul {
-                position: fixed;
-                top: 90px;
-                left: 0;
-                width: 100%;
-                background-color: var(--primary);
-                flex-direction: column;
-                align-items: center;
-                padding: 20px 0;
-                gap: 0;
-                transform: translateY(-150%);
-                transition: var(--transition);
-                box-shadow: 0 5px 10px rgba(0, 0, 0, 0.1);
-                z-index: 99;
-            }
-            
-            nav ul.active {
-                transform: translateY(0);
-            }
-            
-            nav li {
-                width: 100%;
-                text-align: center;
-            }
-            
-            nav a {
-                display: block;
-                padding: 15px;
-                width: 100%;
-            }
-            
-            nav a:hover {
-                background-color: rgba(255, 255, 255, 0.05);
-            }
-            
-            .hero {
-                padding: 80px 0;
-            }
-            
-            .cta-buttons {
-                flex-direction: column;
-                align-items: center;
+                font-size: 2.3rem;
             }
             
             .btn {
-                width: 100%;
-                max-width: 300px;
-                text-align: center;
+                width: auto;
             }
             
-            .contact-form {
-                padding: 30px;
-            }
-        }
-        
-        @media (max-width: 576px) {
-            h1 {
-                font-size: 2.2rem;
+            .cta-buttons {
+                flex-direction: row;
+                justify-content: center;
             }
             
-            h2 {
-                font-size: 1.8rem;
+            .sector-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            
+            .footer-content {
+                grid-template-columns: repeat(3, 1fr);
             }
             
             .hero p {
-                font-size: 1rem;
+                font-size: 1.2rem;
+            }
+        }
+        
+        @media (min-width: 992px) {
+            .mobile-toggle {
+                display: none;
             }
             
-            .sectors, .testimonials, .contact {
-                padding: 70px 0;
+            nav {
+                position: static;
+                width: auto;
+                height: auto;
+                background-color: transparent;
+                padding: 0;
+                box-shadow: none;
+                overflow: visible;
             }
+            
+            nav ul {
+                flex-direction: row;
+                gap: 30px;
+            }
+            
+            nav li {
+                border-bottom: none;
+            }
+            
+            nav a {
+                padding: 8px 0;
+                font-size: 1rem;
+                position: relative;
+            }
+            
+            nav a:hover, nav a:focus {
+                padding-left: 0;
+                transform: none;
+            }
+            
+            nav a:after {
+                content: '';
+                position: absolute;
+                width: 0;
+                height: 2px;
+                background-color: var(--secondary);
+                bottom: 0;
+                left: 0;
+                transition: var(--transition);
+            }
+            
+            nav a:hover:after, nav a:focus:after {
+                width: 100%;
+            }
+            
+            .sector-grid {
+                grid-template-columns: repeat(5, 1fr);
+            }
+            
+            .testimonial {
+                padding: 40px;
+            }
+            
+            .contact-form {
+                padding: 40px;
+            }
+        }
+        
+        /* Large Mobile */
+        @media (min-width: 576px) and (max-width: 767px) {
+            .sector-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            
+            .hero h1 {
+                font-size: 2.5rem;
+            }
+        }
+        
+        /* Small Mobile */
+        @media (max-width: 360px) {
+            h1 {
+                font-size: 2rem;
+            }
+            
+            h2 {
+                font-size: 1.7rem;
+            }
+            
+            .logo-text {
+                font-size: 1.3rem;
+            }
+            
+            .hero {
+                padding: 70px 0 90px;
+            }
+        }
+        
+        /* Touch-friendly improvements */
+        button, .btn, .slider-dot, nav a {
+            -webkit-tap-highlight-color: transparent;
+        }
+        
+        button:focus, .btn:focus, .slider-dot:focus, nav a:focus {
+            outline: 2px solid var(--secondary);
+            outline-offset: 2px;
         }
     </style>
 </head>
@@ -563,122 +751,4 @@
     <!-- Header -->
     <header>
         <div class="container header-content">
-            <div class="logo">
-                <div class="logo-icon">T</div>
-                <div class="logo-text">TA<span>AGC</span></div>
-            </div>
-            
-            <div class="mobile-toggle" id="mobileToggle">
-                <i class="fas fa-bars"></i>
-            </div>
-            
-            <nav>
-                <ul id="navMenu">
-                    <li><a href="#home">Home</a></li>
-                    <li><a href="#sectors">Our Sectors</a></li>
-                    <li><a href="#testimonials">Testimonials</a></li>
-                    <li><a href="#contact">Contact</a></li>
-                </ul>
-            </nav>
-        </div>
-    </header>
-
-    <!-- Hero Section -->
-    <section class="hero" id="home">
-        <div class="container hero-content">
-            <h1>Global Excellence Across Five Sectors</h1>
-            <p>TAAGC (Triple A Ahal Global Concept) delivers world-class solutions in General Agriculture, Grain Processing, ICT, General Contracts, and General Merchandise, driving innovation and sustainable growth worldwide.</p>
-            <div class="cta-buttons">
-                <a href="#contact" class="btn btn-primary">Partner With Us</a>
-                <a href="#sectors" class="btn btn-secondary">Explore Our Sectors</a>
-            </div>
-        </div>
-    </section>
-
-    <!-- Sectors Section -->
-    <section class="sectors" id="sectors">
-        <div class="container">
-            <h2>Our Core Sectors</h2>
-            <div class="sector-grid">
-                <div class="sector-card">
-                    <div class="sector-icon">
-                        <i class="fas fa-tractor"></i>
-                    </div>
-                    <h3>General Agriculture</h3>
-                    <p>Modern farming solutions, sustainable practices, and agricultural technology for global food security.</p>
-                </div>
-                
-                <div class="sector-card">
-                    <div class="sector-icon">
-                        <i class="fas fa-wheat-awn"></i>
-                    </div>
-                    <h3>Grain Processing</h3>
-                    <p>State-of-the-art processing facilities delivering high-quality grains to international markets.</p>
-                </div>
-                
-                <div class="sector-card">
-                    <div class="sector-icon">
-                        <i class="fas fa-laptop-code"></i>
-                    </div>
-                    <h3>ICT Solutions</h3>
-                    <p>Cutting-edge technology services, digital transformation, and communication infrastructure.</p>
-                </div>
-                
-                <div class="sector-card">
-                    <div class="sector-icon">
-                        <i class="fas fa-hard-hat"></i>
-                    </div>
-                    <h3>General Contracts</h3>
-                    <p>Comprehensive contracting services for construction, engineering, and infrastructure projects.</p>
-                </div>
-                
-                <div class="sector-card">
-                    <div class="sector-icon">
-                        <i class="fas fa-boxes-stacked"></i>
-                    </div>
-                    <h3>General Merchandise</h3>
-                    <p>Diverse range of quality products and supplies for retail, wholesale, and industrial clients.</p>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- Testimonials Section -->
-    <section class="testimonials" id="testimonials">
-        <div class="container">
-            <h2>Client Testimonials</h2>
-            <div class="testimonial-slider">
-                <div class="testimonial active" id="testimonial1">
-                    <div class="testimonial-content">
-                        "TAAGC transformed our agricultural operations with their innovative approach and cutting-edge technology. Their expertise in grain processing has increased our yield by 40%."
-                    </div>
-                    <div class="testimonial-author">
-                        <div class="author-avatar">
-                            <i class="fas fa-user"></i>
-                        </div>
-                        <div class="author-info">
-                            <h4>Michael Rodriguez</h4>
-                            <p>Agricultural Director, GreenFields Inc.</p>
-                        </div>
-                    </div>
-                </div>
-                
-                <div class="testimonial" id="testimonial2">
-                    <div class="testimonial-content">
-                        "The ICT solutions provided by TAAGC have revolutionized our business operations. Their team delivered a seamless digital transformation ahead of schedule."
-                    </div>
-                    <div class="testimonial-author">
-                        <div class="author-avatar">
-                            <i class="fas fa-user"></i>
-                        </div>
-                        <div class="author-info">
-                            <h4>Sarah Chen</h4>
-                            <p>CTO, TechForward Global</p>
-                        </div>
-                    </div>
-                </div>
-                
-                <div class="testimonial" id="testimonial3">
-                    <div class="testimonial-content">
-                        "From construction to merchandise supply, TAAGC has been an invaluable partner. Their professionalism and commitment to quality are unmatched in the industry."
-             
+            <div class=
