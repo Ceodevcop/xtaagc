@@ -1,0 +1,368 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TAAGC | Triple A Ahal Global Concept</title>
+    <link rel="stylesheet" href="assets/css/main.css">
+    <link rel="stylesheet" href="assets/css/responsive.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="icon" type="image/x-icon" href="assets/images/favicon.ico">
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="container header-container">
+            <a href="/" class="logo">
+                <img src="assets/images/logo.svg" alt="TAAGC Logo" class="logo-image">
+                <div class="logo-text">TA<span>AGC</span></div>
+            </a>
+            
+            <nav class="nav-desktop">
+                <a href="#home" class="nav-link active">Home</a>
+                <a href="#sectors" class="nav-link">Our Sectors</a>
+                <a href="#approach" class="nav-link">Our Approach</a>
+                <a href="#testimonials" class="nav-link">Testimonials</a>
+                <a href="#contact" class="nav-link">Contact</a>
+            </nav>
+            
+            <div class="header-actions">
+                <button class="btn btn-secondary" id="clientLoginBtn">Client Login</button>
+                <button class="mobile-menu-toggle" id="mobileMenuToggle">
+                    <i class="fas fa-bars"></i>
+                </button>
+            </div>
+        </div>
+        
+        <!-- Mobile Menu -->
+        <div class="mobile-menu" id="mobileMenu">
+            <nav class="mobile-nav">
+                <a href="#home" class="nav-link active">Home</a>
+                <a href="#sectors" class="nav-link">Our Sectors</a>
+                <a href="#approach" class="nav-link">Our Approach</a>
+                <a href="#testimonials" class="nav-link">Testimonials</a>
+                <a href="#contact" class="nav-link">Contact</a>
+                <button class="btn btn-secondary" id="mobileLoginBtn">Client Login</button>
+            </nav>
+        </div>
+    </header>
+
+    <!-- Hero Section -->
+    <section class="hero" id="home">
+        <div class="container hero-container">
+            <h1 class="hero-title">Global Excellence Across Five Core Sectors</h1>
+            <p class="hero-subtitle">
+                TAAGC delivers institutional-grade solutions in Agriculture, Grain Processing, ICT, 
+                General Contracts, and General Merchandise. Partner with us for sustainable growth.
+            </p>
+            
+            <div class="hero-actions">
+                <a href="#contact" class="btn btn-primary btn-large">
+                    Partner With Us
+                    <i class="fas fa-arrow-right"></i>
+                </a>
+                <a href="#sectors" class="btn btn-outline btn-large">
+                    Explore Our Capabilities
+                </a>
+            </div>
+            
+            <div class="hero-stats">
+                <div class="stat-item">
+                    <div class="stat-value">5</div>
+                    <div class="stat-label">Core Sectors</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-value">50+</div>
+                    <div class="stat-label">Countries</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-value">15+</div>
+                    <div class="stat-label">Years Experience</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-value">500+</div>
+                    <div class="stat-label">Global Partners</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Sectors Section -->
+    <section class="sectors" id="sectors">
+        <div class="container">
+            <div class="sectors-header">
+                <h2 class="section-title center">Our Core Sectors</h2>
+                <p class="lead-text text-center">
+                    We operate across five strategic sectors, delivering specialized expertise 
+                    and integrated solutions.
+                </p>
+            </div>
+            
+            <div class="sectors-grid" id="sectorsGrid">
+                <!-- Sectors will be loaded dynamically -->
+            </div>
+        </div>
+    </section>
+
+    <!-- Features Section -->
+    <section class="features" id="approach">
+        <div class="container">
+            <h2 class="section-title">Our Strategic Approach</h2>
+            <p class="lead-text">
+                We combine deep sector expertise with a disciplined approach to deliver 
+                sustainable value for our partners.
+            </p>
+            
+            <div class="features-grid" id="featuresGrid">
+                <!-- Features will be loaded dynamically -->
+            </div>
+        </div>
+    </section>
+
+    <!-- Testimonials Section -->
+    <section class="testimonials" id="testimonials">
+        <div class="container">
+            <div class="testimonials-header">
+                <h2 class="section-title center">Partner Perspectives</h2>
+                <p class="lead-text text-center">
+                    Hear from global partners about their experience working with TAAGC.
+                </p>
+            </div>
+            
+            <div class="testimonials-slider">
+                <div class="testimonial-slide active">
+                    <div class="testimonial-content">
+                        TAAGC transformed our agricultural operations with institutional-grade 
+                        precision and strategic insight. Their integrated approach to supply chain 
+                        optimization resulted in a 40% efficiency improvement.
+                    </div>
+                    <div class="testimonial-author">
+                        <div class="author-avatar">MR</div>
+                        <div class="author-info">
+                            <h4>Michael Rodriguez</h4>
+                            <p>Chief Operating Officer, Global Agribusiness Inc.</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="testimonial-slide">
+                    <div class="testimonial-content">
+                        The ICT infrastructure deployed by TAAGC has positioned us for digital 
+                        leadership in our sector. Their enterprise-grade solutions delivered 
+                        measurable ROI within the first fiscal year.
+                    </div>
+                    <div class="testimonial-author">
+                        <div class="author-avatar">SC</div>
+                        <div class="author-info">
+                            <h4>Sarah Chen</h4>
+                            <p>Chief Technology Officer, Fortune 500 Technology Firm</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="slider-controls">
+                <button class="slider-dot active" data-slide="0"></button>
+                <button class="slider-dot" data-slide="1"></button>
+            </div>
+        </div>
+    </section>
+
+    <!-- Contact Section -->
+    <section class="contact" id="contact">
+        <div class="container contact-container">
+            <div class="contact-info">
+                <h2 class="contact-title">Connect With Our Team</h2>
+                <p class="lead-text" style="color: rgba(255, 255, 255, 0.9);">
+                    Ready to discuss how TAAGC can support your global objectives? 
+                    Contact our strategic partnerships team.
+                </p>
+                
+                <div class="contact-details">
+                    <div class="contact-item">
+                        <i class="fas fa-map-marker-alt contact-icon"></i>
+                        <div>
+                            <h4>Global Headquarters</h4>
+                            <p>123 Financial District, Global Business Hub</p>
+                        </div>
+                    </div>
+                    
+                    <div class="contact-item">
+                        <i class="fas fa-phone contact-icon"></i>
+                        <div>
+                            <h4>Phone</h4>
+                            <p>+1 (555) 123-4567</p>
+                        </div>
+                    </div>
+                    
+                    <div class="contact-item">
+                        <i class="fas fa-envelope contact-icon"></i>
+                        <div>
+                            <h4>Email</h4>
+                            <p>partnerships@taagc.com</p>
+                        </div>
+                    </div>
+                    
+                    <div class="contact-item">
+                        <i class="fas fa-clock contact-icon"></i>
+                        <div>
+                            <h4>Business Hours</h4>
+                            <p>Monday - Friday: 9:00 AM - 6:00 PM GMT</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="contact-form">
+                <form id="contactForm">
+                    <div class="form-message" id="formMessage"></div>
+                    
+                    <div class="form-group">
+                        <label for="name" class="form-label">Full Name *</label>
+                        <input type="text" id="name" class="form-control" placeholder="Enter your name" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="email" class="form-label">Email Address *</label>
+                        <input type="email" id="email" class="form-control" placeholder="Enter your email" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="company" class="form-label">Company</label>
+                        <input type="text" id="company" class="form-control" placeholder="Your company name">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="sector" class="form-label">Sector of Interest</label>
+                        <select id="sector" class="form-control form-select">
+                            <option value="">Select a sector</option>
+                            <option value="agriculture">General Agriculture</option>
+                            <option value="grain">Grain Processing</option>
+                            <option value="ict">ICT Solutions</option>
+                            <option value="contracts">General Contracts</option>
+                            <option value="merchandise">General Merchandise</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="message" class="form-label">Your Message *</label>
+                        <textarea id="message" class="form-control" placeholder="How can we support your objectives?" required></textarea>
+                    </div>
+                    
+                    <button type="submit" class="btn btn-primary" style="width: 100%;">
+                        <span class="btn-text">Send Message</span>
+                        <span class="btn-loader" style="display: none;">
+                            <i class="fas fa-spinner fa-spin"></i> Sending...
+                        </span>
+                        <i class="fas fa-paper-plane"></i>
+                    </button>
+                </form>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container-wide">
+            <div class="footer-container">
+                <div class="footer-about">
+                    <div class="footer-logo">
+                        <img src="assets/images/logo.svg" alt="TAAGC Logo" class="logo-image">
+                        <div class="logo-text">TA<span>AGC</span></div>
+                    </div>
+                    <p class="footer-description">
+                        Triple A Ahal Global Concept delivers institutional-grade solutions 
+                        across five core sectors.
+                    </p>
+                    
+                    <div class="social-links">
+                        <a href="#" class="social-link" aria-label="LinkedIn">
+                            <i class="fab fa-linkedin-in"></i>
+                        </a>
+                        <a href="#" class="social-link" aria-label="Twitter">
+                            <i class="fab fa-twitter"></i>
+                        </a>
+                        <a href="#" class="social-link" aria-label="YouTube">
+                            <i class="fab fa-youtube"></i>
+                        </a>
+                    </div>
+                </div>
+                
+                <div>
+                    <h3 class="footer-heading">Sectors</h3>
+                    <ul class="footer-links" id="footerSectors">
+                        <!-- Dynamic sectors -->
+                    </ul>
+                </div>
+                
+                <div>
+                    <h3 class="footer-heading">Company</h3>
+                    <ul class="footer-links">
+                        <li><a href="#home">Home</a></li>
+                        <li><a href="#sectors">Our Sectors</a></li>
+                        <li><a href="#approach">Our Approach</a></li>
+                        <li><a href="#testimonials">Testimonials</a></li>
+                        <li><a href="#contact">Contact</a></li>
+                    </ul>
+                </div>
+                
+                <div>
+                    <h3 class="footer-heading">Resources</h3>
+                    <ul class="footer-links">
+                        <li><a href="#">Insights & Research</a></li>
+                        <li><a href="#">Case Studies</a></li>
+                        <li><a href="#">Sustainability Report</a></li>
+                        <li><a href="#">Careers</a></li>
+                    </ul>
+                </div>
+            </div>
+            
+            <div class="footer-bottom">
+                <p class="copyright" id="copyrightYear">
+                    © 2023 TAAGC (Triple A Ahal Global Concept). All rights reserved.
+                </p>
+            </div>
+        </div>
+    </footer>
+    
+    <!-- Back to Top -->
+    <button class="back-to-top" id="backToTop">
+        <i class="fas fa-chevron-up"></i>
+    </button>
+
+    <!-- Auth Modal -->
+    <div class="modal" id="authModal">
+        <div class="modal-content">
+            <button class="modal-close" id="closeAuthModal">&times;</button>
+            <h2 class="modal-title" id="authModalTitle">Client Login</h2>
+            <form id="authForm">
+                <div class="form-message" id="authMessage"></div>
+                
+                <div class="form-group">
+                    <label for="authEmail" class="form-label">Email Address</label>
+                    <input type="email" id="authEmail" class="form-control" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="authPassword" class="form-label">Password</label>
+                    <input type="password" id="authPassword" class="form-control" required>
+                </div>
+                
+                <button type="submit" class="btn btn-primary" style="width: 100%;">
+                    <span class="btn-text">Login</span>
+                    <span class="btn-loader" style="display: none;">
+                        <i class="fas fa-spinner fa-spin"></i> Authenticating...
+                    </span>
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <!-- JavaScript -->
+    <script src="assets/js/navigation.js"></script>
+    <script src="assets/js/testimonials.js"></script>
+    <script src="assets/js/contact.js"></script>
+    <script src="assets/js/main.js"></script>
+</body>
+</html>
