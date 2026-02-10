@@ -1,0 +1,312 @@
+// Main JavaScript - Frontend Entry Point
+import API from './api.js';
+
+class TAAGCWebsite {
+    constructor() {
+        this.api = new API();
+        this.init();
+    }
+
+    init() {
+        console.log('TAAGC Website Initializing...');
+        
+        // Set current year
+        this.setCurrentYear();
+        
+        // Load dynamic content
+        this.loadSectors();
+        this.loadFeatures();
+        this.loadFooterSectors();
+        
+        // Initialize components
+        this.initBackToTop();
+        this.initScrollSpy();
+        this.initFormValidation();
+        
+        // Analytics
+        this.trackPageView();
+        
+        console.log('TAAGC Website Initialized');
+    }
+
+    setCurrentYear() {
+        const yearElement = document.getElementById('copyrightYear');
+        if (yearElement) {
+            const currentYear = new Date().getFullYear();
+            yearElement.textContent = yearElement.textContent.replace('2023', currentYear);
+        }
+    }
+
+    async loadSectors() {
+        try {
+            const sectors = await this.api.getSectors();
+            const grid = document.getElementById('sectorsGrid');
+            
+            if (grid && sectors.length > 0) {
+                grid.innerHTML = sectors.map(sector => `
+                    <div class="sector-card">
+                        <div class="sector-icon">
+                            <i class="${sector.icon}"></i>
+                        </div>
+                        <h3 class="sector-title">${sector.title}</h3>
+                        <p class="sector-description">${sector.description}</p>
+                        <div class="sector-meta">
+                            <span class="text-muted">${sector.tags}</span>
+                        </div>
+                    </div>
+                `).join('');
+            }
+        } catch (error) {
+            console.error('Error loading sectors:', error);
+            this.loadFallbackSectors();
+        }
+    }
+
+    loadFallbackSectors() {
+        const sectors = [
+            {
+                title: "General Agriculture",
+                description: "Modern farming solutions, sustainable practices, and agricultural technology for global food security.",
+                icon: "fas fa-seedling",
+                tags: "Global Reach • Sustainable Practices • Technology Integration"
+            },
+            {
+                title: "Grain Processing",
+                description: "State-of-the-art processing facilities delivering premium grains to international markets.",
+                icon: "fas fa-wheat-awn",
+                tags: "Premium Quality • Advanced Processing • Global Distribution"
+            },
+            {
+                title: "ICT Solutions",
+                description: "Cutting-edge technology services, digital transformation, and communication infrastructure.",
+                icon: "fas fa-network-wired",
+                tags: "Digital Transformation • Enterprise Solutions • Infrastructure"
+            },
+            {
+                title: "General Contracts",
+                description: "Comprehensive contracting services for construction, engineering, and infrastructure projects.",
+                icon: "fas fa-hard-hat",
+                tags: "EPC Services • Project Management • Infrastructure Development"
+            },
+            {
+                title: "General Merchandise",
+                description: "Diverse range of quality products and supplies for retail, wholesale, and industrial clients.",
+                icon: "fas fa-boxes-stacked",
+                tags: "Global Sourcing • Quality Assurance • Supply Chain Management"
+            }
+        ];
+
+        const grid = document.getElementById('sectorsGrid');
+        if (grid) {
+            grid.innerHTML = sectors.map(sector => `
+                <div class="sector-card">
+                    <div class="sector-icon">
+                        <i class="${sector.icon}"></i>
+                    </div>
+                    <h3 class="sector-title">${sector.title}</h3>
+                    <p class="sector-description">${sector.description}</p>
+                    <div class="sector-meta">
+                        <span class="text-muted">${sector.tags}</span>
+                    </div>
+                </div>
+            `).join('');
+        }
+    }
+
+    async loadFeatures() {
+        try {
+            const features = await this.api.getFeatures();
+            const grid = document.getElementById('featuresGrid');
+            
+            if (grid && features.length > 0) {
+                grid.innerHTML = features.map((feature, index) => `
+                    <div class="feature-card">
+                        <div class="feature-number">${(index + 1).toString().padStart(2, '0')}</div>
+                        <h3 class="feature-title">${feature.title}</h3>
+                        <p class="feature-description">${feature.description}</p>
+                    </div>
+                `).join('');
+            }
+        } catch (error) {
+            console.error('Error loading features:', error);
+            this.loadFallbackFeatures();
+        }
+    }
+
+    loadFallbackFeatures() {
+        const features = [
+            {
+                title: "Sector Specialization",
+                description: "Deep expertise across our five core sectors enables us to identify unique opportunities."
+            },
+            {
+                title: "Global Network",
+                description: "Extensive network of partners and operations across 50+ countries."
+            },
+            {
+                title: "Risk Management",
+                description: "Comprehensive risk assessment and mitigation strategies ensure resilient operations."
+            },
+            {
+                title: "Sustainable Value",
+                description: "Long-term value creation through sustainable practices and innovation."
+            }
+        ];
+
+        const grid = document.getElementById('featuresGrid');
+        if (grid) {
+            grid.innerHTML = features.map((feature, index) => `
+                <div class="feature-card">
+                    <div class="feature-number">${(index + 1).toString().padStart(2, '0')}</div>
+                    <h3 class="feature-title">${feature.title}</h3>
+                    <p class="feature-description">${feature.description}</p>
+                </div>
+            `).join('');
+        }
+    }
+
+    loadFooterSectors() {
+        const sectors = [
+            "General Agriculture",
+            "Grain Processing",
+            "ICT Solutions",
+            "General Contracts",
+            "General Merchandise"
+        ];
+
+        const footerSectors = document.getElementById('footerSectors');
+        if (footerSectors) {
+            footerSectors.innerHTML = sectors.map(sector => `
+                <li><a href="#sectors">${sector}</a></li>
+            `).join('');
+        }
+    }
+
+    initBackToTop() {
+        const backToTop = document.getElementById('backToTop');
+        
+        if (backToTop) {
+            window.addEventListener('scroll', () => {
+                if (window.pageYOffset > 300) {
+                    backToTop.classList.add('visible');
+                } else {
+                    backToTop.classList.remove('visible');
+                }
+            });
+
+            backToTop.addEventListener('click', () => {
+                window.scrollTo({
+                    top: 0,
+                    behavior: 'smooth'
+                });
+            });
+        }
+    }
+
+    initScrollSpy() {
+        const sections = document.querySelectorAll('section[id]');
+        const navLinks = document.querySelectorAll('.nav-link');
+        
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    const id = entry.target.getAttribute('id');
+                    navLinks.forEach(link => {
+                        link.classList.remove('active');
+                        if (link.getAttribute('href') === `#${id}`) {
+                            link.classList.add('active');
+                        }
+                    });
+                }
+            });
+        }, {
+            threshold: 0.3
+        });
+
+        sections.forEach(section => observer.observe(section));
+    }
+
+    initFormValidation() {
+        const forms = document.querySelectorAll('form');
+        
+        forms.forEach(form => {
+            const inputs = form.querySelectorAll('input[required], textarea[required], select[required]');
+            
+            inputs.forEach(input => {
+                input.addEventListener('blur', () => this.validateField(input));
+                input.addEventListener('input', () => this.clearFieldError(input));
+            });
+        });
+    }
+
+    validateField(field) {
+        const value = field.value.trim();
+        let isValid = true;
+        let errorMessage = '';
+
+        if (!value) {
+            isValid = false;
+            errorMessage = 'This field is required';
+        } else if (field.type === 'email') {
+            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            if (!emailRegex.test(value)) {
+                isValid = false;
+                errorMessage = 'Please enter a valid email address';
+            }
+        }
+
+        this.setFieldValidation(field, isValid, errorMessage);
+        return isValid;
+    }
+
+    setFieldValidation(field, isValid, errorMessage = '') {
+        const formGroup = field.closest('.form-group');
+        let errorElement = formGroup.querySelector('.form-error');
+        
+        if (!errorElement) {
+            errorElement = document.createElement('div');
+            errorElement.className = 'form-error';
+            formGroup.appendChild(errorElement);
+        }
+
+        if (isValid) {
+            field.classList.remove('error');
+            errorElement.classList.remove('show');
+            errorElement.textContent = '';
+        } else {
+            field.classList.add('error');
+            errorElement.classList.add('show');
+            errorElement.textContent = errorMessage;
+        }
+    }
+
+    clearFieldError(field) {
+        if (field.classList.contains('error')) {
+            field.classList.remove('error');
+            const formGroup = field.closest('.form-group');
+            const errorElement = formGroup.querySelector('.form-error');
+            if (errorElement) {
+                errorElement.classList.remove('show');
+            }
+        }
+    }
+
+    trackPageView() {
+        // Implementation for analytics tracking
+        if (typeof gtag !== 'undefined') {
+            gtag('config', 'G-XXXXXXXXXX', {
+                page_title: document.title,
+                page_location: window.location.href,
+                page_path: window.location.pathname
+            });
+        }
+    }
+}
+
+// Initialize when DOM is loaded
+document.addEventListener('DOMContentLoaded', () => {
+    window.taagc = new TAAGCWebsite();
+});
+
+// Export for module usage
+export default TAAGCWebsite;
