@@ -1,0 +1,85 @@
+<!-- admin/editor.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Page Editor - TAAGC Admin</title>
+    <link rel="stylesheet" href="css/admin.css">
+    <link rel="stylesheet" href="css/editor.css">
+    <script src="https://unpkg.com/sortablejs@1.15.0/Sortable.min.js"></script>
+</head>
+<body>
+    <div class="editor-header">
+        <div class="header-left">
+            <a href="dashboard.html" class="back-btn">← Back</a>
+            <input type="text" id="pageTitle" class="page-title-input" placeholder="Page Title">
+        </div>
+        <div class="header-actions">
+            <button class="btn btn-preview" id="previewBtn">Preview</button>
+            <button class="btn btn-save" id="saveDraftBtn">Save Draft</button>
+            <button class="btn btn-publish" id="publishBtn">Publish</button>
+        </div>
+    </div>
+
+    <div class="editor-container">
+        <!-- Sidebar -->
+        <div class="sections-sidebar">
+            <div class="sidebar-title">Drag & Drop Sections</div>
+            
+            <div class="section-type" data-type="hero" draggable="true">
+                <h4>Hero Banner</h4>
+                <p>Large banner with title, subtitle and CTA button</p>
+            </div>
+            
+            <div class="section-type" data-type="process" draggable="true">
+                <h4>Process Steps</h4>
+                <p>Step-by-step process with icons</p>
+            </div>
+            
+            <div class="section-type" data-type="services" draggable="true">
+                <h4>Services Grid</h4>
+                <p>Display services in a grid layout</p>
+            </div>
+            
+            <div class="section-type" data-type="content" draggable="true">
+                <h4>Content Block</h4>
+                <p>Rich text content with title</p>
+            </div>
+            
+            <div class="section-type" data-type="cta" draggable="true">
+                <h4>Call to Action</h4>
+                <p>Prominent CTA section</p>
+            </div>
+            
+            <div class="section-type" data-type="contact" draggable="true">
+                <h4>Contact Form</h4>
+                <p>Contact form with fields</p>
+            </div>
+            
+            <div class="section-type" data-type="testimonials" draggable="true">
+                <h4>Testimonials</h4>
+                <p>Customer testimonials slider</p>
+            </div>
+            
+            <div class="section-type" data-type="team" draggable="true">
+                <h4>Team Members</h4>
+                <p>Display team members grid</p>
+            </div>
+        </div>
+
+        <!-- Main Editor -->
+        <div class="editor-main">
+            <div class="sections-container" id="sectionsContainer">
+                <div class="empty-state" id="emptyState">
+                    <div class="icon">📄</div>
+                    <p>Drag sections here or click a section type to add</p>
+                    <p>Start building your page...</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script type="module" src="js/editor.js"></script>
+</body>
+</html>
