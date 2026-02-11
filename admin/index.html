@@ -5,11 +5,12 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>TAAGC Admin Login</title>
-    <link rel="stylesheet" href="admin/css/admin-login.css">
+    <link rel="stylesheet" href="css/admin-login.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="icon" type="image/x-icon" href="/favicon.ico">
 </head>
 <body>
-    <!-- Background Particles -->
+    <!-- Background Elements -->
     <div class="particle"></div>
     <div class="particle"></div>
     <div class="particle"></div>
@@ -19,9 +20,11 @@
     <div class="login-container">
         <!-- Logo -->
         <div class="logo">
-            <div class="logo-icon">A</div>
+            <div class="logo-icon">
+                <i class="fas fa-shield-alt"></i>
+            </div>
             <h1><span>TAAGC</span> Admin</h1>
-            <p>TRIPLE A AHAL GLOBAL CONCEPT</p>
+            <p>Secure Administration Panel</p>
         </div>
         
         <!-- Login Form -->
@@ -32,8 +35,9 @@
                     <i class="fas fa-envelope"></i> Admin Email
                 </label>
                 <div class="input-wrapper">
-                    <i class="fas fa-user"></i>
-                    <input type="email" id="email" placeholder="admin@taagc.website" required>
+                    <i class="fas fa-user-shield"></i>
+                    <input type="email" id="email" placeholder="admin@taagc.website" required
+                           autocomplete="username" autocorrect="off" autocapitalize="none">
                 </div>
             </div>
             
@@ -44,16 +48,26 @@
                 </label>
                 <div class="input-wrapper">
                     <i class="fas fa-lock"></i>
-                    <input type="password" id="password" placeholder="••••••••" required>
-                    <button type="button" class="password-toggle" id="togglePassword">
+                    <input type="password" id="password" placeholder="••••••••" required
+                           autocomplete="current-password">
+                    <button type="button" class="password-toggle" id="togglePassword"
+                            aria-label="Show password">
                         <i class="fas fa-eye"></i>
                     </button>
                 </div>
             </div>
             
+            <!-- Remember Me -->
+            <div class="remember-me">
+                <input type="checkbox" id="rememberMe">
+                <label for="rememberMe">
+                    <i class="fas fa-check-circle"></i> Remember me
+                </label>
+            </div>
+            
             <!-- Submit Button -->
             <button type="submit" class="submit-btn" id="loginBtn">
-                <i class="fas fa-sign-in-alt"></i> Login to Admin Panel
+                <i class="fas fa-sign-in-alt"></i> Secure Login
             </button>
             
             <!-- Loading Spinner -->
@@ -66,146 +80,207 @@
             <span id="errorText"></span>
         </div>
         
-        <!-- Admin Contact -->
-        <div class="admin-note">
-            <p>For access issues, contact:</p>
-            <a href="mailto:priahmz@gmail.com" class="admin-contact">
-                <i class="fas fa-envelope"></i> priahmz@gmail.com
+        <!-- Success Message -->
+        <div id="successMessage" class="success-message" style="display: none;">
+            <i class="fas fa-check-circle"></i>
+            <span id="successText"></span>
+        </div>
+        
+        <!-- Forgot Password -->
+        <div class="forgot-password">
+            <a href="#" id="forgotPassword">
+                <i class="fas fa-question-circle"></i> Forgot Password?
             </a>
+        </div>
+        
+        <!-- Security Info -->
+        <div class="security-info">
+            <p><i class="fas fa-shield-alt"></i> Secure SSL Connection</p>
+            <p><i class="fas fa-clock"></i> Session expires in 24 hours</p>
         </div>
     </div>
     
     <!-- Company Tagline -->
     <div class="company-tagline">
-        © 2024 TRIPLE A AHAL GLOBAL CONCEPT
+        <i class="fas fa-globe"></i> © 2024 TRIPLE A AHAL GLOBAL CONCEPT
     </div>
 
-    <!-- JavaScript -->
-    <script type="module" src="js/auth.js"></script>
-    <script>
-        // Password toggle functionality
-        document.getElementById('togglePassword').addEventListener('click', function() {
-            const passwordInput = document.getElementById('password');
+    <!-- Firebase and Auth Scripts -->
+    <script type="module" src="../../firebase-config.js"></script>
+    <script type="module" src="js/auth-system.js"></script>
+    
+    <!-- Login Logic -->
+    <script type="module">
+        import { authSystem } from './js/auth-system.js';
+        
+        // DOM Elements
+        const loginForm = document.getElementById('loginForm');
+        const emailInput = document.getElementById('email');
+        const passwordInput = document.getElementById('password');
+        const togglePassword = document.getElementById('togglePassword');
+        const rememberMe = document.getElementById('rememberMe');
+        const loginBtn = document.getElementById('loginBtn');
+        const loadingSpinner = document.getElementById('loadingSpinner');
+        const errorMessage = document.getElementById('errorMessage');
+        const errorText = document.getElementById('errorText');
+        const successMessage = document.getElementById('successMessage');
+        const successText = document.getElementById('successText');
+        const forgotPassword = document.getElementById('forgotPassword');
+        
+        // Password toggle
+        togglePassword.addEventListener('click', function() {
             const icon = this.querySelector('i');
-            
             if (passwordInput.type === 'password') {
                 passwordInput.type = 'text';
                 icon.classList.remove('fa-eye');
                 icon.classList.add('fa-eye-slash');
+                this.setAttribute('aria-label', 'Hide password');
             } else {
                 passwordInput.type = 'password';
                 icon.classList.remove('fa-eye-slash');
                 icon.classList.add('fa-eye');
+                this.setAttribute('aria-label', 'Show password');
             }
         });
-
-        // Form submission with loading state
-        document.getElementById('loginForm').addEventListener('submit', function(e) {
+        
+        // Form submission
+        loginForm.addEventListener('submit', async function(e) {
             e.preventDefault();
             
-            const submitBtn = document.getElementById('loginBtn');
-            const loadingSpinner = document.getElementById('loadingSpinner');
-            const errorMessage = document.getElementById('errorMessage');
-            
-            // Show loading
-            submitBtn.disabled = true;
-            submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Authenticating...';
-            loadingSpinner.style.display = 'block';
-            errorMessage.style.display = 'none';
-            
-            // Get form data
-            const email = document.getElementById('email').value;
-            const password = document.getElementById('password').value;
-            
-            // Simulate login delay (remove in production)
-            setTimeout(() => {
-                // Reset button state
-                submitBtn.disabled = false;
-                submitBtn.innerHTML = '<i class="fas fa-sign-in-alt"></i> Login to Admin Panel';
-                loadingSpinner.style.display = 'none';
-                
-                // Show error for demo (remove in production)
-                document.getElementById('errorText').textContent = 
-                    'Please use Firebase Authentication setup first';
-                errorMessage.style.display = 'flex';
-                
-                // In production, this would call your auth.js module
-                // authManager.login(email, password);
-            }, 1500);
-        });
-
-        // Add input focus effects
-        document.querySelectorAll('input').forEach(input => {
-            input.addEventListener('focus', function() {
-                this.parentElement.parentElement.classList.add('focused');
-            });
-            
-            input.addEventListener('blur', function() {
-                this.parentElement.parentElement.classList.remove('focused');
-            });
-        });
-
-        // Add keyboard shortcuts
-        document.addEventListener('keydown', function(e) {
-            // Ctrl+Enter to submit form
-            if (e.ctrlKey && e.key === 'Enter') {
-                document.getElementById('loginForm').dispatchEvent(new Event('submit'));
+            // Validate inputs
+            if (!emailInput.value || !passwordInput.value) {
+                showError('Please fill in all fields');
+                return;
             }
             
-            // Escape to clear form
-            if (e.key === 'Escape') {
-                document.getElementById('loginForm').reset();
+            if (!isValidEmail(emailInput.value)) {
+                showError('Please enter a valid email address');
+                return;
+            }
+            
+            // Disable form and show loading
+            setFormState('loading');
+            
+            try {
+                // Attempt login
+                const result = await authSystem.login(
+                    emailInput.value,
+                    passwordInput.value,
+                    rememberMe.checked
+                );
+                
+                if (result.success) {
+                    // Show success
+                    showSuccess('Login successful! Redirecting...');
+                    
+                    // Redirect to dashboard after short delay
+                    setTimeout(() => {
+                        window.location.href = 'dashboard.html';
+                    }, 1500);
+                }
+            } catch (error) {
+                // Show error
+                showError(error.message);
+                
+                // Clear password on error
+                passwordInput.value = '';
+                
+                // Re-enable form
+                setFormState('ready');
+            }
+        });
+        
+        // Forgot password
+        forgotPassword.addEventListener('click', async function(e) {
+            e.preventDefault();
+            
+            const email = prompt('Please enter your email address to reset password:');
+            if (!email) return;
+            
+            if (!isValidEmail(email)) {
+                alert('Please enter a valid email address');
+                return;
+            }
+            
+            try {
+                await authSystem.resetPassword(email);
+                alert('Password reset email sent! Please check your inbox.');
+            } catch (error) {
+                alert('Error: ' + error.message);
+            }
+        });
+        
+        // Utility functions
+        function isValidEmail(email) {
+            const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            return re.test(email);
+        }
+        
+        function showError(message) {
+            errorText.textContent = message;
+            errorMessage.style.display = 'flex';
+            successMessage.style.display = 'none';
+            
+            // Auto-hide after 5 seconds
+            setTimeout(() => {
+                errorMessage.style.display = 'none';
+            }, 5000);
+        }
+        
+        function showSuccess(message) {
+            successText.textContent = message;
+            successMessage.style.display = 'flex';
+            errorMessage.style.display = 'none';
+        }
+        
+        function setFormState(state) {
+            if (state === 'loading') {
+                loginBtn.disabled = true;
+                loginBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Authenticating...';
+                loadingSpinner.style.display = 'block';
+                emailInput.disabled = true;
+                passwordInput.disabled = true;
+                rememberMe.disabled = true;
+            } else {
+                loginBtn.disabled = false;
+                loginBtn.innerHTML = '<i class="fas fa-sign-in-alt"></i> Secure Login';
+                loadingSpinner.style.display = 'none';
+                emailInput.disabled = false;
+                passwordInput.disabled = false;
+                rememberMe.disabled = false;
+            }
+        }
+        
+        // Check if already logged in
+        authSystem.onAuthStateChange((state) => {
+            if (state.isAuthenticated && state.isAdmin) {
+                // Already logged in as admin, redirect to dashboard
+                window.location.href = 'dashboard.html';
+            }
+        });
+        
+        // Auto-focus email input
+        emailInput.focus();
+        
+        // Add enter key navigation
+        emailInput.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter' && emailInput.value) {
+                passwordInput.focus();
+            }
+        });
+        
+        passwordInput.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter' && passwordInput.value) {
+                loginForm.dispatchEvent(new Event('submit'));
+            }
+        });
+        
+        // Add security warning for caps lock
+        passwordInput.addEventListener('keyup', (e) => {
+            if (e.getModifierState('CapsLock')) {
+                showError('Caps Lock is ON');
             }
         });
     </script>
-    
-    <!-- Styles for additional enhancements -->
-    <style>
-        /* Additional animations */
-        .focused label {
-            color: #667eea !important;
-            transform: translateX(5px);
-            transition: all 0.3s ease;
-        }
-        
-        /* Autofill styles */
-        input:-webkit-autofill {
-            -webkit-box-shadow: 0 0 0 1000px rgba(255, 255, 255, 0.9) inset !important;
-            -webkit-text-fill-color: #2d3748 !important;
-            border-color: #667eea !important;
-        }
-        
-        @media (prefers-color-scheme: dark) {
-            input:-webkit-autofill {
-                -webkit-box-shadow: 0 0 0 1000px rgba(45, 55, 72, 0.9) inset !important;
-                -webkit-text-fill-color: #e2e8f0 !important;
-            }
-        }
-        
-        /* Selection color */
-        ::selection {
-            background: rgba(102, 126, 234, 0.3);
-            color: white;
-        }
-        
-        /* Scrollbar */
-        ::-webkit-scrollbar {
-            width: 8px;
-        }
-        
-        ::-webkit-scrollbar-track {
-            background: rgba(255, 255, 255, 0.1);
-            border-radius: 4px;
-        }
-        
-        ::-webkit-scrollbar-thumb {
-            background: linear-gradient(135deg, #667eea, #764ba2);
-            border-radius: 4px;
-        }
-        
-        ::-webkit-scrollbar-thumb:hover {
-            background: linear-gradient(135deg, #764ba2, #667eea);
-        }
-    </style>
 </body>
-    </html>
+</html>
