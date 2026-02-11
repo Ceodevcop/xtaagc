@@ -247,3 +247,28 @@ class TAAGCApp {
 document.addEventListener('DOMContentLoaded', () => {
     window.app = new TAAGCApp();
 });
+// app.js - Add these routes to registerPages()
+registerPages() {
+    this.pages = {
+        'home': window.HomePage,
+        'sectors': window.SectorsPage,
+        'agriculture': window.SectorAgriculturePage,
+        'grain-processing': window.SectorGrainPage,
+        'ict': window.SectorICTPage,
+        'general-contracts': window.SectorContractsPage,
+        'general-merchandise': window.SectorMerchandisePage,
+        'approach': window.ApproachPage,
+        'testimonials': window.TestimonialsPage,
+        'contact': window.ContactPage,
+        'ceo': window.CeoPage,
+        
+        // Aliases
+        'services': window.SectorsPage,
+        'agri': window.SectorAgriculturePage,
+        'grain': window.SectorGrainPage,
+        'contracts': window.SectorContractsPage,
+        'merchandise': window.SectorMerchandisePage,
+        'partners': window.TestimonialsPage,
+        'invest': window.ContactPage
+    };
+}
