@@ -1,0 +1,36 @@
+<!-- admin/index.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TAAGC Admin Login</title>
+    <link rel="stylesheet" href="css/admin.css">
+</head>
+<body>
+    <div class="login-container">
+        <div class="logo">
+            <h1><span>TAAGC</span> Admin</h1>
+            <p>Page Management System</p>
+        </div>
+        
+        <form id="loginForm">
+            <div class="input-group">
+                <input type="email" id="email" placeholder="Admin Email" required>
+            </div>
+            <div class="input-group">
+                <input type="password" id="password" placeholder="Password" required>
+            </div>
+            <button type="submit">Login to Admin Panel</button>
+        </form>
+        
+        <div id="errorMessage" class="error-message"></div>
+        
+        <div class="admin-note">
+            <p>For access, contact: priahmz@gmail.com</p>
+        </div>
+    </div>
+
+    <script type="module" src="js/auth.js"></script>
+</body>
+</html>
