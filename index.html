@@ -3,143 +3,339 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>TAAGC | Triple A Ahal Global Concept</title>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Playfair+Display:wght@600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="style.css">
-    <link rel="stylesheet" href="assets/css/responsive.css">
+    
+    <!-- Primary Meta Tags -->
+    <title>TAAGC Global | Triple A AHAL Global Concept</title>
+    <meta name="title" content="TAAGC Global | Triple A AHAL Global Concept">
+    <meta name="description" content="TAAGC delivers institutional-grade solutions in Agriculture, Grain Processing, ICT, General Contracts, and General Merchandise. Partner with us for sustainable growth across 50+ countries.">
+    <meta name="keywords" content="TAAGC, AHAL Global Concept, Agriculture, Grain Processing, ICT, General Contracts, General Merchandise, Global Trade, Investment">
+    <meta name="author" content="Ahmad Hamza, CEO">
+    
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://taagc.website">
+    <meta property="og:title" content="TAAGC Global | Triple A AHAL Global Concept">
+    <meta property="og:description" content="Institutional-grade solutions across five core sectors. Global excellence, delivered.">
+    <meta property="og:image" content="https://taagc.website/images/og-image.jpg">
+
+    <!-- Twitter -->
+    <meta property="twitter:card" content="summary_large_image">
+    <meta property="twitter:url" content="https://taagc.website">
+    <meta property="twitter:title" content="TAAGC Global | Triple A AHAL Global Concept">
+    <meta property="twitter:description" content="Institutional-grade solutions across five core sectors. Global excellence, delivered.">
+    <meta property="twitter:image" content="https://taagc.website/images/og-image.jpg">
+
+    <!-- Favicon -->
+    <link rel="icon" type="image/png" href="/favicon.png">
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png">
+    
+    <!-- Fonts & Icons -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Playfair+Display:wght@600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    <link rel="icon" type="image/x-icon" href="assets/images/favicon.ico">
+    
+    <!-- Main Stylesheet -->
+    <link rel="stylesheet" href="style.css">
+    
+    <!-- Inline critical CSS for immediate rendering -->
+    <style>
+        /* Critical path CSS */
+        :root {
+            --color-primary: #0a2540;
+            --color-accent: #c19a6b;
+        }
+        body { margin: 0; font-family: 'Inter', sans-serif; opacity: 1; transition: opacity 0.3s; }
+        .hero { background: linear-gradient(135deg, rgba(10,37,64,0.97), rgba(58,90,120,0.92)), url('https://images.unsplash.com/photo-1521791136064-7986c2920216?w=1600'); background-size: cover; background-position: center; }
+        .btn-primary { background: linear-gradient(135deg, #0a2540, #3a5a78); color: white; padding: 12px 32px; border-radius: 4px; text-decoration: none; display: inline-block; font-weight: 600; }
+    </style>
 </head>
 <body>
-    <!-- Header -->
-    <header class="header">
-        <div class="container header-container">
-            <a href="/" class="logo">
-                <img src="assets/images/logo.svg" alt="TAAGC Logo" class="logo-image">
-                <div class="logo-text">TA<span>AGC</span></div>
-            </a>
-            
-            <nav class="nav-desktop">
-                <a href="#home" class="nav-link active">Home</a>
-                <a href="#sectors" class="nav-link">Our Sectors</a>
-                <a href="#approach" class="nav-link">Our Approach</a>
-                <a href="#testimonials" class="nav-link">Testimonials</a>
-                <a href="#contact" class="nav-link">Contact</a>
-            </nav>
-            
-            <div class="header-actions">
-                <button class="btn btn-secondary" id="clientLoginBtn">Client Login</button>
-                <button class="mobile-menu-toggle" id="mobileMenuToggle">
-                    <i class="fas fa-bars"></i>
+    <!-- ===== PRELOADER ===== -->
+    <div id="preloader" style="display: none;">
+        <div class="loader"></div>
+    </div>
+
+    <!-- ===== NAVIGATION ===== -->
+    <nav class="navbar" id="navbar">
+        <div class="container">
+            <div class="navbar-content">
+                <a href="/" class="navbar-brand">
+                    <span class="brand-text"><span>TAAGC</span> GLOBAL</span>
+                </a>
+                
+                <div class="navbar-menu" id="navbarMenu">
+                    <ul class="navbar-nav">
+                        <li class="nav-item"><a href="#home" class="nav-link active">Home</a></li>
+                        <li class="nav-item"><a href="#sectors" class="nav-link">Sectors</a></li>
+                        <li class="nav-item"><a href="#approach" class="nav-link">Approach</a></li>
+                        <li class="nav-item"><a href="#testimonials" class="nav-link">Partners</a></li>
+                        <li class="nav-item"><a href="#contact" class="nav-link">Contact</a></li>
+                        <li class="nav-item nav-cta">
+                            <a href="#contact" class="btn btn-primary btn-sm">
+                                <i class="fas fa-handshake"></i> Partner With Us
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+                
+                <button class="navbar-toggler" id="navbarToggler">
+                    <span class="bar"></span>
+                    <span class="bar"></span>
+                    <span class="bar"></span>
                 </button>
             </div>
         </div>
-        
-        <!-- Mobile Menu -->
-        <div class="mobile-menu" id="mobileMenu">
-            <nav class="mobile-nav">
-                <a href="#home" class="nav-link active">Home</a>
-                <a href="#sectors" class="nav-link">Our Sectors</a>
-                <a href="#approach" class="nav-link">Our Approach</a>
-                <a href="#testimonials" class="nav-link">Testimonials</a>
-                <a href="#contact" class="nav-link">Contact</a>
-                <button class="btn btn-secondary" id="mobileLoginBtn">Client Login</button>
-            </nav>
-        </div>
-    </header>
+    </nav>
 
-    <!-- Hero Section -->
-    <section class="hero" id="home">
-        <div class="container hero-container">
-            <h1 class="hero-title">Global Excellence Across Five Core Sectors</h1>
-            <p class="hero-subtitle">
-                TAAGC delivers institutional-grade solutions in Agriculture, Grain Processing, ICT, 
-                General Contracts, and General Merchandise. Partner with us for sustainable growth.
-            </p>
-            
-            <div class="hero-actions">
-                <a href="#contact" class="btn btn-primary btn-large">
-                    Partner With Us
-                    <i class="fas fa-arrow-right"></i>
-                </a>
-                <a href="#sectors" class="btn btn-outline btn-large">
-                    Explore Our Capabilities
-                </a>
+    <!-- ===== HERO SECTION ===== -->
+    <section id="home" class="hero">
+        <div class="hero-overlay"></div>
+        <div class="container">
+            <div class="hero-content">
+                <span class="hero-badge">
+                    <i class="fas fa-award"></i> INSTITUTIONAL-GRADE EXCELLENCE
+                </span>
+                <h1 class="hero-title">
+                    Global Excellence Across <span class="text-gold">Five Core Sectors</span>
+                </h1>
+                <p class="hero-subtitle">
+                    TAAGC delivers institutional-grade solutions in Agriculture, Grain Processing, ICT, 
+                    General Contracts, and General Merchandise. Partner with us for sustainable growth.
+                </p>
+                <div class="hero-buttons">
+                    <a href="#sectors" class="btn btn-primary">
+                        <i class="fas fa-arrow-right"></i> Explore Our Sectors
+                    </a>
+                    <a href="#contact" class="btn btn-outline">
+                        <i class="fas fa-calendar"></i> Schedule Consultation
+                    </a>
+                </div>
             </div>
-            
-            <div class="hero-stats">
-                <div class="stat-item">
-                    <div class="stat-value">5</div>
+        </div>
+        <div class="hero-scroll">
+            <a href="#stats" class="scroll-link">
+                <span class="scroll-text">Discover</span>
+                <i class="fas fa-chevron-down"></i>
+            </a>
+        </div>
+    </section>
+
+    <!-- ===== STATS SECTION ===== -->
+    <section id="stats" class="stats-section">
+        <div class="container">
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-icon">
+                        <i class="fas fa-cubes"></i>
+                    </div>
+                    <div class="stat-number">5</div>
                     <div class="stat-label">Core Sectors</div>
                 </div>
-                <div class="stat-item">
-                    <div class="stat-value">50+</div>
+                <div class="stat-card">
+                    <div class="stat-icon">
+                        <i class="fas fa-globe-americas"></i>
+                    </div>
+                    <div class="stat-number">50+</div>
                     <div class="stat-label">Countries</div>
                 </div>
-                <div class="stat-item">
-                    <div class="stat-value">15+</div>
+                <div class="stat-card">
+                    <div class="stat-icon">
+                        <i class="fas fa-calendar-check"></i>
+                    </div>
+                    <div class="stat-number">15+</div>
                     <div class="stat-label">Years Experience</div>
                 </div>
-                <div class="stat-item">
-                    <div class="stat-value">500+</div>
+                <div class="stat-card">
+                    <div class="stat-icon">
+                        <i class="fas fa-handshake"></i>
+                    </div>
+                    <div class="stat-number">500+</div>
                     <div class="stat-label">Global Partners</div>
                 </div>
             </div>
         </div>
     </section>
 
-    <!-- Sectors Section -->
-    <section class="sectors" id="sectors">
+    <!-- ===== CORE SECTORS SECTION ===== -->
+    <section id="sectors" class="sectors-section">
         <div class="container">
-            <div class="sectors-header">
-                <h2 class="section-title center">Our Core Sectors</h2>
-                <p class="lead-text text-center">
+            <div class="section-header">
+                <span class="section-subtitle">Our Expertise</span>
+                <h2 class="section-title">Five Strategic <span class="text-gold">Core Sectors</span></h2>
+                <p class="section-description">
                     We operate across five strategic sectors, delivering specialized expertise 
-                    and integrated solutions.
+                    and integrated solutions that drive measurable results for our partners.
                 </p>
             </div>
             
-            <div class="sectors-grid" id="sectorsGrid">
-                <!-- Sectors will be loaded dynamically -->
+            <div class="sectors-grid">
+                <!-- Sector 1: Agriculture -->
+                <div class="sector-card">
+                    <div class="sector-icon-wrapper">
+                        <div class="sector-icon">
+                            <i class="fas fa-seedling"></i>
+                        </div>
+                    </div>
+                    <h3>Agriculture</h3>
+                    <p>Sustainable farming, agri-processing, and supply chain optimization for food security.</p>
+                    <a href="#" class="sector-link">
+                        Learn more <i class="fas fa-arrow-right"></i>
+                    </a>
+                </div>
+                
+                <!-- Sector 2: Grain Processing -->
+                <div class="sector-card">
+                    <div class="sector-icon-wrapper">
+                        <div class="sector-icon">
+                            <i class="fas fa-wheat-alt"></i>
+                        </div>
+                    </div>
+                    <h3>Grain Processing</h3>
+                    <p>Industrial-scale milling, storage, and value-added grain product manufacturing.</p>
+                    <a href="#" class="sector-link">
+                        Learn more <i class="fas fa-arrow-right"></i>
+                    </a>
+                </div>
+                
+                <!-- Sector 3: ICT -->
+                <div class="sector-card">
+                    <div class="sector-icon-wrapper">
+                        <div class="sector-icon">
+                            <i class="fas fa-microchip"></i>
+                        </div>
+                    </div>
+                    <h3>ICT</h3>
+                    <p>Enterprise digital transformation, infrastructure deployment, and cybersecurity.</p>
+                    <a href="#" class="sector-link">
+                        Learn more <i class="fas fa-arrow-right"></i>
+                    </a>
+                </div>
+                
+                <!-- Sector 4: General Contracts -->
+                <div class="sector-card">
+                    <div class="sector-icon-wrapper">
+                        <div class="sector-icon">
+                            <i class="fas fa-file-signature"></i>
+                        </div>
+                    </div>
+                    <h3>General Contracts</h3>
+                    <p>Civil works, infrastructure development, and turnkey project execution.</p>
+                    <a href="#" class="sector-link">
+                        Learn more <i class="fas fa-arrow-right"></i>
+                    </a>
+                </div>
+                
+                <!-- Sector 5: General Merchandise -->
+                <div class="sector-card">
+                    <div class="sector-icon-wrapper">
+                        <div class="sector-icon">
+                            <i class="fas fa-box"></i>
+                        </div>
+                    </div>
+                    <h3>General Merchandise</h3>
+                    <p>Global procurement, logistics, and supply chain solutions for consumer goods.</p>
+                    <a href="#" class="sector-link">
+                        Learn more <i class="fas fa-arrow-right"></i>
+                    </a>
+                </div>
             </div>
-        </div>
-    </section>
-
-    <!-- Features Section -->
-    <section class="features" id="approach">
-        <div class="container">
-            <h2 class="section-title">Our Strategic Approach</h2>
-            <p class="lead-text">
-                We combine deep sector expertise with a disciplined approach to deliver 
-                sustainable value for our partners.
-            </p>
             
-            <div class="features-grid" id="featuresGrid">
-                <!-- Features will be loaded dynamically -->
+            <div class="sectors-cta">
+                <a href="#contact" class="btn btn-primary btn-large">
+                    <i class="fas fa-file-alt"></i> Request Sector Brochure
+                </a>
             </div>
         </div>
     </section>
 
-    <!-- Testimonials Section -->
-    <section class="testimonials" id="testimonials">
+    <!-- ===== STRATEGIC APPROACH SECTION ===== -->
+    <section id="approach" class="approach-section">
         <div class="container">
-            <div class="testimonials-header">
-                <h2 class="section-title center">Partner Perspectives</h2>
-                <p class="lead-text text-center">
+            <div class="approach-grid">
+                <div class="approach-content">
+                    <span class="section-subtitle">Our Methodology</span>
+                    <h2 class="section-title">Strategic <span class="text-gold">Approach</span></h2>
+                    <p class="approach-text">
+                        We combine deep sector expertise with a disciplined approach to deliver 
+                        sustainable value for our partners. Our integrated model ensures seamless 
+                        execution across borders and sectors.
+                    </p>
+                    
+                    <div class="approach-features">
+                        <div class="feature-item">
+                            <div class="feature-icon">
+                                <i class="fas fa-chart-line"></i>
+                            </div>
+                            <div class="feature-text">
+                                <h4>Institutional-Grade</h4>
+                                <p>Fortune 500-level processes and compliance standards</p>
+                            </div>
+                        </div>
+                        <div class="feature-item">
+                            <div class="feature-icon">
+                                <i class="fas fa-globe"></i>
+                            </div>
+                            <div class="feature-text">
+                                <h4>Global Network</h4>
+                                <p>Active operations across 50+ countries</p>
+                            </div>
+                        </div>
+                        <div class="feature-item">
+                            <div class="feature-icon">
+                                <i class="fas fa-hand-holding-usd"></i>
+                            </div>
+                            <div class="feature-text">
+                                <h4>Sustainable ROI</h4>
+                                <p>Measurable returns through strategic optimization</p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <a href="#contact" class="btn btn-primary">
+                        <i class="fas fa-handshake"></i> Discuss Your Objectives
+                    </a>
+                </div>
+                
+                <div class="approach-image">
+                    <div class="image-wrapper">
+                        <img src="https://images.unsplash.com/photo-1552664730-d307ca884978?w=800" alt="Strategic Planning Session" loading="lazy">
+                        <div class="experience-badge">
+                            <span class="years">15+</span>
+                            <span class="text">Years of Excellence</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ===== TESTIMONIALS / PARTNER PERSPECTIVES ===== -->
+    <section id="testimonials" class="testimonials-section">
+        <div class="container">
+            <div class="section-header">
+                <span class="section-subtitle">Partner Perspectives</span>
+                <h2 class="section-title">Trusted by <span class="text-gold">Global Leaders</span></h2>
+                <p class="section-description">
                     Hear from global partners about their experience working with TAAGC.
                 </p>
             </div>
             
-            <div class="testimonials-slider">
-                <div class="testimonial-slide active">
+            <div class="testimonials-grid">
+                <!-- Testimonial 1 -->
+                <div class="testimonial-card">
+                    <div class="testimonial-quote">
+                        <i class="fas fa-quote-left"></i>
+                    </div>
                     <div class="testimonial-content">
-                        TAAGC transformed our agricultural operations with institutional-grade 
-                        precision and strategic insight. Their integrated approach to supply chain 
-                        optimization resulted in a 40% efficiency improvement.
+                        <p>
+                            "TAAGC transformed our agricultural operations with institutional-grade precision 
+                            and strategic insight. Their integrated approach to supply chain optimization 
+                            resulted in a <strong>40% efficiency improvement</strong>."
+                        </p>
                     </div>
                     <div class="testimonial-author">
-                        <div class="author-avatar">MR</div>
+                        <div class="author-avatar">
+                            <span>MR</span>
+                        </div>
                         <div class="author-info">
                             <h4>Michael Rodriguez</h4>
                             <p>Chief Operating Officer, Global Agribusiness Inc.</p>
@@ -147,223 +343,78 @@
                     </div>
                 </div>
                 
-                <div class="testimonial-slide">
+                <!-- Testimonial 2 -->
+                <div class="testimonial-card">
+                    <div class="testimonial-quote">
+                        <i class="fas fa-quote-left"></i>
+                    </div>
                     <div class="testimonial-content">
-                        The ICT infrastructure deployed by TAAGC has positioned us for digital 
-                        leadership in our sector. Their enterprise-grade solutions delivered 
-                        measurable ROI within the first fiscal year.
+                        <p>
+                            "The ICT infrastructure deployed by TAAGC has positioned us for digital leadership 
+                            in our sector. Their enterprise-grade solutions delivered <strong>measurable ROI</strong> 
+                            within the first fiscal year."
+                        </p>
                     </div>
                     <div class="testimonial-author">
-                        <div class="author-avatar">SC</div>
+                        <div class="author-avatar">
+                            <span>SC</span>
+                        </div>
                         <div class="author-info">
                             <h4>Sarah Chen</h4>
                             <p>Chief Technology Officer, Fortune 500 Technology Firm</p>
                         </div>
                     </div>
                 </div>
-            </div>
-            
-            <div class="slider-controls">
-                <button class="slider-dot active" data-slide="0"></button>
-                <button class="slider-dot" data-slide="1"></button>
-            </div>
-        </div>
-    </section>
-
-    <!-- Contact Section -->
-    <section class="contact" id="contact">
-        <div class="container contact-container">
-            <div class="contact-info">
-                <h2 class="contact-title">Connect With Our Team</h2>
-                <p class="lead-text" style="color: rgba(255, 255, 255, 0.9);">
-                    Ready to discuss how TAAGC can support your global objectives? 
-                    Contact our strategic partnerships team.
-                </p>
                 
-                <div class="contact-details">
-                    <div class="contact-item">
-                        <i class="fas fa-map-marker-alt contact-icon"></i>
-                        <div>
-                            <h4>Global Headquarters</h4>
-                            <p>123 Financial District, Global Business Hub</p>
-                        </div>
+                <!-- Testimonial 3 - Added for completeness -->
+                <div class="testimonial-card">
+                    <div class="testimonial-quote">
+                        <i class="fas fa-quote-left"></i>
                     </div>
-                    
-                    <div class="contact-item">
-                        <i class="fas fa-phone contact-icon"></i>
-                        <div>
-                            <h4>Phone</h4>
-                            <p>+1 (555) 123-4567</p>
-                        </div>
+                    <div class="testimonial-content">
+                        <p>
+                            "As a strategic partner, TAAGC's general merchandise procurement capabilities 
+                            opened new markets for us. Their logistics network across Africa and the Middle 
+                            East is unparalleled."
+                        </p>
                     </div>
-                    
-                    <div class="contact-item">
-                        <i class="fas fa-envelope contact-icon"></i>
-                        <div>
-                            <h4>Email</h4>
-                            <p>partnerships@taagc.com</p>
+                    <div class="testimonial-author">
+                        <div class="author-avatar">
+                            <span>AK</span>
                         </div>
-                    </div>
-                    
-                    <div class="contact-item">
-                        <i class="fas fa-clock contact-icon"></i>
-                        <div>
-                            <h4>Business Hours</h4>
-                            <p>Monday - Friday: 9:00 AM - 6:00 PM GMT</p>
+                        <div class="author-info">
+                            <h4>Amara Kone</h4>
+                            <p>Supply Chain Director, Pan-African Retail Group</p>
                         </div>
                     </div>
                 </div>
             </div>
             
-            <div class="contact-form">
-                <form id="contactForm">
-                    <div class="form-message" id="formMessage"></div>
-                    
-                    <div class="form-group">
-                        <label for="name" class="form-label">Full Name *</label>
-                        <input type="text" id="name" class="form-control" placeholder="Enter your name" required>
-                    </div>
-                    
-                    <div class="form-group">
-                        <label for="email" class="form-label">Email Address *</label>
-                        <input type="email" id="email" class="form-control" placeholder="Enter your email" required>
-                    </div>
-                    
-                    <div class="form-group">
-                        <label for="company" class="form-label">Company</label>
-                        <input type="text" id="company" class="form-control" placeholder="Your company name">
-                    </div>
-                    
-                    <div class="form-group">
-                        <label for="sector" class="form-label">Sector of Interest</label>
-                        <select id="sector" class="form-control form-select">
-                            <option value="">Select a sector</option>
-                            <option value="agriculture">General Agriculture</option>
-                            <option value="grain">Grain Processing</option>
-                            <option value="ict">ICT Solutions</option>
-                            <option value="contracts">General Contracts</option>
-                            <option value="merchandise">General Merchandise</option>
-                        </select>
-                    </div>
-                    
-                    <div class="form-group">
-                        <label for="message" class="form-label">Your Message *</label>
-                        <textarea id="message" class="form-control" placeholder="How can we support your objectives?" required></textarea>
-                    </div>
-                    
-                    <button type="submit" class="btn btn-primary" style="width: 100%;">
-                        <span class="btn-text">Send Message</span>
-                        <span class="btn-loader" style="display: none;">
-                            <i class="fas fa-spinner fa-spin"></i> Sending...
-                        </span>
-                        <i class="fas fa-paper-plane"></i>
-                    </button>
-                </form>
+            <div class="testimonials-cta">
+                <a href="#" class="btn btn-outline-primary">
+                    <i class="fas fa-book-open"></i> Read Case Studies
+                </a>
             </div>
         </div>
     </section>
 
-    <!-- Footer -->
-    <footer class="footer">
-        <div class="container-wide">
-            <div class="footer-container">
-                <div class="footer-about">
-                    <div class="footer-logo">
-                        <img src="assets/images/logo.svg" alt="TAAGC Logo" class="logo-image">
-                        <div class="logo-text">TA<span>AGC</span></div>
-                    </div>
-                    <p class="footer-description">
-                        Triple A Ahal Global Concept delivers institutional-grade solutions 
-                        across five core sectors.
+    <!-- ===== CONTACT / CONNECT SECTION ===== -->
+    <section id="contact" class="contact-section">
+        <div class="container">
+            <div class="contact-wrapper">
+                <div class="contact-header">
+                    <span class="section-subtitle">Connect With Our Team</span>
+                    <h2 class="section-title">Ready to discuss how TAAGC can support your <span class="text-gold">global objectives?</span></h2>
+                    <p class="contact-description">
+                        Contact our strategic partnerships team for a confidential consultation.
                     </p>
-                    
-                    <div class="social-links">
-                        <a href="#" class="social-link" aria-label="LinkedIn">
-                            <i class="fab fa-linkedin-in"></i>
-                        </a>
-                        <a href="#" class="social-link" aria-label="Twitter">
-                            <i class="fab fa-twitter"></i>
-                        </a>
-                        <a href="#" class="social-link" aria-label="YouTube">
-                            <i class="fab fa-youtube"></i>
-                        </a>
-                    </div>
                 </div>
                 
-                <div>
-                    <h3 class="footer-heading">Sectors</h3>
-                    <ul class="footer-links" id="footerSectors">
-                        <!-- Dynamic sectors -->
-                    </ul>
-                </div>
-                
-                <div>
-                    <h3 class="footer-heading">Company</h3>
-                    <ul class="footer-links">
-                        <li><a href="#home">Home</a></li>
-                        <li><a href="#sectors">Our Sectors</a></li>
-                        <li><a href="#approach">Our Approach</a></li>
-                        <li><a href="#testimonials">Testimonials</a></li>
-                        <li><a href="#contact">Contact</a></li>
-                    </ul>
-                </div>
-                
-                <div>
-                    <h3 class="footer-heading">Resources</h3>
-                    <ul class="footer-links">
-                        <li><a href="#">Insights & Research</a></li>
-                        <li><a href="#">Case Studies</a></li>
-                        <li><a href="#">Sustainability Report</a></li>
-                        <li><a href="#">Careers</a></li>
-                    </ul>
-                </div>
-            </div>
-            
-            <div class="footer-bottom">
-                <p class="copyright" id="copyrightYear">
-                    © 2023 TAAGC (Triple A Ahal Global Concept). All rights reserved.
-                </p>
-            </div>
-        </div>
-    </footer>
-    
-    <!-- Back to Top -->
-    <button class="back-to-top" id="backToTop">
-        <i class="fas fa-chevron-up"></i>
-    </button>
-
-    <!-- Auth Modal -->
-    <div class="modal" id="authModal">
-        <div class="modal-content">
-            <button class="modal-close" id="closeAuthModal">&times;</button>
-            <h2 class="modal-title" id="authModalTitle">Client Login</h2>
-            <form id="authForm">
-                <div class="form-message" id="authMessage"></div>
-                
-                <div class="form-group">
-                    <label for="authEmail" class="form-label">Email Address</label>
-                    <input type="email" id="authEmail" class="form-control" required>
-                </div>
-                
-                <div class="form-group">
-                    <label for="authPassword" class="form-label">Password</label>
-                    <input type="password" id="authPassword" class="form-control" required>
-                </div>
-                
-                <button type="submit" class="btn btn-primary" style="width: 100%;">
-                    <span class="btn-text">Login</span>
-                    <span class="btn-loader" style="display: none;">
-                        <i class="fas fa-spinner fa-spin"></i> Authenticating...
-                    </span>
-                </button>
-            </form>
-        </div>
-    </div>
-
-    <!-- JavaScript -->
-    <script src="assets/js/navigation.js"></script>
-    <script src="assets/js/testimonials.js"></script>
-    <script src="assets/js/contact.js"></script>
-    <script src="assets/js/main.js"></script>
-</body>
-</html>
+                <div class="contact-grid">
+                    <!-- Global Headquarters -->
+                    <div class="contact-card">
+                        <div class="contact-icon-wrapper">
+                            <i class="fas fa-building"></i>
+                        </div>
+                        <h3>Global Headquarters</h3>
+   
