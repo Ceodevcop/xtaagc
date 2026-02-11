@@ -1,0 +1,83 @@
+<!-- admin/dashboard.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard - TAAGC Admin</title>
+    <link rel="stylesheet" href="css/admin.css">
+</head>
+<body>
+    <!-- Header -->
+    <header class="admin-header">
+        <div class="logo-container">
+            <h1><span>TAAGC</span> Admin Panel</h1>
+        </div>
+        <div class="user-info">
+            <span id="userEmail">Loading...</span>
+            <button id="logoutBtn">Logout</button>
+        </div>
+    </header>
+
+    <!-- Sidebar -->
+    <nav class="sidebar">
+        <ul class="nav-menu">
+            <li><a href="#" class="active" id="navPages">📄 Pages</a></li>
+            <li><a href="#" id="navOrders">📦 Orders</a></li>
+            <li><a href="#" id="navInvestments">💰 Investments</a></li>
+            <li><a href="#" id="navUsers">👥 Users</a></li>
+            <li><a href="#" id="navSettings">⚙️ Settings</a></li>
+        </ul>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <div class="dashboard-header">
+            <h2>Page Management</h2>
+            <button class="btn-primary" id="createPageBtn">+ Create New Page</button>
+        </div>
+
+        <!-- Stats Cards -->
+        <div class="stats-cards">
+            <div class="stat-card">
+                <h3>Total Pages</h3>
+                <div class="number" id="totalPages">0</div>
+            </div>
+            <div class="stat-card">
+                <h3>Published</h3>
+                <div class="number" id="publishedPages">0</div>
+            </div>
+            <div class="stat-card">
+                <h3>Drafts</h3>
+                <div class="number" id="draftPages">0</div>
+            </div>
+            <div class="stat-card">
+                <h3>Last Updated</h3>
+                <div class="number" id="lastUpdated">-</div>
+            </div>
+        </div>
+
+        <!-- Pages Table -->
+        <div class="pages-table">
+            <table>
+                <thead>
+                    <tr>
+                        <th width="30%">Page Title</th>
+                        <th width="20%">URL</th>
+                        <th width="15%">Status</th>
+                        <th width="20%">Last Modified</th>
+                        <th width="15%">Actions</th>
+                    </tr>
+                </thead>
+                <tbody id="pagesTableBody">
+                    <tr>
+                        <td colspan="5" class="loading">Loading pages...</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </main>
+
+    <script type="module" src="js/dashboard.js"></script>
+</body>
+</html>
