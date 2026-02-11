@@ -1,26 +1,24 @@
-# TAAGC Website
+# TAAGC Admin Panel
 
-Global standard website for TAAGC (Triple A Ahal Global Concept) - A multinational corporation operating across five sectors.
+A complete Firebase-based admin panel for managing TAAGC website pages with drag-and-drop editor.
 
-## Features
+## Setup Instructions
 
-- Modern, clean, bold, and minimalist design
-- Fully responsive (mobile-first approach)
-- Global standard file structure and naming conventions
-- Firebase integration for authentication and data storage
-- Contact form with Firestore backend
-- Testimonial slider
-- SEO optimized
-- Accessibility compliant (WCAG 2.1)
-- Fast performance
-- Cross-browser compatible
+1. **Upload all files** to your web hosting (Firebase Hosting recommended)
 
-## Tech Stack
+2. **Set up Firebase Authentication:**
+   - Go to Firebase Console > Authentication
+   - Enable Email/Password provider
+   - Add admin users manually or use the admin setup script
 
-- **Frontend**: HTML5, CSS3, JavaScript (ES6+)
-- **Backend**: Firebase (Auth, Firestore, Storage)
-- **Icons**: Font Awesome 6
-- **Fonts**: Inter (Google Fonts)
-- **Hosting**: Firebase Hosting (recommended)
+3. **Set up Firestore Database:**
+   - Go to Firestore Database
+   - Create collections: `pages`, `users`
+   - Set up security rules (provided in security-rules.txt)
 
-## Project Structure
+4. **Create initial admin user:**
+   - Run the setup script or add manually via Firebase Console
+   - Email: priahmz@gmail.com (or your admin email)
+   - Set custom claims: `{ admin: true }`
+
+## File Structure
