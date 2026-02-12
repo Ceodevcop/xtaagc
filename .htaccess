@@ -1,0 +1,9 @@
+# .htaccess - Place in root directory
+RewriteEngine On
+
+# If the requested file or directory doesn't exist
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+
+# Redirect to 404.html with the requested path
+RewriteRule ^(.*)$ 404.html [L]
