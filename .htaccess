@@ -7,3 +7,9 @@ RewriteCond %{REQUEST_FILENAME} !-d
 
 # Redirect to 404.html with the requested path
 RewriteRule ^(.*)$ 404.html [L]
+
+# Protect admin directory
+RewriteRule ^admin/ - [L,NC]
+RewriteCond %{REQUEST_URI} ^/admin/
+RewriteCond %{REMOTE_ADDR} !^192\.168\.1\.  # Add your IP restrictions
+</IfModule>
