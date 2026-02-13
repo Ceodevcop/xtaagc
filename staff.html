@@ -3,549 +3,162 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>TAAGC | Leadership Team</title>
+    <title>Leadership Team | TAAGC Global</title>
     
     <!-- Fonts & Icons -->
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&family=Playfair+Display:wght@700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Playfair+Display:wght@600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
-    <style>
-        *{margin:0;padding:0;box-sizing:border-box;}
-        body{
-            font-family:'Inter',sans-serif;
-            background:linear-gradient(135deg,#0a2540,#1a3a4f);
-            color:#1a1e24;
-            line-height:1.6;
-        }
-        .container{
-            max-width:1400px;
-            margin:0 auto;
-            padding:0 20px;
-        }
-        
-        /* ===== NAVBAR ===== */
-        .navbar{
-            background:white;
-            padding:16px 0;
-            box-shadow:0 4px 20px rgba(0,0,0,0.08);
-            position:sticky;
-            top:0;
-            z-index:1000;
-        }
-        .navbar-content{
-            display:flex;
-            align-items:center;
-            justify-content:space-between;
-        }
-        .navbar-brand{
-            display:flex;
-            align-items:center;
-            gap:12px;
-            text-decoration:none;
-        }
-        .navbar-logo{
-            width:48px;
-            height:48px;
-            background:linear-gradient(135deg,#0a2540,#3a5a78);
-            border-radius:12px;
-            display:flex;
-            align-items:center;
-            justify-content:center;
-            color:white;
-            font-size:24px;
-            font-weight:700;
-        }
-        .navbar-brand-text{
-            font-family:'Playfair Display',serif;
-            font-size:24px;
-            font-weight:700;
-            color:#0a2540;
-        }
-        .navbar-brand-text span{color:#c19a6b;}
-        .navbar-menu{
-            display:flex;
-            align-items:center;
-            gap:32px;
-        }
-        .navbar-nav{
-            display:flex;
-            list-style:none;
-            gap:24px;
-        }
-        .nav-link{
-            color:#4a5568;
-            text-decoration:none;
-            font-weight:600;
-            font-size:15px;
-            display:flex;
-            align-items:center;
-            gap:8px;
-        }
-        .nav-link i{color:#c19a6b;}
-        .nav-link:hover,.nav-link.active{color:#0a2540;}
-        .nav-link.active{border-bottom:2px solid #c19a6b;padding-bottom:4px;}
-        .nav-cta{
-            background:linear-gradient(135deg,#0a2540,#3a5a78);
-            color:white!important;
-            padding:10px 24px;
-            border-radius:40px;
-        }
-        .nav-cta i{color:white!important;}
-        .navbar-toggler{
-            display:none;
-            flex-direction:column;
-            cursor:pointer;
-            background:none;
-            border:none;
-            padding:8px;
-        }
-        .navbar-toggler span{
-            width:25px;
-            height:2px;
-            background:#0a2540;
-            margin:4px 0;
-            transition:0.3s;
-        }
-        
-        /* ===== PAGE HEADER ===== */
-        .page-header{
-            text-align:center;
-            margin:60px 0 40px;
-        }
-        .page-badge{
-            display:inline-block;
-            padding:8px 24px;
-            background:rgba(193,154,107,0.1);
-            color:#c19a6b;
-            border-radius:40px;
-            font-size:14px;
-            font-weight:700;
-            text-transform:uppercase;
-            letter-spacing:2px;
-            margin-bottom:16px;
-        }
-        .page-title{
-            font-family:'Playfair Display',serif;
-            font-size:48px;
-            color:white;
-            margin-bottom:16px;
-        }
-        .page-title span{color:#c19a6b;}
-        .page-subtitle{
-            color:rgba(255,255,255,0.8);
-            font-size:18px;
-            max-width:700px;
-            margin:0 auto;
-        }
-        
-        /* ===== FILTER TABS ===== */
-        .filter-tabs{
-            display:flex;
-            justify-content:center;
-            gap:16px;
-            margin-bottom:40px;
-            flex-wrap:wrap;
-        }
-        .filter-btn{
-            padding:12px 28px;
-            border:2px solid rgba(255,255,255,0.2);
-            border-radius:40px;
-            background:transparent;
-            color:white;
-            font-weight:600;
-            cursor:pointer;
-            transition:0.3s;
-            display:flex;
-            align-items:center;
-            gap:8px;
-        }
-        .filter-btn i{color:#c19a6b;}
-        .filter-btn:hover,.filter-btn.active{
-            background:white;
-            color:#0a2540;
-            border-color:#c19a6b;
-        }
-        .filter-btn.active i{color:#0a2540;}
-        
-        /* ===== STAFF GRID ===== */
-        .staff-grid{
-            display:grid;
-            grid-template-columns:repeat(auto-fit,minmax(320px,1fr));
-            gap:30px;
-            margin-bottom:60px;
-        }
-        .staff-card{
-            background:white;
-            border-radius:24px;
-            overflow:hidden;
-            box-shadow:0 10px 30px rgba(0,0,0,0.08);
-            transition:0.3s;
-            border:1px solid #e2e8f0;
-        }
-        .staff-card:hover{
-            transform:translateY(-10px);
-            box-shadow:0 30px 60px rgba(0,0,0,0.15);
-        }
-        .staff-img{
-            height:280px;
-            overflow:hidden;
-            position:relative;
-        }
-        .staff-img img{
-            width:100%;
-            height:100%;
-            object-fit:cover;
-            transition:0.5s;
-        }
-        .staff-card:hover .staff-img img{transform:scale(1.1);}
-        .staff-rank-badge{
-            position:absolute;
-            top:20px;
-            right:20px;
-            background:#0a2540;
-            color:white;
-            padding:8px 16px;
-            border-radius:40px;
-            font-size:12px;
-            font-weight:700;
-            display:flex;
-            align-items:center;
-            gap:6px;
-        }
-        .staff-rank-badge i{color:#c19a6b;}
-        .staff-info{padding:24px;}
-        .staff-name{
-            font-size:22px;
-            font-weight:700;
-            color:#0a2540;
-            margin-bottom:4px;
-        }
-        .staff-pos{
-            color:#c19a6b;
-            font-weight:600;
-            font-size:14px;
-            text-transform:uppercase;
-            letter-spacing:1px;
-            margin-bottom:12px;
-        }
-        .staff-bio{
-            color:#4a5568;
-            font-size:14px;
-            margin-bottom:16px;
-            line-height:1.6;
-        }
-        .staff-meta{
-            display:flex;
-            gap:16px;
-            padding-top:16px;
-            border-top:1px solid #e2e8f0;
-        }
-        .staff-meta span{
-            display:flex;
-            align-items:center;
-            gap:6px;
-            font-size:13px;
-            color:#4a5568;
-        }
-        .staff-meta i{color:#c19a6b;}
-        .staff-social{
-            display:flex;
-            gap:12px;
-            margin-top:16px;
-        }
-        .staff-social a{
-            width:36px;
-            height:36px;
-            background:#f7fafc;
-            border-radius:50%;
-            display:flex;
-            align-items:center;
-            justify-content:center;
-            color:#0a2540;
-            text-decoration:none;
-            transition:0.3s;
-        }
-        .staff-social a:hover{
-            background:#c19a6b;
-            color:white;
-        }
-        
-        /* ===== HIRING BANNER ===== */
-        .hiring-banner{
-            background:linear-gradient(135deg,#0a2540,#2c4c6b);
-            border-radius:32px;
-            padding:48px;
-            margin:40px 0 60px;
-            display:flex;
-            align-items:center;
-            justify-content:space-between;
-            color:white;
-            flex-wrap:wrap;
-            gap:30px;
-        }
-        .hiring-content h3{
-            font-size:28px;
-            margin-bottom:12px;
-            font-family:'Playfair Display',serif;
-        }
-        .hiring-content h3 span{color:#c19a6b;}
-        .hiring-btn{
-            background:#c19a6b;
-            color:white;
-            padding:16px 36px;
-            border-radius:40px;
-            text-decoration:none;
-            font-weight:700;
-            display:flex;
-            align-items:center;
-            gap:12px;
-            transition:0.3s;
-        }
-        .hiring-btn:hover{
-            background:#b38b5e;
-            transform:translateY(-2px);
-        }
-        
-        /* ===== STATS ===== */
-        .stats-grid{
-            display:grid;
-            grid-template-columns:repeat(4,1fr);
-            gap:30px;
-            margin:60px 0;
-        }
-        .stat-card{
-            background:white;
-            padding:30px;
-            border-radius:16px;
-            text-align:center;
-            box-shadow:0 10px 30px rgba(0,0,0,0.08);
-        }
-        .stat-icon{
-            width:60px;
-            height:60px;
-            background:linear-gradient(135deg,#0a2540,#3a5a78);
-            border-radius:50%;
-            display:flex;
-            align-items:center;
-            justify-content:center;
-            color:white;
-            font-size:24px;
-            margin:0 auto 16px;
-        }
-        .stat-number{
-            font-size:36px;
-            font-weight:800;
-            color:#0a2540;
-            line-height:1;
-            margin-bottom:8px;
-        }
-        .stat-label{
-            color:#4a5568;
-            font-size:14px;
-            font-weight:600;
-            text-transform:uppercase;
-            letter-spacing:1px;
-        }
-        
-        /* ===== FOOTER ===== */
-        .footer{
-            background:#0a2540;
-            color:white;
-            padding:60px 0 30px;
-            margin-top:60px;
-        }
-        .footer-grid{
-            display:grid;
-            grid-template-columns:repeat(auto-fit,minmax(250px,1fr));
-            gap:40px;
-            margin-bottom:40px;
-        }
-        .footer-logo{
-            font-size:24px;
-            font-weight:700;
-            color:white;
-            text-decoration:none;
-            font-family:'Playfair Display',serif;
-        }
-        .footer-logo span{color:#c19a6b;}
-        .footer-links h4{color:white;margin-bottom:20px;}
-        .footer-links ul{list-style:none;}
-        .footer-links li{margin-bottom:12px;}
-        .footer-links a{color:rgba(255,255,255,0.7);text-decoration:none;}
-        .footer-links a:hover{color:#c19a6b;}
-        .footer-bottom{
-            text-align:center;
-            padding-top:30px;
-            border-top:1px solid rgba(255,255,255,0.1);
-            color:rgba(255,255,255,0.6);
-        }
-        
-        /* ===== RESPONSIVE ===== */
-        @media (max-width:992px){
-            .navbar-menu{
-                position:fixed;
-                top:80px;
-                left:-100%;
-                width:80%;
-                height:100vh;
-                background:white;
-                flex-direction:column;
-                padding:40px;
-                transition:0.3s;
-            }
-            .navbar-menu.active{left:0;}
-            .navbar-nav{flex-direction:column;}
-            .navbar-toggler{display:flex;}
-            .stats-grid{grid-template-columns:repeat(2,1fr);}
-        }
-        @media (max-width:768px){
-            .page-title{font-size:36px;}
-            .stats-grid{grid-template-columns:1fr;}
-            .hiring-banner{flex-direction:column;text-align:center;}
-        }
-    </style>
+    <!-- Master Stylesheet -->
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="staff-style.css">
+    
+    <!-- Firebase -->
+    <script type="module" src="firebase-config.js"></script>
 </head>
 <body>
-    <!-- NAVBAR -->
-    <nav class="navbar">
-        <div class="container">
-            <div class="navbar-content">
-                <a href="/" class="navbar-brand">
-                    <div class="navbar-logo">A</div>
-                    <div class="navbar-brand-text"><span>TAAGC</span> GLOBAL</div>
-                </a>
-                <div class="navbar-menu" id="navbarMenu">
-                    <ul class="navbar-nav">
-                        <li><a href="/" class="nav-link"><i class="fas fa-home"></i> Home</a></li>
-                        <li><a href="staff.html" class="nav-link active"><i class="fas fa-users"></i> Leadership</a></li>
-                        <li><a href="register.html" class="nav-link"><i class="fas fa-building"></i> Register</a></li>
-                        <li><a href="register.html#login" class="nav-link"><i class="fas fa-lock-open"></i> Login</a></li>
-                    </ul>
-                    <a href="register.html" class="nav-link nav-cta"><i class="fas fa-handshake"></i> Partner</a>
-                </div>
-                <button class="navbar-toggler" id="menuBtn">
-                    <span></span><span></span><span></span>
-                </button>
-            </div>
-        </div>
-    </nav>
+    <!-- NAVBAR CONTAINER (reuse from home) -->
+    <div id="navbar-container"></div>
 
-    <div class="container">
-        <!-- PAGE HEADER -->
-        <div class="page-header">
+    <!-- PAGE HEADER -->
+    <section class="staff-header">
+        <div class="container">
             <span class="page-badge"><i class="fas fa-crown"></i> EXECUTIVE LEADERSHIP</span>
-            <h1 class="page-title">Meet Our <span>Command Team</span></h1>
+            <h1 class="page-title">Meet Our <span class="text-gold">Command Team</span></h1>
             <p class="page-subtitle">22 ranks of institutional-grade leadership across five core sectors</p>
         </div>
+    </section>
 
-        <!-- FILTER TABS -->
-        <div class="filter-tabs">
-            <button class="filter-btn active" onclick="filterStaff('all')"><i class="fas fa-users"></i> All (22)</button>
-            <button class="filter-btn" onclick="filterStaff('executive')"><i class="fas fa-crown"></i> Executive</button>
-            <button class="filter-btn" onclick="filterStaff('operations')"><i class="fas fa-gears"></i> Operations</button>
-            <button class="filter-btn" onclick="filterStaff('support')"><i class="fas fa-shield"></i> Support</button>
+    <!-- STAFF CONTROLS -->
+    <section class="staff-controls">
+        <div class="container">
+            <div class="controls-grid">
+                <!-- Search -->
+                <div class="search-box">
+                    <i class="fas fa-search search-icon"></i>
+                    <input type="text" id="staffSearch" placeholder="Search by name, role, or bio..." class="search-input">
+                </div>
+                
+                <!-- Filter Tabs -->
+                <div class="filter-tabs" id="filterTabs">
+                    <button class="filter-btn active" data-filter="all">
+                        <i class="fas fa-users"></i> All (22)
+                    </button>
+                    <button class="filter-btn" data-filter="executive">
+                        <i class="fas fa-crown"></i> Executive
+                    </button>
+                    <button class="filter-btn" data-filter="operations">
+                        <i class="fas fa-gears"></i> Operations
+                    </button>
+                    <button class="filter-btn" data-filter="support">
+                        <i class="fas fa-shield"></i> Support
+                    </button>
+                </div>
+                
+                <!-- Sort Dropdown -->
+                <div class="sort-box">
+                    <select id="sortSelect" class="sort-select">
+                        <option value="rank-asc">Rank: Low to High</option>
+                        <option value="rank-desc">Rank: High to Low</option>
+                        <option value="name-asc">Name: A to Z</option>
+                        <option value="name-desc">Name: Z to A</option>
+                        <option value="tier-asc">Tier: Low to High</option>
+                        <option value="tier-desc">Tier: High to Low</option>
+                    </select>
+                </div>
+            </div>
+            
+            <!-- Active Filters -->
+            <div class="active-filters" id="activeFilters"></div>
         </div>
+    </section>
 
-        <!-- STAFF GRID - 22 RANKS COMPLETE -->
-        <div class="staff-grid" id="staffGrid">
-            <!-- TIER 1 - EXECUTIVE (Ranks 1-4) -->
-            <div class="staff-card" data-category="executive">
-                <div class="staff-img">
-                    <img src="staff/ceo.png" alt="Ahmad Hamza">
-                    <span class="staff-rank-badge"><i class="fas fa-crown"></i> Rank 01</span>
+    <!-- STAFF GRID -->
+    <section class="staff-section">
+        <div class="container">
+            <!-- Loading State -->
+            <div id="staffLoading" class="loading-state">
+                <div class="loader"></div>
+                <p>Loading leadership team...</p>
+            </div>
+            
+            <!-- Staff Grid Container -->
+            <div id="staffGrid" class="staff-grid"></div>
+            
+            <!-- Empty State -->
+            <div id="emptyState" class="empty-state" style="display: none;">
+                <i class="fas fa-users-slash"></i>
+                <h3>No Staff Found</h3>
+                <p>No team members match your current filters.</p>
+                <button class="btn btn-outline" onclick="staffManager.resetFilters()">Clear Filters</button>
+            </div>
+            
+            <!-- Pagination -->
+            <div id="pagination" class="pagination"></div>
+        </div>
+    </section>
+
+    <!-- STATS SECTION -->
+    <section class="stats-section">
+        <div class="container">
+            <div class="stats-grid" id="staffStats">
+                <div class="stat-card">
+                    <div class="stat-icon"><i class="fas fa-users"></i></div>
+                    <div class="stat-number" id="totalStaff">22</div>
+                    <div class="stat-label">Total Staff</div>
                 </div>
-                <div class="staff-info">
-                    <h3 class="staff-name">Ahmad Hamza</h3>
-                    <div class="staff-pos">Chief Executive Officer & Founder</div>
-                    <p class="staff-bio">15+ years global trade. Established presence across 50+ countries. Visionary leader in agricultural commodities, ICT infrastructure, and global investment.</p>
-                    <div class="staff-meta">
-                        <span><i class="fas fa-globe"></i> 50+ Countries</span>
-                        <span><i class="fas fa-clock"></i> Since 2009</span>
-                    </div>
-                    <div class="staff-social">
-                        <a href="#"><i class="fab fa-linkedin-in"></i></a>
-                        <a href="#"><i class="fab fa-twitter"></i></a>
-                        <a href="mailto:priahmz@gmail.com"><i class="fas fa-envelope"></i></a>
-                    </div>
+                <div class="stat-card">
+                    <div class="stat-icon"><i class="fas fa-crown"></i></div>
+                    <div class="stat-number" id="executiveCount">4</div>
+                    <div class="stat-label">Executive</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon"><i class="fas fa-gears"></i></div>
+                    <div class="stat-number" id="operationsCount">10</div>
+                    <div class="stat-label">Operations</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon"><i class="fas fa-shield"></i></div>
+                    <div class="stat-number" id="supportCount">8</div>
+                    <div class="stat-label">Support</div>
                 </div>
             </div>
+        </div>
+    </section>
 
-            <div class="staff-card" data-category="executive">
-                <div class="staff-img">
-                    <img src="https://images.unsplash.com/photo-1573497019940-1c28c88b4f3e?w=400&h=400&fit=crop" alt="Position Vacant">
-                    <span class="staff-rank-badge"><i class="fas fa-crown"></i> Rank 02</span>
-                </div>
-                <div class="staff-info">
-                    <h3 class="staff-name">Position Vacant</h3>
-                    <div class="staff-pos">Group President & COO</div>
-                    <p class="staff-bio">Executive leadership opportunity. Seeking experienced leader to drive global operations and sector integration across five core sectors.</p>
-                    <div class="staff-meta">
-                        <span><i class="fas fa-briefcase"></i> Now Hiring</span>
-                        <span><i class="fas fa-tag"></i> Tier 1</span>
-                    </div>
-                    <div class="staff-social">
-                        <a href="register.html"><i class="fas fa-briefcase"></i></a>
-                    </div>
-                </div>
+    <!-- HIRING BANNER -->
+    <section class="hiring-banner">
+        <div class="container">
+            <div class="hiring-content">
+                <span class="hiring-badge"><i class="fas fa-briefcase"></i> NOW HIRING</span>
+                <h2>Join the <span class="text-gold">TAAGC Leadership</span></h2>
+                <p>We're hiring for Rank 02, 03, and 22 positions. Apply today.</p>
+                <a href="/register.html" class="hiring-btn">
+                    <i class="fas fa-file-alt"></i> Apply Now
+                </a>
             </div>
+        </div>
+    </section>
 
-            <div class="staff-card" data-category="executive">
-                <div class="staff-img">
-                    <img src="https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=400&h=400&fit=crop" alt="Strategic Hire">
-                    <span class="staff-rank-badge"><i class="fas fa-crown"></i> Rank 03</span>
-                </div>
-                <div class="staff-info">
-                    <h3 class="staff-name">Strategic Hire</h3>
-                    <div class="staff-pos">EVP, Global Strategy</div>
-                    <p class="staff-bio">Seeking executive to lead corporate strategy, M&A, and investor relations. Institutional experience required.</p>
-                    <div class="staff-meta">
-                        <span><i class="fas fa-briefcase"></i> Now Hiring</span>
-                        <span><i class="fas fa-tag"></i> Tier 1</span>
-                    </div>
-                    <div class="staff-social">
-                        <a href="register.html"><i class="fas fa-briefcase"></i></a>
-                    </div>
-                </div>
-            </div>
+    <!-- FOOTER CONTAINER -->
+    <div id="footer-container"></div>
 
-            <div class="staff-card" data-category="executive">
-                <div class="staff-img">
-                    <img src="https://images.unsplash.com/photo-1580489944761-15a19d654956?w=400&h=400&fit=crop" alt="Dr. Elizabeth Mwangi">
-                    <span class="staff-rank-badge"><i class="fas fa-crown"></i> Rank 04</span>
-                </div>
-                <div class="staff-info">
-                    <h3 class="staff-name">Dr. Elizabeth Mwangi</h3>
-                    <div class="staff-pos">SVP, African Operations</div>
-                    <p class="staff-bio">PhD in Agricultural Economics. Leading TAAGC's expansion across 15 African countries. 200K+ hectares under management.</p>
-                    <div class="staff-meta">
-                        <span><i class="fas fa-map-marker-alt"></i> 15 Countries</span>
-                        <span><i class="fas fa-seedling"></i> 200K+ Ha</span>
-                    </div>
-                    <div class="staff-social">
-                        <a href="#"><i class="fab fa-linkedin-in"></i></a>
-                        <a href="#"><i class="fas fa-envelope"></i></a>
-                    </div>
-                </div>
-            </div>
+    <!-- BACK TO TOP BUTTON -->
+    <button id="backToTop" class="back-to-top" aria-label="Back to top">
+        <i class="fas fa-arrow-up"></i>
+    </button>
 
-            <!-- TIER 2 - EXECUTIVE/OPERATIONS (Ranks 5-10) -->
-            <div class="staff-card" data-category="executive">
-                <div class="staff-img">
-                    <img src="https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?w=400&h=400&fit=crop" alt="Michael Okafor">
-                    <span class="staff-rank-badge"><i class="fas fa-star"></i> Rank 05</span>
-                </div>
-                <div class="staff-info">
-                    <h3 class="staff-name">Michael Okafor</h3>
-                    <div class="staff-pos">VP, Finance & Investment</div>
-                    <p class="staff-bio">CFA, MBA. 12 years in investment banking. Manages $2.1B AUM across TAAGC investment portfolio.</p>
-                    <div class="staff-meta">
-                        <span><i class="fas fa-chart-line"></i> $2.1B AUM</span>
-                        <span><i class="fas fa-tag"></i> Tier 2</span>
-                    </div>
-                    <div class="staff-social">
-                        <a href="#"><i class="fab fa-linkedin-in"></i></a>
-                    </div>
-                </div>
-            </div>
-
-      
+    <!-- SCRIPTS -->
+    <script type="module" src="components/notifications.js"></script>
+    <script type="module" src="components/navbar.js"></script>
+    <script type="module" src="sections/footer.js"></script>
+    
+    <!-- Staff Modules -->
+    <script type="module" src="staff/staff-data.js"></script>
+    <script type="module" src="staff/staff-card.js"></script>
+    <script type="module" src="staff/staff-filter.js"></script>
+    <script type="module" src="staff/staff-search.js"></script>
+    <script type="module" src="staff/staff-sort.js"></script>
+    <script type="module" src="staff/staff-core.js"></script>
+</body>
+</html>
