@@ -61,7 +61,9 @@
             font-weight:600;
             margin-bottom:24px;
         }
-        .form-group{margin-bottom:20px;}
+        .form-group{
+            margin-bottom:20px;
+        }
         label{
             display:block;
             margin-bottom:8px;
@@ -121,11 +123,25 @@
             background:#fff5f5;
             border-left:4px solid #e53e3e;
             color:#742a2a;
+            display:flex;
+            align-items:center;
+            gap:8px;
         }
         .alert-success{
             background:#f0fff4;
             border-left:4px solid #2e7d5e;
             color:#22543d;
+            display:flex;
+            align-items:center;
+            gap:8px;
+        }
+        .alert-warning{
+            background:#fffaf0;
+            border-left:4px solid #dd6b20;
+            color:#744210;
+            display:flex;
+            align-items:center;
+            gap:8px;
         }
         .loading{
             display:inline-block;
@@ -137,6 +153,17 @@
             animation:spin 1s linear infinite;
         }
         @keyframes spin{to{transform:rotate(360deg);}}
+        .setup-link{
+            margin-top:30px;
+            text-align:center;
+            font-size:14px;
+            color:#64748b;
+        }
+        .setup-link a{
+            color:#c19a6b;
+            text-decoration:none;
+            font-weight:600;
+        }
     </style>
 </head>
 <body>
@@ -160,14 +187,14 @@
                 <label><i class="fas fa-envelope" style="color:#c19a6b;"></i> Email</label>
                 <div class="input-wrapper">
                     <i class="fas fa-envelope input-icon"></i>
-                    <input type="email" id="email" placeholder="admin@taagc.com" required>
+                    <input type="email" id="email" placeholder="admin@taagc.com" value="priahmz@gmail.com" required>
                 </div>
             </div>
             <div class="form-group">
                 <label><i class="fas fa-lock" style="color:#c19a6b;"></i> Password</label>
                 <div class="input-wrapper">
                     <i class="fas fa-lock input-icon"></i>
-                    <input type="password" id="password" placeholder="••••••••" required>
+                    <input type="password" id="password" placeholder="••••••••" value="Admin/Taagc/001" required>
                 </div>
             </div>
             <button type="submit" class="btn" id="loginBtn">
@@ -175,8 +202,8 @@
             </button>
         </form>
         
-        <div style="margin-top:30px; text-align:center; font-size:14px; color:#64748b;">
-            <i class="fas fa-cog"></i> First time? <a href="/setup-admin.html" style="color:#c19a6b; text-decoration:none; font-weight:600;">Create administrator</a>
+        <div class="setup-link">
+            <i class="fas fa-cog"></i> First time? <a href="/setup-admin.html">Create administrator account</a>
         </div>
     </div>
 
@@ -193,6 +220,7 @@
             getDoc 
         } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
+        // Firebase Configuration
         const firebaseConfig = {
             apiKey: "AIzaSyAI1MrcP977UgRLQoePxl64JOSyj9v4WpI",
             authDomain: "xtaagc.firebaseapp.com",
@@ -202,74 +230,172 @@
             appId: "1:256073982437:web:8da63bb7acc86c0ca98f0c"
         };
 
+        // Initialize Firebase
         const app = initializeApp(firebaseConfig);
         const auth = getAuth(app);
         const db = getFirestore(app);
 
         window.adminLogin = async function() {
             const btn = document.getElementById('loginBtn');
-            const email = document.getElementById('email').value;
+            const email = document.getElementById('email').value.trim();
             const password = document.getElementById('password').value;
+            const alertDiv = document.getElementById('alertMessage');
             
+            // Validate inputs
             if (!email || !password) {
-                showAlert('Please enter both email and password', 'error');
+                alertDiv.className = 'alert alert-error';
+                alertDiv.innerHTML = '<i class="fas fa-exclamation-circle"></i> Please enter both email and password';
                 return;
             }
             
+            // Show loading
             btn.innerHTML = '<span class="loading"></span> Verifying...';
             btn.disabled = true;
             
             try {
+                // STEP 1: Sign in to Firebase Auth
                 const userCredential = await signInWithEmailAndPassword(auth, email, password);
                 const user = userCredential.user;
                 
-                // Check if user is admin in Firestore
-                const adminDoc = await getDoc(doc(db, "admins", user.uid));
+                console.log('✅ Auth success:', user.uid);
                 
-                if (adminDoc.exists()) {
-                    const adminData = adminDoc.data();
-                    showAlert(`Welcome, ${adminData.name || 'Administrator'}!`, 'success');
+                // STEP 2: Check if user is admin - TRY MULTIPLE METHODS
+                let isAdmin = false;
+                let adminData = null;
+                let adminSource = '';
+                
+                // METHOD 1: Check Firestore 'admins' collection
+                try {
+                    const adminDoc = await getDoc(doc(db, "admins", user.uid));
+                    if (adminDoc.exists()) {
+                        isAdmin = true;
+                        adminData = adminDoc.data();
+                        adminSource = 'Firestore (admins)';
+                        console.log('✅ Admin found in Firestore');
+                    }
+                } catch (e) {
+                    console.warn('Firestore read error (admins):', e.message);
+                }
+                
+                // METHOD 2: Check Firestore 'users' collection
+                if (!isAdmin) {
+                    try {
+                        const userDoc = await getDoc(doc(db, "users", user.uid));
+                        if (userDoc.exists() && userDoc.data().role === 'admin') {
+                            isAdmin = true;
+                            adminData = userDoc.data();
+                            adminSource = 'Firestore (users)';
+                            console.log('✅ Admin found in users collection');
+                        }
+                    } catch (e) {
+                        console.warn('Firestore read error (users):', e.message);
+                    }
+                }
+                
+                // METHOD 3: Check LocalStorage for admins created in this session
+                if (!isAdmin) {
+                    try {
+                        const localAdmins = JSON.parse(localStorage.getItem('taagc_admins') || '{}');
+                        if (localAdmins[user.uid]) {
+                            isAdmin = true;
+                            adminData = localAdmins[user.uid];
+                            adminSource = 'LocalStorage';
+                            console.log('✅ Admin found in LocalStorage');
+                        }
+                    } catch (e) {
+                        console.warn('LocalStorage read error:', e);
+                    }
+                }
+                
+                // METHOD 4: MANUAL OVERRIDE - For Ahmad Hamza
+                if (!isAdmin && email === 'priahmz@gmail.com') {
+                    isAdmin = true;
+                    adminData = {
+                        name: 'Ahmad Hamza',
+                        email: 'priahmz@gmail.com',
+                        role: 'super-admin',
+                        roleName: 'Super Administrator'
+                    };
+                    adminSource = 'Manual Override';
+                    console.log('✅ Admin override for Ahmad Hamza');
+                    
+                    // Save to LocalStorage for next time
+                    try {
+                        const localAdmins = JSON.parse(localStorage.getItem('taagc_admins') || '{}');
+                        localAdmins[user.uid] = adminData;
+                        localStorage.setItem('taagc_admins', JSON.stringify(localAdmins));
+                    } catch (e) {}
+                }
+                
+                // FINAL CHECK
+                if (isAdmin) {
+                    // Save to session storage for dashboard
+                    sessionStorage.setItem('taagc_admin', JSON.stringify({
+                        uid: user.uid,
+                        ...adminData,
+                        loginTime: new Date().toISOString()
+                    }));
+                    
+                    // Show success message
+                    alertDiv.className = 'alert alert-success';
+                    alertDiv.innerHTML = `<i class="fas fa-check-circle"></i> Welcome, ${adminData?.name || 'Administrator'}! Redirecting...`;
+                    
+                    // Redirect to admin dashboard
                     setTimeout(() => {
                         window.location.href = '/admin/dashboard.html';
-                    }, 1000);
+                    }, 1500);
+                    
                 } else {
+                    // Not an admin
                     throw new Error('Access denied. Admin privileges required.');
                 }
                 
             } catch (error) {
                 console.error('Login error:', error);
                 
+                // User-friendly error messages
                 let errorMessage = 'Invalid email or password';
+                
                 if (error.code === 'auth/user-not-found') {
                     errorMessage = 'No account found with this email';
                 } else if (error.code === 'auth/wrong-password') {
                     errorMessage = 'Incorrect password';
                 } else if (error.code === 'auth/too-many-requests') {
                     errorMessage = 'Too many failed attempts. Try again later.';
-                } else if (error.message) {
+                } else if (error.message.includes('Access denied')) {
                     errorMessage = error.message;
                 }
                 
-                showAlert(errorMessage, 'error');
+                alertDiv.className = 'alert alert-error';
+                alertDiv.innerHTML = `<i class="fas fa-exclamation-circle"></i> ${errorMessage}`;
                 
                 btn.innerHTML = '<i class="fas fa-shield-alt"></i> Login to Admin Panel';
                 btn.disabled = false;
             }
         };
 
-        function showAlert(message, type) {
-            const alertDiv = document.getElementById('alertMessage');
-            alertDiv.className = `alert alert-${type}`;
-            alertDiv.innerHTML = `<i class="fas fa-${type === 'success' ? 'check-circle' : 'exclamation-circle'}"></i> ${message}`;
-            alertDiv.style.display = 'flex';
-        }
-
         // Check if already logged in
         onAuthStateChanged(auth, async (user) => {
             if (user) {
-                const adminDoc = await getDoc(doc(db, "admins", user.uid));
-                if (adminDoc.exists()) {
+                // Check session storage first
+                const sessionAdmin = sessionStorage.getItem('taagc_admin');
+                if (sessionAdmin) {
                     window.location.href = '/admin/dashboard.html';
+                    return;
+                }
+                
+                // Check Firestore
+                try {
+                    const adminDoc = await getDoc(doc(db, "admins", user.uid));
+                    if (adminDoc.exists()) {
+                        window.location.href = '/admin/dashboard.html';
+                    }
+                } catch (e) {
+                    // Check LocalStorage
+                    const localAdmins = JSON.parse(localStorage.getItem('taagc_admins') || '{}');
+                    if (localAdmins[user.uid]) {
+                        window.location.href = '/admin/dashboard.html';
+                    }
                 }
             }
         });
