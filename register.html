@@ -2,118 +2,469 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0">
-    <title>Register | TAAGC Global - Company & Individual Registration</title>
-    
-    <!-- SEO Meta -->
-    <meta name="description" content="Register with TAAGC Global as a company or individual. Access global trade, investment opportunities, and partnership programs.">
-    <meta name="keywords" content="TAAGC registration, company registration, individual registration, global trade, investment">
-    
-    <!-- Fonts & Icons -->
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Playfair+Display:wght@600;700;800&display=swap" rel="stylesheet">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Register | TAAGC Global</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    
-    <!-- Master Stylesheets -->
-    <link rel="stylesheet" href="style.css">
-    <link rel="stylesheet" href="register-style.css">
-    
-    <!-- Firebase -->
-    <script type="module" src="firebase-config.js"></script>
+    <style>
+        *{margin:0;padding:0;box-sizing:border-box;}
+        body{
+            font-family:'Inter',sans-serif;
+            background:linear-gradient(135deg,#0a2540,#1a3a4f);
+            min-height:100vh;
+            color:#1e293b;
+        }
+        .navbar{
+            background:white;
+            padding:16px 0;
+            box-shadow:0 4px 20px rgba(0,0,0,0.08);
+        }
+        .navbar-content{
+            max-width:1200px;
+            margin:0 auto;
+            padding:0 20px;
+            display:flex;
+            justify-content:space-between;
+            align-items:center;
+        }
+        .navbar-brand{
+            display:flex;
+            align-items:center;
+            gap:12px;
+            text-decoration:none;
+        }
+        .navbar-logo{
+            width:48px;
+            height:48px;
+            background:linear-gradient(135deg,#0a2540,#3a5a78);
+            border-radius:12px;
+            display:flex;
+            align-items:center;
+            justify-content:center;
+            color:white;
+            font-size:24px;
+            font-weight:700;
+        }
+        .navbar-brand-text{
+            font-size:24px;
+            font-weight:700;
+            color:#0a2540;
+        }
+        .navbar-brand-text span{color:#c19a6b;}
+        .nav-link{
+            color:#4a5568;
+            text-decoration:none;
+            font-weight:600;
+            margin-left:24px;
+        }
+        .page-header{
+            text-align:center;
+            padding:40px 20px;
+            color:white;
+        }
+        .page-header h1{
+            font-size:48px;
+            color:white;
+        }
+        .page-header h1 span{color:#c19a6b;}
+        
+        .container{
+            max-width:800px;
+            margin:0 auto 40px;
+            padding:0 20px;
+        }
+        .form-card{
+            background:white;
+            border-radius:24px;
+            padding:40px;
+            box-shadow:0 20px 40px rgba(0,0,0,0.2);
+        }
+        .type-selector{
+            display:flex;
+            gap:20px;
+            margin-bottom:30px;
+        }
+        .type-btn{
+            flex:1;
+            padding:20px;
+            border:2px solid #e2e8f0;
+            border-radius:16px;
+            background:white;
+            cursor:pointer;
+            text-align:center;
+        }
+        .type-btn.active{
+            border-color:#c19a6b;
+            background:#fef9e7;
+        }
+        .type-btn i{
+            font-size:32px;
+            color:#c19a6b;
+            margin-bottom:10px;
+        }
+        .form-group{
+            margin-bottom:20px;
+        }
+        .form-row{
+            display:grid;
+            grid-template-columns:1fr 1fr;
+            gap:20px;
+        }
+        label{
+            display:block;
+            margin-bottom:8px;
+            font-weight:600;
+            color:#0a2540;
+        }
+        .input-wrapper{
+            position:relative;
+        }
+        .input-wrapper i{
+            position:absolute;
+            left:16px;
+            top:50%;
+            transform:translateY(-50%);
+            color:#a0aec0;
+        }
+        input, select{
+            width:100%;
+            padding:14px 16px 14px 48px;
+            border:2px solid #e2e8f0;
+            border-radius:12px;
+            font-size:15px;
+        }
+        .domain-badge{
+            background:#f0f9ff;
+            border:2px dashed #3182ce;
+            border-radius:12px;
+            padding:15px;
+            margin:20px 0;
+            display:flex;
+            align-items:center;
+            gap:15px;
+        }
+        .btn{
+            width:100%;
+            padding:16px;
+            background:#0a2540;
+            color:white;
+            border:none;
+            border-radius:12px;
+            font-size:16px;
+            font-weight:600;
+            cursor:pointer;
+            margin-top:20px;
+        }
+        .alert{
+            padding:15px;
+            border-radius:8px;
+            margin:20px 0;
+            display:none;
+        }
+        .alert-error{
+            background:#fff5f5;
+            border-left:4px solid #e53e3e;
+            color:#742a2a;
+            display:block;
+        }
+        .alert-success{
+            background:#f0fff4;
+            border-left:4px solid #2e7d5e;
+            color:#22543d;
+            display:block;
+        }
+        .login-link{
+            text-align:center;
+            margin-top:25px;
+            padding-top:25px;
+            border-top:1px solid #e2e8f0;
+        }
+        .login-link a{
+            color:#c19a6b;
+            font-weight:600;
+            text-decoration:none;
+        }
+        .loading{
+            display:inline-block;
+            width:20px;
+            height:20px;
+            border:3px solid rgba(255,255,255,0.3);
+            border-top-color:white;
+            border-radius:50%;
+            animation:spin 1s linear infinite;
+        }
+        @keyframes spin{to{transform:rotate(360deg);}}
+        @media (max-width:768px){
+            .type-selector{flex-direction:column;}
+            .form-row{grid-template-columns:1fr;}
+        }
+    </style>
 </head>
 <body>
-    <!-- NAVBAR CONTAINER (reuse from home) -->
-    <div id="navbar-container"></div>
-
-    <!-- PAGE HEADER -->
-    <section class="register-header">
-        <div class="container">
-            <span class="page-badge"><i class="fas fa-building"></i> JOIN TAAGC GLOBAL</span>
-            <h1 class="page-title">Create Your <span class="text-gold">Account</span></h1>
-            <p class="page-subtitle">Choose your account type to get started with global opportunities</p>
-        </div>
-    </section>
-
-    <!-- REGISTRATION TYPE SELECTOR -->
-    <section class="register-type-section">
-        <div class="container">
-            <div class="type-selector" id="typeSelector">
-                <button class="type-selector-btn active" data-type="company">
-                    <i class="fas fa-building"></i>
-                    <div>
-                        <h3>Company Registration</h3>
-                        <p>For registered businesses and organizations</p>
-                    </div>
-                </button>
-                <button class="type-selector-btn" data-type="individual">
-                    <i class="fas fa-user"></i>
-                    <div>
-                        <h3>Individual Registration</h3>
-                        <p>For shoppers, investors, and professionals</p>
-                    </div>
-                </button>
+    <!-- Navbar -->
+    <nav class="navbar">
+        <div class="navbar-content">
+            <a href="/" class="navbar-brand">
+                <div class="navbar-logo">A</div>
+                <div class="navbar-brand-text"><span>TAAGC</span> GLOBAL</div>
+            </a>
+            <div>
+                <a href="/" class="nav-link">Home</a>
+                <a href="/staff.html" class="nav-link">Team</a>
             </div>
         </div>
-    </section>
+    </nav>
 
-    <!-- REGISTRATION FORM CONTAINER -->
-    <section class="register-form-section">
-        <div class="container">
-            <div class="form-container" id="formContainer">
-                <!-- Forms will be dynamically injected here -->
-                <div class="loading-state">
-                    <div class="loader"></div>
-                    <p>Loading registration form...</p>
+    <!-- Header -->
+    <div class="page-header">
+        <h1>Create <span>Account</span></h1>
+    </div>
+
+    <!-- Main Form -->
+    <div class="container">
+        <div class="form-card">
+            <!-- Type Selector -->
+            <div class="type-selector">
+                <div class="type-btn active" onclick="showCompanyForm()">
+                    <i class="fas fa-building"></i>
+                    <h3>Company</h3>
+                </div>
+                <div class="type-btn" onclick="showIndividualForm()">
+                    <i class="fas fa-user"></i>
+                    <h3>Individual</h3>
                 </div>
             </div>
-        </div>
-    </section>
 
-    <!-- BENEFITS SECTION -->
-    <section class="benefits-section">
-        <div class="container">
-            <div class="section-header">
-                <span class="section-subtitle">WHY REGISTER</span>
-                <h2 class="section-title">Benefits of <span class="text-gold">Membership</span></h2>
+            <!-- Alert -->
+            <div id="alert" class="alert"></div>
+
+            <!-- COMPANY FORM -->
+            <div id="companyForm">
+                <div class="domain-badge">
+                    <i class="fas fa-globe"></i>
+                    <div><strong>Company Email Required</strong><br>@gmail, @yahoo NOT accepted</div>
+                </div>
+                <form id="companyFormElement">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>Company Name</label>
+                            <div class="input-wrapper">
+                                <i class="fas fa-building"></i>
+                                <input type="text" id="compName" required>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label>Reg Number</label>
+                            <div class="input-wrapper">
+                                <i class="fas fa-qrcode"></i>
+                                <input type="text" id="compReg" required>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>Email</label>
+                            <div class="input-wrapper">
+                                <i class="fas fa-envelope"></i>
+                                <input type="email" id="compEmail" required>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label>Phone</label>
+                            <div class="input-wrapper">
+                                <i class="fas fa-phone"></i>
+                                <input type="tel" id="compPhone" required>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>Password</label>
+                            <div class="input-wrapper">
+                                <i class="fas fa-lock"></i>
+                                <input type="password" id="compPass" minlength="6" required>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label>Confirm</label>
+                            <div class="input-wrapper">
+                                <i class="fas fa-check"></i>
+                                <input type="password" id="compPass2" required>
+                            </div>
+                        </div>
+                    </div>
+                    <button type="submit" class="btn" id="compBtn">Register Company</button>
+                </form>
             </div>
+
+            <!-- INDIVIDUAL FORM (hidden) -->
+            <div id="individualForm" style="display:none;">
+                <form id="individualFormElement">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>Full Name</label>
+                            <div class="input-wrapper">
+                                <i class="fas fa-user"></i>
+                                <input type="text" id="indName" required>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label>Email</label>
+                            <div class="input-wrapper">
+                                <i class="fas fa-envelope"></i>
+                                <input type="email" id="indEmail" required>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>Phone</label>
+                            <div class="input-wrapper">
+                                <i class="fas fa-phone"></i>
+                                <input type="tel" id="indPhone" required>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label>Account Type</label>
+                            <div class="input-wrapper">
+                                <i class="fas fa-tag"></i>
+                                <select id="indType">
+                                    <option value="shopper">Shopper</option>
+                                    <option value="investor">Investor</option>
+                                    <option value="professional">Professional</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>Password</label>
+                            <div class="input-wrapper">
+                                <i class="fas fa-lock"></i>
+                                <input type="password" id="indPass" minlength="6" required>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label>Confirm</label>
+                            <div class="input-wrapper">
+                                <i class="fas fa-check"></i>
+                                <input type="password" id="indPass2" required>
+                            </div>
+                        </div>
+                    </div>
+                    <button type="submit" class="btn" id="indBtn">Create Account</button>
+                </form>
+            </div>
+
+            <!-- Login Link -->
+            <div class="login-link">
+                Already have an account? <a href="/admin/">Login</a>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Firebase Config
+        const firebaseConfig = {
+            apiKey: "AIzaSyAI1MrcP977UgRLQoePxl64JOSyj9v4WpI",
+            authDomain: "xtaagc.firebaseapp.com",
+            projectId: "xtaagc",
+            storageBucket: "xtaagc.firebasestorage.app",
+            messagingSenderId: "256073982437",
+            appId: "1:256073982437:web:8da63bb7acc86c0ca98f0c"
+        };
+
+        // Initialize
+        firebase.initializeApp(firebaseConfig);
+        const auth = firebase.auth();
+        const db = firebase.firestore();
+
+        // UI Functions
+        function showAlert(msg, type) {
+            const a = document.getElementById('alert');
+            a.className = `alert alert-${type}`;
+            a.innerHTML = `<i class="fas fa-${type==='success'?'check-circle':'exclamation-circle'}"></i> ${msg}`;
+        }
+
+        function showCompanyForm() {
+            document.querySelectorAll('.type-btn').forEach(b=>b.classList.remove('active'));
+            event.currentTarget.classList.add('active');
+            document.getElementById('companyForm').style.display='block';
+            document.getElementById('individualForm').style.display='none';
+        }
+
+        function showIndividualForm() {
+            document.querySelectorAll('.type-btn').forEach(b=>b.classList.remove('active'));
+            event.currentTarget.classList.add('active');
+            document.getElementById('companyForm').style.display='none';
+            document.getElementById('individualForm').style.display='block';
+        }
+
+        // Company Registration
+        document.getElementById('companyFormElement').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            const btn = document.getElementById('compBtn');
+            const email = document.getElementById('compEmail').value;
+            const pass = document.getElementById('compPass').value;
             
-            <div class="benefits-grid" id="benefitsGrid">
-                <!-- Benefits loaded dynamically -->
-            </div>
-        </div>
-    </section>
+            if(pass !== document.getElementById('compPass2').value) {
+                showAlert('Passwords do not match','error'); return;
+            }
+            if(email.includes('@gmail')||email.includes('@yahoo')) {
+                showAlert('Company email required','error'); return;
+            }
 
-    <!-- FAQ SECTION -->
-    <section class="faq-section">
-        <div class="container">
-            <div class="section-header">
-                <span class="section-subtitle">QUESTIONS?</span>
-                <h2 class="section-title">Frequently Asked <span class="text-gold">Questions</span></h2>
-            </div>
+            btn.innerHTML = '<span class="loading"></span> Registering...';
+            btn.disabled = true;
+
+            try {
+                const user = await firebase.auth().createUserWithEmailAndPassword(email, pass);
+                await db.collection('companies').doc(user.user.uid).set({
+                    name: document.getElementById('compName').value,
+                    reg: document.getElementById('compReg').value,
+                    email, phone: document.getElementById('compPhone').value,
+                    status: 'pending'
+                });
+                showAlert('Registration submitted!','success');
+                setTimeout(()=>window.location.href='/company-dashboard.html',2000);
+            } catch(e) {
+                showAlert(e.message,'error');
+                btn.innerHTML='Register Company';
+                btn.disabled=false;
+            }
+        });
+
+        // Individual Registration
+        document.getElementById('individualFormElement').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            const btn = document.getElementById('indBtn');
+            const email = document.getElementById('indEmail').value;
+            const pass = document.getElementById('indPass').value;
             
-            <div class="faq-grid" id="faqGrid"></div>
-        </div>
-    </section>
+            if(pass !== document.getElementById('indPass2').value) {
+                showAlert('Passwords do not match','error'); return;
+            }
 
-    <!-- FOOTER CONTAINER -->
-    <div id="footer-container"></div>
+            btn.innerHTML = '<span class="loading"></span> Creating...';
+            btn.disabled = true;
 
-    <!-- BACK TO TOP BUTTON -->
-    <button id="backToTop" class="back-to-top" aria-label="Back to top">
-        <i class="fas fa-arrow-up"></i>
-    </button>
-
-    <!-- SCRIPTS -->
-    <script type="module" src="components/notifications.js"></script>
-    <script type="module" src="components/modal.js"></script>
-    <script type="module" src="components/navbar.js"></script>
-    <script type="module" src="sections/footer.js"></script>
-    
-    <!-- Register Modules -->
-    <script type="module" src="register/register-validation.js"></script>
-    <script type="module" src="register/register-ui.js"></script>
-    <script type="module" src="register/register-company.js"></script>
-    <script type="module" src="register/register-individual.js"></script>
-    <script type="module" src="register/register-success.js"></script>
-    <script type="module" src="register/register-core.js"></script>
+            try {
+                const user = await firebase.auth().createUserWithEmailAndPassword(email, pass);
+                const type = document.getElementById('indType').value;
+                await db.collection('individuals').doc(user.user.uid).set({
+                    name: document.getElementById('indName').value,
+                    email, phone: document.getElementById('indPhone').value,
+                    accountType: type
+                });
+                showAlert('Account created!','success');
+                const dash = {shopper:'/shopper-dashboard.html',investor:'/investor-dashboard.html',professional:'/professional-dashboard.html'};
+                setTimeout(()=>window.location.href=dash[type],2000);
+            } catch(e) {
+                showAlert(e.message,'error');
+                btn.innerHTML='Create Account';
+                btn.disabled=false;
+            }
+        });
+    </script>
 </body>
-</html>
+                                    </html>
