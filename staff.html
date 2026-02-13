@@ -6,159 +6,598 @@
     <title>Leadership Team | TAAGC Global</title>
     
     <!-- Fonts & Icons -->
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Playfair+Display:wght@600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
-    <!-- Master Stylesheet -->
-    <link rel="stylesheet" href="style.css">
-    <link rel="stylesheet" href="staff-style.css">
-    
-    <!-- Firebase -->
-    <script type="module" src="firebase-config.js"></script>
+    <style>
+        *{margin:0;padding:0;box-sizing:border-box;}
+        body{
+            font-family:'Inter',sans-serif;
+            background:#f8fafc;
+            color:#1e293b;
+            line-height:1.6;
+        }
+        .container{
+            max-width:1400px;
+            margin:0 auto;
+            padding:0 20px;
+        }
+        
+        /* Navbar */
+        .navbar{
+            background:white;
+            padding:16px 0;
+            box-shadow:0 4px 20px rgba(0,0,0,0.08);
+            position:sticky;
+            top:0;
+            z-index:1000;
+        }
+        .navbar-content{
+            display:flex;
+            align-items:center;
+            justify-content:space-between;
+        }
+        .navbar-brand{
+            display:flex;
+            align-items:center;
+            gap:12px;
+            text-decoration:none;
+        }
+        .navbar-logo{
+            width:48px;
+            height:48px;
+            background:linear-gradient(135deg,#0a2540,#3a5a78);
+            border-radius:12px;
+            display:flex;
+            align-items:center;
+            justify-content:center;
+            color:white;
+            font-size:24px;
+            font-weight:700;
+        }
+        .navbar-brand-text{
+            font-size:24px;
+            font-weight:700;
+            color:#0a2540;
+        }
+        .navbar-brand-text span{color:#c19a6b;}
+        .navbar-menu{
+            display:flex;
+            align-items:center;
+            gap:32px;
+        }
+        .navbar-nav{
+            display:flex;
+            list-style:none;
+            gap:24px;
+        }
+        .nav-link{
+            color:#4a5568;
+            text-decoration:none;
+            font-weight:600;
+        }
+        
+        /* Header */
+        .page-header{
+            text-align:center;
+            padding:60px 0 40px;
+            background:linear-gradient(135deg,#0a2540,#1a3a4f);
+            color:white;
+        }
+        .page-header h1{
+            font-size:48px;
+            color:white;
+            margin-bottom:10px;
+        }
+        .page-header h1 span{color:#c19a6b;}
+        .page-header p{
+            font-size:18px;
+            color:rgba(255,255,255,0.9);
+        }
+        
+        /* Stats */
+        .stats-grid{
+            display:grid;
+            grid-template-columns:repeat(4,1fr);
+            gap:20px;
+            margin:40px 0;
+        }
+        .stat-card{
+            background:white;
+            padding:25px;
+            border-radius:16px;
+            text-align:center;
+            box-shadow:0 4px 10px rgba(0,0,0,0.05);
+        }
+        .stat-number{
+            font-size:36px;
+            font-weight:700;
+            color:#0a2540;
+        }
+        .stat-label{
+            color:#64748b;
+            font-size:14px;
+        }
+        
+        /* Filter Tabs */
+        .filter-tabs{
+            display:flex;
+            justify-content:center;
+            gap:15px;
+            margin:30px 0;
+            flex-wrap:wrap;
+        }
+        .filter-btn{
+            padding:10px 24px;
+            border:2px solid #e2e8f0;
+            border-radius:40px;
+            background:white;
+            cursor:pointer;
+            font-weight:600;
+        }
+        .filter-btn.active{
+            background:#0a2540;
+            color:white;
+            border-color:#0a2540;
+        }
+        
+        /* Staff Grid */
+        .staff-grid{
+            display:grid;
+            grid-template-columns:repeat(auto-fill,minmax(300px,1fr));
+            gap:30px;
+            margin:40px 0;
+        }
+        .staff-card{
+            background:white;
+            border-radius:16px;
+            overflow:hidden;
+            box-shadow:0 4px 10px rgba(0,0,0,0.05);
+            border:1px solid #e2e8f0;
+        }
+        .staff-img{
+            height:250px;
+            overflow:hidden;
+        }
+        .staff-img img{
+            width:100%;
+            height:100%;
+            object-fit:cover;
+        }
+        .staff-info{
+            padding:20px;
+        }
+        .staff-name{
+            font-size:20px;
+            font-weight:700;
+            color:#0a2540;
+        }
+        .staff-role{
+            color:#c19a6b;
+            font-size:14px;
+            font-weight:600;
+            margin:5px 0 10px;
+        }
+        .staff-rank{
+            display:inline-block;
+            padding:4px 12px;
+            background:#f1f5f9;
+            border-radius:40px;
+            font-size:12px;
+        }
+        .staff-rank i{color:#c19a6b;}
+        
+        /* Hiring Banner */
+        .hiring-banner{
+            background:linear-gradient(135deg,#0a2540,#2d5a4a);
+            color:white;
+            padding:40px;
+            border-radius:24px;
+            text-align:center;
+            margin:40px 0;
+        }
+        .hiring-banner h2{
+            color:white;
+            font-size:32px;
+            margin-bottom:15px;
+        }
+        .hiring-btn{
+            display:inline-block;
+            background:#c19a6b;
+            color:white;
+            padding:12px 30px;
+            border-radius:40px;
+            text-decoration:none;
+            font-weight:600;
+            margin-top:20px;
+        }
+        
+        /* Responsive */
+        @media (max-width:768px){
+            .stats-grid{grid-template-columns:1fr;}
+            .filter-tabs{flex-direction:column;}
+        }
+    </style>
 </head>
 <body>
-    <!-- NAVBAR CONTAINER (reuse from home) -->
-    <div id="navbar-container"></div>
-
-    <!-- PAGE HEADER -->
-    <section class="staff-header">
+    <!-- Navbar -->
+    <nav class="navbar">
         <div class="container">
-            <span class="page-badge"><i class="fas fa-crown"></i> EXECUTIVE LEADERSHIP</span>
-            <h1 class="page-title">Meet Our <span class="text-gold">Command Team</span></h1>
-            <p class="page-subtitle">22 ranks of institutional-grade leadership across five core sectors</p>
-        </div>
-    </section>
-
-    <!-- STAFF CONTROLS -->
-    <section class="staff-controls">
-        <div class="container">
-            <div class="controls-grid">
-                <!-- Search -->
-                <div class="search-box">
-                    <i class="fas fa-search search-icon"></i>
-                    <input type="text" id="staffSearch" placeholder="Search by name, role, or bio..." class="search-input">
-                </div>
-                
-                <!-- Filter Tabs -->
-                <div class="filter-tabs" id="filterTabs">
-                    <button class="filter-btn active" data-filter="all">
-                        <i class="fas fa-users"></i> All (22)
-                    </button>
-                    <button class="filter-btn" data-filter="executive">
-                        <i class="fas fa-crown"></i> Executive
-                    </button>
-                    <button class="filter-btn" data-filter="operations">
-                        <i class="fas fa-gears"></i> Operations
-                    </button>
-                    <button class="filter-btn" data-filter="support">
-                        <i class="fas fa-shield"></i> Support
-                    </button>
-                </div>
-                
-                <!-- Sort Dropdown -->
-                <div class="sort-box">
-                    <select id="sortSelect" class="sort-select">
-                        <option value="rank-asc">Rank: Low to High</option>
-                        <option value="rank-desc">Rank: High to Low</option>
-                        <option value="name-asc">Name: A to Z</option>
-                        <option value="name-desc">Name: Z to A</option>
-                        <option value="tier-asc">Tier: Low to High</option>
-                        <option value="tier-desc">Tier: High to Low</option>
-                    </select>
-                </div>
-            </div>
-            
-            <!-- Active Filters -->
-            <div class="active-filters" id="activeFilters"></div>
-        </div>
-    </section>
-
-    <!-- STAFF GRID -->
-    <section class="staff-section">
-        <div class="container">
-            <!-- Loading State -->
-            <div id="staffLoading" class="loading-state">
-                <div class="loader"></div>
-                <p>Loading leadership team...</p>
-            </div>
-            
-            <!-- Staff Grid Container -->
-            <div id="staffGrid" class="staff-grid"></div>
-            
-            <!-- Empty State -->
-            <div id="emptyState" class="empty-state" style="display: none;">
-                <i class="fas fa-users-slash"></i>
-                <h3>No Staff Found</h3>
-                <p>No team members match your current filters.</p>
-                <button class="btn btn-outline" onclick="staffManager.resetFilters()">Clear Filters</button>
-            </div>
-            
-            <!-- Pagination -->
-            <div id="pagination" class="pagination"></div>
-        </div>
-    </section>
-
-    <!-- STATS SECTION -->
-    <section class="stats-section">
-        <div class="container">
-            <div class="stats-grid" id="staffStats">
-                <div class="stat-card">
-                    <div class="stat-icon"><i class="fas fa-users"></i></div>
-                    <div class="stat-number" id="totalStaff">22</div>
-                    <div class="stat-label">Total Staff</div>
-                </div>
-                <div class="stat-card">
-                    <div class="stat-icon"><i class="fas fa-crown"></i></div>
-                    <div class="stat-number" id="executiveCount">4</div>
-                    <div class="stat-label">Executive</div>
-                </div>
-                <div class="stat-card">
-                    <div class="stat-icon"><i class="fas fa-gears"></i></div>
-                    <div class="stat-number" id="operationsCount">10</div>
-                    <div class="stat-label">Operations</div>
-                </div>
-                <div class="stat-card">
-                    <div class="stat-icon"><i class="fas fa-shield"></i></div>
-                    <div class="stat-number" id="supportCount">8</div>
-                    <div class="stat-label">Support</div>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- HIRING BANNER -->
-    <section class="hiring-banner">
-        <div class="container">
-            <div class="hiring-content">
-                <span class="hiring-badge"><i class="fas fa-briefcase"></i> NOW HIRING</span>
-                <h2>Join the <span class="text-gold">TAAGC Leadership</span></h2>
-                <p>We're hiring for Rank 02, 03, and 22 positions. Apply today.</p>
-                <a href="/register.html" class="hiring-btn">
-                    <i class="fas fa-file-alt"></i> Apply Now
+            <div class="navbar-content">
+                <a href="/" class="navbar-brand">
+                    <div class="navbar-logo">A</div>
+                    <div class="navbar-brand-text"><span>TAAGC</span> GLOBAL</div>
                 </a>
+                <div class="navbar-menu">
+                    <ul class="navbar-nav">
+                        <li><a href="/" class="nav-link">Home</a></li>
+                        <li><a href="/staff.html" class="nav-link">Team</a></li>
+                        <li><a href="/register.html" class="nav-link">Register</a></li>
+                    </ul>
+                </div>
             </div>
         </div>
-    </section>
+    </nav>
 
-    <!-- FOOTER CONTAINER -->
-    <div id="footer-container"></div>
+    <!-- Header -->
+    <div class="page-header">
+        <div class="container">
+            <h1>Our <span>Leadership Team</span></h1>
+            <p>22 ranks of institutional-grade leadership</p>
+        </div>
+    </div>
 
-    <!-- BACK TO TOP BUTTON -->
-    <button id="backToTop" class="back-to-top" aria-label="Back to top">
-        <i class="fas fa-arrow-up"></i>
-    </button>
+    <!-- Stats -->
+    <div class="container">
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-number">22</div>
+                <div class="stat-label">Total Ranks</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number">4</div>
+                <div class="stat-label">Executive</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number">10</div>
+                <div class="stat-label">Operations</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number">8</div>
+                <div class="stat-label">Support</div>
+            </div>
+        </div>
+    </div>
 
-    <!-- SCRIPTS -->
-    <script type="module" src="components/notifications.js"></script>
-    <script type="module" src="components/navbar.js"></script>
-    <script type="module" src="sections/footer.js"></script>
-    
-    <!-- Staff Modules -->
-    <script type="module" src="staff/staff-data.js"></script>
-    <script type="module" src="staff/staff-card.js"></script>
-    <script type="module" src="staff/staff-filter.js"></script>
-    <script type="module" src="staff/staff-search.js"></script>
-    <script type="module" src="staff/staff-sort.js"></script>
-    <script type="module" src="staff/staff-core.js"></script>
+    <!-- Filter Tabs -->
+    <div class="container">
+        <div class="filter-tabs">
+            <button class="filter-btn active" onclick="filterStaff('all')">All</button>
+            <button class="filter-btn" onclick="filterStaff('executive')">Executive</button>
+            <button class="filter-btn" onclick="filterStaff('operations')">Operations</button>
+            <button class="filter-btn" onclick="filterStaff('support')">Support</button>
+        </div>
+    </div>
+
+    <!-- Staff Grid -->
+    <div class="container">
+        <div class="staff-grid" id="staffGrid">
+            <!-- Rank 1 -->
+            <div class="staff-card" data-category="executive">
+                <div class="staff-img">
+                    <img src="https://images.unsplash.com/photo-1560250097-0b93528c311a?w=400" alt="CEO">
+                </div>
+                <div class="staff-info">
+                    <div class="staff-name">Ahmad Hamza</div>
+                    <div class="staff-role">CEO & Founder</div>
+                    <p style="font-size:13px; color:#64748b; margin:10px 0;">15+ years global trade. 50+ countries.</p>
+                    <span class="staff-rank"><i class="fas fa-crown"></i> Rank 01</span>
+                </div>
+            </div>
+            
+            <!-- Rank 2 -->
+            <div class="staff-card" data-category="executive">
+                <div class="staff-img">
+                    <img src="https://images.unsplash.com/photo-1573497019940-1c28c88b4f3e?w=400" alt="Vacant">
+                </div>
+                <div class="staff-info">
+                    <div class="staff-name">Position Vacant</div>
+                    <div class="staff-role">Group President</div>
+                    <p style="font-size:13px; color:#64748b; margin:10px 0;">Executive leadership opportunity</p>
+                    <span class="staff-rank"><i class="fas fa-crown"></i> Rank 02 • Hiring</span>
+                </div>
+            </div>
+            
+            <!-- Rank 3 -->
+            <div class="staff-card" data-category="executive">
+                <div class="staff-img">
+                    <img src="https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=400" alt="Strategic Hire">
+                </div>
+                <div class="staff-info">
+                    <div class="staff-name">Strategic Hire</div>
+                    <div class="staff-role">EVP, Global Strategy</div>
+                    <p style="font-size:13px; color:#64748b; margin:10px 0;">M&A, investor relations</p>
+                    <span class="staff-rank"><i class="fas fa-crown"></i> Rank 03 • Hiring</span>
+                </div>
+            </div>
+            
+            <!-- Rank 4 -->
+            <div class="staff-card" data-category="executive">
+                <div class="staff-img">
+                    <img src="https://images.unsplash.com/photo-1580489944761-15a19d654956?w=400" alt="Elizabeth Mwangi">
+                </div>
+                <div class="staff-info">
+                    <div class="staff-name">Dr. Elizabeth Mwangi</div>
+                    <div class="staff-role">SVP, African Operations</div>
+                    <p style="font-size:13px; color:#64748b; margin:10px 0;">15 countries, 200K+ hectares</p>
+                    <span class="staff-rank"><i class="fas fa-crown"></i> Rank 04</span>
+                </div>
+            </div>
+            
+            <!-- Rank 5 -->
+            <div class="staff-card" data-category="executive">
+                <div class="staff-img">
+                    <img src="https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?w=400" alt="Michael Okafor">
+                </div>
+                <div class="staff-info">
+                    <div class="staff-name">Michael Okafor</div>
+                    <div class="staff-role">VP, Finance</div>
+                    <p style="font-size:13px; color:#64748b; margin:10px 0;">$2.1B AUM, CFA</p>
+                    <span class="staff-rank"><i class="fas fa-star"></i> Rank 05</span>
+                </div>
+            </div>
+            
+            <!-- Rank 6 -->
+            <div class="staff-card" data-category="executive">
+                <div class="staff-img">
+                    <img src="https://images.unsplash.com/photo-1573496799652-408c2ac9fe98?w=400" alt="Sarah Chen">
+                </div>
+                <div class="staff-info">
+                    <div class="staff-name">Sarah Chen</div>
+                    <div class="staff-role">AVP, Digital</div>
+                    <p style="font-size:13px; color:#64748b; margin:10px 0;">150+ enterprise clients</p>
+                    <span class="staff-rank"><i class="fas fa-star"></i> Rank 06</span>
+                </div>
+            </div>
+            
+            <!-- Rank 7 -->
+            <div class="staff-card" data-category="operations">
+                <div class="staff-img">
+                    <img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=400" alt="Ahmed Hassan">
+                </div>
+                <div class="staff-info">
+                    <div class="staff-name">Ahmed Hassan</div>
+                    <div class="staff-role">Director, MENA</div>
+                    <p style="font-size:13px; color:#64748b; margin:10px 0;">Middle East & North Africa</p>
+                    <span class="staff-rank"><i class="fas fa-star"></i> Rank 07</span>
+                </div>
+            </div>
+            
+            <!-- Rank 8 -->
+            <div class="staff-card" data-category="operations">
+                <div class="staff-img">
+                    <img src="https://images.unsplash.com/photo-1595152772835-219674b2a8a6?w=400" alt="James Otieno">
+                </div>
+                <div class="staff-info">
+                    <div class="staff-name">Col. James Otieno</div>
+                    <div class="staff-role">Deputy Director</div>
+                    <p style="font-size:13px; color:#64748b; margin:10px 0;">$450M infrastructure</p>
+                    <span class="staff-rank"><i class="fas fa-star"></i> Rank 08</span>
+                </div>
+            </div>
+            
+            <!-- Rank 9 -->
+            <div class="staff-card" data-category="operations">
+                <div class="staff-img">
+                    <img src="https://images.unsplash.com/photo-1573497019418-b400bb3ab074?w=400" alt="Grace Ndlovu">
+                </div>
+                <div class="staff-info">
+                    <div class="staff-name">Grace Ndlovu</div>
+                    <div class="staff-role">Major, Agriculture</div>
+                    <p style="font-size:13px; color:#64748b; margin:10px 0;">200K+ hectares</p>
+                    <span class="staff-rank"><i class="fas fa-medal"></i> Rank 09</span>
+                </div>
+            </div>
+            
+            <!-- Rank 10 -->
+            <div class="staff-card" data-category="operations">
+                <div class="staff-img">
+                    <img src="https://images.unsplash.com/photo-1566492031773-4f4e44671857?w=400" alt="Ibrahim Diallo">
+                </div>
+                <div class="staff-info">
+                    <div class="staff-name">Ibrahim Diallo</div>
+                    <div class="staff-role">Captain, Grain</div>
+                    <p style="font-size:13px; color:#64748b; margin:10px 0;">2M MT capacity</p>
+                    <span class="staff-rank"><i class="fas fa-medal"></i> Rank 10</span>
+                </div>
+            </div>
+            
+            <!-- Rank 11 -->
+            <div class="staff-card" data-category="operations">
+                <div class="staff-img">
+                    <img src="https://images.unsplash.com/photo-1573496799652-408c2ac9fe98?w=400" alt="Fatima Al-Zahra">
+                </div>
+                <div class="staff-info">
+                    <div class="staff-name">Fatima Al-Zahra</div>
+                    <div class="staff-role">Lieutenant, ICT</div>
+                    <p style="font-size:13px; color:#64748b; margin:10px 0;">Cybersecurity, CISSP</p>
+                    <span class="staff-rank"><i class="fas fa-medal"></i> Rank 11</span>
+                </div>
+            </div>
+            
+            <!-- Rank 12 -->
+            <div class="staff-card" data-category="operations">
+                <div class="staff-img">
+                    <img src="https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=400" alt="Kwame Asante">
+                </div>
+                <div class="staff-info">
+                    <div class="staff-name">Kwame Asante</div>
+                    <div class="staff-role">Sgt Major, Contracts</div>
+                    <p style="font-size:13px; color:#64748b; margin:10px 0;">$450M projects</p>
+                    <span class="staff-rank"><i class="fas fa-medal"></i> Rank 12</span>
+                </div>
+            </div>
+            
+            <!-- Rank 13 -->
+            <div class="staff-card" data-category="operations">
+                <div class="staff-img">
+                    <img src="https://images.unsplash.com/photo-1580489944761-15a19d654956?w=400" alt="Chloe Mensah">
+                </div>
+                <div class="staff-info">
+                    <div class="staff-name">Chloe Mensah</div>
+                    <div class="staff-role">Sgt, Merchandise</div>
+                    <p style="font-size:13px; color:#64748b; margin:10px 0;">10K+ SKUs</p>
+                    <span class="staff-rank"><i class="fas fa-medal"></i> Rank 13</span>
+                </div>
+            </div>
+            
+            <!-- Rank 14 -->
+            <div class="staff-card" data-category="support">
+                <div class="staff-img">
+                    <img src="https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?w=400" alt="John Okonkwo">
+                </div>
+                <div class="staff-info">
+                    <div class="staff-name">John Okonkwo</div>
+                    <div class="staff-role">Corporal, Logistics</div>
+                    <p style="font-size:13px; color:#64748b; margin:10px 0;">200+ fleet</p>
+                    <span class="staff-rank"><i class="fas fa-shield"></i> Rank 14</span>
+                </div>
+            </div>
+            
+            <!-- Rank 15 -->
+            <div class="staff-card" data-category="support">
+                <div class="staff-img">
+                    <img src="https://images.unsplash.com/photo-1573497019940-1c28c88b4f3e?w=400" alt="Aisha Mohammed">
+                </div>
+                <div class="staff-info">
+                    <div class="staff-name">Aisha Mohammed</div>
+                    <div class="staff-role">Lance Corporal</div>
+                    <p style="font-size:13px; color:#64748b; margin:10px 0;">25 staff</p>
+                    <span class="staff-rank"><i class="fas fa-shield"></i> Rank 15</span>
+                </div>
+            </div>
+            
+            <!-- Rank 16 -->
+            <div class="staff-card" data-category="support">
+                <div class="staff-img">
+                    <img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=400" alt="David Ochieng">
+                </div>
+                <div class="staff-info">
+                    <div class="staff-name">David Ochieng</div>
+                    <div class="staff-role">Sr Specialist, Finance</div>
+                    <p style="font-size:13px; color:#64748b; margin:10px 0;">CPA, ACCA</p>
+                    <span class="staff-rank"><i class="fas fa-shield"></i> Rank 16</span>
+                </div>
+            </div>
+            
+            <!-- Rank 17 -->
+            <div class="staff-card" data-category="support">
+                <div class="staff-img">
+                    <img src="https://images.unsplash.com/photo-1580489944761-15a19d654956?w=400" alt="Ngozi Okonkwo">
+                </div>
+                <div class="staff-info">
+                    <div class="staff-name">Ngozi Okonkwo</div>
+                    <div class="staff-role">Specialist, HR</div>
+                    <p style="font-size:13px; color:#64748b; margin:10px 0;">127 staff</p>
+                    <span class="staff-rank"><i class="fas fa-shield"></i> Rank 17</span>
+                </div>
+            </div>
+            
+            <!-- Rank 18 -->
+            <div class="staff-card" data-category="support">
+                <div class="staff-img">
+                    <img src="https://images.unsplash.com/photo-1566492031773-4f4e44671857?w=400" alt="Kwesi Appiah">
+                </div>
+                <div class="staff-info">
+                    <div class="staff-name">Kwesi Appiah</div>
+                    <div class="staff-role">Jr Specialist, IT</div>
+                    <p style="font-size:13px; color:#64748b; margin:10px 0;">200+ users</p>
+                    <span class="staff-rank"><i class="fas fa-shield"></i> Rank 18</span>
+                </div>
+            </div>
+            
+            <!-- Rank 19 -->
+            <div class="staff-card" data-category="support">
+                <div class="staff-img">
+                    <img src="https://images.unsplash.com/photo-1573497019418-b400bb3ab074?w=400" alt="Fatima Bello">
+                </div>
+                <div class="staff-info">
+                    <div class="staff-name">Fatima Bello</div>
+                    <div class="staff-role">Sr Associate, Procurement</div>
+                    <p style="font-size:13px; color:#64748b; margin:10px 0;">CIPS</p>
+                    <span class="staff-rank"><i class="fas fa-user"></i> Rank 19</span>
+                </div>
+            </div>
+            
+            <!-- Rank 20 -->
+            <div class="staff-card" data-category="support">
+                <div class="staff-img">
+                    <img src="https://images.unsplash.com/photo-1595152772835-219674b2a8a6?w=400" alt="Emmanuel Adebayo">
+                </div>
+                <div class="staff-info">
+                    <div class="staff-name">Emmanuel Adebayo</div>
+                    <div class="staff-role">Associate, Logistics</div>
+                    <p style="font-size:13px; color:#64748b; margin:10px 0;">Supply chain</p>
+                    <span class="staff-rank"><i class="fas fa-user"></i> Rank 20</span>
+                </div>
+            </div>
+            
+            <!-- Rank 21 -->
+            <div class="staff-card" data-category="support">
+                <div class="staff-img">
+                    <img src="https://images.unsplash.com/photo-1573496799652-408c2ac9fe98?w=400" alt="Amina Yusuf">
+                </div>
+                <div class="staff-info">
+                    <div class="staff-name">Amina Yusuf</div>
+                    <div class="staff-role">Jr Associate, Marketing</div>
+                    <p style="font-size:13px; color:#64748b; margin:10px 0;">Social media</p>
+                    <span class="staff-rank"><i class="fas fa-user"></i> Rank 21</span>
+                </div>
+            </div>
+            
+            <!-- Rank 22 -->
+            <div class="staff-card" data-category="support">
+                <div class="staff-img">
+                    <img src="https://images.unsplash.com/photo-1521791136064-7986c2920216?w=400" alt="Hiring">
+                </div>
+                <div class="staff-info">
+                    <div class="staff-name">Now Hiring</div>
+                    <div class="staff-role">Entry Level</div>
+                    <p style="font-size:13px; color:#64748b; margin:10px 0;">2 positions available</p>
+                    <span class="staff-rank"><i class="fas fa-user"></i> Rank 22 • Apply</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Hiring Banner -->
+    <div class="container">
+        <div class="hiring-banner">
+            <h2>Join Our Leadership Team</h2>
+            <p>We're hiring for Rank 02, 03, and 22 positions</p>
+            <a href="/register.html" class="hiring-btn">
+                <i class="fas fa-file-alt"></i> Apply Now
+            </a>
+        </div>
+    </div>
+
+    <script>
+        function filterStaff(category) {
+            // Update active button
+            document.querySelectorAll('.filter-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            event.target.classList.add('active');
+            
+            // Filter cards
+            document.querySelectorAll('.staff-card').forEach(card => {
+                if(category === 'all' || card.dataset.category === category) {
+                    card.style.display = 'block';
+                } else {
+                    card.style.display = 'none';
+                }
+            });
+        }
+    </script>
 </body>
 </html>
