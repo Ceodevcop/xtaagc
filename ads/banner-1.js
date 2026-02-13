@@ -5,7 +5,7 @@ export default {
     subtitle: 'Get 10% off on your first order',
     cta: 'Shop Now',
     link: '/register',
-    image: 'https://images.unsplash.com/photo-1607083206968-13611e3d76db?w=1200',
+    image: 'https://drive.google.com/file/d/1R7IjapRyBwaqUnPKdCSLjayB9O6LO7Sa/view?usp=drivesdk',
     
     render() {
         return `
