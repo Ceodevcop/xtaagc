@@ -1,0 +1,139 @@
+===========================================================================
+⚡ TAAGC SUPER ADMIN - DAILY COMMANDS & FILE STRUCTURE ⚡
+===========================================================================
+Date: ____________________   Admin: ____________________
+
+===========================================================================
+📁 COMPLETE FILE STRUCTURE - COPY THIS EXACTLY
+===========================================================================
+/
+├── admin/
+│   ├── index.html              # Login page
+│   ├── dashboard.html          # Main dashboard
+│   │
+│   ├── css/
+│   │   └── admin.css           # MASTER STYLESHEET (1 file)
+│   │
+│   ├── js/
+│   │   ├── firebase-init.js    # Firebase config
+│   │   ├── admin-auth.js       # Login logic
+│   │   ├── admin-core.js       # MAIN CONTROLLER
+│   │   │
+│   │   ├── components/
+│   │   │   ├── notifications.js # Toast alerts
+│   │   │   ├── modal.js        # Popup modals
+│   │   │   └── table.js        # Data tables
+│   │   │
+│   │   └── pages/
+│   │       ├── dashboard-page.js   # SUPER ADMIN DASHBOARD
+│   │       ├── pages-page.js       # Page creator
+│   │       ├── users-page.js       # User management
+│   │       ├── admins-page.js      # Admin management
+│   │       ├── companies-page.js   # Company approvals
+│   │       ├── orders-page.js      # Order management
+│   │       ├── investments-page.js # Investment tracking
+│   │       ├── support-page.js     # Support tickets
+│   │       ├── analytics-page.js   # Analytics
+│   │       └── settings-page.js    # Settings
+│   │
+│   └── assets/ (optional)
+│
+├── setup-admin.html            # Create admin accounts
+│
+└── 404.html                    # Auto-page creator (admin only)
+
+===========================================================================
+🔥 DAILY DEPLOYMENT COMMANDS - FTP / CPANEL
+===========================================================================
+
+[ ] 1. LOGIN to cPanel/FTP
+[ ] 2. NAVIGATE to /public_html/ or /www/
+[ ] 3. UPLOAD entire /admin/ folder
+[ ] 4. UPLOAD setup-admin.html
+[ ] 5. UPLOAD 404.html
+[ ] 6. SET permissions: folders 755, files 644
+
+===========================================================================
+✅ DAILY CHECKLIST - SUPER ADMIN TASKS
+===========================================================================
+
+[ ] 1. LOGIN: https://taagc.website/admin/
+     → Email: priahmz@gmail.com
+     → Password: Admin/Taagc/001
+
+[ ] 2. CHECK DASHBOARD stats:
+     → Total Pages: _______
+     → Total Users: _______
+     → New Orders: _______
+     → Pending Companies: _______
+
+[ ] 3. REVIEW Pending Company Approvals
+     → Go to Companies page
+     → Verify registration documents
+     → Approve/Reject
+
+[ ] 4. CHECK Support Tickets
+     → Go to Support page
+     → Respond to open tickets
+     → Mark as resolved
+
+[ ] 5. MONITOR Orders & Investments
+     → Check for failed transactions
+     → Verify shipment tracking
+     → Review investment ROI
+
+[ ] 6. CREATE/EDIT Pages
+     → New content needed? _______
+     → Update existing pages? _______
+     → Check 404 errors
+
+[ ] 7. REVIEW Analytics
+     → Page views: _______
+     → User growth: _______
+     → Revenue: _______
+
+[ ] 8. BACKUP Database (Firebase)
+     → Export Firestore collections
+     → Save to local drive
+
+===========================================================================
+🚀 QUICK LAUNCH URLS
+===========================================================================
+
+🔐 Admin Login:    https://taagc.website/admin/
+🛠️  Setup Admin:   https://taagc.website/setup-admin.html
+📊 Dashboard:      https://taagc.website/admin/dashboard.html
+📄 Page Creator:   https://taagc.website/admin/dashboard.html (click Pages)
+👥 User Manager:   https://taagc.website/admin/dashboard.html (click Users)
+🏢 Companies:      https://taagc.website/admin/dashboard.html (click Companies)
+
+===========================================================================
+📋 FIREBASE ADMIN CREDENTIALS (PRIMARY)
+===========================================================================
+
+NAME:     Ahmad Hamza
+EMAIL:    priahmz@gmail.com
+PASSWORD: Admin/Taagc/001
+ROLE:     Super Administrator (Full Access)
+
+===========================================================================
+🆘 EMERGENCY COMMANDS
+===========================================================================
+
+❌ FORGOT PASSWORD?
+    → Go to Firebase Console → Authentication → Users
+    → Click "..." on user → Send password reset email
+
+❌ LOST ADMIN ACCESS?
+    → Run setup-admin.html to create new admin
+    → OR Firebase Console → Firestore → admins collection
+    → Add document with your UID and { isAdmin: true, role: "super-admin" }
+
+❌ 404 PAGE NOT CREATING?
+    → Check .htaccess file exists
+    → Ensure 404.html is in root directory
+    → Login as admin first, then visit non-existent page
+
+===========================================================================
+✅ END OF DAILY COMMANDS - SAVE THIS FILE FOR TOMORROW
+===========================================================================
