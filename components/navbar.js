@@ -23,3 +23,80 @@ export const Navbar = {
                                     <a href="/register.html" class="nav-link">
                                         <i class="fas fa-handshake"></i> Partner
                                     </a>
+                                </li>
+                            </ul>
+                        </div>
+                        
+                        <button class="navbar-toggler" id="navbarToggler">
+                            <span></span><span></span><span></span>
+                        </button>
+                    </div>
+                </div>
+            </nav>
+        `;
+    },
+    
+    init() {
+        const navbar = document.getElementById('navbar');
+        const toggler = document.getElementById('navbarToggler');
+        const menu = document.getElementById('navbarMenu');
+        
+        window.addEventListener('scroll', () => {
+            if (window.scrollY > 100) {
+                navbar.classList.add('scrolled');
+            } else {
+                navbar.classList.remove('scrolled');
+            }
+        });
+        
+        if (toggler) {
+            toggler.addEventListener('click', (e) => {
+                e.stopPropagation();
+                menu.classList.toggle('active');
+                toggler.classList.toggle('active');
+            });
+        }
+        
+        // Smooth scroll for anchor links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function(e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({ behavior: 'smooth' });
+                    menu?.classList.remove('active');
+                    toggler?.classList.remove('active');
+                }
+            });
+        });
+        
+        // Active nav link on scroll
+        const sections = document.querySelectorAll('section[id]');
+        window.addEventListener('scroll', () => {
+            let current = '';
+            sections.forEach(section => {
+                const sectionTop = section.offsetTop - 100;
+                const sectionHeight = section.clientHeight;
+                if (window.scrollY >= sectionTop && window.scrollY < sectionTop + sectionHeight) {
+                    current = section.getAttribute('id');
+                }
+            });
+            
+            document.querySelectorAll('.nav-link').forEach(link => {
+                link.classList.remove('active');
+                if (link.getAttribute('href') === `#${current}`) {
+                    link.classList.add('active');
+                }
+            });
+        });
+    }
+};
+
+// Render navbar
+document.addEventListener('DOMContentLoaded', () => {
+    const container = document.getElementById('navbar-container');
+    if (container) {
+        container.innerHTML = Navbar.render();
+        Navbar.init();
+    }
+});
