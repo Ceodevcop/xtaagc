@@ -11,7 +11,6 @@
         body{
             font-family:'Inter',sans-serif;
             background:linear-gradient(135deg,#0a2540,#1a3a4f);
-            color:white;
             min-height:100vh;
             display:flex;
             align-items:center;
@@ -24,7 +23,6 @@
             padding:48px;
             max-width:600px;
             width:100%;
-            color:#1e293b;
             box-shadow:0 25px 50px rgba(0,0,0,0.3);
         }
         .logo{
@@ -53,17 +51,18 @@
         }
         .logo-text span{color:#c19a6b;}
         
-        h1{font-size:28px;margin-bottom:16px;color:#0a2540;}
+        h1{font-size:28px;margin-bottom:8px;color:#0a2540;}
         .admin-badge{
             display:inline-block;
-            background:#c19a6b;
-            color:white;
-            padding:8px 24px;
+            background:#c19a6b20;
+            color:#c19a6b;
+            padding:6px 16px;
             border-radius:40px;
-            font-size:14px;
+            font-size:13px;
             font-weight:600;
-            margin-bottom:20px;
+            margin-bottom:24px;
         }
+        
         .admin-card{
             background:#f8fafc;
             border-radius:16px;
@@ -86,27 +85,27 @@
         }
         .admin-value{
             color:#1e293b;
-            font-family:monospace;
             background:white;
             padding:6px 12px;
             border-radius:8px;
             border:1px solid #e2e8f0;
+            font-family:monospace;
         }
+        
         .btn{
-            display:inline-flex;
+            display:flex;
             align-items:center;
             justify-content:center;
             gap:10px;
-            padding:16px 32px;
+            width:100%;
+            padding:16px;
             background:#c19a6b;
             color:white;
-            text-decoration:none;
-            border-radius:40px;
-            font-weight:600;
-            transition:0.3s;
             border:none;
+            border-radius:12px;
+            font-weight:600;
             cursor:pointer;
-            width:100%;
+            transition:0.3s;
             font-size:16px;
         }
         .btn:hover{
@@ -119,6 +118,7 @@
         .btn-primary:hover{
             background:#1a3a4f;
         }
+        
         .steps{
             margin:30px 0;
             padding:20px;
@@ -137,7 +137,9 @@
         .step.completed i{color:#2e7d5e;}
         .step.active{color:#0a2540;font-weight:600;}
         .step.active i{color:#c19a6b;}
-        .hidden{display:none;}
+        .step.error{color:#e53e3e;}
+        .step.error i{color:#e53e3e;}
+        
         .alert{
             padding:16px 20px;
             border-radius:12px;
@@ -156,6 +158,27 @@
             border-left:4px solid #e53e3e;
             color:#742a2a;
         }
+        .alert-info{
+            background:#ebf8ff;
+            border-left:4px solid #3182ce;
+            color:#2c5282;
+        }
+        
+        .hidden{display:none;}
+        
+        .credentials-box{
+            background:#0a2540;
+            color:white;
+            padding:20px;
+            border-radius:12px;
+            margin:20px 0;
+        }
+        .credential-row{
+            display:flex;
+            justify-content:space-between;
+            padding:8px 0;
+            border-bottom:1px solid rgba(255,255,255,0.1);
+        }
     </style>
 </head>
 <body>
@@ -169,14 +192,14 @@
             <i class="fas fa-crown"></i> ADMIN SETUP
         </span>
 
-        <h1>Set Administrator Account</h1>
-        <p style="color:#64748b; margin-bottom:20px;">Configure the following admin account with full page creation privileges.</p>
+        <h1>Ahmad Hamza</h1>
+        <p style="color:#64748b; margin-bottom:20px;">Configure Super Administrator account with full page creation privileges.</p>
 
-        <!-- Admin Details Card -->
+        <!-- Admin Credentials Card -->
         <div class="admin-card">
             <div style="display:flex; align-items:center; gap:12px; margin-bottom:16px;">
                 <i class="fas fa-user-shield" style="font-size:24px; color:#c19a6b;"></i>
-                <h2 style="font-size:20px; color:#0a2540; margin:0;">Ahmad Hamza</h2>
+                <h2 style="font-size:20px; color:#0a2540; margin:0;">Super Administrator</h2>
             </div>
             
             <div class="admin-row">
@@ -193,7 +216,7 @@
             </div>
             <div class="admin-row">
                 <span class="admin-label">Role:</span>
-                <span class="admin-value" style="background:#c19a6b20; color:#c19a6b; font-weight:600;">Super Administrator</span>
+                <span class="admin-value" style="background:#c19a6b20; color:#c19a6b; font-weight:600;">Super Admin</span>
             </div>
         </div>
 
@@ -201,7 +224,7 @@
         <div class="steps" id="setupSteps">
             <div class="step active" id="step1">
                 <i class="fas fa-circle-notch fa-spin"></i>
-                <span>Ready to setup admin account</span>
+                <span>Ready to create admin account</span>
             </div>
             <div class="step" id="step2">
                 <i class="fas fa-circle"></i>
@@ -209,7 +232,7 @@
             </div>
             <div class="step" id="step3">
                 <i class="fas fa-circle"></i>
-                <span>Setting custom admin claims</span>
+                <span>Setting admin permissions</span>
             </div>
             <div class="step" id="step4">
                 <i class="fas fa-circle"></i>
@@ -217,7 +240,7 @@
             </div>
             <div class="step" id="step5">
                 <i class="fas fa-circle"></i>
-                <span>Verifying admin privileges</span>
+                <span>Verifying admin access</span>
             </div>
         </div>
 
@@ -226,8 +249,8 @@
 
         <!-- Action Buttons -->
         <div id="setupActions">
-            <button onclick="setupAdmin()" class="btn" id="setupBtn">
-                <i class="fas fa-shield-alt"></i> Setup Admin Account
+            <button onclick="createAdminAccount()" class="btn" id="setupBtn">
+                <i class="fas fa-shield-alt"></i> Create Admin Account
             </button>
             
             <button onclick="window.location.href='/admin/login.html'" class="btn btn-primary" style="margin-top:15px;" id="loginBtn" disabled>
@@ -244,19 +267,23 @@
                 <h2 style="color:#2e7d5e; margin-bottom:16px;">Admin Setup Complete!</h2>
                 <p style="color:#64748b; margin-bottom:24px;">Ahmad Hamza is now a Super Administrator with full page creation privileges.</p>
                 
-                <div style="background:#f8fafc; border-radius:16px; padding:24px; margin-bottom:24px; text-align:left;">
-                    <h3 style="color:#0a2540; margin-bottom:16px;">Admin Credentials</h3>
-                    <div style="display:flex; align-items:center; gap:12px; margin-bottom:12px;">
-                        <i class="fas fa-envelope" style="color:#c19a6b;"></i>
-                        <span style="font-weight:600;">priahmz@gmail.com</span>
+                <div class="credentials-box">
+                    <h3 style="color:white; margin-bottom:16px;">Admin Credentials</h3>
+                    <div class="credential-row">
+                        <span>Email:</span>
+                        <strong>priahmz@gmail.com</strong>
                     </div>
-                    <div style="display:flex; align-items:center; gap:12px;">
-                        <i class="fas fa-lock" style="color:#c19a6b;"></i>
-                        <span style="font-weight:600;">Admin/Taagc/001</span>
+                    <div class="credential-row">
+                        <span>Password:</span>
+                        <strong>Admin/Taagc/001</strong>
+                    </div>
+                    <div class="credential-row" style="border-bottom:none;">
+                        <span>Role:</span>
+                        <strong style="color:#c19a6b;">Super Administrator</strong>
                     </div>
                 </div>
                 
-                <button onclick="window.location.href='/admin/login.html'" class="btn" style="background:#0a2540;">
+                <button onclick="window.location.href='/admin/login.html'" class="btn" style="background:#0a2540; margin-top:20px;">
                     <i class="fas fa-sign-in-alt"></i> Login to Admin Panel
                 </button>
             </div>
@@ -269,6 +296,7 @@
             getAuth, 
             createUserWithEmailAndPassword,
             signInWithEmailAndPassword,
+            onAuthStateChanged,
             sendEmailVerification 
         } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
         import { 
@@ -278,12 +306,8 @@
             getDoc, 
             serverTimestamp 
         } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
-        import { 
-            getFunctions, 
-            httpsCallable 
-        } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-functions.js";
 
-        // Firebase Configuration
+        // ===== FIREBASE CONFIG =====
         const firebaseConfig = {
             apiKey: "AIzaSyAI1MrcP977UgRLQoePxl64JOSyj9v4WpI",
             authDomain: "xtaagc.firebaseapp.com",
@@ -293,75 +317,144 @@
             appId: "1:256073982437:web:8da63bb7acc86c0ca98f0c"
         };
 
-        // Initialize Firebase
+        // ===== INITIALIZE FIREBASE =====
         const app = initializeApp(firebaseConfig);
         const auth = getAuth(app);
         const db = getFirestore(app);
-        const functions = getFunctions(app);
 
-        // Admin credentials
+        // ===== ADMIN CREDENTIALS =====
         const ADMIN_EMAIL = "priahmz@gmail.com";
         const ADMIN_PASSWORD = "Admin/Taagc/001";
         const ADMIN_NAME = "Ahmad Hamza";
 
-        // ===== SETUP ADMIN =====
-        window.setupAdmin = async function() {
+        // ===== SHOW ALERT =====
+        function showAlert(message, type) {
+            const container = document.getElementById('alertContainer');
+            const alert = document.createElement('div');
+            alert.className = `alert alert-${type}`;
+            alert.innerHTML = `
+                <i class="fas fa-${type === 'success' ? 'check-circle' : type === 'error' ? 'exclamation-circle' : 'info-circle'}"></i>
+                <span>${message}</span>
+            `;
+            container.innerHTML = '';
+            container.appendChild(alert);
+        }
+
+        // ===== UPDATE STEP =====
+        function updateStep(stepId, status, message) {
+            const step = document.getElementById(stepId);
+            if (!step) return;
+            
+            step.className = `step ${status}`;
+            
+            if (status === 'completed') {
+                step.innerHTML = `<i class="fas fa-check-circle"></i> <span>${message}</span>`;
+            } else if (status === 'active') {
+                step.innerHTML = `<i class="fas fa-circle-notch fa-spin"></i> <span>${message}</span>`;
+            } else if (status === 'error') {
+                step.innerHTML = `<i class="fas fa-exclamation-circle"></i> <span>${message}</span>`;
+            }
+        }
+
+        // ===== SET CUSTOM ADMIN CLAIMS (VIA CLOUD FUNCTION) =====
+        async function setAdminClaims(user) {
+            try {
+                // Try to call Cloud Function first
+                const functions = await import("https://www.gstatic.com/firebasejs/10.7.1/firebase-functions.js");
+                const setAdminRole = functions.httpsCallable(getFunctions(app), 'setAdminRole');
+                await setAdminRole({ 
+                    uid: user.uid, 
+                    email: ADMIN_EMAIL,
+                    name: ADMIN_NAME 
+                });
+                return true;
+            } catch (error) {
+                console.warn('Cloud Function not available, using Firestore-based admin verification');
+                
+                // Fallback: Store admin status in Firestore
+                await setDoc(doc(db, "admins", user.uid), {
+                    uid: user.uid,
+                    email: ADMIN_EMAIL,
+                    name: ADMIN_NAME,
+                    role: 'super-admin',
+                    isAdmin: true,
+                    permissions: ['create_pages', 'edit_pages', 'delete_pages', 'manage_users'],
+                    createdAt: serverTimestamp(),
+                    updatedAt: serverTimestamp()
+                }, { merge: true });
+                
+                return true;
+            }
+        }
+
+        // ===== CHECK IF ADMIN EXISTS =====
+        async function checkAdminExists() {
+            try {
+                // Try to sign in to check if user exists
+                await signInWithEmailAndPassword(auth, ADMIN_EMAIL, ADMIN_PASSWORD);
+                return { exists: true, canSignIn: true };
+            } catch (error) {
+                if (error.code === 'auth/user-not-found') {
+                    return { exists: false, canSignIn: false };
+                } else if (error.code === 'auth/wrong-password') {
+                    return { exists: true, canSignIn: false };
+                }
+                return { exists: false, canSignIn: false };
+            }
+        }
+
+        // ===== CREATE ADMIN ACCOUNT =====
+        window.createAdminAccount = async function() {
             const setupBtn = document.getElementById('setupBtn');
             const loginBtn = document.getElementById('loginBtn');
             
-            setupBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Setting up admin...';
+            setupBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Setting up...';
             setupBtn.disabled = true;
             
             showAlert('Starting admin setup...', 'info');
+            updateStep('step1', 'completed', 'Setup initiated');
+            updateStep('step2', 'active', 'Checking if admin exists...');
             
             try {
-                // Step 1: Create user in Firebase Auth
-                updateStep('step1', 'completed', '✓ Admin ready');
-                updateStep('step2', 'active', 'Creating admin user...');
+                // Check if admin already exists
+                const adminStatus = await checkAdminExists();
                 
                 let user;
-                try {
-                    // Try to create new user
+                
+                if (adminStatus.exists) {
+                    // Admin exists - try to sign in
+                    updateStep('step2', 'completed', 'Admin user already exists');
+                    updateStep('step3', 'active', 'Verifying admin access...');
+                    
+                    const userCredential = await signInWithEmailAndPassword(auth, ADMIN_EMAIL, ADMIN_PASSWORD);
+                    user = userCredential.user;
+                    
+                    updateStep('step3', 'completed', 'Admin access verified');
+                } else {
+                    // Create new admin user
+                    updateStep('step2', 'completed', 'Creating new admin user...');
+                    
                     const userCredential = await createUserWithEmailAndPassword(auth, ADMIN_EMAIL, ADMIN_PASSWORD);
                     user = userCredential.user;
-                } catch (error) {
-                    if (error.code === 'auth/email-already-in-use') {
-                        // User exists, try to sign in
-                        showAlert('Admin user already exists. Attempting to update permissions...', 'info');
-                        const userCredential = await signInWithEmailAndPassword(auth, ADMIN_EMAIL, ADMIN_PASSWORD);
-                        user = userCredential.user;
-                    } else {
-                        throw error;
+                    
+                    updateStep('step2', 'completed', '✓ Admin user created successfully');
+                    updateStep('step3', 'active', 'Setting admin permissions...');
+                    
+                    // Set admin claims
+                    await setAdminClaims(user);
+                    
+                    updateStep('step3', 'completed', '✓ Admin permissions granted');
+                    
+                    // Send verification email
+                    try {
+                        await sendEmailVerification(user);
+                        console.log('Verification email sent');
+                    } catch (e) {
+                        console.log('Email verification not sent');
                     }
                 }
                 
-                updateStep('step2', 'completed', '✓ Admin user created');
-                
-                // Step 3: Set custom admin claims
-                updateStep('step3', 'active', 'Setting admin privileges...');
-                
-                try {
-                    // Use Firebase Admin SDK via Cloud Function
-                    const setAdminRole = httpsCallable(functions, 'setAdminRole');
-                    await setAdminRole({ 
-                        uid: user.uid, 
-                        email: ADMIN_EMAIL,
-                        name: ADMIN_NAME
-                    });
-                } catch (error) {
-                    // Fallback: Set custom claims via REST API
-                    console.warn('Cloud Function not available, setting claims via token refresh');
-                    
-                    // Get ID token
-                    const idToken = await user.getIdToken();
-                    
-                    // Set custom claims (Note: This requires Firebase Admin SDK - for production, use Cloud Functions)
-                    // For now, we'll set admin status in Firestore as fallback
-                }
-                
-                updateStep('step3', 'completed', '✓ Admin privileges set');
-                
-                // Step 4: Create admin profile in Firestore
+                // Step 4: Create/Update Firestore profile
                 updateStep('step4', 'active', 'Creating admin profile...');
                 
                 await setDoc(doc(db, "admins", user.uid), {
@@ -372,9 +465,9 @@
                     permissions: ['create_pages', 'edit_pages', 'delete_pages', 'manage_users'],
                     createdAt: serverTimestamp(),
                     updatedAt: serverTimestamp(),
-                    createdBy: 'system',
+                    lastLogin: serverTimestamp(),
                     status: 'active'
-                });
+                }, { merge: true });
                 
                 // Also create in users collection
                 await setDoc(doc(db, "users", user.uid), {
@@ -385,11 +478,11 @@
                     userType: 'admin',
                     createdAt: serverTimestamp(),
                     updatedAt: serverTimestamp()
-                });
+                }, { merge: true });
                 
                 updateStep('step4', 'completed', '✓ Admin profile created');
                 
-                // Step 5: Verify admin privileges
+                // Step 5: Verify admin access
                 updateStep('step5', 'active', 'Verifying admin privileges...');
                 
                 // Force token refresh
@@ -397,9 +490,8 @@
                 
                 // Check if admin document exists
                 const adminDoc = await getDoc(doc(db, "admins", user.uid));
-                const isAdmin = adminDoc.exists();
                 
-                if (isAdmin) {
+                if (adminDoc.exists()) {
                     updateStep('step5', 'completed', '✓ Admin verified - Access granted');
                 } else {
                     throw new Error('Admin verification failed');
@@ -412,85 +504,16 @@
                 setupBtn.innerHTML = '<i class="fas fa-check-circle"></i> Setup Complete';
                 loginBtn.disabled = false;
                 
-                // Show success view
+                // Hide steps and show success
                 document.getElementById('setupSteps').classList.add('hidden');
                 document.getElementById('setupActions').classList.add('hidden');
                 document.getElementById('successView').classList.remove('hidden');
                 
-                // Send email verification
-                try {
-                    await sendEmailVerification(user);
-                    console.log('Verification email sent');
-                } catch (e) {
-                    console.log('Email verification not sent');
-                }
-                
             } catch (error) {
                 console.error('Setup error:', error);
-                showAlert('Error: ' + error.message, 'error');
                 
-                setupBtn.innerHTML = '<i class="fas fa-shield-alt"></i> Retry Setup';
-                setupBtn.disabled = false;
-                
-                // Reset steps
-                resetSteps();
-            }
-        };
-
-        // ===== UPDATE STEP =====
-        function updateStep(stepId, status, text) {
-            const step = document.getElementById(stepId);
-            if (!step) return;
-            
-            step.className = 'step ' + status;
-            
-            if (status === 'completed') {
-                step.innerHTML = `<i class="fas fa-check-circle" style="color:#2e7d5e;"></i> <span>${text}</span>`;
-            } else if (status === 'active') {
-                step.innerHTML = `<i class="fas fa-circle-notch fa-spin" style="color:#c19a6b;"></i> <span>${text}</span>`;
-            }
-        }
-
-        // ===== RESET STEPS =====
-        function resetSteps() {
-            const steps = ['step1', 'step2', 'step3', 'step4', 'step5'];
-            steps.forEach((stepId, index) => {
-                const step = document.getElementById(stepId);
-                if (step) {
-                    step.className = 'step';
-                    if (index === 0) {
-                        step.classList.add('active');
-                        step.innerHTML = '<i class="fas fa-circle-notch fa-spin"></i> <span>Ready to setup admin account</span>';
-                    } else {
-                        step.innerHTML = `<i class="fas fa-circle"></i> <span>${step.dataset.originalText || ''}</span>`;
-                    }
-                }
-            });
-        }
-
-        // ===== SHOW ALERT =====
-        function showAlert(message, type) {
-            const alertContainer = document.getElementById('alertContainer');
-            const alertDiv = document.createElement('div');
-            alertDiv.className = `alert alert-${type}`;
-            alertDiv.innerHTML = `
-                <i class="fas fa-${type === 'success' ? 'check-circle' : type === 'error' ? 'exclamation-circle' : 'info-circle'}"></i>
-                <span>${message}</span>
-            `;
-            alertContainer.innerHTML = '';
-            alertContainer.appendChild(alertDiv);
-        }
-
-        // Store original step texts
-        document.addEventListener('DOMContentLoaded', () => {
-            const steps = ['step2', 'step3', 'step4', 'step5'];
-            steps.forEach(stepId => {
-                const step = document.getElementById(stepId);
-                if (step) {
-                    step.dataset.originalText = step.innerText;
-                }
-            });
-        });
-    </script>
-</body>
-</html>
+                let errorMessage = error.message;
+                if (error.code === 'auth/email-already-in-use') {
+                    errorMessage = 'This email is already registered. Please sign in instead.';
+                } else if (error.code === 'auth/weak-password') {
+           
