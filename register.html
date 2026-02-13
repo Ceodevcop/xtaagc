@@ -1,227 +1,119 @@
-<!-- Add this script at the bottom, replace existing script -->
-<script type="module">
-    import { authService } from './firebase-config.js';
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0">
+    <title>Register | TAAGC Global - Company & Individual Registration</title>
     
-    // ===== NAVBAR TOGGLE =====
-    document.getElementById('menuBtn')?.addEventListener('click', function(){
-        document.getElementById('navbarMenu').classList.toggle('active');
-    });
+    <!-- SEO Meta -->
+    <meta name="description" content="Register with TAAGC Global as a company or individual. Access global trade, investment opportunities, and partnership programs.">
+    <meta name="keywords" content="TAAGC registration, company registration, individual registration, global trade, investment">
+    
+    <!-- Fonts & Icons -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Playfair+Display:wght@600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Master Stylesheets -->
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="register-style.css">
+    
+    <!-- Firebase -->
+    <script type="module" src="firebase-config.js"></script>
+</head>
+<body>
+    <!-- NAVBAR CONTAINER (reuse from home) -->
+    <div id="navbar-container"></div>
 
-    // ===== FORM STATE =====
-    let currentForm = 'company';
-    let individualType = 'shopper';
+    <!-- PAGE HEADER -->
+    <section class="register-header">
+        <div class="container">
+            <span class="page-badge"><i class="fas fa-building"></i> JOIN TAAGC GLOBAL</span>
+            <h1 class="page-title">Create Your <span class="text-gold">Account</span></h1>
+            <p class="page-subtitle">Choose your account type to get started with global opportunities</p>
+        </div>
+    </section>
 
-    // ===== SHOW FORM =====
-    window.showForm = function(type) {
-        currentForm = type;
-        document.querySelectorAll('.selector-btn').forEach(btn => btn.classList.remove('active'));
-        document.querySelector(`.selector-btn.${type}`).classList.add('active');
-        document.getElementById('registerSection').innerHTML = type === 'company' ? getCompanyForm() : getIndividualForm();
-    };
+    <!-- REGISTRATION TYPE SELECTOR -->
+    <section class="register-type-section">
+        <div class="container">
+            <div class="type-selector" id="typeSelector">
+                <button class="type-selector-btn active" data-type="company">
+                    <i class="fas fa-building"></i>
+                    <div>
+                        <h3>Company Registration</h3>
+                        <p>For registered businesses and organizations</p>
+                    </div>
+                </button>
+                <button class="type-selector-btn" data-type="individual">
+                    <i class="fas fa-user"></i>
+                    <div>
+                        <h3>Individual Registration</h3>
+                        <p>For shoppers, investors, and professionals</p>
+                    </div>
+                </button>
+            </div>
+        </div>
+    </section>
 
-    // ===== COMPANY REGISTRATION =====
-    window.registerCompany = async function() {
-        const btn = document.getElementById('compBtn');
-        btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Registering...';
-        btn.disabled = true;
-        
-        const email = document.getElementById('compEmail')?.value;
-        
-        // Check personal email
-        if(email.includes('@gmail') || email.includes('@yahoo') || email.includes('@hotmail') || email.includes('@outlook')) {
-            showAlert('Company email required. Personal emails not accepted.', 'error');
-            btn.innerHTML = '<i class="fas fa-building"></i> Register Company';
-            btn.disabled = false;
-            return;
-        }
-        
-        // Check passwords
-        const pass = document.getElementById('compPass')?.value;
-        const pass2 = document.getElementById('compPass2')?.value;
-        if(pass !== pass2) {
-            showAlert('Passwords do not match', 'error');
-            btn.innerHTML = '<i class="fas fa-building"></i> Register Company';
-            btn.disabled = false;
-            return;
-        }
-        
-        const result = await authService.registerCompany({
-            companyName: document.getElementById('compName').value,
-            registrationNumber: document.getElementById('compReg').value,
-            email: email,
-            phone: document.getElementById('compPhone').value,
-            country: document.getElementById('compCountry').value,
-            sector: document.getElementById('compSector').value,
-            contactPerson: document.getElementById('compContact').value,
-            jobTitle: document.getElementById('compTitle').value,
-            companySize: document.getElementById('compSize').value,
-            registrationType: 'company',
-            password: pass
-        });
-        
-        if(result.success) {
-            showAlert('Registration successful! Please verify your email.', 'success');
-            setTimeout(() => window.location.href = 'company-dashboard.html', 3000);
-        } else {
-            showAlert(result.error, 'error');
-            btn.innerHTML = '<i class="fas fa-building"></i> Register Company';
-            btn.disabled = false;
-        }
-    };
+    <!-- REGISTRATION FORM CONTAINER -->
+    <section class="register-form-section">
+        <div class="container">
+            <div class="form-container" id="formContainer">
+                <!-- Forms will be dynamically injected here -->
+                <div class="loading-state">
+                    <div class="loader"></div>
+                    <p>Loading registration form...</p>
+                </div>
+            </div>
+        </div>
+    </section>
 
-    // ===== INDIVIDUAL REGISTRATION =====
-    window.registerIndividual = async function() {
-        const btn = document.getElementById('indBtn');
-        btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Creating Account...';
-        btn.disabled = true;
-        
-        const pass = document.getElementById('indPass')?.value;
-        const pass2 = document.getElementById('indPass2')?.value;
-        
-        if(pass !== pass2) {
-            showAlert('Passwords do not match', 'error');
-            btn.innerHTML = `<i class="fas ${getTypeIcon()}"></i> Create ${getTypeLabel()} Account`;
-            btn.disabled = false;
-            return;
-        }
-        
-        const result = await authService.registerIndividual({
-            fullName: document.getElementById('indName').value,
-            email: document.getElementById('indEmail').value,
-            phone: document.getElementById('indPhone').value,
-            country: document.getElementById('indCountry').value,
-            accountType: individualType,
-            idType: document.getElementById('indIdType').value,
-            idNumber: document.getElementById('indIdNumber').value,
-            dob: document.getElementById('indDob').value,
-            password: pass
-        });
-        
-        if(result.success) {
-            showAlert('Registration successful! Redirecting...', 'success');
+    <!-- BENEFITS SECTION -->
+    <section class="benefits-section">
+        <div class="container">
+            <div class="section-header">
+                <span class="section-subtitle">WHY REGISTER</span>
+                <h2 class="section-title">Benefits of <span class="text-gold">Membership</span></h2>
+            </div>
             
-            // Redirect to correct dashboard
-            setTimeout(() => {
-                if(individualType === 'shopper') window.location.href = 'shopper-dashboard.html';
-                else if(individualType === 'investor') window.location.href = 'investor-dashboard.html';
-                else if(individualType === 'professional') window.location.href = 'professional-dashboard.html';
-            }, 2000);
-        } else {
-            showAlert(result.error, 'error');
-            btn.innerHTML = `<i class="fas ${getTypeIcon()}"></i> Create ${getTypeLabel()} Account`;
-            btn.disabled = false;
-        }
-    };
+            <div class="benefits-grid" id="benefitsGrid">
+                <!-- Benefits loaded dynamically -->
+            </div>
+        </div>
+    </section>
 
-    // ===== LOGIN =====
-    window.loginUser = async function() {
-        const btn = document.getElementById('loginBtn');
-        btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Logging in...';
-        btn.disabled = true;
-        
-        const email = document.getElementById('loginEmail').value;
-        const password = document.getElementById('loginPassword').value;
-        
-        const result = await authService.login(email, password);
-        
-        if(result.success) {
-            showAlert('Login successful! Redirecting...', 'success');
+    <!-- FAQ SECTION -->
+    <section class="faq-section">
+        <div class="container">
+            <div class="section-header">
+                <span class="section-subtitle">QUESTIONS?</span>
+                <h2 class="section-title">Frequently Asked <span class="text-gold">Questions</span></h2>
+            </div>
             
-            // Get user profile to determine dashboard
-            const { sharedService } = await import('./firebase-config.js');
-            const profile = await sharedService.getUserProfile(result.user.uid);
-            
-            setTimeout(() => {
-                if(profile.success) {
-                    if(profile.type === 'individual') {
-                        if(profile.user.accountType === 'shopper') window.location.href = 'shopper-dashboard.html';
-                        else if(profile.user.accountType === 'investor') window.location.href = 'investor-dashboard.html';
-                        else if(profile.user.accountType === 'professional') window.location.href = 'professional-dashboard.html';
-                    } else {
-                        window.location.href = 'company-dashboard.html';
-                    }
-                } else {
-                    window.location.href = 'shopper-dashboard.html';
-                }
-            }, 2000);
-        } else {
-            showAlert(result.error, 'error');
-            btn.innerHTML = '<span>Login to Dashboard</span>';
-            btn.disabled = false;
-        }
-    };
+            <div class="faq-grid" id="faqGrid"></div>
+        </div>
+    </section>
 
-    // ===== FORGOT PASSWORD =====
-    window.forgotPassword = async function(e) {
-        e.preventDefault();
-        const email = prompt('Enter your email address:');
-        if(email) {
-            const result = await authService.resetPassword(email);
-            showAlert(result.message || result.error, result.success ? 'success' : 'error');
-        }
-    };
+    <!-- FOOTER CONTAINER -->
+    <div id="footer-container"></div>
 
-    // ===== LOGOUT =====
-    window.logout = async function() {
-        const result = await authService.logout();
-        if(result.success) window.location.href = 'index.html';
-    };
+    <!-- BACK TO TOP BUTTON -->
+    <button id="backToTop" class="back-to-top" aria-label="Back to top">
+        <i class="fas fa-arrow-up"></i>
+    </button>
 
-    // ===== ALERT SYSTEM =====
-    function showAlert(message, type) {
-        const alertBox = document.getElementById('loginAlert');
-        alertBox.className = `alert alert-${type}`;
-        alertBox.innerHTML = `<i class="fas fa-${type === 'success' ? 'check-circle' : 'exclamation-circle'}"></i> ${message}`;
-        alertBox.style.display = 'flex';
-        setTimeout(() => alertBox.style.display = 'none', 4000);
-    }
-
-    // ===== HELPER FUNCTIONS =====
-    window.setIndividualType = function(type) {
-        individualType = type;
-        document.querySelectorAll('#individualTypeGrid .type-card').forEach(card => card.classList.remove('active'));
-        event.currentTarget.classList.add('active');
-        document.getElementById('registerSection').innerHTML = getIndividualForm();
-    };
-
-    function getTypeLabel() {
-        const types = {'shopper':'Shopper','investor':'Investor','professional':'Professional'};
-        return types[individualType] || 'Shopper';
-    }
-    function getTypeIcon() {
-        const icons = {'shopper':'fa-shopping-cart','investor':'fa-chart-line','professional':'fa-briefcase'};
-        return icons[individualType] || 'fa-shopping-cart';
-    }
-    function getTypeButtonClass() {
-        const classes = {'shopper':'btn-shopper','investor':'btn-investor','professional':'btn-professional'};
-        return classes[individualType] || 'btn-shopper';
-    }
-    function getTypeColor() {
-        const colors = {'shopper':'#2d5a4a','investor':'#5a3a5a','professional':'#3a5a6b'};
-        return colors[individualType] || '#2d5a4a';
-    }
-    function getTypeDescription() {
-        const desc = {
-            'shopper':'Shop from global retailers, track orders, get instant quotes.',
-            'investor':'Access vetted investment opportunities, track portfolio performance.',
-            'professional':'Find consulting projects, submit bids, manage contracts.'
-        };
-        return desc[individualType] || desc.shopper;
-    }
-    function getTypePreview() {
-        const preview = {
-            'shopper':'Track orders, get quotes, shop from Amazon, eBay, and more.',
-            'investor':'Monitor investments, view ROI, explore new opportunities.',
-            'professional':'Manage projects, track bids, grow your consulting business.'
-        };
-        return preview[individualType] || preview.shopper;
-    }
-
-    // ===== FORM TEMPLATES =====
-    function getCompanyForm() { /* ... your existing company form HTML ... */ }
-    function getIndividualForm() { /* ... your existing individual form HTML ... */ }
-
-    // ===== INIT =====
-    document.getElementById('registerSection').innerHTML = getCompanyForm();
-    if(window.location.hash === '#login') setTimeout(() => document.querySelector('.auth-card').scrollIntoView({behavior:'smooth'}), 100);
-</script>
+    <!-- SCRIPTS -->
+    <script type="module" src="components/notifications.js"></script>
+    <script type="module" src="components/modal.js"></script>
+    <script type="module" src="components/navbar.js"></script>
+    <script type="module" src="sections/footer.js"></script>
+    
+    <!-- Register Modules -->
+    <script type="module" src="register/register-validation.js"></script>
+    <script type="module" src="register/register-ui.js"></script>
+    <script type="module" src="register/register-company.js"></script>
+    <script type="module" src="register/register-individual.js"></script>
+    <script type="module" src="register/register-success.js"></script>
+    <script type="module" src="register/register-core.js"></script>
+</body>
+</html>
