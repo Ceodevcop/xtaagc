@@ -50,6 +50,7 @@
             font-family:'Playfair Display',serif;
         }
         .logo-text span{color:#c19a6b;}
+        
         h1{font-size:28px;margin-bottom:8px;color:#0a2540;}
         .admin-badge{
             display:inline-block;
@@ -61,33 +62,52 @@
             font-weight:600;
             margin-bottom:24px;
         }
-        .admin-card{
+        
+        .form-section{
             background:#f8fafc;
             border-radius:16px;
             padding:24px;
             margin:30px 0;
             border-left:4px solid #c19a6b;
         }
-        .admin-row{
-            display:flex;
-            align-items:center;
-            gap:16px;
-            padding:12px 0;
-            border-bottom:1px solid #e2e8f0;
+        
+        .form-group{
+            margin-bottom:20px;
         }
-        .admin-label{
+        .form-group label{
+            display:block;
+            margin-bottom:8px;
             font-weight:600;
             color:#0a2540;
-            width:100px;
         }
-        .admin-value{
-            color:#1e293b;
-            background:white;
-            padding:6px 12px;
-            border-radius:8px;
-            border:1px solid #e2e8f0;
-            font-family:monospace;
+        .form-group label i{
+            color:#c19a6b;
+            margin-right:8px;
         }
+        .input-wrapper{
+            position:relative;
+        }
+        .input-icon{
+            position:absolute;
+            left:16px;
+            top:50%;
+            transform:translateY(-50%);
+            color:#a0aec0;
+        }
+        input, select{
+            width:100%;
+            padding:14px 16px 14px 48px;
+            border:2px solid #e2e8f0;
+            border-radius:12px;
+            font-size:15px;
+            transition:0.3s;
+        }
+        input:focus, select:focus{
+            border-color:#c19a6b;
+            outline:none;
+            box-shadow:0 0 0 4px rgba(193,154,107,0.1);
+        }
+        
         .btn{
             display:flex;
             align-items:center;
@@ -108,8 +128,13 @@
             background:#b38b5e;
             transform:translateY(-2px);
         }
-        .btn-primary{background:#0a2540;}
-        .btn-primary:hover{background:#1a3a4f;}
+        .btn-primary{
+            background:#0a2540;
+        }
+        .btn-primary:hover{
+            background:#1a3a4f;
+        }
+        
         .alert{
             padding:16px 20px;
             border-radius:12px;
@@ -128,20 +153,29 @@
             border-left:4px solid #e53e3e;
             color:#742a2a;
         }
+        .alert-info{
+            background:#ebf8ff;
+            border-left:4px solid #3182ce;
+            color:#2c5282;
+        }
+        
         .hidden{display:none;}
+        
         .credentials-box{
             background:#0a2540;
             color:white;
-            padding:20px;
-            border-radius:12px;
+            padding:24px;
+            border-radius:16px;
             margin:20px 0;
         }
         .credential-row{
             display:flex;
             justify-content:space-between;
-            padding:8px 0;
+            padding:10px 0;
             border-bottom:1px solid rgba(255,255,255,0.1);
         }
+        .credential-row:last-child{border-bottom:none;}
+        
         .loading{
             display:inline-block;
             width:20px;
@@ -152,6 +186,14 @@
             animation:spin 1s linear infinite;
         }
         @keyframes spin{to{transform:rotate(360deg);}}
+        
+        .password-strength{
+            margin-top:8px;
+            font-size:12px;
+        }
+        .strength-weak{color:#e53e3e;}
+        .strength-medium{color:#dd6b20;}
+        .strength-strong{color:#2e7d5e;}
     </style>
 </head>
 <body>
@@ -165,68 +207,99 @@
             <i class="fas fa-crown"></i> ADMIN SETUP
         </span>
 
-        <h1>Ahmad Hamza</h1>
-        <p style="color:#64748b; margin-bottom:20px;">Set up Super Administrator with full page creation privileges.</p>
+        <h1>Create Administrator</h1>
+        <p style="color:#64748b; margin-bottom:20px;">Enter the credentials for the new administrator account.</p>
 
-        <div class="admin-card">
-            <div style="display:flex; align-items:center; gap:12px; margin-bottom:16px;">
+        <!-- Admin Setup Form -->
+        <div class="form-section">
+            <div style="display:flex; align-items:center; gap:12px; margin-bottom:20px;">
                 <i class="fas fa-user-shield" style="font-size:24px; color:#c19a6b;"></i>
-                <h2 style="font-size:20px; color:#0a2540; margin:0;">Super Administrator</h2>
+                <h2 style="font-size:20px; color:#0a2540; margin:0;">Administrator Details</h2>
             </div>
-            <div class="admin-row">
-                <span class="admin-label">Name:</span>
-                <span class="admin-value">Ahmad Hamza</span>
-            </div>
-            <div class="admin-row">
-                <span class="admin-label">Email:</span>
-                <span class="admin-value">priahmz@gmail.com</span>
-            </div>
-            <div class="admin-row">
-                <span class="admin-label">Password:</span>
-                <span class="admin-value">Admin/Taagc/001</span>
-            </div>
+            
+            <form id="adminSetupForm">
+                <div class="form-group">
+                    <label><i class="fas fa-user"></i> Full Name</label>
+                    <div class="input-wrapper">
+                        <i class="fas fa-user input-icon"></i>
+                        <input type="text" id="adminName" placeholder="e.g. Ahmad Hamza" required>
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label><i class="fas fa-envelope"></i> Email Address</label>
+                    <div class="input-wrapper">
+                        <i class="fas fa-envelope input-icon"></i>
+                        <input type="email" id="adminEmail" placeholder="admin@taagc.com" required>
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label><i class="fas fa-lock"></i> Password</label>
+                    <div class="input-wrapper">
+                        <i class="fas fa-lock input-icon"></i>
+                        <input type="password" id="adminPassword" placeholder="••••••••" minlength="6" required>
+                    </div>
+                    <div id="passwordStrength" class="password-strength"></div>
+                </div>
+                
+                <div class="form-group">
+                    <label><i class="fas fa-check-circle"></i> Confirm Password</label>
+                    <div class="input-wrapper">
+                        <i class="fas fa-check input-icon"></i>
+                        <input type="password" id="adminConfirmPassword" placeholder="••••••••" required>
+                    </div>
+                    <div id="passwordMatch" class="password-strength"></div>
+                </div>
+                
+                <div class="form-group">
+                    <label><i class="fas fa-tag"></i> Admin Role</label>
+                    <div class="input-wrapper">
+                        <i class="fas fa-shield-alt input-icon"></i>
+                        <select id="adminRole">
+                            <option value="super-admin">Super Administrator (Full Access)</option>
+                            <option value="admin">Administrator (Page Management)</option>
+                            <option value="editor">Editor (Create/Edit Pages)</option>
+                        </select>
+                    </div>
+                </div>
+            </form>
         </div>
 
+        <!-- Alert Container -->
         <div id="alertContainer"></div>
 
-        <div id="setupControls">
+        <!-- Action Buttons -->
+        <div id="setupActions">
             <button onclick="createAdmin()" class="btn" id="setupBtn">
-                <i class="fas fa-shield-alt"></i> Create Admin Account
+                <i class="fas fa-shield-alt"></i> Create Administrator
             </button>
         </div>
 
+        <!-- Success View -->
         <div id="successView" class="hidden">
             <div style="text-align:center; padding:20px;">
                 <div style="width:80px; height:80px; background:#2e7d5e; border-radius:50%; display:flex; align-items:center; justify-content:center; margin:0 auto 20px; color:white; font-size:40px;">
                     <i class="fas fa-check-circle"></i>
                 </div>
-                <h2 style="color:#2e7d5e; margin-bottom:16px;">Admin Setup Complete!</h2>
+                <h2 style="color:#2e7d5e; margin-bottom:16px;">Administrator Created!</h2>
                 
-                <div class="credentials-box">
-                    <h3 style="color:white; margin-bottom:16px;">Admin Credentials</h3>
-                    <div class="credential-row">
-                        <span>Email:</span>
-                        <strong>priahmz@gmail.com</strong>
-                    </div>
-                    <div class="credential-row">
-                        <span>Password:</span>
-                        <strong>Admin/Taagc/001</strong>
-                    </div>
-                    <div class="credential-row" style="border-bottom:none;">
-                        <span>Role:</span>
-                        <strong style="color:#c19a6b;">Super Administrator</strong>
-                    </div>
+                <div class="credentials-box" id="successCredentials">
+                    <!-- Dynamically filled -->
                 </div>
                 
-                <button onclick="window.location.href='/admin/login.html'" class="btn" style="background:#0a2540;">
-                    <i class="fas fa-sign-in-alt"></i> Login to Admin Panel
+                <button onclick="window.location.href='/admin/login.html'" class="btn" style="background:#0a2540; margin-top:20px;">
+                    <i class="fas fa-sign-in-alt"></i> Go to Admin Login
+                </button>
+                
+                <button onclick="resetForm()" class="btn" style="background:#64748b; margin-top:10px;">
+                    <i class="fas fa-plus"></i> Create Another Admin
                 </button>
             </div>
         </div>
     </div>
 
-    <script>
-        // Firebase SDKs
+    <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
         import { 
             getAuth, 
@@ -239,7 +312,7 @@
             setDoc 
         } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
-        // Firebase Config
+        // Firebase Configuration
         const firebaseConfig = {
             apiKey: "AIzaSyAI1MrcP977UgRLQoePxl64JOSyj9v4WpI",
             authDomain: "xtaagc.firebaseapp.com",
@@ -254,95 +327,197 @@
         const auth = getAuth(app);
         const db = getFirestore(app);
 
-        // Admin credentials
-        const ADMIN_EMAIL = "priahmz@gmail.com";
-        const ADMIN_PASSWORD = "Admin/Taagc/001";
-        const ADMIN_NAME = "Ahmad Hamza";
+        // ===== PASSWORD STRENGTH CHECKER =====
+        function checkPasswordStrength(password) {
+            let strength = 0;
+            if (password.length >= 8) strength++;
+            if (password.match(/[a-z]+/)) strength++;
+            if (password.match(/[A-Z]+/)) strength++;
+            if (password.match(/[0-9]+/)) strength++;
+            if (password.match(/[$@#&!]+/)) strength++;
+            
+            if (strength <= 2) return { level: 'Weak', color: '#e53e3e' };
+            if (strength <= 4) return { level: 'Medium', color: '#dd6b20' };
+            return { level: 'Strong', color: '#2e7d5e' };
+        }
 
-        // Show alert
+        // ===== PASSWORD STRENGTH EVENT LISTENER =====
+        document.getElementById('adminPassword')?.addEventListener('input', function() {
+            const password = this.value;
+            const strength = checkPasswordStrength(password);
+            const strengthDiv = document.getElementById('passwordStrength');
+            
+            if (password.length === 0) {
+                strengthDiv.innerHTML = '';
+            } else {
+                strengthDiv.innerHTML = `Password strength: <span style="color:${strength.color}; font-weight:600;">${strength.level}</span>`;
+                strengthDiv.className = `password-strength strength-${strength.level.toLowerCase()}`;
+            }
+        });
+
+        // ===== PASSWORD MATCH CHECKER =====
+        document.getElementById('adminConfirmPassword')?.addEventListener('input', function() {
+            const password = document.getElementById('adminPassword').value;
+            const confirm = this.value;
+            const matchDiv = document.getElementById('passwordMatch');
+            
+            if (confirm.length === 0) {
+                matchDiv.innerHTML = '';
+            } else if (password === confirm) {
+                matchDiv.innerHTML = '<span style="color:#2e7d5e;"><i class="fas fa-check-circle"></i> Passwords match</span>';
+            } else {
+                matchDiv.innerHTML = '<span style="color:#e53e3e;"><i class="fas fa-exclamation-circle"></i> Passwords do not match</span>';
+            }
+        });
+
+        // ===== SHOW ALERT =====
         function showAlert(message, type) {
             const container = document.getElementById('alertContainer');
             container.innerHTML = `
                 <div class="alert alert-${type}">
-                    <i class="fas fa-${type === 'success' ? 'check-circle' : 'exclamation-circle'}"></i>
+                    <i class="fas fa-${type === 'success' ? 'check-circle' : type === 'error' ? 'exclamation-circle' : 'info-circle'}"></i>
                     <span>${message}</span>
                 </div>
             `;
         }
 
-        // Create admin account - DIRECT APPROACH
+        // ===== CLEAR ALERT =====
+        function clearAlert() {
+            document.getElementById('alertContainer').innerHTML = '';
+        }
+
+        // ===== VALIDATE FORM =====
+        function validateForm() {
+            const name = document.getElementById('adminName').value.trim();
+            const email = document.getElementById('adminEmail').value.trim();
+            const password = document.getElementById('adminPassword').value;
+            const confirm = document.getElementById('adminConfirmPassword').value;
+            
+            if (!name || !email || !password || !confirm) {
+                showAlert('Please fill in all fields', 'error');
+                return false;
+            }
+            
+            if (password.length < 6) {
+                showAlert('Password must be at least 6 characters', 'error');
+                return false;
+            }
+            
+            if (password !== confirm) {
+                showAlert('Passwords do not match', 'error');
+                return false;
+            }
+            
+            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            if (!emailRegex.test(email)) {
+                showAlert('Please enter a valid email address', 'error');
+                return false;
+            }
+            
+            return true;
+        }
+
+        // ===== CREATE ADMIN ACCOUNT =====
         window.createAdmin = async function() {
+            clearAlert();
+            
+            if (!validateForm()) {
+                return;
+            }
+            
             const btn = document.getElementById('setupBtn');
-            btn.innerHTML = '<span class="loading"></span> Creating admin...';
+            btn.innerHTML = '<span class="loading"></span> Creating Administrator...';
             btn.disabled = true;
+            
+            const adminName = document.getElementById('adminName').value.trim();
+            const adminEmail = document.getElementById('adminEmail').value.trim();
+            const adminPassword = document.getElementById('adminPassword').value;
+            const adminRole = document.getElementById('adminRole').value;
 
             try {
                 // STEP 1: Try to create user
                 let user;
                 try {
-                    const userCredential = await createUserWithEmailAndPassword(auth, ADMIN_EMAIL, ADMIN_PASSWORD);
+                    const userCredential = await createUserWithEmailAndPassword(auth, adminEmail, adminPassword);
                     user = userCredential.user;
                     console.log('✅ Admin user created:', user.uid);
                 } catch (createError) {
                     if (createError.code === 'auth/email-already-in-use') {
-                        // User exists - sign in
-                        const userCredential = await signInWithEmailAndPassword(auth, ADMIN_EMAIL, ADMIN_PASSWORD);
-                        user = userCredential.user;
-                        console.log('✅ Admin user exists, signed in:', user.uid);
+                        // User exists - try to sign in
+                        try {
+                            const userCredential = await signInWithEmailAndPassword(auth, adminEmail, adminPassword);
+                            user = userCredential.user;
+                            console.log('✅ Admin user exists, signed in:', user.uid);
+                        } catch (signInError) {
+                            showAlert('This email is already registered but the password is incorrect.', 'error');
+                            btn.innerHTML = '<i class="fas fa-shield-alt"></i> Create Administrator';
+                            btn.disabled = false;
+                            return;
+                        }
                     } else {
                         throw createError;
                     }
                 }
 
-                // STEP 2: Create admin document in Firestore
+                // STEP 2: Determine role permissions
+                let permissions = [];
+                let roleName = '';
+                
+                switch(adminRole) {
+                    case 'super-admin':
+                        roleName = 'Super Administrator';
+                        permissions = ['create_pages', 'edit_pages', 'delete_pages', 'manage_users', 'manage_admins', 'view_analytics', 'settings'];
+                        break;
+                    case 'admin':
+                        roleName = 'Administrator';
+                        permissions = ['create_pages', 'edit_pages', 'delete_pages', 'view_analytics'];
+                        break;
+                    case 'editor':
+                        roleName = 'Editor';
+                        permissions = ['create_pages', 'edit_pages'];
+                        break;
+                }
+
+                // STEP 3: Create admin document in Firestore
                 await setDoc(doc(db, "admins", user.uid), {
                     uid: user.uid,
-                    name: ADMIN_NAME,
-                    email: ADMIN_EMAIL,
-                    role: 'super-admin',
+                    name: adminName,
+                    email: adminEmail,
+                    role: adminRole,
+                    roleName: roleName,
+                    permissions: permissions,
                     isAdmin: true,
-                    permissions: ['create_pages', 'edit_pages', 'delete_pages', 'manage_users'],
+                    createdAt: new Date().toISOString(),
+                    updatedAt: new Date().toISOString(),
+                    createdBy: 'setup',
+                    status: 'active'
+                });
+
+                // STEP 4: Create user document
+                await setDoc(doc(db, "users", user.uid), {
+                    uid: user.uid,
+                    name: adminName,
+                    email: adminEmail,
+                    role: 'admin',
+                    userType: 'admin',
                     createdAt: new Date().toISOString(),
                     updatedAt: new Date().toISOString()
                 });
 
-                // STEP 3: Create user document
-                await setDoc(doc(db, "users", user.uid), {
-                    uid: user.uid,
-                    name: ADMIN_NAME,
-                    email: ADMIN_EMAIL,
-                    role: 'admin',
-                    userType: 'admin',
-                    createdAt: new Date().toISOString()
-                });
-
-                // STEP 4: Force token refresh
+                // STEP 5: Force token refresh
                 await user.getIdToken(true);
                 
                 // SUCCESS!
-                showAlert('✅ Admin setup complete! Ahmad Hamza is now Super Administrator.', 'success');
+                showAlert(`✅ ${roleName} created successfully!`, 'success');
                 
-                document.getElementById('setupControls').classList.add('hidden');
-                document.getElementById('successView').classList.remove('hidden');
-
-            } catch (error) {
-                console.error('Setup error:', error);
-                
-                let errorMessage = error.message;
-                if (error.code === 'auth/weak-password') {
-                    errorMessage = 'Password should be at least 6 characters.';
-                } else if (error.code === 'auth/invalid-email') {
-                    errorMessage = 'Invalid email address.';
-                } else if (error.code === 'auth/network-request-failed') {
-                    errorMessage = 'Network error. Check your connection.';
-                }
-                
-                showAlert('Error: ' + errorMessage, 'error');
-                
-                btn.innerHTML = '<i class="fas fa-shield-alt"></i> Retry Setup';
-                btn.disabled = false;
-            }
-        };
-    </script>
-</body>
-</html>
+                // Show success credentials
+                document.getElementById('successCredentials').innerHTML = `
+                    <h3 style="color:white; margin-bottom:16px;">Administrator Credentials</h3>
+                    <div class="credential-row">
+                        <span>Name:</span>
+                        <strong>${adminName}</strong>
+                    </div>
+                    <div class="credential-row">
+                        <span>Email:</span>
+                        <strong>${adminEmail}</strong>
+                    <
