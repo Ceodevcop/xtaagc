@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0">
+    
+    <!-- SEO Meta -->
+    <title id="pageTitle">TAAGC Global | Triple A AHAL Global Concept</title>
+    <meta name="description" id="pageDescription" content="Institutional-grade solutions in Agriculture, Grain Processing, ICT, General Contracts, and General Merchandise.">
+    <meta name="keywords" content="TAAGC, global trade, agriculture, grain processing, ICT, investments">
+    <meta name="author" content="Ahmad Hamza, CEO">
+    
+    <!-- Open Graph -->
+    <meta property="og:title" content="TAAGC Global">
+    <meta property="og:description" content="Global Excellence Across Five Core Sectors">
+    <meta property="og:image" content="/assets/og-image.jpg">
+    <meta property="og:url" content="https://taagc.website">
+    
+    <!-- Favicon -->
+    <link rel="icon" type="image/png" href="/favicon.png">
+    
+    <!-- Fonts & Icons -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Playfair+Display:wght@600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Master Stylesheet -->
+    <link rel="stylesheet" href="style.css">
+    
+    <!-- Firebase -->
+    <script type="module" src="firebase-config.js"></script>
+</head>
+<body>
+    <!-- NAVBAR CONTAINER -->
+    <div id="navbar-container"></div>
+
+    <!-- AD BANNER TOP -->
+    <div id="ad-top" class="ad-container ad-top"></div>
+
+    <!-- MAIN CONTENT -->
+    <main id="main-content">
+        <!-- All sections will be injected here -->
+    </main>
+
+    <!-- AD BANNER BOTTOM -->
+    <div id="ad-bottom" class="ad-container ad-bottom"></div>
+
+    <!-- FOOTER CONTAINER -->
+    <div id="footer-container"></div>
+
+    <!-- MODAL CONTAINER (for popup ads) -->
+    <div id="modal-container"></div>
+
+    <!-- BACK TO TOP BUTTON -->
+    <button id="backToTop" class="back-to-top" aria-label="Back to top">
+        <i class="fas fa-arrow-up"></i>
+    </button>
+
+    <!-- SCRIPTS - Order matters -->
+    <script type="module" src="components/notifications.js"></script>
+    <script type="module" src="components/modal.js"></script>
+    <script type="module" src="components/carousel.js"></script>
+    <script type="module" src="components/navbar.js"></script>
+    
+    <!-- Ad Configuration -->
+    <script type="module" src="ads/ads-config.js"></script>
+    <script type="module" src="ads/banner-1.js"></script>
+    <script type="module" src="ads/banner-2.js"></script>
+    <script type="module" src="ads/banner-3.js"></script>
+    <script type="module" src="ads/banner-4.js"></script>
+    
+    <!-- Sections -->
+    <script type="module" src="sections/hero.js"></script>
+    <script type="module" src="sections/stats.js"></script>
+    <script type="module" src="sections/sectors.js"></script>
+    <script type="module" src="sections/approach.js"></script>
+    <script type="module" src="sections/testimonials.js"></script>
+    <script type="module" src="sections/ceo.js"></script>
+    <script type="module" src="sections/contact.js"></script>
+    <script type="module" src="sections/cta.js"></script>
+    <script type="module" src="sections/footer.js"></script>
+    
+    <!-- Main Application Controller -->
+    <script type="module" src="app.js"></script>
+</body>
+</html>
