@@ -284,4 +284,175 @@ export const STAFF_DATA = [
         tier: 4,
         tierName: 'Tier 4 • Blue',
         bio: 'Six Sigma Green Belt. Leads team of 25 operations staff across procurement and customer service.',
-        image: 'https://images.unsplash.com/photo-157349701
+        image: 'https://images.unsplash.com/photo-1573497019940-1c28c88b4f3e?w=400&h=400&fit=crop',
+        initials: 'AM',
+        email: 'a.mohammed@taagc.com',
+        location: 'Kano, Nigeria',
+        since: 2022,
+        team: 25,
+        tags: ['six sigma', 'operations', 'supervisor']
+    },
+    // RANK 16: Senior Specialist Finance
+    {
+        id: 'rank-16',
+        rank: 16,
+        name: 'David Ochieng',
+        role: 'Senior Specialist, Finance',
+        category: 'support',
+        tier: 4,
+        tierName: 'Tier 4 • Blue',
+        bio: 'CPA, ACCA. Manages accounts payable, payroll, and financial reporting for group companies.',
+        image: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=400&h=400&fit=crop',
+        initials: 'DO',
+        email: 'd.ochieng@taagc.com',
+        location: 'Nairobi, Kenya',
+        since: 2020,
+        certifications: 'CPA, ACCA',
+        tags: ['finance', 'cpa', 'accounting']
+    },
+    // RANK 17: Specialist HR
+    {
+        id: 'rank-17',
+        rank: 17,
+        name: 'Ngozi Okonkwo',
+        role: 'Specialist, Human Resources',
+        category: 'support',
+        tier: 4,
+        tierName: 'Tier 4 • Blue',
+        bio: 'CIPM certified. Leads recruitment, training, and employee relations for 127 staff across 15 countries.',
+        image: 'https://images.unsplash.com/photo-1580489944761-15a19d654956?w=400&h=400&fit=crop',
+        initials: 'NO',
+        email: 'n.okonkwo@taagc.com',
+        location: 'Lagos, Nigeria',
+        since: 2021,
+        staff: 127,
+        tags: ['hr', 'recruitment', 'cipm']
+    },
+    // RANK 18: Junior Specialist IT
+    {
+        id: 'rank-18',
+        rank: 18,
+        name: 'Kwesi Appiah',
+        role: 'Junior Specialist, IT Support',
+        category: 'support',
+        tier: 4,
+        tierName: 'Tier 4 • Blue',
+        bio: 'CompTIA A+, Network+. Provides technical support for 200+ users across global offices.',
+        image: 'https://images.unsplash.com/photo-1566492031773-4f4e44671857?w=400&h=400&fit=crop',
+        initials: 'KA',
+        email: 'k.appiah@taagc.com',
+        location: 'Accra, Ghana',
+        since: 2023,
+        certifications: 'CompTIA A+',
+        tags: ['it', 'support', 'helpdesk']
+    },
+    // RANK 19: Senior Associate Procurement
+    {
+        id: 'rank-19',
+        rank: 19,
+        name: 'Fatima Bello',
+        role: 'Senior Associate, Procurement',
+        category: 'support',
+        tier: 5,
+        tierName: 'Tier 5 • Entry',
+        bio: 'CIPS certified. Manages supplier relationships and purchase orders for general merchandise division.',
+        image: 'https://images.unsplash.com/photo-1573497019418-b400bb3ab074?w=400&h=400&fit=crop',
+        initials: 'FB',
+        email: 'f.bello@taagc.com',
+        location: 'Kano, Nigeria',
+        since: 2022,
+        tags: ['procurement', 'cips', 'supplier']
+    },
+    // RANK 20: Associate Logistics
+    {
+        id: 'rank-20',
+        rank: 20,
+        name: 'Emmanuel Adebayo',
+        role: 'Associate, Logistics',
+        category: 'support',
+        tier: 5,
+        tierName: 'Tier 5 • Entry',
+        bio: 'Supply chain coordinator. Manages shipment tracking, customs documentation, and last-mile delivery.',
+        image: 'https://images.unsplash.com/photo-1595152772835-219674b2a8a6?w=400&h=400&fit=crop',
+        initials: 'EA',
+        email: 'e.adebayo@taagc.com',
+        location: 'Lagos, Nigeria',
+        since: 2023,
+        tags: ['logistics', 'shipping', 'customs']
+    },
+    // RANK 21: Junior Associate Marketing
+    {
+        id: 'rank-21',
+        rank: 21,
+        name: 'Amina Yusuf',
+        role: 'Junior Associate, Marketing',
+        category: 'support',
+        tier: 5,
+        tierName: 'Tier 5 • Entry',
+        bio: 'Digital marketing specialist. Manages social media, content creation, and corporate communications.',
+        image: 'https://images.unsplash.com/photo-1573496799652-408c2ac9fe98?w=400&h=400&fit=crop',
+        initials: 'AY',
+        email: 'a.yusuf@taagc.com',
+        location: 'Abuja, Nigeria',
+        since: 2024,
+        tags: ['marketing', 'social media', 'content']
+    },
+    // RANK 22: Entry Level
+    {
+        id: 'rank-22',
+        rank: 22,
+        name: 'Now Hiring',
+        role: 'Entry Level • Graduate Trainee',
+        category: 'support',
+        tier: 5,
+        tierName: 'Tier 5 • Entry',
+        bio: 'Launch your career with TAAGC Global. Rotational program across five core sectors. Mentorship and rapid advancement.',
+        image: 'https://images.unsplash.com/photo-1521791136064-7986c2920216?w=400&h=400&fit=crop',
+        initials: 'NH',
+        email: 'careers@taagc.com',
+        hiring: true,
+        hiringNote: '2 positions available',
+        tags: ['hiring', 'entry-level', 'trainee'],
+        featured: false
+    }
+];
+
+// Get staff from Firestore (if using backend)
+export async function fetchStaffFromFirestore() {
+    try {
+        const staffRef = collection(db, "staff");
+        const q = query(staffRef, orderBy("rank", "asc"));
+        const snapshot = await getDocs(q);
+        
+        if (!snapshot.empty) {
+            const firestoreStaff = [];
+            snapshot.forEach(doc => {
+                firestoreStaff.push({ id: doc.id, ...doc.data() });
+            });
+            return firestoreStaff;
+        }
+        return STAFF_DATA; // Fallback to static data
+    } catch (error) {
+        console.warn('Error fetching from Firestore, using static data:', error);
+        return STAFF_DATA;
+    }
+}
+
+// Stats calculator
+export function getStaffStats(staff) {
+    return {
+        total: staff.length,
+        executive: staff.filter(s => s.category === 'executive').length,
+        operations: staff.filter(s => s.category === 'operations').length,
+        support: staff.filter(s => s.category === 'support').length,
+        hiring: staff.filter(s => s.hiring).length,
+        featured: staff.filter(s => s.featured).length,
+        tiers: {
+            tier1: staff.filter(s => s.tier === 1).length,
+            tier2: staff.filter(s => s.tier === 2).length,
+            tier3: staff.filter(s => s.tier === 3).length,
+            tier4: staff.filter(s => s.tier === 4).length,
+            tier5: staff.filter(s => s.tier === 5).length
+        }
+    };
+        }
