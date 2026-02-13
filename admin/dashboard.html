@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard | TAAGC Global</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="css/admin.css">
+</head>
+<body>
+    <div class="dashboard">
+        <!-- SIDEBAR -->
+        <div class="sidebar">
+            <div class="sidebar-logo">
+                <div class="logo-icon">A</div>
+                <div class="logo-text"><span>TAAGC</span> ADMIN</div>
+            </div>
+            
+            <div class="admin-profile" id="adminProfile">
+                <div style="display:flex; align-items:center; gap:12px;">
+                    <div style="width:48px; height:48px; background:#c19a6b; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:20px; font-weight:700;" id="adminInitials">AH</div>
+                    <div>
+                        <div id="adminName" style="font-weight:600;">Ahmad Hamza</div>
+                        <div id="adminRole" style="font-size:12px; opacity:0.8;">Super Administrator</div>
+                    </div>
+                </div>
+            </div>
+            
+            <nav>
+                <div class="nav-item active" data-section="dashboard">
+                    <i class="fas fa-tachometer-alt"></i> Dashboard
+                </div>
+                <div class="nav-item" data-section="pages">
+                    <i class="fas fa-file-alt"></i> Page Creator
+                </div>
+                <div class="nav-item" data-section="users">
+                    <i class="fas fa-users"></i> User Management
+                </div>
+                <div class="nav-item" data-section="admins">
+                    <i class="fas fa-user-shield"></i> Administrators
+                </div>
+                <div class="nav-item" data-section="analytics">
+                    <i class="fas fa-chart-line"></i> Analytics
+                </div>
+                <div class="nav-item" data-section="settings">
+                    <i class="fas fa-cog"></i> Settings
+                </div>
+            </nav>
+            
+            <div style="margin-top:50px;">
+                <button id="logoutBtn" style="width:100%; padding:12px; background:rgba(255,255,255,0.1); color:white; border:none; border-radius:8px; display:flex; align-items:center; justify-content:center; gap:8px; cursor:pointer;">
+                    <i class="fas fa-sign-out-alt"></i> Logout
+                </button>
+            </div>
+        </div>
+        
+        <!-- MAIN CONTENT - DYNAMICALLY INJECTED -->
+        <div class="main-content" id="mainContent">
+            <div style="display:flex; justify-content:center; align-items:center; height:100%;">
+                <div class="loading" style="width:40px; height:40px;"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- PAGE EDITOR MODAL -->
+    <div id="pageEditorModal" class="modal">
+        <div class="modal-content">
+            <h2 style="margin-bottom:20px; color:#0a2540;">Create New Page</h2>
+            <form id="pageCreateForm">
+                <div class="form-group">
+                    <label>Page Title</label>
+                    <input type="text" id="pageTitle" class="form-control" placeholder="e.g. About Us" required>
+                </div>
+                <div class="form-group">
+                    <label>URL Slug</label>
+                    <input type="text" id="pageSlug" class="form-control" placeholder="about-us" required>
+                </div>
+                <div class="form-group">
+                    <label>Template</label>
+                    <select id="pageTemplate" class="form-control">
+                        <option value="default">Default Landing Page</option>
+                        <option value="sector">Sector Page</option>
+                        <option value="service">Service Page</option>
+                        <option value="product">Product Page</option>
+                        <option value="event">Event Page</option>
+                        <option value="blog">Blog Post</option>
+                    </select>
+                </div>
+                <div style="margin-bottom:20px;">
+                    <label style="display:flex; align-items:center; gap:8px;">
+                        <input type="checkbox" id="pagePublish" checked>
+                        <span>Publish immediately</span>
+                    </label>
+                </div>
+                <div style="display:flex; gap:10px;">
+                    <button type="submit" class="btn" style="flex:1;" id="createPageBtn">Create Page</button>
+                    <button type="button" class="btn btn-outline" style="flex:1;" onclick="window.pageEditor?.closeModal()">Cancel</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script type="module" src="js/admin-dashboard.js"></script>
+    <script type="module" src="js/admin-pages.js"></script>
+    <script type="module" src="js/admin-users.js"></script>
+    <script type="module" src="js/admin-analytics.js"></script>
+</body>
+</html>
