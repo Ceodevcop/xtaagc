@@ -122,6 +122,11 @@
             border-left:4px solid #e53e3e;
             color:#742a2a;
         }
+        .alert-success{
+            background:#f0fff4;
+            border-left:4px solid #2e7d5e;
+            color:#22543d;
+        }
         .loading{
             display:inline-block;
             width:20px;
@@ -142,11 +147,11 @@
         </div>
 
         <span class="admin-badge">
-            <i class="fas fa-shield-alt"></i> SUPER ADMIN ACCESS
+            <i class="fas fa-shield-alt"></i> ADMINISTRATOR ACCESS
         </span>
 
         <h1>Admin Login</h1>
-        <p style="color:#64748b; margin-bottom:24px;">Sign in with your administrator credentials</p>
+        <p style="color:#64748b; margin-bottom:24px;">Enter your administrator credentials</p>
 
         <div id="alertMessage" class="alert"></div>
 
@@ -155,20 +160,24 @@
                 <label><i class="fas fa-envelope" style="color:#c19a6b;"></i> Email</label>
                 <div class="input-wrapper">
                     <i class="fas fa-envelope input-icon"></i>
-                    <input type="email" id="email" value="priahmz@gmail.com" required>
+                    <input type="email" id="email" placeholder="admin@taagc.com" required>
                 </div>
             </div>
             <div class="form-group">
                 <label><i class="fas fa-lock" style="color:#c19a6b;"></i> Password</label>
                 <div class="input-wrapper">
                     <i class="fas fa-lock input-icon"></i>
-                    <input type="password" id="password" value="Admin/Taagc/001" required>
+                    <input type="password" id="password" placeholder="••••••••" required>
                 </div>
             </div>
             <button type="submit" class="btn" id="loginBtn">
                 <i class="fas fa-shield-alt"></i> Login to Admin Panel
             </button>
         </form>
+        
+        <div style="margin-top:30px; text-align:center; font-size:14px; color:#64748b;">
+            <i class="fas fa-cog"></i> First time? <a href="/setup-admin.html" style="color:#c19a6b; text-decoration:none; font-weight:600;">Create administrator</a>
+        </div>
     </div>
 
     <script type="module">
@@ -202,6 +211,11 @@
             const email = document.getElementById('email').value;
             const password = document.getElementById('password').value;
             
+            if (!email || !password) {
+                showAlert('Please enter both email and password', 'error');
+                return;
+            }
+            
             btn.innerHTML = '<span class="loading"></span> Verifying...';
             btn.disabled = true;
             
@@ -213,7 +227,11 @@
                 const adminDoc = await getDoc(doc(db, "admins", user.uid));
                 
                 if (adminDoc.exists()) {
-                    window.location.href = '/admin/dashboard.html';
+                    const adminData = adminDoc.data();
+                    showAlert(`Welcome, ${adminData.name || 'Administrator'}!`, 'success');
+                    setTimeout(() => {
+                        window.location.href = '/admin/dashboard.html';
+                    }, 1000);
                 } else {
                     throw new Error('Access denied. Admin privileges required.');
                 }
@@ -221,21 +239,30 @@
             } catch (error) {
                 console.error('Login error:', error);
                 
-                const alertDiv = document.getElementById('alertMessage');
-                alertDiv.className = 'alert alert-error';
-                
-                if (error.code === 'auth/user-not-found' || error.code === 'auth/wrong-password' || error.code === 'auth/invalid-credential') {
-                    alertDiv.innerHTML = '<i class="fas fa-exclamation-circle"></i> Invalid email or password';
-                } else {
-                    alertDiv.innerHTML = `<i class="fas fa-exclamation-circle"></i> ${error.message}`;
+                let errorMessage = 'Invalid email or password';
+                if (error.code === 'auth/user-not-found') {
+                    errorMessage = 'No account found with this email';
+                } else if (error.code === 'auth/wrong-password') {
+                    errorMessage = 'Incorrect password';
+                } else if (error.code === 'auth/too-many-requests') {
+                    errorMessage = 'Too many failed attempts. Try again later.';
+                } else if (error.message) {
+                    errorMessage = error.message;
                 }
                 
-                alertDiv.style.display = 'flex';
+                showAlert(errorMessage, 'error');
                 
                 btn.innerHTML = '<i class="fas fa-shield-alt"></i> Login to Admin Panel';
                 btn.disabled = false;
             }
         };
+
+        function showAlert(message, type) {
+            const alertDiv = document.getElementById('alertMessage');
+            alertDiv.className = `alert alert-${type}`;
+            alertDiv.innerHTML = `<i class="fas fa-${type === 'success' ? 'check-circle' : 'exclamation-circle'}"></i> ${message}`;
+            alertDiv.style.display = 'flex';
+        }
 
         // Check if already logged in
         onAuthStateChanged(auth, async (user) => {
