@@ -50,7 +50,6 @@
             font-family:'Playfair Display',serif;
         }
         .logo-text span{color:#c19a6b;}
-        
         h1{font-size:28px;margin-bottom:8px;color:#0a2540;}
         .admin-badge{
             display:inline-block;
@@ -123,18 +122,16 @@
             border-left:4px solid #e53e3e;
             color:#742a2a;
         }
-        .admin-info{
-            background:#f8fafc;
-            border-radius:12px;
-            padding:16px;
-            margin-top:30px;
-            font-size:14px;
-            color:#64748b;
-            text-align:center;
+        .loading{
+            display:inline-block;
+            width:20px;
+            height:20px;
+            border:3px solid rgba(255,255,255,0.3);
+            border-top-color:white;
+            border-radius:50%;
+            animation:spin 1s linear infinite;
         }
-        .admin-info strong{
-            color:#0a2540;
-        }
+        @keyframes spin{to{transform:rotate(360deg);}}
     </style>
 </head>
 <body>
@@ -158,28 +155,20 @@
                 <label><i class="fas fa-envelope" style="color:#c19a6b;"></i> Email</label>
                 <div class="input-wrapper">
                     <i class="fas fa-envelope input-icon"></i>
-                    <input type="email" id="email" value="priahmz@gmail.com" placeholder="admin@taagc.com" required>
+                    <input type="email" id="email" value="priahmz@gmail.com" required>
                 </div>
             </div>
-
             <div class="form-group">
                 <label><i class="fas fa-lock" style="color:#c19a6b;"></i> Password</label>
                 <div class="input-wrapper">
                     <i class="fas fa-lock input-icon"></i>
-                    <input type="password" id="password" value="Admin/Taagc/001" placeholder="••••••••" required>
+                    <input type="password" id="password" value="Admin/Taagc/001" required>
                 </div>
             </div>
-
             <button type="submit" class="btn" id="loginBtn">
                 <i class="fas fa-shield-alt"></i> Login to Admin Panel
             </button>
         </form>
-
-        <div class="admin-info">
-            <i class="fas fa-crown" style="color:#c19a6b; margin-right:8px;"></i>
-            <strong>Ahmad Hamza</strong> - Super Administrator<br>
-            <span style="font-size:12px;">priahmz@gmail.com</span>
-        </div>
     </div>
 
     <script type="module">
@@ -192,9 +181,7 @@
         import { 
             getFirestore, 
             doc, 
-            getDoc, 
-            updateDoc,
-            serverTimestamp 
+            getDoc 
         } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
         const firebaseConfig = {
@@ -215,40 +202,34 @@
             const email = document.getElementById('email').value;
             const password = document.getElementById('password').value;
             
-            btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Verifying...';
+            btn.innerHTML = '<span class="loading"></span> Verifying...';
             btn.disabled = true;
             
             try {
                 const userCredential = await signInWithEmailAndPassword(auth, email, password);
                 const user = userCredential.user;
                 
-                // Check if user is admin
-                const idTokenResult = await user.getIdTokenResult();
-                const isAdmin = idTokenResult.claims.admin === true;
+                // Check if user is admin in Firestore
+                const adminDoc = await getDoc(doc(db, "admins", user.uid));
                 
-                if (!isAdmin) {
-                    // Check Firestore as fallback
-                    const adminDoc = await getDoc(doc(db, "admins", user.uid));
-                    if (!adminDoc.exists()) {
-                        throw new Error('Access denied. Admin privileges required.');
-                    }
+                if (adminDoc.exists()) {
+                    window.location.href = '/admin/dashboard.html';
+                } else {
+                    throw new Error('Access denied. Admin privileges required.');
                 }
-                
-                // Update last login
-                await updateDoc(doc(db, "admins", user.uid), {
-                    lastLogin: serverTimestamp(),
-                    lastLoginIP: 'web'
-                }).catch(() => {});
-                
-                // Redirect to admin dashboard
-                window.location.href = '/admin/dashboard.html';
                 
             } catch (error) {
                 console.error('Login error:', error);
                 
                 const alertDiv = document.getElementById('alertMessage');
                 alertDiv.className = 'alert alert-error';
-                alertDiv.innerHTML = `<i class="fas fa-exclamation-circle"></i> ${error.message}`;
+                
+                if (error.code === 'auth/user-not-found' || error.code === 'auth/wrong-password' || error.code === 'auth/invalid-credential') {
+                    alertDiv.innerHTML = '<i class="fas fa-exclamation-circle"></i> Invalid email or password';
+                } else {
+                    alertDiv.innerHTML = `<i class="fas fa-exclamation-circle"></i> ${error.message}`;
+                }
+                
                 alertDiv.style.display = 'flex';
                 
                 btn.innerHTML = '<i class="fas fa-shield-alt"></i> Login to Admin Panel';
@@ -259,8 +240,8 @@
         // Check if already logged in
         onAuthStateChanged(auth, async (user) => {
             if (user) {
-                const idTokenResult = await user.getIdTokenResult();
-                if (idTokenResult.claims.admin === true) {
+                const adminDoc = await getDoc(doc(db, "admins", user.uid));
+                if (adminDoc.exists()) {
                     window.location.href = '/admin/dashboard.html';
                 }
             }
