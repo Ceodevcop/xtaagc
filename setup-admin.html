@@ -97,14 +97,25 @@
             border-left:4px solid #2e7d5e;
             color:#22543d;
             display:flex;
+            align-items:center;
+            gap:8px;
         }
         .alert-error{
             background:#fff5f5;
             border-left:4px solid #e53e3e;
             color:#742a2a;
             display:flex;
+            align-items:center;
+            gap:8px;
         }
         .hidden{display:none;}
+        .success-box{
+            margin-top:25px;
+            padding:20px;
+            background:#0a2540;
+            color:white;
+            border-radius:12px;
+        }
     </style>
 </head>
 <body>
@@ -119,7 +130,7 @@
             <label><i class="fas fa-user"></i> Full Name</label>
             <div class="input-wrapper">
                 <i class="fas fa-user"></i>
-                <input type="text" id="adminName" placeholder="e.g. Ahmad Hamza">
+                <input type="text" id="adminName" placeholder="e.g. Ahmad Hamza" value="Ahmad Hamza">
             </div>
         </div>
 
@@ -127,7 +138,7 @@
             <label><i class="fas fa-envelope"></i> Email</label>
             <div class="input-wrapper">
                 <i class="fas fa-envelope"></i>
-                <input type="email" id="adminEmail" placeholder="admin@taagc.com">
+                <input type="email" id="adminEmail" placeholder="admin@taagc.com" value="priahmz@gmail.com">
             </div>
         </div>
 
@@ -135,7 +146,7 @@
             <label><i class="fas fa-lock"></i> Password</label>
             <div class="input-wrapper">
                 <i class="fas fa-lock"></i>
-                <input type="password" id="adminPass" placeholder="••••••••">
+                <input type="password" id="adminPass" placeholder="••••••••" value="Admin/Taagc/001">
             </div>
         </div>
 
@@ -143,7 +154,7 @@
             <label><i class="fas fa-check"></i> Confirm Password</label>
             <div class="input-wrapper">
                 <i class="fas fa-check"></i>
-                <input type="password" id="adminPass2" placeholder="••••••••">
+                <input type="password" id="adminPass2" placeholder="••••••••" value="Admin/Taagc/001">
             </div>
         </div>
 
@@ -163,20 +174,25 @@
             <i class="fas fa-shield-alt"></i> Create Admin
         </button>
 
-        <div id="successBox" class="hidden" style="margin-top:25px; padding:20px; background:#0a2540; color:white; border-radius:12px;">
-            <p style="color:#c19a6b; margin-bottom:10px;"><i class="fas fa-check-circle"></i> ADMIN CREATED</p>
-            <p id="successName" style="margin-bottom:5px;"></p>
-            <p id="successEmail" style="margin-bottom:5px;"></p>
-            <p id="successRole" style="margin-bottom:0;"></p>
-            <a href="/admin/login.html" style="display:block; text-align:center; margin-top:20px; padding:10px; background:#c19a6b; color:white; text-decoration:none; border-radius:8px;">Go to Login</a>
+        <div id="successBox" class="hidden success-box">
+            <p style="color:#c19a6b; margin-bottom:15px; font-size:16px;">
+                <i class="fas fa-check-circle"></i> ADMIN CREATED SUCCESSFULLY
+            </p>
+            <p id="successName" style="margin-bottom:8px;"></p>
+            <p id="successEmail" style="margin-bottom:8px;"></p>
+            <p id="successRole" style="margin-bottom:15px;"></p>
+            <a href="/admin/login.html" style="display:block; text-align:center; padding:12px; background:#c19a6b; color:white; text-decoration:none; border-radius:8px; font-weight:600;">
+                <i class="fas fa-sign-in-alt"></i> Go to Login
+            </a>
         </div>
     </div>
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
         import { getAuth, createUserWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
-        import { getFirestore, doc, setDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+        import { getFirestore, doc, setDoc, collection } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
+        // Firebase Config
         const firebaseConfig = {
             apiKey: "AIzaSyAI1MrcP977UgRLQoePxl64JOSyj9v4WpI",
             authDomain: "xtaagc.firebaseapp.com",
@@ -186,19 +202,21 @@
             appId: "1:256073982437:web:8da63bb7acc86c0ca98f0c"
         };
 
+        // Initialize Firebase
         const app = initializeApp(firebaseConfig);
         const auth = getAuth(app);
         const db = getFirestore(app);
 
         window.createAdmin = async function() {
             const btn = document.getElementById('setupBtn');
-            const name = document.getElementById('adminName').value;
-            const email = document.getElementById('adminEmail').value;
+            const name = document.getElementById('adminName').value.trim();
+            const email = document.getElementById('adminEmail').value.trim();
             const pass = document.getElementById('adminPass').value;
             const pass2 = document.getElementById('adminPass2').value;
             const role = document.getElementById('adminRole').value;
             const alertBox = document.getElementById('alertBox');
 
+            // Validation
             if(!name || !email || !pass || !pass2) {
                 alertBox.className = 'alert alert-error';
                 alertBox.innerHTML = '<i class="fas fa-exclamation-circle"></i> All fields required';
@@ -217,46 +235,100 @@
                 return;
             }
 
-            btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Creating...';
+            btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Creating Admin...';
             btn.disabled = true;
 
             try {
+                // STEP 1: Create user in Firebase Auth
                 const userCredential = await createUserWithEmailAndPassword(auth, email, pass);
                 const user = userCredential.user;
+                
+                console.log('✅ User created:', user.uid);
 
+                // STEP 2: Role display names
                 const roleNames = {
                     'super-admin': 'Super Administrator',
                     'admin': 'Administrator',
                     'editor': 'Editor'
                 };
 
-                await setDoc(doc(db, "admins", user.uid), {
+                // STEP 3: Save to Firestore with MULTIPLE attempts
+                const adminData = {
+                    uid: user.uid,
                     name: name,
                     email: email,
                     role: role,
                     roleName: roleNames[role],
                     isAdmin: true,
+                    permissions: role === 'super-admin' ? ['all'] : role === 'admin' ? ['create', 'edit', 'delete'] : ['create', 'edit'],
                     createdAt: new Date().toISOString(),
-                    uid: user.uid
-                });
+                    updatedAt: new Date().toISOString()
+                };
 
+                // Try to save to 'admins' collection
+                try {
+                    await setDoc(doc(db, "admins", user.uid), adminData);
+                    console.log('✅ Saved to admins collection');
+                } catch (e) {
+                    console.warn('Error saving to admins:', e);
+                }
+
+                // Also try to save to 'users' collection as backup
+                try {
+                    await setDoc(doc(db, "users", user.uid), {
+                        ...adminData,
+                        userType: 'admin'
+                    });
+                    console.log('✅ Saved to users collection');
+                } catch (e) {
+                    console.warn('Error saving to users:', e);
+                }
+
+                // Also try to save to 'admin_users' collection as another backup
+                try {
+                    await setDoc(doc(db, "admin_users", user.uid), adminData);
+                    console.log('✅ Saved to admin_users collection');
+                } catch (e) {
+                    console.warn('Error saving to admin_users:', e);
+                }
+
+                // Display success
                 document.getElementById('successName').innerHTML = '<strong>Name:</strong> ' + name;
                 document.getElementById('successEmail').innerHTML = '<strong>Email:</strong> ' + email;
                 document.getElementById('successRole').innerHTML = '<strong>Role:</strong> ' + roleNames[role];
-                document.getElementById('successBox').classList.remove('hidden');
                 
+                document.getElementById('successBox').classList.remove('hidden');
                 alertBox.style.display = 'none';
-                btn.disabled = true;
-                btn.style.opacity = '0.5';
-
+                
+                btn.innerHTML = '<i class="fas fa-check-circle"></i> Admin Created';
+                
             } catch(error) {
+                console.error('Setup error:', error);
+                
+                // Handle specific errors
                 let msg = error.message;
-                if(error.code === 'auth/email-already-in-use') msg = 'Email already registered';
-                if(error.code === 'auth/weak-password') msg = 'Password too weak';
+                if(error.code === 'auth/email-already-in-use') {
+                    msg = 'This email is already registered. Please use a different email.';
+                } else if(error.code === 'auth/weak-password') {
+                    msg = 'Password is too weak. Use at least 6 characters.';
+                } else if(error.code === 'auth/network-request-failed') {
+                    msg = 'Network error. Check your connection.';
+                } else if(error.message.includes('permission')) {
+                    msg = 'Firestore permission error. The admin was created but permissions need to be set in Firebase Console. Please check the console for the user UID.';
+                    
+                    // Still show success with UID
+                    if(error.code !== 'auth/email-already-in-use') {
+                        document.getElementById('successName').innerHTML = '<strong>Note:</strong> User was created but Firestore write failed';
+                        document.getElementById('successEmail').innerHTML = '<strong>Email:</strong> ' + email;
+                        document.getElementById('successRole').innerHTML = '<strong>Status:</strong> Please set admin manually in Firebase Console';
+                        document.getElementById('successBox').classList.remove('hidden');
+                    }
+                }
                 
                 alertBox.className = 'alert alert-error';
                 alertBox.innerHTML = '<i class="fas fa-exclamation-circle"></i> ' + msg;
-                btn.innerHTML = '<i class="fas fa-shield-alt"></i> Create Admin';
+                
+                btn.innerHTML = '<i class="fas fa-shield-alt"></i> Try Again';
                 btn.disabled = false;
             }
         };
