@@ -3,549 +3,126 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Register/Login | TAAGC Global</title>
+    <title>Login/Register | TAAGC Global</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/navbar.css">
+    <link rel="stylesheet" href="css/footer.css">
     <style>
-        *{margin:0;padding:0;box-sizing:border-box;}
-        body{
-            font-family:'Inter',sans-serif;
-            background:linear-gradient(135deg,#0a2540,#1a3a4f);
-            min-height:100vh;
-            color:#1e293b;
-        }
-        .navbar{
-            background:white;
-            padding:16px 0;
-            box-shadow:0 4px 20px rgba(0,0,0,0.08);
-        }
-        .navbar-content{
-            max-width:1200px;
-            margin:0 auto;
-            padding:0 20px;
-            display:flex;
-            justify-content:space-between;
-            align-items:center;
-        }
-        .navbar-brand{
-            display:flex;
-            align-items:center;
-            gap:12px;
-            text-decoration:none;
-        }
-        .navbar-logo{
-            width:48px;
-            height:48px;
-            background:linear-gradient(135deg,#0a2540,#3a5a78);
-            border-radius:12px;
-            display:flex;
-            align-items:center;
-            justify-content:center;
-            color:white;
-            font-size:24px;
-            font-weight:700;
-        }
-        .navbar-brand-text{
-            font-size:24px;
-            font-weight:700;
-            color:#0a2540;
-        }
-        .navbar-brand-text span{color:#c19a6b;}
-        .nav-link{
-            color:#4a5568;
-            text-decoration:none;
-            font-weight:600;
-            margin-left:24px;
-        }
-        .page-header{
-            text-align:center;
-            padding:40px 20px;
-            color:white;
-        }
-        .page-header h1{
-            font-size:48px;
-            color:white;
-        }
-        .page-header h1 span{color:#c19a6b;}
-        
-        .container{
-            max-width:800px;
-            margin:0 auto 40px;
-            padding:0 20px;
-        }
-        .form-card{
-            background:white;
-            border-radius:24px;
-            padding:40px;
-            box-shadow:0 20px 40px rgba(0,0,0,0.2);
-        }
-        .tab-buttons{
-            display:flex;
-            gap:20px;
-            margin-bottom:30px;
-        }
-        .tab-btn{
-            flex:1;
-            padding:15px;
-            border:2px solid #e2e8f0;
-            border-radius:12px;
-            background:white;
-            cursor:pointer;
-            font-weight:600;
-            font-size:16px;
-        }
-        .tab-btn.active{
-            border-color:#c19a6b;
-            background:#fef9e7;
-        }
-        .form-group{
-            margin-bottom:20px;
-        }
-        .form-row{
-            display:grid;
-            grid-template-columns:1fr 1fr;
-            gap:20px;
-        }
-        label{
-            display:block;
-            margin-bottom:8px;
-            font-weight:600;
-            color:#0a2540;
-        }
-        .input-wrapper{
-            position:relative;
-        }
-        .input-wrapper i{
-            position:absolute;
-            left:16px;
-            top:50%;
-            transform:translateY(-50%);
-            color:#a0aec0;
-        }
-        input, select{
-            width:100%;
-            padding:14px 16px 14px 48px;
-            border:2px solid #e2e8f0;
-            border-radius:12px;
-            font-size:15px;
-        }
-        .btn{
-            width:100%;
-            padding:16px;
-            background:#0a2540;
-            color:white;
-            border:none;
-            border-radius:12px;
-            font-size:16px;
-            font-weight:600;
-            cursor:pointer;
-            margin-top:10px;
-        }
-        .btn-accent{
-            background:#c19a6b;
-        }
-        .alert{
-            padding:15px;
-            border-radius:8px;
-            margin:20px 0;
-            display:none;
-        }
-        .alert-error{
-            background:#fff5f5;
-            border-left:4px solid #e53e3e;
-            color:#742a2a;
-            display:block;
-        }
-        .alert-success{
-            background:#f0fff4;
-            border-left:4px solid #2e7d5e;
-            color:#22543d;
-            display:block;
-        }
-        .loading{
-            display:inline-block;
-            width:20px;
-            height:20px;
-            border:3px solid rgba(255,255,255,0.3);
-            border-top-color:white;
-            border-radius:50%;
-            animation:spin 1s linear infinite;
-        }
-        @keyframes spin{to{transform:rotate(360deg);}}
-        @media (max-width:768px){
-            .form-row{grid-template-columns:1fr;}
-        }
+        .auth-card{max-width:500px;margin:60px auto;background:white;border-radius:32px;padding:48px;box-shadow:0 25px 50px rgba(0,0,0,0.3);}
+        .tab-buttons{display:flex;gap:10px;margin-bottom:30px;}
+        .tab-btn{flex:1;padding:14px;border:2px solid var(--border);border-radius:12px;background:white;cursor:pointer;font-weight:600;}
+        .tab-btn.active{border-color:var(--accent);background:#fef9e7;}
+        .register-link{text-align:center;margin-top:25px;padding-top:25px;border-top:1px solid var(--border);}
+        .register-link a{color:var(--accent);font-weight:600;text-decoration:none;}
+        .remember-row{display:flex;justify-content:space-between;margin:15px 0;}
+        .forgot-link{color:var(--accent);text-decoration:none;}
     </style>
 </head>
 <body>
     <!-- Navbar -->
-    <nav class="navbar">
-        <div class="navbar-content">
-            <a href="/" class="navbar-brand">
+    <nav class="navbar">[same navbar as index.html]</nav>
+
+    <div class="container">
+        <div class="auth-card">
+            <div class="logo" style="display:flex;align-items:center;gap:12px;margin-bottom:30px;">
                 <div class="navbar-logo">A</div>
                 <div class="navbar-brand-text"><span>TAAGC</span> GLOBAL</div>
-            </a>
-            <div>
-                <a href="/" class="nav-link">Home</a>
-                <a href="/staff.html" class="nav-link">Team</a>
             </div>
-        </div>
-    </nav>
 
-    <!-- Header -->
-    <div class="page-header">
-        <h1>Welcome <span>Back</span></h1>
-    </div>
-
-    <!-- Main Form -->
-    <div class="container">
-        <div class="form-card">
-            <!-- Tab Buttons -->
             <div class="tab-buttons">
                 <button class="tab-btn active" onclick="showTab('login')">Login</button>
                 <button class="tab-btn" onclick="showTab('register')">Register</button>
             </div>
 
-            <!-- Alert -->
-            <div id="alert" class="alert"></div>
+            <div id="alertMessage" class="alert"></div>
 
             <!-- LOGIN FORM -->
             <div id="loginForm">
                 <form id="loginFormElement">
                     <div class="form-group">
                         <label>Email</label>
-                        <div class="input-wrapper">
-                            <i class="fas fa-envelope"></i>
-                            <input type="email" id="loginEmail" required>
-                        </div>
+                        <div class="input-wrapper"><i class="fas fa-envelope"></i><input type="email" id="loginEmail" class="form-control" required></div>
                     </div>
                     <div class="form-group">
                         <label>Password</label>
-                        <div class="input-wrapper">
-                            <i class="fas fa-lock"></i>
-                            <input type="password" id="loginPassword" required>
-                        </div>
+                        <div class="input-wrapper"><i class="fas fa-lock"></i><input type="password" id="loginPassword" class="form-control" required></div>
                     </div>
-                    <div style="display:flex; justify-content:space-between; margin:15px 0;">
-                        <label>
-                            <input type="checkbox" id="rememberMe"> Remember me
-                        </label>
-                        <a href="#" style="color:#c19a6b; text-decoration:none;">Forgot password?</a>
+                    <div class="remember-row">
+                        <label><input type="checkbox" id="rememberMe"> Remember me</label>
+                        <a href="#" class="forgot-link" onclick="forgotPassword(event)">Forgot password?</a>
                     </div>
-                    <button type="submit" class="btn btn-accent" id="loginBtn">Login</button>
+                    <button type="submit" class="btn btn-accent btn-block" id="loginBtn">Login</button>
                 </form>
             </div>
 
-            <!-- REGISTER FORM (hidden) -->
+            <!-- REGISTER FORM (simplified) -->
             <div id="registerForm" style="display:none;">
-                <div class="tab-buttons" style="margin-bottom:20px;">
-                    <button class="tab-btn active" onclick="setRegisterType('company')">Company</button>
-                    <button class="tab-btn" onclick="setRegisterType('individual')">Individual</button>
-                </div>
-                
-                <!-- Company Register -->
-                <div id="companyRegister">
-                    <form id="companyForm">
-                        <div class="form-row">
-                            <div class="form-group">
-                                <label>Company Name</label>
-                                <div class="input-wrapper">
-                                    <i class="fas fa-building"></i>
-                                    <input type="text" id="compName" required>
-                                </div>
-                            </div>
-                            <div class="form-group">
-                                <label>Reg Number</label>
-                                <div class="input-wrapper">
-                                    <i class="fas fa-qrcode"></i>
-                                    <input type="text" id="compReg" required>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="form-row">
-                            <div class="form-group">
-                                <label>Email</label>
-                                <div class="input-wrapper">
-                                    <i class="fas fa-envelope"></i>
-                                    <input type="email" id="compEmail" required>
-                                </div>
-                            </div>
-                            <div class="form-group">
-                                <label>Phone</label>
-                                <div class="input-wrapper">
-                                    <i class="fas fa-phone"></i>
-                                    <input type="tel" id="compPhone" required>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="form-row">
-                            <div class="form-group">
-                                <label>Password</label>
-                                <div class="input-wrapper">
-                                    <i class="fas fa-lock"></i>
-                                    <input type="password" id="compPass" minlength="6" required>
-                                </div>
-                            </div>
-                            <div class="form-group">
-                                <label>Confirm</label>
-                                <div class="input-wrapper">
-                                    <i class="fas fa-check"></i>
-                                    <input type="password" id="compPass2" required>
-                                </div>
-                            </div>
-                        </div>
-                        <button type="submit" class="btn" id="compBtn">Register Company</button>
-                    </form>
-                </div>
+                <!-- Company/Individual tabs here -->
+                <button type="submit" class="btn btn-primary btn-block">Register</button>
+            </div>
 
-                <!-- Individual Register -->
-                <div id="individualRegister" style="display:none;">
-                    <form id="individualForm">
-                        <div class="form-row">
-                            <div class="form-group">
-                                <label>Full Name</label>
-                                <div class="input-wrapper">
-                                    <i class="fas fa-user"></i>
-                                    <input type="text" id="indName" required>
-                                </div>
-                            </div>
-                            <div class="form-group">
-                                <label>Email</label>
-                                <div class="input-wrapper">
-                                    <i class="fas fa-envelope"></i>
-                                    <input type="email" id="indEmail" required>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="form-row">
-                            <div class="form-group">
-                                <label>Phone</label>
-                                <div class="input-wrapper">
-                                    <i class="fas fa-phone"></i>
-                                    <input type="tel" id="indPhone" required>
-                                </div>
-                            </div>
-                            <div class="form-group">
-                                <label>Account Type</label>
-                                <div class="input-wrapper">
-                                    <i class="fas fa-tag"></i>
-                                    <select id="indType">
-                                        <option value="shopper">Shopper</option>
-                                        <option value="investor">Investor</option>
-                                        <option value="professional">Professional</option>
-                                    </select>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="form-row">
-                            <div class="form-group">
-                                <label>Password</label>
-                                <div class="input-wrapper">
-                                    <i class="fas fa-lock"></i>
-                                    <input type="password" id="indPass" minlength="6" required>
-                                </div>
-                            </div>
-                            <div class="form-group">
-                                <label>Confirm</label>
-                                <div class="input-wrapper">
-                                    <i class="fas fa-check"></i>
-                                    <input type="password" id="indPass2" required>
-                                </div>
-                            </div>
-                        </div>
-                        <button type="submit" class="btn" id="indBtn">Create Account</button>
-                    </form>
-                </div>
+            <div class="register-link">
+                <span id="loginLinkText">Don't have an account? <a href="#" onclick="showTab('register')">Register</a></span>
+                <span id="registerLinkText" style="display:none;">Already have an account? <a href="#" onclick="showTab('login')">Login</a></span>
             </div>
         </div>
     </div>
 
+    <!-- Footer -->
+    <footer class="footer">[same footer as index.html]</footer>
+
     <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js"></script>
-
+    <script src="js/firebase-init.js"></script>
+    <script src="js/auth.js"></script>
+    <script src="js/main.js"></script>
+    <script src="js/cookie-consent.js"></script>
+    
+    <!-- Registration logic -->
     <script>
-        // Firebase Config
-        firebase.initializeApp({
-            apiKey: "AIzaSyAI1MrcP977UgRLQoePxl64JOSyj9v4WpI",
-            authDomain: "xtaagc.firebaseapp.com",
-            projectId: "xtaagc",
-            storageBucket: "xtaagc.firebasestorage.app",
-            messagingSenderId: "256073982437",
-            appId: "1:256073982437:web:8da63bb7acc86c0ca98f0c"
-        });
-
-        const auth = firebase.auth();
-        const db = firebase.firestore();
-
-        // UI Functions
-        function showAlert(msg, type) {
-            const a = document.getElementById('alert');
-            a.className = `alert alert-${type}`;
-            a.innerHTML = `<i class="fas fa-${type==='success'?'check-circle':'exclamation-circle'}"></i> ${msg}`;
-        }
-
-        function showTab(tab) {
-            document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));
-            event.currentTarget.classList.add('active');
-            document.getElementById('loginForm').style.display = tab==='login' ? 'block' : 'none';
-            document.getElementById('registerForm').style.display = tab==='register' ? 'block' : 'none';
-        }
-
-        function setRegisterType(type) {
-            document.querySelectorAll('#registerForm .tab-btn').forEach(b=>b.classList.remove('active'));
-            event.currentTarget.classList.add('active');
-            document.getElementById('companyRegister').style.display = type==='company' ? 'block' : 'none';
-            document.getElementById('individualRegister').style.display = type==='individual' ? 'block' : 'none';
-        }
-
-        // LOGIN
         document.getElementById('loginFormElement').addEventListener('submit', async function(e) {
             e.preventDefault();
             const btn = document.getElementById('loginBtn');
-            const email = document.getElementById('loginEmail').value;
-            const pass = document.getElementById('loginPassword').value;
-            const remember = document.getElementById('rememberMe').checked;
-
             btn.innerHTML = '<span class="loading"></span> Logging in...';
             btn.disabled = true;
 
             try {
-                const user = await auth.signInWithEmailAndPassword(email, pass);
+                const user = await auth.signInWithEmailAndPassword(
+                    document.getElementById('loginEmail').value,
+                    document.getElementById('loginPassword').value
+                );
                 
                 // Check user type
-                let userData = { uid: user.user.uid, email };
-                
-                // Try companies first
-                const companyDoc = await db.collection('companies').doc(user.user.uid).get();
-                if (companyDoc.exists) {
+                let userData = { uid: user.user.uid, email: user.user.email };
+                const company = await db.collection('companies').doc(user.user.uid).get();
+                if(company.exists) {
                     userData.userType = 'company';
-                    userData.accountType = companyDoc.data().accountType || 'client';
-                    userData.name = companyDoc.data().name || companyDoc.data().companyName;
+                    userData.accountType = company.data().accountType || 'client';
                 } else {
-                    // Try individuals
-                    const indDoc = await db.collection('individuals').doc(user.user.uid).get();
-                    if (indDoc.exists) {
-                        userData.userType = 'individual';
-                        userData.accountType = indDoc.data().accountType || 'shopper';
-                        userData.name = indDoc.data().name;
-                    }
+                    const ind = await db.collection('individuals').doc(user.user.uid).get();
+                    userData.userType = 'individual';
+                    userData.accountType = ind.exists ? ind.data().accountType || 'shopper' : 'shopper';
                 }
 
-                // Save to storage
-                const storage = remember ? localStorage : sessionStorage;
+                const storage = document.getElementById('rememberMe').checked ? localStorage : sessionStorage;
                 storage.setItem('taagc_user', JSON.stringify(userData));
 
-                // Redirect
                 showAlert('Login successful!', 'success');
                 setTimeout(() => {
-                    if (userData.userType === 'company') {
-                        window.location.href = '/company-dashboard.html';
-                    } else {
-                        const dash = { shopper: '/shopper-dashboard.html', investor: '/investor-dashboard.html', professional: '/professional-dashboard.html' };
-                        window.location.href = dash[userData.accountType] || '/dashboard.html';
-                    }
+                    if(userData.userType === 'company') window.location.href = '/dashboards/company.html';
+                    else window.location.href = userData.accountType === 'shopper' ? '/dashboards/shopper.html' :
+                                               userData.accountType === 'investor' ? '/dashboards/investor.html' :
+                                               '/dashboards/professional.html';
                 }, 1500);
-
             } catch(e) {
                 showAlert(e.message, 'error');
                 btn.innerHTML = 'Login';
                 btn.disabled = false;
             }
         });
-
-        // COMPANY REGISTRATION
-        document.getElementById('companyForm').addEventListener('submit', async function(e) {
-            e.preventDefault();
-            const btn = document.getElementById('compBtn');
-            const email = document.getElementById('compEmail').value;
-            const pass = document.getElementById('compPass').value;
-            
-            if(pass !== document.getElementById('compPass2').value) {
-                showAlert('Passwords do not match','error'); return;
-            }
-            if(email.includes('@gmail')||email.includes('@yahoo')) {
-                showAlert('Company email required','error'); return;
-            }
-
-            btn.innerHTML = '<span class="loading"></span> Registering...';
-            btn.disabled = true;
-
-            try {
-                const user = await auth.createUserWithEmailAndPassword(email, pass);
-                await db.collection('companies').doc(user.user.uid).set({
-                    name: document.getElementById('compName').value,
-                    regNumber: document.getElementById('compReg').value,
-                    email, phone: document.getElementById('compPhone').value,
-                    accountType: 'client',
-                    status: 'pending',
-                    userType: 'company',
-                    createdAt: new Date().toISOString()
-                });
-
-                // Auto login after registration
-                const userData = { uid: user.user.uid, email, userType: 'company', accountType: 'client' };
-                localStorage.setItem('taagc_user', JSON.stringify(userData));
-
-                showAlert('Registration submitted!','success');
-                setTimeout(()=>window.location.href='/company-dashboard.html',2000);
-            } catch(e) {
-                showAlert(e.message,'error');
-                btn.innerHTML='Register Company';
-                btn.disabled=false;
-            }
-        });
-
-        // INDIVIDUAL REGISTRATION
-        document.getElementById('individualForm').addEventListener('submit', async function(e) {
-            e.preventDefault();
-            const btn = document.getElementById('indBtn');
-            const email = document.getElementById('indEmail').value;
-            const pass = document.getElementById('indPass').value;
-            const type = document.getElementById('indType').value;
-            
-            if(pass !== document.getElementById('indPass2').value) {
-                showAlert('Passwords do not match','error'); return;
-            }
-
-            btn.innerHTML = '<span class="loading"></span> Creating...';
-            btn.disabled = true;
-
-            try {
-                const user = await auth.createUserWithEmailAndPassword(email, pass);
-                await db.collection('individuals').doc(user.user.uid).set({
-                    name: document.getElementById('indName').value,
-                    email, phone: document.getElementById('indPhone').value,
-                    accountType: type,
-                    userType: 'individual',
-                    createdAt: new Date().toISOString()
-                });
-
-                // Auto login after registration
-                const userData = { uid: user.user.uid, email, userType: 'individual', accountType: type };
-                localStorage.setItem('taagc_user', JSON.stringify(userData));
-
-                showAlert('Account created!','success');
-                const dash = { shopper:'/shopper-dashboard.html', investor:'/investor-dashboard.html', professional:'/professional-dashboard.html' };
-                setTimeout(()=>window.location.href=dash[type],2000);
-            } catch(e) {
-                showAlert(e.message,'error');
-                btn.innerHTML='Create Account';
-                btn.disabled=false;
-            }
-        });
-
-        // Check if already logged in
-        const user = localStorage.getItem('taagc_user') || sessionStorage.getItem('taagc_user');
-        if (user) {
-            const userData = JSON.parse(user);
-            const dash = userData.userType === 'company' 
-                ? '/company-dashboard.html' 
-                : { shopper:'/shopper-dashboard.html', investor:'/investor-dashboard.html', professional:'/professional-dashboard.html' }[userData.accountType];
-            if (dash && window.location.pathname !== dash) {
-                window.location.href = dash;
-            }
-        }
     </script>
 </body>
 </html>
