@@ -1,4 +1,4 @@
-// js/firebase-init.js
+// js/firebase-init.js - FIXED VERSION
 const firebaseConfig = {
     apiKey: "AIzaSyAI1MrcP977UgRLQoePxl64JOSyj9v4WpI",
     authDomain: "xtaagc.firebaseapp.com",
@@ -10,9 +10,13 @@ const firebaseConfig = {
 
 // Initialize Firebase
 firebase.initializeApp(firebaseConfig);
+
+// Create global auth and db objects
 const auth = firebase.auth();
 const db = firebase.firestore();
 
-// Make available globally
+// Make them available globally
 window.auth = auth;
 window.db = db;
+
+console.log('✅ Firebase initialized successfully');
