@@ -1,29 +1,268 @@
-<!-- Login Form -->
-<input type="email" id="loginEmail" ...>
-<input type="password" id="loginPassword" ...>
-<input type="checkbox" id="rememberMe">
-<button id="loginBtn">Login</button>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Login/Register | TAAGC</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        *{margin:0;padding:0;box-sizing:border-box;}
+        body{font-family:'Inter',sans-serif;background:linear-gradient(135deg,#0a2540,#1a3a4f);min-height:100vh;display:flex;align-items:center;justify-content:center;padding:20px;}
+        .card{background:white;border-radius:32px;padding:40px;width:100%;max-width:500px;box-shadow:0 25px 50px rgba(0,0,0,0.3);}
+        .logo{display:flex;align-items:center;gap:12px;margin-bottom:30px;}
+        .logo div{width:48px;height:48px;background:linear-gradient(135deg,#0a2540,#3a5a78);border-radius:12px;display:flex;align-items:center;justify-content:center;color:white;font-size:24px;font-weight:700;}
+        .logo span{font-size:24px;font-weight:700;color:#0a2540;}
+        .logo span span{color:#c19a6b;}
+        .tabs{display:flex;gap:10px;margin-bottom:30px;}
+        .tab{flex:1;padding:14px;border:2px solid #e2e8f0;border-radius:12px;background:white;cursor:pointer;font-weight:600;}
+        .tab.active{border-color:#c19a6b;background:#fef9e7;}
+        .alert{padding:15px;border-radius:8px;margin-bottom:20px;display:none;}
+        .alert.error{background:#fff5f5;border-left:4px solid #e53e3e;color:#742a2a;display:block;}
+        .alert.success{background:#f0fff4;border-left:4px solid #2e7d5e;color:#22543d;display:block;}
+        .form-group{margin-bottom:20px;}
+        label{display:block;margin-bottom:8px;font-weight:600;color:#0a2540;}
+        .input-wrapper{position:relative;}
+        .input-wrapper i{position:absolute;left:16px;top:50%;transform:translateY(-50%);color:#a0aec0;}
+        input,select{width:100%;padding:14px 16px 14px 48px;border:2px solid #e2e8f0;border-radius:12px;font-size:15px;}
+        .btn{width:100%;padding:16px;background:#0a2540;color:white;border:none;border-radius:12px;font-weight:600;cursor:pointer;margin-top:10px;}
+        .btn-accent{background:#c19a6b;}
+        .row{display:flex;gap:20px;margin-bottom:20px;}
+        .flex{display:flex;justify-content:space-between;align-items:center;margin:15px 0;}
+        a{color:#c19a6b;text-decoration:none;}
+        .badge{background:#f0f9ff;border:2px dashed #3182ce;border-radius:12px;padding:15px;margin-bottom:20px;display:flex;align-items:center;gap:15px;}
+        .badge i{font-size:24px;color:#3182ce;}
+        .link{text-align:center;margin-top:25px;padding-top:25px;border-top:1px solid #e2e8f0;}
+        .loading{display:inline-block;width:20px;height:20px;border:3px solid rgba(255,255,255,0.3);border-top-color:white;border-radius:50%;animation:spin 1s linear infinite;}
+        @keyframes spin{to{transform:rotate(360deg);}}
+        @media (max-width:768px){.row{flex-direction:column;}}
+    </style>
+</head>
+<body>
+    <div class="card">
+        <div class="logo">
+            <div>A</div>
+            <span><span>TAAGC</span> GLOBAL</span>
+        </div>
 
-<!-- Company Registration -->
-<input type="text" id="compName">
-<input type="text" id="compReg">
-<input type="email" id="compEmail">
-<input type="tel" id="compPhone">
-<input type="password" id="compPass">
-<input type="password" id="compPass2">
-<button id="compBtn">Register</button>
+        <div class="tabs">
+            <button class="tab active" onclick="showTab('login')">Login</button>
+            <button class="tab" onclick="showTab('register')">Register</button>
+        </div>
 
-<!-- Individual Registration -->
-<input type="text" id="indName">
-<input type="email" id="indEmail">
-<input type="tel" id="indPhone">
-<select id="indType">...</select>
-<input type="password" id="indPass">
-<input type="password" id="indPass2">
-<button id="indBtn">Register</button>
+        <div id="alert" class="alert"></div>
 
-<!-- Other elements -->
-<div id="alertMessage"></div>
-<a id="forgotPasswordLink">Forgot password?</a>
-<a id="showRegisterLink">Register</a>
-<a id="showLoginLink">Login</a>
+        <!-- LOGIN FORM -->
+        <div id="loginForm">
+            <form onsubmit="handleLogin(event)">
+                <div class="form-group">
+                    <label>Email</label>
+                    <div class="input-wrapper">
+                        <i class="fas fa-envelope"></i>
+                        <input type="email" id="loginEmail" placeholder="your@email.com" required>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label>Password</label>
+                    <div class="input-wrapper">
+                        <i class="fas fa-lock"></i>
+                        <input type="password" id="loginPassword" placeholder="••••••••" required>
+                    </div>
+                </div>
+                <div class="flex">
+                    <label><input type="checkbox" id="rememberMe"> Remember me</label>
+                    <a href="#" onclick="forgotPassword(event)">Forgot?</a>
+                </div>
+                <button type="submit" class="btn btn-accent" id="loginBtn">Login</button>
+            </form>
+        </div>
+
+        <!-- REGISTER FORM -->
+        <div id="registerForm" style="display:none;">
+            <div class="row">
+                <button class="tab active" onclick="setType('company')">Company</button>
+                <button class="tab" onclick="setType('individual')">Individual</button>
+            </div>
+
+            <!-- Company -->
+            <div id="companyReg">
+                <div class="badge">
+                    <i class="fas fa-globe"></i>
+                    <div><strong>Company Email Required</strong><br><small>@gmail not accepted</small></div>
+                </div>
+                <form onsubmit="handleCompanyReg(event)">
+                    <div class="row">
+                        <input type="text" id="compName" placeholder="Company Name" required>
+                        <input type="text" id="compReg" placeholder="Reg Number" required>
+                    </div>
+                    <div class="row">
+                        <input type="email" id="compEmail" placeholder="Email" required>
+                        <input type="tel" id="compPhone" placeholder="Phone" required>
+                    </div>
+                    <div class="row">
+                        <input type="password" id="compPass" placeholder="Password" minlength="6" required>
+                        <input type="password" id="compPass2" placeholder="Confirm" required>
+                    </div>
+                    <button type="submit" class="btn" id="compBtn">Register Company</button>
+                </form>
+            </div>
+
+            <!-- Individual -->
+            <div id="indReg" style="display:none;">
+                <form onsubmit="handleIndReg(event)">
+                    <div class="row">
+                        <input type="text" id="indName" placeholder="Full Name" required>
+                        <input type="email" id="indEmail" placeholder="Email" required>
+                    </div>
+                    <div class="row">
+                        <input type="tel" id="indPhone" placeholder="Phone" required>
+                        <select id="indType">
+                            <option value="shopper">Shopper</option>
+                            <option value="investor">Investor</option>
+                            <option value="professional">Professional</option>
+                        </select>
+                    </div>
+                    <div class="row">
+                        <input type="password" id="indPass" placeholder="Password" minlength="6" required>
+                        <input type="password" id="indPass2" placeholder="Confirm" required>
+                    </div>
+                    <button type="submit" class="btn" id="indBtn">Create Account</button>
+                </form>
+            </div>
+        </div>
+
+        <div class="link">
+            <span id="loginLink">Don't have account? <a href="#" onclick="showTab('register')">Register</a></span>
+            <span id="regLink" style="display:none;">Have account? <a href="#" onclick="showTab('login')">Login</a></span>
+        </div>
+    </div>
+
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js"></script>
+
+    <script>
+        // Firebase
+        firebase.initializeApp({
+            apiKey: "AIzaSyAI1MrcP977UgRLQoePxl64JOSyj9v4WpI",
+            authDomain: "xtaagc.firebaseapp.com",
+            projectId: "xtaagc",
+            storageBucket: "xtaagc.firebasestorage.app",
+            messagingSenderId: "256073982437",
+            appId: "1:256073982437:web:8da63bb7acc86c0ca98f0c"
+        });
+        const auth = firebase.auth();
+        const db = firebase.firestore();
+
+        // UI
+        function showAlert(msg, type) {
+            const a = document.getElementById('alert');
+            a.className = `alert ${type}`;
+            a.innerHTML = `<i class="fas fa-${type==='success'?'check-circle':'exclamation-circle'}"></i> ${msg}`;
+            setTimeout(() => a.className='alert', 4000);
+        }
+
+        function showTab(t) {
+            document.querySelectorAll('.tab').forEach(b=>b.classList.remove('active'));
+            event.currentTarget.classList.add('active');
+            document.getElementById('loginForm').style.display = t==='login'?'block':'none';
+            document.getElementById('registerForm').style.display = t==='register'?'block':'none';
+            document.getElementById('loginLink').style.display = t==='login'?'block':'none';
+            document.getElementById('regLink').style.display = t==='register'?'block':'none';
+        }
+
+        function setType(t) {
+            document.querySelectorAll('#registerForm .tab').forEach(b=>b.classList.remove('active'));
+            event.currentTarget.classList.add('active');
+            document.getElementById('companyReg').style.display = t==='company'?'block':'none';
+            document.getElementById('indReg').style.display = t==='individual'?'block':'none';
+        }
+
+        function forgotPassword(e) {
+            e.preventDefault();
+            const email = prompt('Email:');
+            if(email) auth.sendPasswordResetEmail(email).then(()=>showAlert('Email sent!','success')).catch(e=>showAlert(e.message,'error'));
+        }
+
+        // Login
+        async function handleLogin(e) {
+            e.preventDefault();
+            const btn = document.getElementById('loginBtn');
+            btn.innerHTML = '<span class="loading"></span> Logging...';
+            btn.disabled = true;
+            try {
+                const user = await auth.signInWithEmailAndPassword(
+                    document.getElementById('loginEmail').value,
+                    document.getElementById('loginPassword').value
+                );
+                const storage = document.getElementById('rememberMe').checked ? localStorage : sessionStorage;
+                storage.setItem('taagc_user', JSON.stringify({uid:user.user.uid}));
+                showAlert('Success!','success');
+                setTimeout(()=>window.location.href='/dashboards/shopper.html',1500);
+            } catch(e) {
+                showAlert(e.message,'error');
+                btn.innerHTML='Login';
+                btn.disabled=false;
+            }
+        }
+
+        // Company Register
+        async function handleCompanyReg(e) {
+            e.preventDefault();
+            const btn = document.getElementById('compBtn');
+            const email = document.getElementById('compEmail').value;
+            const pass = document.getElementById('compPass').value;
+            if(pass !== document.getElementById('compPass2').value) return showAlert('Passwords mismatch','error');
+            if(email.includes('@gmail')) return showAlert('Company email required','error');
+            
+            btn.innerHTML = '<span class="loading"></span> Registering...';
+            btn.disabled = true;
+            try {
+                const user = await auth.createUserWithEmailAndPassword(email, pass);
+                await db.collection('companies').doc(user.user.uid).set({
+                    name: document.getElementById('compName').value,
+                    email, phone: document.getElementById('compPhone').value,
+                    status:'pending'
+                });
+                showAlert('Registered!','success');
+                setTimeout(()=>window.location.href='/dashboards/company.html',2000);
+            } catch(e) {
+                showAlert(e.message,'error');
+                btn.innerHTML='Register Company';
+                btn.disabled=false;
+            }
+        }
+
+        // Individual Register
+        async function handleIndReg(e) {
+            e.preventDefault();
+            const btn = document.getElementById('indBtn');
+            const email = document.getElementById('indEmail').value;
+            const pass = document.getElementById('indPass').value;
+            const type = document.getElementById('indType').value;
+            if(pass !== document.getElementById('indPass2').value) return showAlert('Passwords mismatch','error');
+            
+            btn.innerHTML = '<span class="loading"></span> Creating...';
+            btn.disabled = true;
+            try {
+                const user = await auth.createUserWithEmailAndPassword(email, pass);
+                await db.collection('individuals').doc(user.user.uid).set({
+                    name: document.getElementById('indName').value,
+                    email, phone: document.getElementById('indPhone').value,
+                    accountType: type
+                });
+                showAlert('Created!','success');
+                const dash = {shopper:'/dashboards/shopper.html',investor:'/dashboards/investor.html',professional:'/dashboards/professional.html'};
+                setTimeout(()=>window.location.href=dash[type],2000);
+            } catch(e) {
+                showAlert(e.message,'error');
+                btn.innerHTML='Create Account';
+                btn.disabled=false;
+            }
+        }
+
+        // Auto redirect if logged in
+        if(localStorage.getItem('taagc_user')||sessionStorage.getItem('taagc_user')) window.location.href='/dashboards/shopper.html';
+    </script>
+</body>
+</html>
