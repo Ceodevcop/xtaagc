@@ -26,7 +26,9 @@
                     <div class="navbar-brand-text"><span>TAAGC</span> GLOBAL</div>
                 </a>
                 <button class="navbar-toggler" id="navbarToggler">
-                    <span></span><span></span><span></span>
+                    <span></span>
+                    <span></span>
+                    <span></span>
                 </button>
                 <div class="navbar-menu" id="navbarMenu">
                     <ul class="navbar-nav">
@@ -62,14 +64,14 @@
             <div id="loginForm" class="form-section">
                 <form id="loginFormElement">
                     <div class="form-group">
-                        <label>Email Address</label>
+                        <label><i class="fas fa-envelope"></i> Email Address</label>
                         <div class="input-wrapper">
                             <i class="fas fa-envelope"></i>
                             <input type="email" id="loginEmail" class="form-control" placeholder="your@email.com" required>
                         </div>
                     </div>
                     <div class="form-group">
-                        <label>Password</label>
+                        <label><i class="fas fa-lock"></i> Password</label>
                         <div class="input-wrapper">
                             <i class="fas fa-lock"></i>
                             <input type="password" id="loginPassword" class="form-control" placeholder="••••••••" required>
@@ -105,49 +107,49 @@
                     <form id="companyForm">
                         <div class="form-row">
                             <div class="form-group">
-                                <label>Company Name</label>
+                                <label><i class="fas fa-building"></i> Company Name</label>
                                 <div class="input-wrapper">
                                     <i class="fas fa-building"></i>
-                                    <input type="text" id="compName" class="form-control" required>
+                                    <input type="text" id="compName" class="form-control" placeholder="Legal entity name" required>
                                 </div>
                             </div>
                             <div class="form-group">
-                                <label>Registration Number</label>
+                                <label><i class="fas fa-qrcode"></i> Registration Number</label>
                                 <div class="input-wrapper">
                                     <i class="fas fa-qrcode"></i>
-                                    <input type="text" id="compReg" class="form-control" required>
+                                    <input type="text" id="compReg" class="form-control" placeholder="CAC / RC / DUNS" required>
                                 </div>
                             </div>
                         </div>
                         <div class="form-row">
                             <div class="form-group">
-                                <label>Business Email</label>
+                                <label><i class="fas fa-envelope"></i> Business Email</label>
                                 <div class="input-wrapper">
                                     <i class="fas fa-envelope"></i>
-                                    <input type="email" id="compEmail" class="form-control" required>
+                                    <input type="email" id="compEmail" class="form-control" placeholder="contact@company.com" required>
                                 </div>
                             </div>
                             <div class="form-group">
-                                <label>Phone Number</label>
+                                <label><i class="fas fa-phone"></i> Phone Number</label>
                                 <div class="input-wrapper">
                                     <i class="fas fa-phone"></i>
-                                    <input type="tel" id="compPhone" class="form-control" required>
+                                    <input type="tel" id="compPhone" class="form-control" placeholder="+234 800 000 0000" required>
                                 </div>
                             </div>
                         </div>
                         <div class="form-row">
                             <div class="form-group">
-                                <label>Password</label>
+                                <label><i class="fas fa-lock"></i> Password</label>
                                 <div class="input-wrapper">
                                     <i class="fas fa-lock"></i>
-                                    <input type="password" id="compPass" class="form-control" minlength="6" required>
+                                    <input type="password" id="compPass" class="form-control" minlength="6" placeholder="••••••••" required>
                                 </div>
                             </div>
                             <div class="form-group">
-                                <label>Confirm Password</label>
+                                <label><i class="fas fa-check"></i> Confirm Password</label>
                                 <div class="input-wrapper">
                                     <i class="fas fa-check"></i>
-                                    <input type="password" id="compPass2" class="form-control" required>
+                                    <input type="password" id="compPass2" class="form-control" placeholder="••••••••" required>
                                 </div>
                             </div>
                         </div>
@@ -160,30 +162,30 @@
                     <form id="individualForm">
                         <div class="form-row">
                             <div class="form-group">
-                                <label>Full Name</label>
+                                <label><i class="fas fa-user"></i> Full Name</label>
                                 <div class="input-wrapper">
                                     <i class="fas fa-user"></i>
-                                    <input type="text" id="indName" class="form-control" required>
+                                    <input type="text" id="indName" class="form-control" placeholder="John Doe" required>
                                 </div>
                             </div>
                             <div class="form-group">
-                                <label>Email Address</label>
+                                <label><i class="fas fa-envelope"></i> Email Address</label>
                                 <div class="input-wrapper">
                                     <i class="fas fa-envelope"></i>
-                                    <input type="email" id="indEmail" class="form-control" required>
+                                    <input type="email" id="indEmail" class="form-control" placeholder="your@email.com" required>
                                 </div>
                             </div>
                         </div>
                         <div class="form-row">
                             <div class="form-group">
-                                <label>Phone Number</label>
+                                <label><i class="fas fa-phone"></i> Phone Number</label>
                                 <div class="input-wrapper">
                                     <i class="fas fa-phone"></i>
-                                    <input type="tel" id="indPhone" class="form-control" required>
+                                    <input type="tel" id="indPhone" class="form-control" placeholder="+234 800 000 0000" required>
                                 </div>
                             </div>
                             <div class="form-group">
-                                <label>Account Type</label>
+                                <label><i class="fas fa-tag"></i> Account Type</label>
                                 <div class="input-wrapper">
                                     <i class="fas fa-tag"></i>
                                     <select id="indType" class="form-control">
@@ -196,17 +198,17 @@
                         </div>
                         <div class="form-row">
                             <div class="form-group">
-                                <label>Password</label>
+                                <label><i class="fas fa-lock"></i> Password</label>
                                 <div class="input-wrapper">
                                     <i class="fas fa-lock"></i>
-                                    <input type="password" id="indPass" class="form-control" minlength="6" required>
+                                    <input type="password" id="indPass" class="form-control" minlength="6" placeholder="••••••••" required>
                                 </div>
                             </div>
                             <div class="form-group">
-                                <label>Confirm Password</label>
+                                <label><i class="fas fa-check"></i> Confirm Password</label>
                                 <div class="input-wrapper">
                                     <i class="fas fa-check"></i>
-                                    <input type="password" id="indPass2" class="form-control" required>
+                                    <input type="password" id="indPass2" class="form-control" placeholder="••••••••" required>
                                 </div>
                             </div>
                         </div>
@@ -264,12 +266,16 @@
         </div>
     </footer>
 
+    <button id="backToTop" class="back-to-top">
+        <i class="fas fa-arrow-up"></i>
+    </button>
+
     <!-- Firebase SDK -->
     <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js"></script>
     
-    <!-- JavaScript Files - Order Matters -->
+    <!-- JavaScript Files - Order is Critical -->
     <script src="js/firebase-init.js"></script>
     <script src="js/main.js"></script>
     <script src="js/cookie-consent.js"></script>
@@ -279,4 +285,4 @@
     <script src="js/auth-register-individual.js"></script>
     <script src="js/auth-check.js"></script>
 </body>
-                                                                   </html>
+    </html>
