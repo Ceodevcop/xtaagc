@@ -54,7 +54,7 @@
 
         <!-- LOGIN FORM -->
         <div id="loginForm">
-            <form onsubmit="handleLogin(event)">
+            <form id="loginFormElement">
                 <div class="form-group">
                     <label>Email</label>
                     <div class="input-wrapper">
@@ -71,7 +71,7 @@
                 </div>
                 <div class="flex">
                     <label><input type="checkbox" id="rememberMe"> Remember me</label>
-                    <a href="#" onclick="forgotPassword(event)">Forgot?</a>
+                    <a href="#" id="forgotPasswordLink">Forgot?</a>
                 </div>
                 <button type="submit" class="btn btn-accent" id="loginBtn">Login</button>
             </form>
@@ -90,7 +90,7 @@
                     <i class="fas fa-globe"></i>
                     <div><strong>Company Email Required</strong><br><small>@gmail not accepted</small></div>
                 </div>
-                <form onsubmit="handleCompanyReg(event)">
+                <form id="companyForm">
                     <div class="row">
                         <input type="text" id="compName" placeholder="Company Name" required>
                         <input type="text" id="compReg" placeholder="Reg Number" required>
@@ -109,7 +109,7 @@
 
             <!-- Individual -->
             <div id="indReg" style="display:none;">
-                <form onsubmit="handleIndReg(event)">
+                <form id="indForm">
                     <div class="row">
                         <input type="text" id="indName" placeholder="Full Name" required>
                         <input type="email" id="indEmail" placeholder="Email" required>
@@ -132,29 +132,52 @@
         </div>
 
         <div class="link">
-            <span id="loginLink">Don't have account? <a href="#" onclick="showTab('register')">Register</a></span>
-            <span id="regLink" style="display:none;">Have account? <a href="#" onclick="showTab('login')">Login</a></span>
+            <span id="loginLink">Don't have account? <a href="#" id="showRegisterLink">Register</a></span>
+            <span id="regLink" style="display:none;">Have account? <a href="#" id="showLoginLink">Login</a></span>
         </div>
     </div>
 
+    <!-- Firebase SDK -->
     <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js"></script>
 
     <script>
-        // Firebase
-        firebase.initializeApp({
-            apiKey: "AIzaSyAI1MrcP977UgRLQoePxl64JOSyj9v4WpI",
-            authDomain: "xtaagc.firebaseapp.com",
-            projectId: "xtaagc",
-            storageBucket: "xtaagc.firebasestorage.app",
-            messagingSenderId: "256073982437",
-            appId: "1:256073982437:web:8da63bb7acc86c0ca98f0c"
-        });
-        const auth = firebase.auth();
-        const db = firebase.firestore();
+        // ===== WAIT FOR FIREBASE TO LOAD =====
+        function initFirebase() {
+            if (typeof firebase === 'undefined') {
+                console.log('Waiting for Firebase...');
+                setTimeout(initFirebase, 100);
+                return;
+            }
+            
+            try {
+                // Initialize Firebase
+                firebase.initializeApp({
+                    apiKey: "AIzaSyAI1MrcP977UgRLQoePxl64JOSyj9v4WpI",
+                    authDomain: "xtaagc.firebaseapp.com",
+                    projectId: "xtaagc",
+                    storageBucket: "xtaagc.firebasestorage.app",
+                    messagingSenderId: "256073982437",
+                    appId: "1:256073982437:web:8da63bb7acc86c0ca98f0c"
+                });
+                
+                window.auth = firebase.auth();
+                window.db = firebase.firestore();
+                
+                console.log('✅ Firebase initialized');
+                
+                // Now setup everything else
+                setupEventListeners();
+                checkAuthStatus();
+                
+            } catch (e) {
+                console.error('Firebase init error:', e);
+                showAlert('Failed to initialize. Refresh page.', 'error');
+            }
+        }
 
-        // UI
+        // ===== UI FUNCTIONS =====
         function showAlert(msg, type) {
             const a = document.getElementById('alert');
             a.className = `alert ${type}`;
@@ -162,107 +185,204 @@
             setTimeout(() => a.className='alert', 4000);
         }
 
-        function showTab(t) {
+        window.showTab = function(t) {
             document.querySelectorAll('.tab').forEach(b=>b.classList.remove('active'));
             event.currentTarget.classList.add('active');
             document.getElementById('loginForm').style.display = t==='login'?'block':'none';
             document.getElementById('registerForm').style.display = t==='register'?'block':'none';
             document.getElementById('loginLink').style.display = t==='login'?'block':'none';
             document.getElementById('regLink').style.display = t==='register'?'block':'none';
-        }
+        };
 
-        function setType(t) {
+        window.setType = function(t) {
             document.querySelectorAll('#registerForm .tab').forEach(b=>b.classList.remove('active'));
             event.currentTarget.classList.add('active');
             document.getElementById('companyReg').style.display = t==='company'?'block':'none';
             document.getElementById('indReg').style.display = t==='individual'?'block':'none';
+        };
+
+        // ===== SETUP EVENT LISTENERS =====
+        function setupEventListeners() {
+            // Login form
+            document.getElementById('loginFormElement').addEventListener('submit', handleLogin);
+            
+            // Company form
+            document.getElementById('companyForm').addEventListener('submit', handleCompanyReg);
+            
+            // Individual form
+            document.getElementById('indForm').addEventListener('submit', handleIndReg);
+            
+            // Forgot password
+            document.getElementById('forgotPasswordLink').addEventListener('click', forgotPassword);
+            
+            // Tab links
+            document.getElementById('showRegisterLink').addEventListener('click', (e) => {
+                e.preventDefault();
+                document.querySelectorAll('.tab')[1].click();
+            });
+            
+            document.getElementById('showLoginLink').addEventListener('click', (e) => {
+                e.preventDefault();
+                document.querySelectorAll('.tab')[0].click();
+            });
         }
 
-        function forgotPassword(e) {
+        // ===== FORGOT PASSWORD =====
+        async function forgotPassword(e) {
             e.preventDefault();
-            const email = prompt('Email:');
-            if(email) auth.sendPasswordResetEmail(email).then(()=>showAlert('Email sent!','success')).catch(e=>showAlert(e.message,'error'));
-        }
-
-        // Login
-        async function handleLogin(e) {
-            e.preventDefault();
-            const btn = document.getElementById('loginBtn');
-            btn.innerHTML = '<span class="loading"></span> Logging...';
-            btn.disabled = true;
+            const email = prompt('Enter your email:');
+            if(!email) return;
+            
             try {
-                const user = await auth.signInWithEmailAndPassword(
-                    document.getElementById('loginEmail').value,
-                    document.getElementById('loginPassword').value
-                );
-                const storage = document.getElementById('rememberMe').checked ? localStorage : sessionStorage;
-                storage.setItem('taagc_user', JSON.stringify({uid:user.user.uid}));
-                showAlert('Success!','success');
-                setTimeout(()=>window.location.href='/dashboards/shopper.html',1500);
+                await window.auth.sendPasswordResetEmail(email);
+                showAlert('Reset email sent! Check inbox.', 'success');
             } catch(e) {
-                showAlert(e.message,'error');
-                btn.innerHTML='Login';
-                btn.disabled=false;
+                showAlert(e.message, 'error');
             }
         }
 
-        // Company Register
+        // ===== LOGIN =====
+        async function handleLogin(e) {
+            e.preventDefault();
+            
+            if (!window.auth) {
+                showAlert('Auth not ready. Please wait.', 'error');
+                return;
+            }
+            
+            const btn = document.getElementById('loginBtn');
+            const email = document.getElementById('loginEmail').value;
+            const pass = document.getElementById('loginPassword').value;
+            
+            btn.innerHTML = '<span class="loading"></span> Logging...';
+            btn.disabled = true;
+            
+            try {
+                await window.auth.signInWithEmailAndPassword(email, pass);
+                
+                const storage = document.getElementById('rememberMe').checked ? localStorage : sessionStorage;
+                storage.setItem('taagc_user', 'logged_in');
+                
+                showAlert('Success! Redirecting...', 'success');
+                setTimeout(() => window.location.href='/dashboards/shopper.html', 1500);
+                
+            } catch(e) {
+                showAlert(e.message, 'error');
+                btn.innerHTML = 'Login';
+                btn.disabled = false;
+            }
+        }
+
+        // ===== COMPANY REGISTER =====
         async function handleCompanyReg(e) {
             e.preventDefault();
+            
+            if (!window.auth || !window.db) {
+                showAlert('Auth not ready. Please wait.', 'error');
+                return;
+            }
+            
             const btn = document.getElementById('compBtn');
             const email = document.getElementById('compEmail').value;
             const pass = document.getElementById('compPass').value;
-            if(pass !== document.getElementById('compPass2').value) return showAlert('Passwords mismatch','error');
-            if(email.includes('@gmail')) return showAlert('Company email required','error');
+            const pass2 = document.getElementById('compPass2').value;
+            
+            if(pass !== pass2) {
+                showAlert('Passwords do not match', 'error');
+                return;
+            }
+            
+            if(email.includes('@gmail') || email.includes('@yahoo')) {
+                showAlert('Company email required', 'error');
+                return;
+            }
             
             btn.innerHTML = '<span class="loading"></span> Registering...';
             btn.disabled = true;
+            
             try {
-                const user = await auth.createUserWithEmailAndPassword(email, pass);
-                await db.collection('companies').doc(user.user.uid).set({
+                const user = await window.auth.createUserWithEmailAndPassword(email, pass);
+                
+                await window.db.collection('companies').doc(user.user.uid).set({
                     name: document.getElementById('compName').value,
-                    email, phone: document.getElementById('compPhone').value,
-                    status:'pending'
+                    reg: document.getElementById('compReg').value,
+                    email: email,
+                    phone: document.getElementById('compPhone').value,
+                    status: 'pending',
+                    createdAt: new Date().toISOString()
                 });
-                showAlert('Registered!','success');
-                setTimeout(()=>window.location.href='/dashboards/company.html',2000);
+                
+                localStorage.setItem('taagc_user', 'company');
+                showAlert('Registered! Redirecting...', 'success');
+                setTimeout(() => window.location.href='/dashboards/company.html', 2000);
+                
             } catch(e) {
-                showAlert(e.message,'error');
-                btn.innerHTML='Register Company';
-                btn.disabled=false;
+                showAlert(e.message, 'error');
+                btn.innerHTML = 'Register Company';
+                btn.disabled = false;
             }
         }
 
-        // Individual Register
+        // ===== INDIVIDUAL REGISTER =====
         async function handleIndReg(e) {
             e.preventDefault();
+            
+            if (!window.auth || !window.db) {
+                showAlert('Auth not ready. Please wait.', 'error');
+                return;
+            }
+            
             const btn = document.getElementById('indBtn');
             const email = document.getElementById('indEmail').value;
             const pass = document.getElementById('indPass').value;
+            const pass2 = document.getElementById('indPass2').value;
             const type = document.getElementById('indType').value;
-            if(pass !== document.getElementById('indPass2').value) return showAlert('Passwords mismatch','error');
+            
+            if(pass !== pass2) {
+                showAlert('Passwords do not match', 'error');
+                return;
+            }
             
             btn.innerHTML = '<span class="loading"></span> Creating...';
             btn.disabled = true;
+            
             try {
-                const user = await auth.createUserWithEmailAndPassword(email, pass);
-                await db.collection('individuals').doc(user.user.uid).set({
+                const user = await window.auth.createUserWithEmailAndPassword(email, pass);
+                
+                await window.db.collection('individuals').doc(user.user.uid).set({
                     name: document.getElementById('indName').value,
-                    email, phone: document.getElementById('indPhone').value,
-                    accountType: type
+                    email: email,
+                    phone: document.getElementById('indPhone').value,
+                    accountType: type,
+                    createdAt: new Date().toISOString()
                 });
-                showAlert('Created!','success');
-                const dash = {shopper:'/dashboards/shopper.html',investor:'/dashboards/investor.html',professional:'/dashboards/professional.html'};
-                setTimeout(()=>window.location.href=dash[type],2000);
+                
+                localStorage.setItem('taagc_user', 'individual');
+                showAlert('Created! Redirecting...', 'success');
+                
+                const dash = {
+                    shopper: '/dashboards/shopper.html',
+                    investor: '/dashboards/investor.html',
+                    professional: '/dashboards/professional.html'
+                };
+                setTimeout(() => window.location.href = dash[type], 2000);
+                
             } catch(e) {
-                showAlert(e.message,'error');
-                btn.innerHTML='Create Account';
-                btn.disabled=false;
+                showAlert(e.message, 'error');
+                btn.innerHTML = 'Create Account';
+                btn.disabled = false;
             }
         }
 
-        // Auto redirect if logged in
-        if(localStorage.getItem('taagc_user')||sessionStorage.getItem('taagc_user')) window.location.href='/dashboards/shopper.html';
+        // ===== CHECK AUTH STATUS =====
+        function checkAuthStatus() {
+            if(localStorage.getItem('taagc_user') || sessionStorage.getItem('taagc_user')) {
+                window.location.href = '/dashboards/shopper.html';
+            }
+        }
+
+        // ===== START EVERYTHING =====
+        initFirebase();
     </script>
 </body>
 </html>
