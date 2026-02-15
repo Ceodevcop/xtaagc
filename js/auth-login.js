@@ -1,145 +1,150 @@
-// js/auth-ui.js - UI helper functions with null checks
+// js/auth-login.js - Login form handler with null checks
 
-// Show alert message
-function showAlert(message, type) {
-    const alertDiv = document.getElementById('alertMessage');
-    if (!alertDiv) {
-        console.warn('Alert element not found');
+function initializeLoginHandler() {
+    const loginForm = document.getElementById('loginFormElement');
+    
+    if (!loginForm) {
+        console.warn('Login form not found, retrying in 100ms...');
+        setTimeout(initializeLoginHandler, 100);
         return;
     }
     
-    alertDiv.className = `alert alert-${type}`;
-    alertDiv.innerHTML = `<i class="fas fa-${type === 'success' ? 'check-circle' : 'exclamation-circle'}"></i> ${message}`;
+    console.log('Login form found, attaching handler...');
     
-    // Auto hide after 5 seconds
-    setTimeout(() => {
-        if (alertDiv) {
-            alertDiv.innerHTML = '';
-            alertDiv.className = 'alert';
+    // Remove any existing listeners to prevent duplicates
+    const newForm = loginForm.cloneNode(true);
+    loginForm.parentNode.replaceChild(newForm, loginForm);
+    
+    newForm.addEventListener('submit', async function(e) {
+        e.preventDefault();
+        
+        const btn = document.getElementById('loginBtn');
+        const emailInput = document.getElementById('loginEmail');
+        const passwordInput = document.getElementById('loginPassword');
+        const rememberInput = document.getElementById('rememberMe');
+        
+        // Validate elements exist
+        if (!btn || !emailInput || !passwordInput) {
+            showAlert('Form elements not found', 'error');
+            return;
         }
-    }, 5000);
-}
-
-// Switch between login and register tabs
-function showTab(tab) {
-    // Update tab buttons
-    document.querySelectorAll('.tab-btn').forEach(btn => {
-        if (btn && btn.dataset) {
-            btn.classList.toggle('active', btn.dataset.tab === tab);
+        
+        const email = emailInput.value.trim();
+        const password = passwordInput.value;
+        const rememberMe = rememberInput ? rememberInput.checked : false;
+        
+        if (!email || !password) {
+            showAlert('Please enter email and password', 'error');
+            return;
         }
-    });
-    
-    // Show/hide forms
-    const loginForm = document.getElementById('loginForm');
-    const registerForm = document.getElementById('registerForm');
-    const loginLink = document.getElementById('loginLinkText');
-    const registerLink = document.getElementById('registerLinkText');
-    
-    if (loginForm) loginForm.style.display = tab === 'login' ? 'block' : 'none';
-    if (registerForm) registerForm.style.display = tab === 'register' ? 'block' : 'none';
-    if (loginLink) loginLink.style.display = tab === 'login' ? 'block' : 'none';
-    if (registerLink) registerLink.style.display = tab === 'register' ? 'block' : 'none';
-}
-
-// Switch between company and individual registration
-function setRegisterType(type) {
-    // Update type buttons
-    document.querySelectorAll('.company-type-btn').forEach(btn => {
-        if (btn && btn.dataset) {
-            btn.classList.toggle('active', btn.dataset.registerType === type);
-        }
-    });
-    
-    // Show/hide registration forms
-    const companyReg = document.getElementById('companyRegister');
-    const individualReg = document.getElementById('individualRegister');
-    
-    if (companyReg) companyReg.style.display = type === 'company' ? 'block' : 'none';
-    if (individualReg) individualReg.style.display = type === 'individual' ? 'block' : 'none';
-}
-
-// Forgot password handler
-async function handleForgotPassword(e) {
-    if (e) e.preventDefault();
-    
-    const email = prompt('Enter your email address:');
-    if (!email) return;
-    
-    try {
-        if (!window.auth) {
-            throw new Error('Authentication not initialized');
-        }
-        await window.auth.sendPasswordResetEmail(email);
-        showAlert('Password reset email sent! Check your inbox.', 'success');
-    } catch (error) {
-        console.error('Forgot password error:', error);
-        showAlert(error.message || 'Failed to send reset email', 'error');
-    }
-}
-
-// Make functions globally available
-window.showAlert = showAlert;
-window.showTab = showTab;
-window.setRegisterType = setRegisterType;
-window.handleForgotPassword = handleForgotPassword;
-
-// Initialize event listeners when DOM is fully loaded
-document.addEventListener('DOMContentLoaded', function() {
-    console.log('DOM loaded, initializing auth UI...');
-    
-    // Tab buttons
-    document.querySelectorAll('.tab-btn[data-tab]').forEach(btn => {
-        btn.addEventListener('click', function(e) {
-            e.preventDefault();
-            if (this.dataset && this.dataset.tab) {
-                showTab(this.dataset.tab);
+        
+        // Show loading state
+        const originalText = btn.innerHTML;
+        btn.innerHTML = '<span class="loading"></span> Logging in...';
+        btn.disabled = true;
+        
+        try {
+            // Check if auth is initialized
+            if (!window.auth) {
+                throw new Error('Authentication not initialized. Please refresh the page.');
             }
-        });
-    });
-    
-    // Register type buttons
-    document.querySelectorAll('.company-type-btn[data-register-type]').forEach(btn => {
-        btn.addEventListener('click', function(e) {
-            e.preventDefault();
-            if (this.dataset && this.dataset.registerType) {
-                setRegisterType(this.dataset.registerType);
+            
+            // Sign in to Firebase
+            const userCredential = await window.auth.signInWithEmailAndPassword(email, password);
+            const user = userCredential.user;
+            
+            console.log('Login successful:', user.uid);
+            
+            // Get user data from Firestore
+            let userData = { 
+                uid: user.uid, 
+                email: user.email 
+            };
+            
+            // Check companies collection
+            if (!window.db) {
+                throw new Error('Database not initialized');
             }
-        });
-    });
-    
-    // Forgot password link
-    const forgotLink = document.getElementById('forgotPasswordLink');
-    if (forgotLink) {
-        forgotLink.addEventListener('click', handleForgotPassword);
-    } else {
-        console.warn('Forgot password link not found');
-    }
-    
-    // Show register link
-    const showRegisterLink = document.getElementById('showRegisterLink');
-    if (showRegisterLink) {
-        showRegisterLink.addEventListener('click', function(e) {
-            e.preventDefault();
-            showTab('register');
-        });
-    }
-    
-    // Show login link
-    const showLoginLink = document.getElementById('showLoginLink');
-    if (showLoginLink) {
-        showLoginLink.addEventListener('click', function(e) {
-            e.preventDefault();
-            showTab('login');
-        });
-    }
-    
-    // Set default active tab if none active
-    const activeTab = document.querySelector('.tab-btn.active');
-    if (!activeTab) {
-        const loginTab = document.querySelector('[data-tab="login"]');
-        if (loginTab) {
-            loginTab.classList.add('active');
-            showTab('login');
+            
+            const companyDoc = await window.db.collection('companies').doc(user.uid).get();
+            
+            if (companyDoc.exists) {
+                userData.userType = 'company';
+                userData.accountType = companyDoc.data().accountType || 'client';
+                userData.name = companyDoc.data().name || companyDoc.data().companyName || 'Company';
+            } else {
+                // Check individuals collection
+                const indDoc = await window.db.collection('individuals').doc(user.uid).get();
+                
+                if (indDoc.exists) {
+                    userData.userType = 'individual';
+                    userData.accountType = indDoc.data().accountType || 'shopper';
+                    userData.name = indDoc.data().name || indDoc.data().fullName || 'User';
+                } else {
+                    // Fallback - create basic user record
+                    userData.userType = 'individual';
+                    userData.accountType = 'shopper';
+                    userData.name = user.email.split('@')[0] || 'User';
+                    
+                    // Save to Firestore for future logins
+                    try {
+                        await window.db.collection('users').doc(user.uid).set({
+                            email: user.email,
+                            uid: user.uid,
+                            userType: 'individual',
+                            accountType: 'shopper',
+                            createdAt: new Date().toISOString()
+                        });
+                    } catch (e) {
+                        console.warn('Could not save user record:', e);
+                    }
+                }
+            }
+            
+            // Save to storage
+            const storage = rememberMe ? localStorage : sessionStorage;
+            storage.setItem('taagc_user', JSON.stringify(userData));
+            
+            // Show success message
+            showAlert('Login successful! Redirecting...', 'success');
+            
+            // Redirect based on user type
+            setTimeout(() => {
+                if (userData.userType === 'company') {
+                    window.location.href = '/dashboards/company.html';
+                } else {
+                    const dashboards = {
+                        shopper: '/dashboards/shopper.html',
+                        investor: '/dashboards/investor.html',
+                        professional: '/dashboards/professional.html'
+                    };
+                    window.location.href = dashboards[userData.accountType] || '/dashboards/shopper.html';
+                }
+            }, 1500);
+            
+        } catch (error) {
+            console.error('Login error:', error);
+            
+            // Show error message
+            let errorMessage = error.message;
+            if (error.code === 'auth/user-not-found') errorMessage = 'No account found with this email';
+            if (error.code === 'auth/wrong-password') errorMessage = 'Incorrect password';
+            if (error.code === 'auth/too-many-requests') errorMessage = 'Too many failed attempts. Try again later.';
+            if (error.code === 'auth/invalid-email') errorMessage = 'Invalid email address';
+            if (error.code === 'auth/network-request-failed') errorMessage = 'Network error. Check your connection.';
+            
+            showAlert(errorMessage, 'error');
+            
+            // Reset button
+            btn.innerHTML = originalText || 'Login to Account';
+            btn.disabled = false;
         }
+    });
+}
+
+// Wait for DOM to be ready
+if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initializeLoginHandler);
+} else {
+    initializeLoginHandler();
     }
-});
