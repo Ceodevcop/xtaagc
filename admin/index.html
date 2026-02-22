@@ -1,0 +1,295 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin Login – TAAGC Global</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link rel="stylesheet" href="/css/style.css">
+  <style>
+    body {
+      background: linear-gradient(135deg, #0a2540 0%, #1a3a4f 100%);
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+    .admin-login-card {
+      max-width: 400px;
+      width: 100%;
+      background: white;
+      border-radius: 24px;
+      padding: 40px;
+      box-shadow: 0 20px 40px rgba(0,0,0,0.3);
+    }
+    .admin-logo {
+      text-align: center;
+      margin-bottom: 30px;
+    }
+    .admin-logo .logo-icon {
+      width: 60px;
+      height: 60px;
+      background: linear-gradient(135deg, #0a2540, #3a5a78);
+      border-radius: 16px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      font-size: 28px;
+      font-weight: 700;
+      margin: 0 auto 15px;
+    }
+    .admin-logo h2 {
+      color: #0a2540;
+      font-size: 24px;
+    }
+    .admin-logo p {
+      color: #64748b;
+      font-size: 14px;
+    }
+    .admin-badge {
+      display: inline-block;
+      background: rgba(193,154,107,0.1);
+      color: #c19a6b;
+      padding: 6px 16px;
+      border-radius: 40px;
+      font-size: 12px;
+      font-weight: 600;
+      text-align: center;
+      margin-bottom: 20px;
+    }
+    .form-group {
+      margin-bottom: 20px;
+    }
+    label {
+      display: block;
+      margin-bottom: 8px;
+      font-weight: 600;
+      color: #0a2540;
+    }
+    .input-wrapper {
+      position: relative;
+    }
+    .input-wrapper i {
+      position: absolute;
+      left: 16px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: #a0aec0;
+    }
+    input {
+      width: 100%;
+      padding: 14px 16px 14px 48px;
+      border: 2px solid #e2e8f0;
+      border-radius: 12px;
+      font-size: 15px;
+      transition: border-color 0.2s;
+    }
+    input:focus {
+      border-color: #c19a6b;
+      outline: none;
+    }
+    .btn-admin {
+      width: 100%;
+      padding: 16px;
+      background: #0a2540;
+      color: white;
+      border: none;
+      border-radius: 12px;
+      font-size: 16px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background 0.2s;
+      margin-top: 10px;
+    }
+    .btn-admin:hover {
+      background: #1a3a4f;
+    }
+    .alert {
+      padding: 16px;
+      border-radius: 8px;
+      margin-top: 20px;
+      display: none;
+    }
+    .alert-error {
+      background: #fff5f5;
+      border-left: 4px solid #e53e3e;
+      color: #742a2a;
+      display: block;
+    }
+    .alert-success {
+      background: #f0fff4;
+      border-left: 4px solid #2e7d5e;
+      color: #22543d;
+      display: block;
+    }
+    .security-note {
+      margin-top: 25px;
+      padding-top: 20px;
+      border-top: 1px solid #e2e8f0;
+      font-size: 12px;
+      color: #64748b;
+      text-align: center;
+    }
+  </style>
+</head>
+<body>
+  <div class="admin-login-card">
+    <div class="admin-logo">
+      <div class="logo-icon">A</div>
+      <h2>TAAGC Admin</h2>
+      <p>Secure administration portal</p>
+    </div>
+
+    <div class="admin-badge">
+      <i class="fas fa-shield-alt"></i> AUTHORIZED PERSONNEL ONLY
+    </div>
+
+    <form id="adminLoginForm">
+      <div class="form-group">
+        <label><i class="fas fa-envelope"></i> Admin Email</label>
+        <div class="input-wrapper">
+          <i class="fas fa-envelope"></i>
+          <input type="email" id="email" placeholder="admin@taagc.com" required>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label><i class="fas fa-lock"></i> Password</label>
+        <div class="input-wrapper">
+          <i class="fas fa-lock"></i>
+          <input type="password" id="password" placeholder="••••••••" required>
+        </div>
+      </div>
+
+      <div class="form-check" style="margin: 15px 0;">
+        <input type="checkbox" id="remember">
+        <label for="remember" style="display: inline; margin-left: 8px;">Remember me on this device</label>
+      </div>
+
+      <button type="submit" class="btn-admin" id="loginBtn">
+        <i class="fas fa-sign-in-alt"></i> Access Admin Panel
+      </button>
+    </form>
+
+    <div id="alertMessage" class="alert"></div>
+
+    <div class="security-note">
+      <i class="fas fa-lock"></i> All access is logged and monitored
+    </div>
+  </div>
+
+  <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js"></script>
+
+  <script>
+    // Firebase Config
+    firebase.initializeApp({
+      apiKey: "AIzaSyAI1MrcP977UgRLQoePxl64JOSyj9v4WpI",
+      authDomain: "xtaagc.firebaseapp.com",
+      projectId: "xtaagc",
+      storageBucket: "xtaagc.firebasestorage.app",
+      messagingSenderId: "256073982437",
+      appId: "1:256073982437:web:8da63bb7acc86c0ca98f0c"
+    });
+
+    const auth = firebase.auth();
+    const db = firebase.firestore();
+
+    // Admin login handler
+    document.getElementById('adminLoginForm').addEventListener('submit', async function(e) {
+      e.preventDefault();
+
+      const email = document.getElementById('email').value;
+      const password = document.getElementById('password').value;
+      const remember = document.getElementById('remember').checked;
+      const loginBtn = document.getElementById('loginBtn');
+      const alertDiv = document.getElementById('alertMessage');
+
+      loginBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Verifying...';
+      loginBtn.disabled = true;
+      alertDiv.className = 'alert';
+      alertDiv.innerHTML = '';
+
+      try {
+        // Sign in to Firebase
+        const userCredential = await auth.signInWithEmailAndPassword(email, password);
+        const user = userCredential.user;
+
+        // Check if user is admin in Firestore
+        const adminDoc = await db.collection('admins').doc(user.uid).get();
+
+        if (!adminDoc.exists) {
+          throw new Error('Access denied. Admin privileges required.');
+        }
+
+        const adminData = adminDoc.data();
+
+        // Update last login
+        await db.collection('admins').doc(user.uid).update({
+          lastLogin: firebase.firestore.FieldValue.serverTimestamp(),
+          lastLoginIP: 'web'
+        });
+
+        // Log admin login
+        await db.collection('audit_logs').add({
+          action: 'admin.login',
+          adminId: user.uid,
+          adminEmail: user.email,
+          timestamp: firebase.firestore.FieldValue.serverTimestamp(),
+          ip: await getClientIP()
+        });
+
+        // Store admin session
+        const sessionData = {
+          uid: user.uid,
+          email: user.email,
+          name: adminData.name,
+          role: adminData.role,
+          permissions: adminData.permissions || []
+        };
+
+        if (remember) {
+          localStorage.setItem('taagc_admin', JSON.stringify(sessionData));
+        } else {
+          sessionStorage.setItem('taagc_admin', JSON.stringify(sessionData));
+        }
+
+        // Show success
+        alertDiv.className = 'alert alert-success';
+        alertDiv.innerHTML = '<i class="fas fa-check-circle"></i> Login successful! Redirecting...';
+
+        setTimeout(() => {
+          window.location.href = '/admin/dashboard.html';
+        }, 1500);
+
+      } catch (error) {
+        alertDiv.className = 'alert alert-error';
+        alertDiv.innerHTML = '<i class="fas fa-exclamation-circle"></i> ' + error.message;
+        loginBtn.innerHTML = '<i class="fas fa-sign-in-alt"></i> Access Admin Panel';
+        loginBtn.disabled = false;
+      }
+    });
+
+    // Helper to get client IP
+    async function getClientIP() {
+      try {
+        const res = await fetch('https://api.ipify.org?format=json');
+        const data = await res.json();
+        return data.ip;
+      } catch {
+        return 'unknown';
+      }
+    }
+
+    // Check if already logged in
+    const existingAdmin = localStorage.getItem('taagc_admin') || sessionStorage.getItem('taagc_admin');
+    if (existingAdmin) {
+      window.location.href = '/admin/dashboard.html';
+    }
+  </script>
+</body>
+</html>
