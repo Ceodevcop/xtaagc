@@ -1,23 +1,350 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Firebase Load Test</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 20px;
+            background: #f5f5f5;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        h1 { color: #333; }
+        h2 { color: #666; margin-top: 30px; }
+        .test-section {
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            padding: 15px;
+            margin: 15px 0;
+            background: #fafafa;
+        }
+        .success { color: #28a745; font-weight: bold; }
+        .error { color: #dc3545; font-weight: bold; }
+        .warning { color: #ffc107; font-weight: bold; }
+        .info { color: #17a2b8; }
+        pre {
+            background: #f8f9fa;
+            padding: 10px;
+            border-radius: 4px;
+            overflow: auto;
+            max-height: 200px;
+            border: 1px solid #ddd;
+        }
+        .file-status {
+            display: inline-block;
+            padding: 3px 8px;
+            border-radius: 3px;
+            font-size: 12px;
+            font-weight: bold;
+            margin-left: 10px;
+        }
+        .status-loaded { background: #28a745; color: white; }
+        .status-error { background: #dc3545; color: white; }
+        .status-pending { background: #ffc107; color: black; }
+        button {
+            background: #007bff;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+            margin-right: 10px;
+        }
+        button:hover { background: #0056b3; }
+        .network-log {
+            background: #272822;
+            color: #f8f8f2;
+            padding: 10px;
+            border-radius: 4px;
+            font-family: monospace;
+            white-space: pre-wrap;
+        }
+    </style>
 </head>
 <body>
-    <h1>Firebase Load Test</h1>
-    
-    <script src="/admin/js/firebase-app.js"></script>
-    <script src="/admin/js/firebase-auth.js"></script>
-    <script src="/admin/js/firebase-firestore.js"></script>
-    
+    <div class="container">
+        <h1>🔥 Firebase Load Test</h1>
+        <p>Testing Firebase loading from different sources and versions</p>
+
+        <!-- Test 1: Local Files -->
+        <div class="test-section">
+            <h2>Test 1: Your Local Firebase Files <span id="local-status" class="file-status status-pending">Testing...</span></h2>
+            <p>Loading from: <code>/admin/js/</code></p>
+            <button onclick="testLocalFiles()">Run Test 1</button>
+            <button onclick="clearTest(1)">Clear</button>
+            <div id="test1-result"></div>
+        </div>
+
+        <!-- Test 2: Firebase CDN (v8 - Global namespace) -->
+        <div class="test-section">
+            <h2>Test 2: Firebase CDN v8 <span id="cdn8-status" class="file-status status-pending">Not Tested</span></h2>
+            <p>Loading from: <code>https://www.gstatic.com/firebasejs/8.10.1/</code></p>
+            <button onclick="testCDNv8()">Run Test 2</button>
+            <button onclick="clearTest(2)">Clear</button>
+            <div id="test2-result"></div>
+        </div>
+
+        <!-- Test 3: Firebase CDN (v9+ with compat) -->
+        <div class="test-section">
+            <h2>Test 3: Firebase CDN v10 (Compat) <span id="cdn10-status" class="file-status status-pending">Not Tested</span></h2>
+            <p>Loading from: <code>https://www.gstatic.com/firebasejs/10.8.0/ (compat versions)</code></p>
+            <button onclick="testCDNv10()">Run Test 3</button>
+            <button onclick="clearTest(3)">Clear</button>
+            <div id="test3-result"></div>
+        </div>
+
+        <!-- Test 4: Modular Firebase (v9+ without compat) -->
+        <div class="test-section">
+            <h2>Test 4: Firebase CDN v10 (Modular) <span id="cdn10-mod-status" class="file-status status-pending">Not Tested</span></h2>
+            <p>Loading from: <code>https://www.gstatic.com/firebasejs/10.8.0/ (modular)</code></p>
+            <button onclick="testCDNv10Modular()">Run Test 4</button>
+            <button onclick="clearTest(4)">Clear</button>
+            <div id="test4-result"></div>
+        </div>
+
+        <!-- Network Log -->
+        <div class="test-section">
+            <h2>Network Load Log</h2>
+            <button onclick="clearNetworkLog()">Clear Log</button>
+            <div id="network-log" class="network-log">No network activity logged yet...</div>
+        </div>
+
+        <!-- System Info -->
+        <div class="test-section">
+            <h2>System Information</h2>
+            <button onclick="showSystemInfo()">Refresh Info</button>
+            <div id="system-info"></div>
+        </div>
+    </div>
+
     <script>
-        console.log('Firebase object:', typeof firebase);
-        console.log('Window keys with firebase:', Object.keys(window).filter(k => k.toLowerCase().includes('firebase')));
+        // Network logging
+        let networkLog = [];
         
-        if (typeof firebase !== 'undefined') {
-            console.log('Firebase apps:', firebase.apps);
-            console.log('Available services:', Object.keys(firebase));
+        function logNetwork(message, type = 'info') {
+            const timestamp = new Date().toLocaleTimeString();
+            networkLog.push(`[${timestamp}] ${message}`);
+            const logElement = document.getElementById('network-log');
+            logElement.innerHTML = networkLog.join('\n');
         }
+
+        function clearNetworkLog() {
+            networkLog = [];
+            document.getElementById('network-log').innerHTML = 'Network log cleared...';
+        }
+
+        // Clear test results
+        function clearTest(testNum) {
+            document.getElementById(`test${testNum}-result`).innerHTML = '';
+            if (testNum === 1) document.getElementById('local-status').textContent = 'Cleared';
+            if (testNum === 2) document.getElementById('cdn8-status').textContent = 'Cleared';
+            if (testNum === 3) document.getElementById('cdn10-status').textContent = 'Cleared';
+            if (testNum === 4) document.getElementById('cdn10-mod-status').textContent = 'Cleared';
+        }
+
+        // Helper to check file existence
+        async function checkFileExists(url) {
+            try {
+                const response = await fetch(url, { method: 'HEAD' });
+                return {
+                    exists: response.ok,
+                    status: response.status,
+                    size: response.headers.get('content-length') || 'unknown'
+                };
+            } catch (error) {
+                return { exists: false, error: error.message };
+            }
+        }
+
+        // Test 1: Local files
+        async function testLocalFiles() {
+            const resultDiv = document.getElementById('test1-result');
+            resultDiv.innerHTML = '<p>Testing local files...</p>';
+            
+            const files = [
+                '/admin/js/firebase-app.js',
+                '/admin/js/firebase-auth.js', 
+                '/admin/js/firebase-firestore.js'
+            ];
+
+            let html = '<h3>File Check:</h3><ul>';
+            
+            // First check if files exist
+            for (const file of files) {
+                const check = await checkFileExists(file);
+                html += `<li><strong>${file}</strong>: `;
+                if (check.exists) {
+                    html += `<span class="success">✓ Found</span> (Status: ${check.status}, Size: ${check.size} bytes)`;
+                } else {
+                    html += `<span class="error">✗ Not Found</span> (Error: ${check.error || 'Unknown'})`;
+                }
+                html += '</li>';
+            }
+            html += '</ul>';
+
+            // Now try loading them
+            html += '<h3>Loading Test:</h3>';
+            
+            // Remove any existing Firebase scripts
+            document.querySelectorAll('script[src*="firebase"]').forEach(s => s.remove());
+            
+            // Clear Firebase object
+            window.firebase = undefined;
+            
+            try {
+                // Load scripts sequentially
+                for (const file of files) {
+                    html += `<p>Loading ${file}... `;
+                    await loadScript(file);
+                    html += `<span class="success">✓ Loaded</span></p>`;
+                }
+                
+                // Check result
+                html += '<h3>Result:</h3>';
+                if (typeof firebase !== 'undefined') {
+                    html += `<p class="success">✅ Firebase object is defined!</p>`;
+                    html += `<pre>Version: ${firebase.SDK_VERSION || 'unknown'}\n`;
+                    html += `Available: ${Object.keys(firebase).join(', ')}</pre>`;
+                    document.getElementById('local-status').className = 'file-status status-loaded';
+                    document.getElementById('local-status').textContent = '✓ Working';
+                } else {
+                    html += `<p class="error">❌ Firebase object is STILL undefined!</p>`;
+                    html += `<p class="warning">Check if files are complete and from same version</p>`;
+                    document.getElementById('local-status').className = 'file-status status-error';
+                    document.getElementById('local-status').textContent = '✗ Failed';
+                }
+            } catch (error) {
+                html += `<p class="error">Error loading scripts: ${error.message}</p>`;
+                document.getElementById('local-status').className = 'file-status status-error';
+                document.getElementById('local-status').textContent = '✗ Error';
+            }
+            
+            resultDiv.innerHTML = html;
+        }
+
+        // Test 2: CDN v8 (Global namespace)
+        async function testCDNv8() {
+            await testCDNVersion('8.10.1', false, 2, 'cdn8-status');
+        }
+
+        // Test 3: CDN v10 Compat
+        async function testCDNv10() {
+            await testCDNVersion('10.8.0', true, 3, 'cdn10-status');
+        }
+
+        // Test 4: CDN v10 Modular
+        async function testCDNv10Modular() {
+            await testCDNVersion('10.8.0', false, 4, 'cdn10-mod-status', true);
+        }
+
+        async function testCDNVersion(version, useCompat, testNum, statusId, expectModular = false) {
+            const resultDiv = document.getElementById(`test${testNum}-result`);
+            resultDiv.innerHTML = '<p>Loading from CDN...</p>';
+            
+            const compat = useCompat ? '-compat' : '';
+            const files = [
+                `https://www.gstatic.com/firebasejs/${version}/firebase-app${compat}.js`,
+                `https://www.gstatic.com/firebasejs/${version}/firebase-auth${compat}.js`,
+                `https://www.gstatic.com/firebasejs/${version}/firebase-firestore${compat}.js`
+            ];
+
+            let html = '<h3>Loading:</h3>';
+            
+            // Remove existing scripts
+            document.querySelectorAll('script[src*="firebase"]').forEach(s => s.remove());
+            window.firebase = undefined;
+            
+            try {
+                for (const file of files) {
+                    html += `<p>Loading ${file.split('/').pop()}... `;
+                    await loadScript(file);
+                    html += `<span class="success">✓ Loaded</span></p>`;
+                }
+                
+                html += '<h3>Result:</h3>';
+                
+                if (expectModular) {
+                    // Modular Firebase doesn't create global firebase
+                    if (typeof firebase === 'undefined' && typeof initializeApp !== 'undefined') {
+                        html += `<p class="success">✅ Modular Firebase detected (no global firebase object)</p>`;
+                        document.getElementById(statusId).className = 'file-status status-loaded';
+                        document.getElementById(statusId).textContent = '✓ Modular';
+                    } else {
+                        html += `<p class="warning">⚠️ Unexpected result - check console</p>`;
+                    }
+                } else {
+                    if (typeof firebase !== 'undefined') {
+                        html += `<p class="success">✅ Firebase object is defined!</p>`;
+                        html += `<pre>Version: ${firebase.SDK_VERSION || version}\n`;
+                        html += `Available: ${Object.keys(firebase).join(', ')}</pre>`;
+                        document.getElementById(statusId).className = 'file-status status-loaded';
+                        document.getElementById(statusId).textContent = '✓ Working';
+                    } else {
+                        html += `<p class="error">❌ Firebase object is undefined!</p>`;
+                        document.getElementById(statusId).className = 'file-status status-error';
+                        document.getElementById(statusId).textContent = '✗ Failed';
+                    }
+                }
+            } catch (error) {
+                html += `<p class="error">Error: ${error.message}</p>`;
+                document.getElementById(statusId).className = 'file-status status-error';
+                document.getElementById(statusId).textContent = '✗ Error';
+            }
+            
+            resultDiv.innerHTML = html;
+        }
+
+        // Helper to load script
+        function loadScript(src) {
+            return new Promise((resolve, reject) => {
+                const script = document.createElement('script');
+                script.src = src;
+                script.onload = () => {
+                    logNetwork(`✅ Loaded: ${src}`);
+                    resolve();
+                };
+                script.onerror = () => {
+                    logNetwork(`❌ Failed: ${src}`);
+                    reject(new Error(`Failed to load ${src}`));
+                };
+                document.head.appendChild(script);
+            });
+        }
+
+        // Show system info
+        function showSystemInfo() {
+            const info = {
+                userAgent: navigator.userAgent,
+                platform: navigator.platform,
+                language: navigator.language,
+                cookiesEnabled: navigator.cookieEnabled,
+                screenSize: `${screen.width}x${screen.height}`,
+                timezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
+                localStorage: typeof localStorage !== 'undefined',
+                sessionStorage: typeof sessionStorage !== 'undefined'
+            };
+            
+            let html = '<pre>';
+            for (const [key, value] of Object.entries(info)) {
+                html += `${key}: ${value}\n`;
+            }
+            html += '</pre>';
+            
+            document.getElementById('system-info').innerHTML = html;
+        }
+
+        // Run initial system info
+        showSystemInfo();
     </script>
 </body>
 </html>
