@@ -255,7 +255,7 @@
                     if (user) {
                         const session = localStorage.getItem('taagc_admin') || sessionStorage.getItem('taagc_admin');
                         if (session) {
-                            window.location.href = 'dashboard/index.html';
+                            window.location.href = '/admin/dashboard';
                         }
                     }
                 });
@@ -294,7 +294,7 @@
                 } catch (e) {}
 
                 if (!isAdmin) {
-                    const superAdmins = ['admin@taagc.com', 'priahmz@gmail.com'];
+                    const superAdmins = ['priahmz@gmail.com'];
                     if (superAdmins.includes(email)) {
                         isAdmin = true;
                         adminData = { name: 'Super Admin', email: email, role: 'super-admin' };
