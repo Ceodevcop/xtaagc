@@ -2,55 +2,77 @@
 <html>
 <head>
     <title>Firebase Diagnostic</title>
+    <!-- Load Firebase FIRST in head -->
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js"></script>
 </head>
 <body>
     <h2>Firebase Diagnostic Tool</h2>
     
-    <div id="status" style="padding: 20px; margin: 20px; border: 2px solid #ccc;"></div>
+    <div id="status" style="padding: 20px; margin: 20px; border: 2px solid #ccc; white-space: pre-line;"></div>
     
     <script>
         const status = document.getElementById('status');
-        let html = '<h3>Testing Firebase Loading...</h3>';
+        let html = '<h3>Testing Firebase Loading...</h3>\n\n';
         
-        // Test 1: Can we load external scripts?
-        html += '<p>Test 1: Checking if we can load external scripts...</p>';
+        // Test 1: Script tags should be in head
+        html += '✅ Test 1: Script tags added to head\n';
         
-        // Try to load Firebase
-        const script = document.createElement('script');
-        script.src = 'https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js';
-        script.onload = () => {
-            html += '<p style="color:green;">✅ Test 2: Firebase app loaded successfully!</p>';
+        // Wait for Firebase to be available
+        function waitForFirebase() {
+            return new Promise((resolve) => {
+                if (typeof firebase !== 'undefined') {
+                    resolve();
+                } else {
+                    // Check every 100ms
+                    let checks = 0;
+                    const interval = setInterval(() => {
+                        checks++;
+                        if (typeof firebase !== 'undefined') {
+                            clearInterval(interval);
+                            resolve();
+                        } else if (checks > 50) { // 5 seconds timeout
+                            clearInterval(interval);
+                            resolve(); // Timeout, but continue
+                        }
+                    }, 100);
+                }
+            });
+        }
+
+        // Run tests
+        (async function() {
+            html += '⏳ Test 2: Waiting for Firebase to load...\n';
+            await waitForFirebase();
             
-            // Try to use Firebase
-            try {
-                const config = {
-                    apiKey: "AIzaSyAI1MrcP977UgRLQoePxl64JOSyj9v4WpI",
-                    authDomain: "xtaagc.firebaseapp.com",
-                    projectId: "xtaagc"
-                };
-                firebase.initializeApp(config);
-                html += '<p style="color:green;">✅ Test 3: Firebase initialized successfully!</p>';
-            } catch (e) {
-                html += '<p style="color:red;">❌ Test 3: Firebase init failed: ' + e.message + '</p>';
+            if (typeof firebase !== 'undefined') {
+                html += '✅ Test 2: Firebase object is available\n';
+                
+                try {
+                    const config = {
+                        apiKey: "AIzaSyAI1MrcP977UgRLQoePxl64JOSyj9v4WpI",
+                        authDomain: "xtaagc.firebaseapp.com",
+                        projectId: "xtaagc"
+                    };
+                    
+                    firebase.initializeApp(config);
+                    html += '✅ Test 3: Firebase initialized successfully!\n';
+                    html += '\n✅ Firebase is working correctly!\n';
+                    status.style.color = 'green';
+                } catch (e) {
+                    html += `❌ Test 3: Firebase init failed: ${e.message}\n`;
+                }
+            } else {
+                html += '❌ Test 2: Firebase object still not available after timeout\n';
+                html += '\nPossible issues:\n';
+                html += '- CDN is blocked\n';
+                html += '- Browser extension blocking\n';
+                html += '- Network issues\n';
             }
             
             status.innerHTML = html;
-        };
-        
-        script.onerror = () => {
-            html += '<p style="color:red;">❌ Test 2: Failed to load Firebase from CDN!</p>';
-            html += '<p>Possible causes:</p>';
-            html += '<ul>';
-            html += '<li>Firebase CDN is blocked in your country</li>';
-            html += '<li>Your server is blocking external scripts</li>';
-            html += '<li>Network connectivity issues</li>';
-            html += '</ul>';
-            status.innerHTML = html;
-        };
-        
-        document.head.appendChild(script);
-        html += '<p style="color:orange;">⏳ Test 2: Loading Firebase... (check below)</p>';
-        status.innerHTML = html;
+        })();
     </script>
 </body>
 </html>
