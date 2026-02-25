@@ -59,9 +59,14 @@
             cursor: pointer;
             width: 100%;
             margin-top: 20px;
+            transition: background 0.2s;
         }
         .btn:hover {
             background: #1a3a4f;
+        }
+        .btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
         }
         .warning {
             color: #856404;
@@ -71,7 +76,21 @@
             margin: 20px 0;
             font-size: 14px;
         }
+        .loading {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid rgba(255,255,255,0.3);
+            border-top-color: white;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
     </style>
+    
+    <!-- Load Firebase SDK first -->
     <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js"></script>
@@ -88,49 +107,83 @@
             After successful creation, delete this file for security.
         </div>
         
-        <button class="btn" onclick="createAdmin()">Create Admin User</button>
+        <div style="margin-bottom: 20px; padding: 15px; background: #f8fafc; border-radius: 8px;">
+            <p><strong>Default Credentials:</strong></p>
+            <p>Email: admin@taagc.com</p>
+            <p>Password: Admin123!</p>
+        </div>
+        
+        <button class="btn" id="createBtn" onclick="createAdmin()">
+            Create Admin User
+        </button>
         
         <div style="margin-top: 20px; font-size: 13px; color: #64748b; text-align: center;">
-            Default credentials will be displayed after creation
+            This will create a super admin account
         </div>
     </div>
 
     <script>
-        // Initialize Firebase
-        firebase.initializeApp({
+        // Initialize Firebase FIRST - before any functions
+        const firebaseConfig = {
             apiKey: "AIzaSyAI1MrcP977UgRLQoePxl64JOSyj9v4WpI",
             authDomain: "xtaagc.firebaseapp.com",
             projectId: "xtaagc",
             storageBucket: "xtaagc.firebasestorage.app",
             messagingSenderId: "256073982437",
             appId: "1:256073982437:web:8da63bb7acc86c0ca98f0c"
-        });
+        };
 
+        // Initialize Firebase
+        firebase.initializeApp(firebaseConfig);
+        
+        // Now create auth and db - these are safe to use
         const auth = firebase.auth();
         const db = firebase.firestore();
 
+        console.log('✅ Firebase initialized');
+
         async function createAdmin() {
             const resultDiv = document.getElementById('result');
-            resultDiv.innerHTML = '<div style="text-align:center">Creating admin...</div>';
+            const createBtn = document.getElementById('createBtn');
+            
+            resultDiv.innerHTML = '<div style="text-align:center"><span class="loading"></span> Creating admin...</div>';
+            createBtn.disabled = true;
+            createBtn.innerHTML = '<span class="loading"></span> Creating...';
             
             const adminEmail = "admin@taagc.com";
             const adminPassword = "Admin123!";
             
             try {
+                console.log('Starting admin creation...');
+                
                 // Try to create user
                 let user;
                 try {
+                    console.log('Attempting to create user...');
                     const userCredential = await auth.createUserWithEmailAndPassword(adminEmail, adminPassword);
                     user = userCredential.user;
+                    console.log('✅ User created:', user.uid);
+                    
                 } catch (createError) {
+                    console.log('Create error:', createError.code);
+                    
                     // If user already exists, sign in
                     if (createError.code === 'auth/email-already-in-use') {
+                        console.log('User already exists, signing in...');
                         const userCredential = await auth.signInWithEmailAndPassword(adminEmail, adminPassword);
                         user = userCredential.user;
+                        console.log('✅ Signed in as existing user:', user.uid);
                     } else {
                         throw createError;
                     }
                 }
+                
+                // Ensure user exists
+                if (!user) {
+                    throw new Error('Failed to get user');
+                }
+                
+                console.log('Creating admin document...');
                 
                 // Create admin document in Firestore
                 await db.collection('admins').doc(user.uid).set({
@@ -141,12 +194,19 @@
                     createdBy: 'system'
                 }, { merge: true });
                 
+                console.log('✅ Admin document created');
+                
                 // Also create in a backup collection
-                await db.collection('admin_users').doc(user.uid).set({
-                    email: adminEmail,
-                    isAdmin: true,
-                    role: 'super-admin'
-                }, { merge: true });
+                try {
+                    await db.collection('admin_users').doc(user.uid).set({
+                        email: adminEmail,
+                        isAdmin: true,
+                        role: 'super-admin'
+                    }, { merge: true });
+                    console.log('✅ Backup admin document created');
+                } catch (e) {
+                    console.log('Backup creation failed (optional):', e);
+                }
                 
                 // Log the creation
                 try {
@@ -156,27 +216,80 @@
                         adminEmail: adminEmail,
                         timestamp: firebase.firestore.FieldValue.serverTimestamp()
                     });
+                    console.log('✅ Audit log created');
                 } catch (e) {
-                    // Ignore if audit_logs doesn't exist
+                    console.log('Audit log failed (optional):', e);
                 }
+                
+                // Store session
+                localStorage.setItem('taagc_admin', JSON.stringify({
+                    uid: user.uid,
+                    email: adminEmail,
+                    name: 'Super Admin',
+                    role: 'super-admin'
+                }));
                 
                 resultDiv.innerHTML = `
                     <div class="success">
                         ✅ Admin created successfully!<br><br>
                         <strong>Email:</strong> admin@taagc.com<br>
                         <strong>Password:</strong> Admin123!<br><br>
+                        <a href="admin-login.html" style="display: inline-block; background: #0a2540; color: white; padding: 10px 20px; border-radius: 8px; text-decoration: none; margin-top: 10px;">Go to Login</a>
+                        <br><br>
                         <span style="color: #e53e3e; font-weight: bold;">⚠️ DELETE THIS FILE NOW</span>
                     </div>
                 `;
                 
+                createBtn.disabled = true;
+                createBtn.style.display = 'none';
+                
             } catch (error) {
+                console.error('❌ Error:', error);
+                
+                let errorMessage = error.message;
+                if (error.code === 'auth/weak-password') {
+                    errorMessage = 'Password is too weak. Use at least 6 characters.';
+                } else if (error.code === 'auth/invalid-email') {
+                    errorMessage = 'Invalid email address.';
+                } else if (error.code === 'auth/network-request-failed') {
+                    errorMessage = 'Network error. Check your internet connection.';
+                }
+                
                 resultDiv.innerHTML = `
                     <div class="error">
-                        ❌ Error: ${error.message}
+                        ❌ Error: ${errorMessage}<br><br>
+                        <button onclick="location.reload()" style="background: #0a2540; color: white; border: none; padding: 8px 16px; border-radius: 4px; cursor: pointer;">Try Again</button>
                     </div>
                 `;
+                
+                createBtn.disabled = false;
+                createBtn.innerHTML = 'Create Admin User';
             }
         }
+
+        // Check if admin already exists and show message
+        window.onload = async function() {
+            try {
+                // Try to sign in to check if user exists
+                await auth.signInWithEmailAndPassword('admin@taagc.com', 'Admin123!');
+                
+                // If successful, user exists
+                document.getElementById('result').innerHTML = `
+                    <div class="success">
+                        ✅ Admin account already exists!<br><br>
+                        <strong>Email:</strong> admin@taagc.com<br>
+                        <strong>Password:</strong> Admin123!<br><br>
+                        <a href="admin-login.html" style="display: inline-block; background: #0a2540; color: white; padding: 10px 20px; border-radius: 8px; text-decoration: none;">Go to Login</a>
+                    </div>
+                `;
+                
+                document.getElementById('createBtn').style.display = 'none';
+                
+            } catch (e) {
+                // User doesn't exist - that's fine, show create button
+                console.log('Admin does not exist yet');
+            }
+        };
     </script>
 </body>
 </html>
