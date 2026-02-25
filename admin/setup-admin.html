@@ -5,19 +5,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Admin Setup - TAAGC</title>
     
-    <!-- Try multiple CDN sources -->
-    <script src="https://cdn.jsdelivr.net/npm/firebase@10.7.1/dist/firebase-app.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/firebase@10.7.1/dist/firebase-auth.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/firebase@10.7.1/dist/firebase-firestore.js"></script>
-    
-    <!-- Fallback to local -->
-    <script>
-        window.onerror = function() {
-            document.write('<script src="js/firebase-app.js"><\/script>');
-            document.write('<script src="js/firebase-auth.js"><\/script>');
-            document.write('<script src="js/firebase-firestore.js"><\/script>');
-        };
-    </script>
+    <!-- Load LOCAL Firebase files -->
+    <script src="js/firebase-app.js"></script>
+    <script src="js/firebase-auth.js"></script>
+    <script src="js/firebase-firestore.js"></script>
     
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
     
@@ -74,6 +65,7 @@
             cursor: pointer;
             width: 100%;
             margin-top: 20px;
+            transition: background 0.2s;
         }
         .btn:hover {
             background: #1a3a4f;
@@ -101,13 +93,27 @@
         @keyframes spin {
             to { transform: rotate(360deg); }
         }
-        .status-box {
+        .file-list {
             background: #f8fafc;
             border-radius: 8px;
             padding: 15px;
             margin: 20px 0;
             font-family: monospace;
             font-size: 13px;
+        }
+        .file-list li {
+            list-style: none;
+            padding: 5px 0;
+            border-bottom: 1px solid #e2e8f0;
+        }
+        .file-list li:last-child {
+            border-bottom: none;
+        }
+        .check {
+            color: #2e7d5e;
+        }
+        .missing {
+            color: #e53e3e;
         }
     </style>
 </head>
@@ -117,12 +123,17 @@
         <p style="color: #64748b; margin-bottom: 20px;">Create your first administrator account</p>
         
         <div class="warning">
-            <strong>⚠️ Default Credentials:</strong><br>
-            Email: admin@taagc.com<br>
-            Password: Admin123!
+            <strong>⚠️ Required Files:</strong> Make sure these files exist in your /admin/js/ folder:
         </div>
         
-        <div id="status" class="status-box">Initializing Firebase...</div>
+        <div class="file-list" id="fileCheck">
+            Checking files...
+        </div>
+        
+        <div id="status" class="file-list" style="background: #fff3cd; color: #856404;">
+            ⏳ Verifying Firebase files...
+        </div>
+        
         <div id="result"></div>
         
         <button class="btn" id="createBtn" onclick="createAdmin()" disabled>
@@ -135,63 +146,83 @@
     </div>
 
     <script>
-        function waitForFirebase() {
-            return new Promise((resolve) => {
-                if (typeof firebase !== 'undefined') {
-                    resolve();
-                } else {
-                    let attempts = 0;
-                    const interval = setInterval(() => {
-                        attempts++;
-                        if (typeof firebase !== 'undefined') {
-                            clearInterval(interval);
-                            resolve();
-                        } else if (attempts > 100) {
-                            clearInterval(interval);
-                            resolve();
+        // Check if Firebase files loaded
+        function checkFirebaseFiles() {
+            const fileList = document.getElementById('fileCheck');
+            const status = document.getElementById('status');
+            
+            const files = [
+                'firebase-app.js',
+                'firebase-auth.js',
+                'firebase-firestore.js'
+            ];
+            
+            let html = '<strong>File Status:</strong><ul>';
+            let allLoaded = true;
+            
+            files.forEach(file => {
+                // Try to check if file exists by attempting to fetch it
+                fetch(`js/${file}`, { method: 'HEAD' })
+                    .then(response => {
+                        const li = document.querySelector(`#file-${file.replace(/\./g, '-')}`);
+                        if (response.ok) {
+                            li.innerHTML = `✅ ${file} - Found`;
+                            li.style.color = '#2e7d5e';
+                        } else {
+                            li.innerHTML = `❌ ${file} - Missing`;
+                            li.style.color = '#e53e3e';
+                            allLoaded = false;
                         }
-                    }, 100);
-                }
+                    })
+                    .catch(() => {
+                        const li = document.querySelector(`#file-${file.replace(/\./g, '-')}`);
+                        if (li) {
+                            li.innerHTML = `❌ ${file} - Cannot access`;
+                            li.style.color = '#e53e3e';
+                            allLoaded = false;
+                        }
+                    });
+                
+                html += `<li id="file-${file.replace(/\./g, '-')}">⏳ Checking ${file}...</li>`;
             });
+            
+            html += '</ul>';
+            fileList.innerHTML = html;
+            
+            // Check if firebase object exists
+            setTimeout(() => {
+                if (typeof firebase !== 'undefined') {
+                    status.innerHTML = '✅ Firebase loaded successfully!';
+                    status.style.background = '#f0fff4';
+                    status.style.color = '#22543d';
+                    document.getElementById('createBtn').disabled = false;
+                    
+                    // Initialize Firebase
+                    try {
+                        const config = {
+                            apiKey: "AIzaSyAI1MrcP977UgRLQoePxl64JOSyj9v4WpI",
+                            authDomain: "xtaagc.firebaseapp.com",
+                            projectId: "xtaagc",
+                            storageBucket: "xtaagc.firebasestorage.app",
+                            messagingSenderId: "256073982437",
+                            appId: "1:256073982437:web:8da63bb7acc86c0ca98f0c"
+                        };
+                        firebase.initializeApp(config);
+                        checkExistingAdmin();
+                    } catch (e) {
+                        status.innerHTML = `❌ Firebase init error: ${e.message}`;
+                        status.style.background = '#fff5f5';
+                        status.style.color = '#742a2a';
+                    }
+                } else {
+                    status.innerHTML = '❌ Firebase failed to load. Please upload the Firebase SDK files to /admin/js/';
+                    status.style.background = '#fff5f5';
+                    status.style.color = '#742a2a';
+                }
+            }, 1000);
         }
 
-        window.onload = async function() {
-            const statusDiv = document.getElementById('status');
-            const createBtn = document.getElementById('createBtn');
-            
-            statusDiv.innerHTML = '⏳ Loading Firebase...';
-            
-            await waitForFirebase();
-            
-            if (typeof firebase === 'undefined') {
-                statusDiv.innerHTML = '❌ Firebase failed to load. Please contact administrator.';
-                statusDiv.style.color = 'red';
-                return;
-            }
-            
-            try {
-                const config = {
-                    apiKey: "AIzaSyAI1MrcP977UgRLQoePxl64JOSyj9v4WpI",
-                    authDomain: "xtaagc.firebaseapp.com",
-                    projectId: "xtaagc",
-                    storageBucket: "xtaagc.firebasestorage.app",
-                    messagingSenderId: "256073982437",
-                    appId: "1:256073982437:web:8da63bb7acc86c0ca98f0c"
-                };
-                
-                firebase.initializeApp(config);
-                statusDiv.innerHTML = '✅ Firebase initialized successfully!';
-                statusDiv.style.color = 'green';
-                createBtn.disabled = false;
-                
-                await checkExistingAdmin();
-                
-            } catch (e) {
-                statusDiv.innerHTML = `❌ Firebase init failed: ${e.message}`;
-                statusDiv.style.color = 'red';
-            }
-        };
-
+        // Check if admin already exists
         async function checkExistingAdmin() {
             try {
                 const auth = firebase.auth();
@@ -206,10 +237,12 @@
                 document.getElementById('createBtn').style.display = 'none';
                 
             } catch (e) {
-                // Admin doesn't exist - that's fine
+                // Admin doesn't exist - good to create
+                console.log('Admin does not exist, ready to create');
             }
         }
 
+        // Create admin function
         async function createAdmin() {
             const resultDiv = document.getElementById('result');
             const createBtn = document.getElementById('createBtn');
@@ -272,6 +305,9 @@
                 createBtn.disabled = false;
             }
         }
+
+        // Start checking files when page loads
+        window.onload = checkFirebaseFiles;
     </script>
 </body>
 </html>
