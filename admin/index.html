@@ -151,15 +151,6 @@
         @keyframes spin {
             to { transform: rotate(360deg); }
         }
-        .debug-info {
-            margin-top: 20px;
-            padding: 10px;
-            background: #f1f5f9;
-            border-radius: 8px;
-            font-size: 12px;
-            color: #475569;
-            display: none;
-        }
         .footer-note {
             margin-top: 25px;
             padding-top: 20px;
@@ -170,7 +161,7 @@
         }
     </style>
     
-    <!-- Load Firebase first -->
+    <!-- Load Firebase -->
     <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js"></script>
@@ -186,12 +177,6 @@
             <i class="fas fa-shield-alt"></i> AUTHORIZED PERSONNEL ONLY
         </div>
         <div id="alertMessage" class="alert"></div>
-        
-        <!-- Debug info (hidden by default) -->
-        <div id="debugInfo" class="debug-info">
-            <strong>Debug Info:</strong>
-            <div id="debugContent"></div>
-        </div>
         
         <form id="loginForm">
             <div class="form-group">
@@ -219,7 +204,7 @@
         </form>
         
         <div style="margin-top: 15px; text-align: center;">
-            <a href="#" onclick="showDebug()" style="color: #64748b; font-size: 12px;">Troubleshooting</a>
+            <a href="../create-admin.html" style="color: #64748b; font-size: 12px;">First time? Create admin</a>
         </div>
         
         <div class="footer-note">
@@ -228,68 +213,27 @@
     </div>
 
     <script>
-        // Debug function
-        function showDebug() {
-            document.getElementById('debugInfo').style.display = 'block';
-        }
-
-        function addDebug(message) {
-            const debug = document.getElementById('debugContent');
-            debug.innerHTML += '<div>' + new Date().toLocaleTimeString() + ': ' + message + '</div>';
-        }
-
         // Initialize Firebase
-        try {
-            console.log('Starting Firebase initialization...');
-            addDebug('Starting Firebase initialization...');
-            
-            const firebaseConfig = {
-                apiKey: "AIzaSyAI1MrcP977UgRLQoePxl64JOSyj9v4WpI",
-                authDomain: "xtaagc.firebaseapp.com",
-                projectId: "xtaagc",
-                storageBucket: "xtaagc.firebasestorage.app",
-                messagingSenderId: "256073982437",
-                appId: "1:256073982437:web:8da63bb7acc86c0ca98f0c"
-            };
+        const firebaseConfig = {
+            apiKey: "AIzaSyAI1MrcP977UgRLQoePxl64JOSyj9v4WpI",
+            authDomain: "xtaagc.firebaseapp.com",
+            projectId: "xtaagc",
+            storageBucket: "xtaagc.firebasestorage.app",
+            messagingSenderId: "256073982437",
+            appId: "1:256073982437:web:8da63bb7acc86c0ca98f0c"
+        };
 
-            // Initialize Firebase
-            firebase.initializeApp(firebaseConfig);
-            console.log('✅ Firebase initialized');
-            addDebug('✅ Firebase initialized');
-            
-        } catch (e) {
-            console.error('❌ Firebase init error:', e);
-            addDebug('❌ Firebase init error: ' + e.message);
-        }
-
-        // Get auth and db
+        firebase.initializeApp(firebaseConfig);
         const auth = firebase.auth();
         const db = firebase.firestore();
-        
-        console.log('✅ Auth and DB ready');
-        addDebug('✅ Auth and DB ready');
-
-        // Enable persistence
-        db.enablePersistence().catch(err => {
-            console.log('Persistence error:', err);
-            addDebug('Persistence error: ' + err.message);
-        });
 
         // Check if already logged in
         auth.onAuthStateChanged((user) => {
             if (user) {
-                console.log('User already logged in:', user.email);
-                addDebug('User already logged in: ' + user.email);
-                
                 const session = localStorage.getItem('taagc_admin') || sessionStorage.getItem('taagc_admin');
                 if (session) {
-                    console.log('Redirecting to dashboard...');
-                    addDebug('Redirecting to dashboard...');
-                    window.location.href = 'admin-dashboard.html';
+                    window.location.href = 'dashboard/index.html';
                 }
-            } else {
-                console.log('No user logged in');
-                addDebug('No user logged in');
             }
         });
 
@@ -306,50 +250,28 @@
             btn.innerHTML = '<span class="loading"></span> Verifying...';
             btn.disabled = true;
             alertDiv.style.display = 'none';
-            
-            console.log('Login attempt for:', email);
-            addDebug('Login attempt for: ' + email);
 
             try {
-                // Attempt login
-                console.log('Calling signInWithEmailAndPassword...');
-                addDebug('Calling signInWithEmailAndPassword...');
-                
                 const userCredential = await auth.signInWithEmailAndPassword(email, password);
                 const user = userCredential.user;
-                
-                console.log('✅ Login successful:', user.uid);
-                addDebug('✅ Login successful: ' + user.uid);
 
                 // Check if admin
                 let isAdmin = false;
                 let adminData = null;
 
-                // Try admins collection
+                // Check admins collection
                 try {
-                    console.log('Checking admins collection...');
-                    addDebug('Checking admins collection...');
-                    
                     const adminDoc = await db.collection('admins').doc(user.uid).get();
                     if (adminDoc.exists) {
                         isAdmin = true;
                         adminData = adminDoc.data();
-                        console.log('✅ Admin found in admins collection');
-                        addDebug('✅ Admin found in admins collection');
-                    } else {
-                        console.log('No admin document found');
-                        addDebug('No admin document found');
                     }
                 } catch (e) {
                     console.log('Error checking admins:', e);
-                    addDebug('Error checking admins: ' + e.message);
                 }
 
                 // Hardcoded super admins
                 if (!isAdmin) {
-                    console.log('Checking hardcoded super admins...');
-                    addDebug('Checking hardcoded super admins...');
-                    
                     const superAdmins = ['admin@taagc.com', 'priahmz@gmail.com'];
                     if (superAdmins.includes(email)) {
                         isAdmin = true;
@@ -358,8 +280,6 @@
                             email: email,
                             role: 'super-admin'
                         };
-                        console.log('✅ Hardcoded admin override');
-                        addDebug('✅ Hardcoded admin override');
                         
                         // Create admin document for future
                         try {
@@ -369,18 +289,13 @@
                                 role: 'super-admin',
                                 createdAt: new Date().toISOString()
                             }, { merge: true });
-                            console.log('✅ Created admin document');
-                            addDebug('✅ Created admin document');
                         } catch (e) {
                             console.log('Could not create admin doc:', e);
-                            addDebug('Could not create admin doc: ' + e.message);
                         }
                     }
                 }
 
                 if (!isAdmin) {
-                    console.log('❌ Not an admin');
-                    addDebug('❌ Not an admin');
                     throw new Error('Access denied. Admin privileges required.');
                 }
 
@@ -395,27 +310,8 @@
 
                 if (remember) {
                     localStorage.setItem('taagc_admin', JSON.stringify(sessionData));
-                    console.log('✅ Session saved to localStorage');
-                    addDebug('✅ Session saved to localStorage');
                 } else {
                     sessionStorage.setItem('taagc_admin', JSON.stringify(sessionData));
-                    console.log('✅ Session saved to sessionStorage');
-                    addDebug('✅ Session saved to sessionStorage');
-                }
-
-                // Log the login
-                try {
-                    await db.collection('audit_logs').add({
-                        action: 'admin.login',
-                        adminId: user.uid,
-                        adminEmail: user.email,
-                        timestamp: firebase.firestore.FieldValue.serverTimestamp()
-                    });
-                    console.log('✅ Audit log created');
-                    addDebug('✅ Audit log created');
-                } catch (e) {
-                    console.log('Could not log audit:', e);
-                    addDebug('Could not log audit: ' + e.message);
                 }
 
                 alertDiv.className = 'alert alert-success';
@@ -423,24 +319,17 @@
                 alertDiv.style.display = 'block';
 
                 setTimeout(() => {
-                    console.log('Redirecting to dashboard...');
-                    addDebug('Redirecting to dashboard...');
-                    window.location.href = 'admin-dashboard.html';
+                    window.location.href = 'dashboard/index.html';
                 }, 1500);
 
             } catch (error) {
-                console.error('❌ Login error:', error);
-                addDebug('❌ Login error: ' + error.message);
+                console.error('Login error:', error);
                 
                 let errorMessage = error.message;
                 if (error.code === 'auth/user-not-found') {
-                    errorMessage = 'No account found. Run create-admin.html first.';
+                    errorMessage = 'No account found. <a href="../create-admin.html">Create admin</a> first.';
                 } else if (error.code === 'auth/wrong-password') {
                     errorMessage = 'Incorrect password.';
-                } else if (error.code === 'auth/too-many-requests') {
-                    errorMessage = 'Too many attempts. Try later.';
-                } else if (error.code === 'auth/network-request-failed') {
-                    errorMessage = 'Network error. Check connection.';
                 }
 
                 alertDiv.className = 'alert alert-error';
