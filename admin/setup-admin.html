@@ -88,9 +88,23 @@
         @keyframes spin {
             to { transform: rotate(360deg); }
         }
+        .note {
+            margin-top: 20px;
+            font-size: 13px;
+            color: #64748b;
+            text-align: center;
+        }
+        .note a {
+            color: #0a2540;
+            text-decoration: none;
+            font-weight: 600;
+        }
+        .note a:hover {
+            text-decoration: underline;
+        }
     </style>
     
-    <!-- Load Firebase SDK first -->
+    <!-- Load Firebase SDK - MUST be first -->
     <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js"></script>
@@ -117,13 +131,15 @@
             Create Admin User
         </button>
         
-        <div style="margin-top: 20px; font-size: 13px; color: #64748b; text-align: center;">
-            This will create a super admin account
+        <div class="note">
+            <a href="index.html">Already have an account? Login</a>
         </div>
     </div>
 
     <script>
-        // Initialize Firebase FIRST - before any functions
+        // ===== FIREBASE INITIALIZATION - MUST BE AT TOP LEVEL =====
+        console.log('Starting Firebase initialization...');
+        
         const firebaseConfig = {
             apiKey: "AIzaSyAI1MrcP977UgRLQoePxl64JOSyj9v4WpI",
             authDomain: "xtaagc.firebaseapp.com",
@@ -135,13 +151,42 @@
 
         // Initialize Firebase
         firebase.initializeApp(firebaseConfig);
+        console.log('✅ Firebase initialized');
         
-        // Now create auth and db - these are safe to use
+        // Get auth and db instances
         const auth = firebase.auth();
         const db = firebase.firestore();
+        console.log('✅ Auth and DB ready');
 
-        console.log('✅ Firebase initialized');
+        // Optional: Enable persistence for better reliability
+        db.enablePersistence().catch(err => {
+            console.log('Persistence error (non-critical):', err);
+        });
 
+        // Check if admin already exists on page load
+        window.addEventListener('load', async function() {
+            try {
+                // Try to sign in silently to check if user exists
+                await auth.signInWithEmailAndPassword('admin@taagc.com', 'Admin123!');
+                
+                // If successful, user exists
+                document.getElementById('result').innerHTML = `
+                    <div class="success">
+                        ✅ Admin account already exists!<br><br>
+                        <strong>Email:</strong> admin@taagc.com<br>
+                        <strong>Password:</strong> Admin123!<br><br>
+                        <a href="index.html" style="display: inline-block; background: #0a2540; color: white; padding: 10px 20px; border-radius: 8px; text-decoration: none; margin-top: 10px;">Go to Admin Login</a>
+                    </div>
+                `;
+                document.getElementById('createBtn').style.display = 'none';
+                
+            } catch (e) {
+                // User doesn't exist - that's fine, show create button
+                console.log('Admin does not exist yet, ready to create');
+            }
+        });
+
+        // Create admin function
         async function createAdmin() {
             const resultDiv = document.getElementById('result');
             const createBtn = document.getElementById('createBtn');
@@ -154,12 +199,11 @@
             const adminPassword = "Admin123!";
             
             try {
-                console.log('Starting admin creation...');
+                console.log('Attempting to create admin user...');
                 
                 // Try to create user
                 let user;
                 try {
-                    console.log('Attempting to create user...');
                     const userCredential = await auth.createUserWithEmailAndPassword(adminEmail, adminPassword);
                     user = userCredential.user;
                     console.log('✅ User created:', user.uid);
@@ -178,14 +222,12 @@
                     }
                 }
                 
-                // Ensure user exists
                 if (!user) {
                     throw new Error('Failed to get user');
                 }
                 
-                console.log('Creating admin document...');
-                
                 // Create admin document in Firestore
+                console.log('Creating admin document...');
                 await db.collection('admins').doc(user.uid).set({
                     name: 'Super Admin',
                     email: adminEmail,
@@ -196,32 +238,7 @@
                 
                 console.log('✅ Admin document created');
                 
-                // Also create in a backup collection
-                try {
-                    await db.collection('admin_users').doc(user.uid).set({
-                        email: adminEmail,
-                        isAdmin: true,
-                        role: 'super-admin'
-                    }, { merge: true });
-                    console.log('✅ Backup admin document created');
-                } catch (e) {
-                    console.log('Backup creation failed (optional):', e);
-                }
-                
-                // Log the creation
-                try {
-                    await db.collection('audit_logs').add({
-                        action: 'admin.created',
-                        adminId: user.uid,
-                        adminEmail: adminEmail,
-                        timestamp: firebase.firestore.FieldValue.serverTimestamp()
-                    });
-                    console.log('✅ Audit log created');
-                } catch (e) {
-                    console.log('Audit log failed (optional):', e);
-                }
-                
-                // Store session
+                // Store session for auto-login
                 localStorage.setItem('taagc_admin', JSON.stringify({
                     uid: user.uid,
                     email: adminEmail,
@@ -234,13 +251,12 @@
                         ✅ Admin created successfully!<br><br>
                         <strong>Email:</strong> admin@taagc.com<br>
                         <strong>Password:</strong> Admin123!<br><br>
-                        <a href="admin-login.html" style="display: inline-block; background: #0a2540; color: white; padding: 10px 20px; border-radius: 8px; text-decoration: none; margin-top: 10px;">Go to Login</a>
+                        <a href="index.html" style="display: inline-block; background: #0a2540; color: white; padding: 10px 20px; border-radius: 8px; text-decoration: none; margin-top: 10px;">Go to Admin Login</a>
                         <br><br>
                         <span style="color: #e53e3e; font-weight: bold;">⚠️ DELETE THIS FILE NOW</span>
                     </div>
                 `;
                 
-                createBtn.disabled = true;
                 createBtn.style.display = 'none';
                 
             } catch (error) {
@@ -249,8 +265,6 @@
                 let errorMessage = error.message;
                 if (error.code === 'auth/weak-password') {
                     errorMessage = 'Password is too weak. Use at least 6 characters.';
-                } else if (error.code === 'auth/invalid-email') {
-                    errorMessage = 'Invalid email address.';
                 } else if (error.code === 'auth/network-request-failed') {
                     errorMessage = 'Network error. Check your internet connection.';
                 }
@@ -266,30 +280,6 @@
                 createBtn.innerHTML = 'Create Admin User';
             }
         }
-
-        // Check if admin already exists and show message
-        window.onload = async function() {
-            try {
-                // Try to sign in to check if user exists
-                await auth.signInWithEmailAndPassword('admin@taagc.com', 'Admin123!');
-                
-                // If successful, user exists
-                document.getElementById('result').innerHTML = `
-                    <div class="success">
-                        ✅ Admin account already exists!<br><br>
-                        <strong>Email:</strong> admin@taagc.com<br>
-                        <strong>Password:</strong> Admin123!<br><br>
-                        <a href="admin-login.html" style="display: inline-block; background: #0a2540; color: white; padding: 10px 20px; border-radius: 8px; text-decoration: none;">Go to Login</a>
-                    </div>
-                `;
-                
-                document.getElementById('createBtn').style.display = 'none';
-                
-            } catch (e) {
-                // User doesn't exist - that's fine, show create button
-                console.log('Admin does not exist yet');
-            }
-        };
     </script>
 </body>
 </html>
