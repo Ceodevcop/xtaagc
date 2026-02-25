@@ -196,6 +196,11 @@
             display: none;
         }
     </style>
+    
+    <!-- Load Firebase -->
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js"></script>
 </head>
 <body>
     <div class="dashboard" id="dashboardSection">
@@ -263,46 +268,30 @@
                 <div class="section-header">
                     <h2><i class="fas fa-clock" style="color:#c19a6b;"></i> Recent Activity</h2>
                 </div>
-                <table>
-                    <thead>
-                        <tr>
-                            <th>Action</th>
-                            <th>User</th>
-                            <th>Time</th>
-                        </tr>
-                    </thead>
-                    <tbody id="activityTable">
-                        <tr>
-                            <td colspan="3" style="text-align:center;">Loading activity...</td>
-                        </tr>
-                    </tbody>
-                </table>
+                <div id="recentActivity">Loading activity...</div>
             </div>
         </main>
     </div>
 
-    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js"></script>
-
     <script>
         // Initialize Firebase
-        firebase.initializeApp({
+        const firebaseConfig = {
             apiKey: "AIzaSyAI1MrcP977UgRLQoePxl64JOSyj9v4WpI",
             authDomain: "xtaagc.firebaseapp.com",
             projectId: "xtaagc",
             storageBucket: "xtaagc.firebasestorage.app",
             messagingSenderId: "256073982437",
             appId: "1:256073982437:web:8da63bb7acc86c0ca98f0c"
-        });
+        };
 
+        firebase.initializeApp(firebaseConfig);
         const auth = firebase.auth();
         const db = firebase.firestore();
 
         // Check authentication
         auth.onAuthStateChanged(async (user) => {
             if (!user) {
-                window.location.href = 'admin-login-fixed.html';
+                window.location.href = '../index.html';
                 return;
             }
 
@@ -312,8 +301,6 @@
                 document.getElementById('adminName').innerHTML = sessionData.name || 'Admin';
                 document.getElementById('adminEmail').innerHTML = sessionData.email || user.email;
                 document.getElementById('adminAvatar').innerHTML = (sessionData.name || 'A').charAt(0);
-            } else {
-                document.getElementById('adminEmail').innerHTML = user.email;
             }
 
             // Load dashboard data
@@ -337,19 +324,18 @@
                     .limit(5)
                     .get();
 
-                const tbody = document.getElementById('activityTable');
-                tbody.innerHTML = '';
+                let html = '<table><thead><tr><th>Action</th><th>User</th><th>Time</th></tr></thead><tbody>';
 
                 if (activitySnap.empty) {
-                    tbody.innerHTML = '<tr><td colspan="3" style="text-align:center;">No recent activity</td></tr>';
+                    html += '<tr><td colspan="3" style="text-align:center;">No recent activity</td></tr>';
                 } else {
                     activitySnap.forEach(doc => {
                         const log = doc.data();
                         const time = log.timestamp?.toDate ? 
                             log.timestamp.toDate().toLocaleString() : 
-                            new Date().toLocaleString();
+                            'Just now';
                         
-                        tbody.innerHTML += `
+                        html += `
                             <tr>
                                 <td>${log.action || 'Unknown'}</td>
                                 <td>${log.adminEmail || log.userId || 'System'}</td>
@@ -358,11 +344,13 @@
                         `;
                     });
                 }
+                
+                html += '</tbody></table>';
+                document.getElementById('recentActivity').innerHTML = html;
 
             } catch (error) {
                 console.error('Error loading dashboard data:', error);
-                document.getElementById('activityTable').innerHTML = 
-                    '<tr><td colspan="3" style="text-align:center; color:#e53e3e;">Error loading data</td></tr>';
+                document.getElementById('recentActivity').innerHTML = 'Error loading data';
             }
         }
 
@@ -371,9 +359,7 @@
             localStorage.removeItem('taagc_admin');
             sessionStorage.removeItem('taagc_admin');
             auth.signOut().then(() => {
-                window.location.href = 'admin-login-fixed.html';
-            }).catch(() => {
-                window.location.href = 'admin-login-fixed.html';
+                window.location.href = '../index.html';
             });
         });
     </script>
