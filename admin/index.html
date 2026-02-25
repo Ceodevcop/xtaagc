@@ -5,20 +5,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Admin Login - TAAGC</title>
     
-    <!-- Try multiple CDN sources -->
-    <script src="https://cdn.jsdelivr.net/npm/firebase@10.7.1/dist/firebase-app.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/firebase@10.7.1/dist/firebase-auth.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/firebase@10.7.1/dist/firebase-firestore.js"></script>
-    
-    <!-- Fallback to local if CDN fails -->
-    <script>
-        window.onerror = function() {
-            document.write('Loading local Firebase...');
-            document.write('<script src="js/firebase-app.js"><\/script>');
-            document.write('<script src="js/firebase-auth.js"><\/script>');
-            document.write('<script src="js/firebase-firestore.js"><\/script>');
-        };
-    </script>
+    <!-- Load LOCAL Firebase files -->
+    <script src="js/firebase-app.js"></script>
+    <script src="js/firebase-auth.js"></script>
+    <script src="js/firebase-firestore.js"></script>
     
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -215,7 +205,6 @@
     </div>
 
     <script>
-        // Wait for Firebase to be ready
         function waitForFirebase() {
             return new Promise((resolve) => {
                 if (typeof firebase !== 'undefined') {
@@ -227,7 +216,7 @@
                         if (typeof firebase !== 'undefined') {
                             clearInterval(interval);
                             resolve();
-                        } else if (attempts > 100) { // 10 seconds timeout
+                        } else if (attempts > 100) {
                             clearInterval(interval);
                             resolve();
                         }
@@ -236,7 +225,6 @@
             });
         }
 
-        // Initialize when page loads
         window.onload = async function() {
             const statusDiv = document.getElementById('status');
             const loginBtn = document.getElementById('loginBtn');
@@ -244,7 +232,7 @@
             await waitForFirebase();
             
             if (typeof firebase === 'undefined') {
-                statusDiv.innerHTML = '❌ Firebase failed to load. Please contact administrator.';
+                statusDiv.innerHTML = '❌ Firebase failed to load. Please upload SDK files to /admin/js/';
                 statusDiv.style.color = 'red';
                 return;
             }
@@ -264,7 +252,6 @@
                 statusDiv.style.color = 'green';
                 loginBtn.disabled = false;
                 
-                // Check if already logged in
                 firebase.auth().onAuthStateChanged((user) => {
                     if (user) {
                         const session = localStorage.getItem('taagc_admin') || sessionStorage.getItem('taagc_admin');
@@ -280,7 +267,6 @@
             }
         };
 
-        // Login handler
         document.getElementById('loginForm').addEventListener('submit', async function(e) {
             e.preventDefault();
             
@@ -292,53 +278,34 @@
 
             btn.innerHTML = '<span class="loading"></span> Verifying...';
             btn.disabled = true;
-            alertDiv.style.display = 'none';
 
             try {
-                const auth = firebase.auth();
-                const db = firebase.firestore();
-                
-                const userCredential = await auth.signInWithEmailAndPassword(email, password);
+                const userCredential = await firebase.auth().signInWithEmailAndPassword(email, password);
                 const user = userCredential.user;
 
-                // Check if admin
                 let isAdmin = false;
                 let adminData = null;
 
                 try {
-                    const adminDoc = await db.collection('admins').doc(user.uid).get();
+                    const adminDoc = await firebase.firestore().collection('admins').doc(user.uid).get();
                     if (adminDoc.exists) {
                         isAdmin = true;
                         adminData = adminDoc.data();
                     }
-                } catch (e) {
-                    console.log('Error checking admin:', e);
-                }
+                } catch (e) {}
 
-                // Hardcoded super admins
                 if (!isAdmin) {
                     const superAdmins = ['admin@taagc.com', 'priahmz@gmail.com'];
                     if (superAdmins.includes(email)) {
                         isAdmin = true;
                         adminData = { name: 'Super Admin', email: email, role: 'super-admin' };
-                        
-                        // Create admin document for future
-                        try {
-                            await db.collection('admins').doc(user.uid).set({
-                                name: 'Super Admin',
-                                email: email,
-                                role: 'super-admin',
-                                createdAt: new Date().toISOString()
-                            }, { merge: true });
-                        } catch (e) {}
                     }
                 }
 
                 if (!isAdmin) {
-                    throw new Error('Access denied. Admin privileges required.');
+                    throw new Error('Access denied');
                 }
 
-                // Save session
                 const sessionData = {
                     uid: user.uid,
                     email: user.email,
@@ -353,7 +320,7 @@
                 }
 
                 alertDiv.className = 'alert alert-success';
-                alertDiv.innerHTML = '<i class="fas fa-check-circle"></i> Login successful! Redirecting...';
+                alertDiv.innerHTML = 'Login successful! Redirecting...';
                 alertDiv.style.display = 'block';
 
                 setTimeout(() => {
@@ -361,19 +328,9 @@
                 }, 1500);
 
             } catch (error) {
-                console.error('Login error:', error);
-                
-                let errorMessage = error.message;
-                if (error.code === 'auth/user-not-found') {
-                    errorMessage = 'No account found. Please run setup-admin.html first.';
-                } else if (error.code === 'auth/wrong-password') {
-                    errorMessage = 'Incorrect password.';
-                }
-
                 alertDiv.className = 'alert alert-error';
-                alertDiv.innerHTML = '<i class="fas fa-exclamation-circle"></i> ' + errorMessage;
+                alertDiv.innerHTML = error.message;
                 alertDiv.style.display = 'block';
-                
                 btn.innerHTML = '<i class="fas fa-sign-in-alt"></i> Access Admin Panel';
                 btn.disabled = false;
             }
