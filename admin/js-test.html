@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Firebase JS Test</title>
+</head>
+<body>
+    <h2>Firebase JavaScript Test</h2>
+    
+    <div id="output" style="background: #f0f0f0; padding: 20px; margin: 20px; font-family: monospace;"></div>
+    
+    <script>
+        const output = document.getElementById('output');
+        function log(msg) {
+            output.innerHTML += msg + '<br>';
+        }
+        
+        log('📁 Testing Firebase files in /admin/js/:');
+        log('----------------------------------------');
+        
+        // Test 1: Check if files are accessible
+        const files = [
+            'js/firebase-app.js',
+            'js/firebase-auth.js',
+            'js/firebase-firestore.js'
+        ];
+        
+        let loadedCount = 0;
+        
+        files.forEach((file, index) => {
+            const script = document.createElement('script');
+            script.src = file + '?t=' + Date.now(); // Cache bust
+            script.onload = () => {
+                loadedCount++;
+                log(`✅ Loaded: ${file}`);
+                
+                if (loadedCount === files.length) {
+                    log('----------------------------------------');
+                    log('📊 Checking Firebase object...');
+                    setTimeout(() => {
+                        if (typeof firebase !== 'undefined') {
+                            log('✅ Firebase object exists!');
+                            log(`📦 Firebase version: ${firebase.SDK_VERSION || 'unknown'}`);
+                            
+                            try {
+                                const config = {
+                                    apiKey: "AIzaSyAI1MrcP977UgRLQoePxl64JOSyj9v4WpI",
+                                    authDomain: "xtaagc.firebaseapp.com",
+                                    projectId: "xtaagc"
+                                };
+                                firebase.initializeApp(config);
+                                log('✅ Firebase initialized successfully!');
+                            } catch (e) {
+                                log(`❌ Init error: ${e.message}`);
+                            }
+                        } else {
+                            log('❌ Firebase object STILL undefined!');
+                            log('🔍 This means the files loaded but did not create the firebase object.');
+                            log('📝 Possible causes:');
+                            log('   - Wrong file version');
+                            log('   - Corrupted files');
+                            log('   - Files are from different version');
+                        }
+                    }, 500);
+                }
+            };
+            script.onerror = () => {
+                log(`❌ Failed to load: ${file}`);
+            };
+            document.head.appendChild(script);
+            log(`⏳ Loading: ${file}...`);
+        });
+    </script>
+</body>
+</html>
