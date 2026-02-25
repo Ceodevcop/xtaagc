@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Firebase Load Test</title>
+</head>
+<body>
+    <h1>Firebase Load Test</h1>
+    
+    <script src="/admin/js/firebase-app.js"></script>
+    <script src="/admin/js/firebase-auth.js"></script>
+    <script src="/admin/js/firebase-firestore.js"></script>
+    
+    <script>
+        console.log('Firebase object:', typeof firebase);
+        console.log('Window keys with firebase:', Object.keys(window).filter(k => k.toLowerCase().includes('firebase')));
+        
+        if (typeof firebase !== 'undefined') {
+            console.log('Firebase apps:', firebase.apps);
+            console.log('Available services:', Object.keys(firebase));
+        }
+    </script>
+</body>
+</html>
