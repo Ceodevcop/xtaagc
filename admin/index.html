@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>TAAGC Admin Portal</title>
+    <title>TAAGC Admin Login</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
@@ -21,14 +21,9 @@
             justify-content: center;
             padding: 20px;
         }
-        .container {
-            max-width: 1200px;
-            width: 100%;
-        }
-        /* Login Card */
         .login-card {
             max-width: 400px;
-            margin: 0 auto;
+            width: 100%;
             background: #fff;
             border-radius: 24px;
             padding: 40px;
@@ -122,6 +117,10 @@
         .btn:hover {
             background: #1a3a4f;
         }
+        .btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
         .alert {
             padding: 15px;
             border-radius: 8px;
@@ -160,97 +159,89 @@
             font-size: 12px;
             color: #64748b;
         }
-        .hidden {
-            display: none;
-        }
-        .flex {
-            display: flex;
-        }
     </style>
-</head>
-<body>
-    <div class="container" id="app">
-        <!-- LOGIN SECTION -->
-        <div id="loginSection" class="login-card">
-            <div class="logo">
-                <div class="logo-icon">A</div>
-                <h2>TAAGC Admin</h2>
-                <p>Secure administration portal</p>
-            </div>
-            <div class="admin-badge">
-                <i class="fas fa-shield-alt"></i> AUTHORIZED PERSONNEL ONLY
-            </div>
-            <div id="alertMessage" class="alert"></div>
-            <form id="loginForm">
-                <div class="form-group">
-                    <label><i class="fas fa-envelope"></i> Email</label>
-                    <div class="input-wrapper">
-                        <i class="fas fa-envelope"></i>
-                        <input type="email" id="email" placeholder="admin@taagc.com" value="admin@taagc.com" required>
-                    </div>
-                </div>
-                <div class="form-group">
-                    <label><i class="fas fa-lock"></i> Password</label>
-                    <div class="input-wrapper">
-                        <i class="fas fa-lock"></i>
-                        <input type="password" id="password" placeholder="••••••••" value="Admin123!" required>
-                    </div>
-                </div>
-                <div style="margin:15px 0">
-                    <label class="checkbox-label">
-                        <input type="checkbox" id="remember" checked> Remember me
-                    </label>
-                </div>
-                <button type="submit" class="btn" id="loginBtn">
-                    <i class="fas fa-sign-in-alt"></i> Access Admin Panel
-                </button>
-            </form>
-            <div class="footer-note">
-                <i class="fas fa-lock"></i> All access is logged
-            </div>
-        </div>
-    </div>
-
+    
+    <!-- Load Firebase first -->
     <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js"></script>
+</head>
+<body>
+    <div class="login-card">
+        <div class="logo">
+            <div class="logo-icon">A</div>
+            <h2>TAAGC Admin</h2>
+            <p>Secure administration portal</p>
+        </div>
+        <div class="admin-badge">
+            <i class="fas fa-shield-alt"></i> AUTHORIZED PERSONNEL ONLY
+        </div>
+        <div id="alertMessage" class="alert"></div>
+        <form id="loginForm">
+            <div class="form-group">
+                <label><i class="fas fa-envelope"></i> Email</label>
+                <div class="input-wrapper">
+                    <i class="fas fa-envelope"></i>
+                    <input type="email" id="email" placeholder="admin@taagc.com" value="admin@taagc.com" required>
+                </div>
+            </div>
+            <div class="form-group">
+                <label><i class="fas fa-lock"></i> Password</label>
+                <div class="input-wrapper">
+                    <i class="fas fa-lock"></i>
+                    <input type="password" id="password" placeholder="••••••••" value="Admin123!" required>
+                </div>
+            </div>
+            <div style="margin:15px 0">
+                <label class="checkbox-label">
+                    <input type="checkbox" id="remember" checked> Remember me
+                </label>
+            </div>
+            <button type="submit" class="btn" id="loginBtn">
+                <i class="fas fa-sign-in-alt"></i> Access Admin Panel
+            </button>
+        </form>
+        <div class="footer-note">
+            <i class="fas fa-lock"></i> All access is logged
+        </div>
+    </div>
 
     <script>
-        // ===== FIREBASE INIT =====
-        firebase.initializeApp({
+        // Initialize Firebase FIRST - at the top level
+        const firebaseConfig = {
             apiKey: "AIzaSyAI1MrcP977UgRLQoePxl64JOSyj9v4WpI",
             authDomain: "xtaagc.firebaseapp.com",
             projectId: "xtaagc",
             storageBucket: "xtaagc.firebasestorage.app",
             messagingSenderId: "256073982437",
             appId: "1:256073982437:web:8da63bb7acc86c0ca98f0c"
-        });
+        };
+
+        // Initialize Firebase
+        firebase.initializeApp(firebaseConfig);
         
+        // Now these are safe to use
         const auth = firebase.auth();
         const db = firebase.firestore();
 
-        // Enable offline persistence for better reliability
+        console.log('✅ Firebase initialized');
+
+        // Enable persistence for better reliability
         db.enablePersistence().catch(err => {
             console.log('Persistence failed:', err);
         });
 
-        // ===== CHECK SESSION ON LOAD =====
-        (function() {
-            const session = localStorage.getItem('taagc_admin') || sessionStorage.getItem('taagc_admin');
-            if (session) {
-                // Verify with Firebase
-                auth.onAuthStateChanged(user => {
-                    if (user) {
-                        window.location.href = 'admin-dashboard-fixed.html';
-                    } else {
-                        localStorage.removeItem('taagc_admin');
-                        sessionStorage.removeItem('taagc_admin');
-                    }
-                });
+        // Check if already logged in
+        auth.onAuthStateChanged(async (user) => {
+            if (user) {
+                const session = localStorage.getItem('taagc_admin') || sessionStorage.getItem('taagc_admin');
+                if (session) {
+                    window.location.href = 'admin-dashboard.html';
+                }
             }
-        })();
+        });
 
-        // ===== LOGIN HANDLER =====
+        // Login handler
         document.getElementById('loginForm').addEventListener('submit', async function(e) {
             e.preventDefault();
             
@@ -260,21 +251,23 @@
             const btn = document.getElementById('loginBtn');
             const alertDiv = document.getElementById('alertMessage');
 
-            // Show loading
-            btn.innerHTML = '<span class="loading"></span> Verifying credentials...';
+            btn.innerHTML = '<span class="loading"></span> Verifying...';
             btn.disabled = true;
             alertDiv.style.display = 'none';
 
             try {
-                // Sign in to Firebase
+                console.log('Attempting login for:', email);
+                
                 const userCredential = await auth.signInWithEmailAndPassword(email, password);
                 const user = userCredential.user;
+                
+                console.log('✅ User authenticated:', user.uid);
 
-                // Check if user is admin - try multiple methods
+                // Check if admin
                 let isAdmin = false;
                 let adminData = null;
 
-                // Method 1: Check admins collection
+                // Try admins collection
                 try {
                     const adminDoc = await db.collection('admins').doc(user.uid).get();
                     if (adminDoc.exists) {
@@ -283,24 +276,10 @@
                         console.log('✅ Admin found in admins collection');
                     }
                 } catch (e) {
-                    console.log('Error checking admins collection:', e);
+                    console.log('Error checking admins:', e);
                 }
 
-                // Method 2: Check admin_users collection
-                if (!isAdmin) {
-                    try {
-                        const adminUserDoc = await db.collection('admin_users').doc(user.uid).get();
-                        if (adminUserDoc.exists && adminUserDoc.data().isAdmin) {
-                            isAdmin = true;
-                            adminData = adminUserDoc.data();
-                            console.log('✅ Admin found in admin_users collection');
-                        }
-                    } catch (e) {
-                        console.log('Error checking admin_users collection:', e);
-                    }
-                }
-
-                // Method 3: Hardcoded super admin emails
+                // Hardcoded super admins
                 if (!isAdmin) {
                     const superAdmins = ['admin@taagc.com', 'priahmz@gmail.com'];
                     if (superAdmins.includes(email)) {
@@ -312,7 +291,7 @@
                         };
                         console.log('✅ Hardcoded admin override');
                         
-                        // Create admin document for future logins
+                        // Create admin document for future
                         try {
                             await db.collection('admins').doc(user.uid).set({
                                 name: 'Super Admin',
@@ -320,9 +299,8 @@
                                 role: 'super-admin',
                                 createdAt: new Date().toISOString()
                             }, { merge: true });
-                            console.log('✅ Created admin document for future logins');
                         } catch (e) {
-                            console.log('Could not create admin document:', e);
+                            console.log('Could not create admin doc:', e);
                         }
                     }
                 }
@@ -331,7 +309,7 @@
                     throw new Error('Access denied. Admin privileges required.');
                 }
 
-                // Prepare session data
+                // Save session
                 const sessionData = {
                     uid: user.uid,
                     email: user.email,
@@ -340,14 +318,13 @@
                     loginTime: new Date().toISOString()
                 };
 
-                // Save session
                 if (remember) {
                     localStorage.setItem('taagc_admin', JSON.stringify(sessionData));
                 } else {
                     sessionStorage.setItem('taagc_admin', JSON.stringify(sessionData));
                 }
 
-                // Log the login attempt
+                // Log the login
                 try {
                     await db.collection('audit_logs').add({
                         action: 'admin.login',
@@ -356,32 +333,27 @@
                         timestamp: firebase.firestore.FieldValue.serverTimestamp()
                     });
                 } catch (e) {
-                    console.log('Could not log audit entry:', e);
+                    console.log('Could not log audit:', e);
                 }
 
-                // Show success
                 alertDiv.className = 'alert alert-success';
                 alertDiv.innerHTML = '<i class="fas fa-check-circle"></i> Login successful! Redirecting...';
                 alertDiv.style.display = 'block';
 
-                // Redirect to dashboard
                 setTimeout(() => {
-                    window.location.href = 'admin-dashboard-fixed.html';
+                    window.location.href = 'admin-dashboard.html';
                 }, 1500);
 
             } catch (error) {
                 console.error('Login error:', error);
                 
-                // User-friendly error messages
                 let errorMessage = error.message;
                 if (error.code === 'auth/user-not-found') {
-                    errorMessage = 'No account found with this email. Please run create-admin.html first.';
+                    errorMessage = 'No account found. Run create-admin.html first.';
                 } else if (error.code === 'auth/wrong-password') {
-                    errorMessage = 'Incorrect password. Try again.';
+                    errorMessage = 'Incorrect password.';
                 } else if (error.code === 'auth/too-many-requests') {
-                    errorMessage = 'Too many failed attempts. Account temporarily locked.';
-                } else if (error.message.includes('Admin privileges')) {
-                    errorMessage = error.message;
+                    errorMessage = 'Too many attempts. Try later.';
                 }
 
                 alertDiv.className = 'alert alert-error';
