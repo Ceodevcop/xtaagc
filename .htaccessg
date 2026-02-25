@@ -7,9 +7,9 @@ RewriteRule ^ - [L]
 RewriteCond %{REQUEST_FILENAME} -d
 RewriteRule ^ - [L]
 
-# Special rules for admin files - these are in root directory, not /admin/ folder
-RewriteRule ^admin\.html$ - [L]
-RewriteRule ^admin\dashboard\.html$ - [L]
+# Special rules for admin files
+RewriteRule ^admin/index\.html$ - [L]
+RewriteRule ^admin/dashboard/index\.html$ - [L]
 RewriteRule ^create-admin\.html$ - [L]
 
 # All other non-existent files go to 404.html
