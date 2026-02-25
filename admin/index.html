@@ -3,9 +3,26 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>TAAGC Admin Login</title>
+    <title>Admin Login - TAAGC</title>
+    
+    <!-- Try multiple CDN sources -->
+    <script src="https://cdn.jsdelivr.net/npm/firebase@10.7.1/dist/firebase-app.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/firebase@10.7.1/dist/firebase-auth.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/firebase@10.7.1/dist/firebase-firestore.js"></script>
+    
+    <!-- Fallback to local if CDN fails -->
+    <script>
+        window.onerror = function() {
+            document.write('Loading local Firebase...');
+            document.write('<script src="js/firebase-app.js"><\/script>');
+            document.write('<script src="js/firebase-auth.js"><\/script>');
+            document.write('<script src="js/firebase-firestore.js"><\/script>');
+        };
+    </script>
+    
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
     <style>
         * {
             margin: 0;
@@ -53,16 +70,6 @@
         .logo p {
             color: #64748b;
             font-size: 14px;
-        }
-        .admin-badge {
-            background: rgba(193,154,107,.1);
-            color: #c19a6b;
-            padding: 8px 16px;
-            border-radius: 40px;
-            font-size: 12px;
-            font-weight: 600;
-            text-align: center;
-            margin-bottom: 30px;
         }
         .form-group {
             margin-bottom: 20px;
@@ -151,20 +158,15 @@
         @keyframes spin {
             to { transform: rotate(360deg); }
         }
-        .footer-note {
-            margin-top: 25px;
-            padding-top: 20px;
-            border-top: 1px solid #e2e8f0;
+        .status-box {
+            background: #f8fafc;
+            border-radius: 8px;
+            padding: 10px;
+            margin-bottom: 20px;
+            font-size: 13px;
             text-align: center;
-            font-size: 12px;
-            color: #64748b;
         }
     </style>
-    
-    <!-- Load Firebase -->
-    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js"></script>
 </head>
 <body>
     <div class="login-card">
@@ -173,9 +175,9 @@
             <h2>TAAGC Admin</h2>
             <p>Secure administration portal</p>
         </div>
-        <div class="admin-badge">
-            <i class="fas fa-shield-alt"></i> AUTHORIZED PERSONNEL ONLY
-        </div>
+        
+        <div id="status" class="status-box">Loading Firebase...</div>
+        
         <div id="alertMessage" class="alert"></div>
         
         <form id="loginForm">
@@ -183,14 +185,14 @@
                 <label><i class="fas fa-envelope"></i> Email</label>
                 <div class="input-wrapper">
                     <i class="fas fa-envelope"></i>
-                    <input type="email" id="email" placeholder="admin@taagc.com" value="admin@taagc.com" required>
+                    <input type="email" id="email" value="admin@taagc.com" required>
                 </div>
             </div>
             <div class="form-group">
                 <label><i class="fas fa-lock"></i> Password</label>
                 <div class="input-wrapper">
                     <i class="fas fa-lock"></i>
-                    <input type="password" id="password" placeholder="••••••••" value="Admin123!" required>
+                    <input type="password" id="password" value="Admin123!" required>
                 </div>
             </div>
             <div style="margin:15px 0">
@@ -198,13 +200,13 @@
                     <input type="checkbox" id="remember" checked> Remember me
                 </label>
             </div>
-            <button type="submit" class="btn" id="loginBtn">
+            <button type="submit" class="btn" id="loginBtn" disabled>
                 <i class="fas fa-sign-in-alt"></i> Access Admin Panel
             </button>
         </form>
         
         <div style="margin-top: 15px; text-align: center;">
-            <a href="../create-admin.html" style="color: #64748b; font-size: 12px;">First time? Create admin</a>
+            <a href="setup-admin.html" style="color: #64748b; font-size: 12px;">First time? Create admin account</a>
         </div>
         
         <div class="footer-note">
@@ -213,29 +215,70 @@
     </div>
 
     <script>
-        // Initialize Firebase
-        const firebaseConfig = {
-            apiKey: "AIzaSyAI1MrcP977UgRLQoePxl64JOSyj9v4WpI",
-            authDomain: "xtaagc.firebaseapp.com",
-            projectId: "xtaagc",
-            storageBucket: "xtaagc.firebasestorage.app",
-            messagingSenderId: "256073982437",
-            appId: "1:256073982437:web:8da63bb7acc86c0ca98f0c"
-        };
-
-        firebase.initializeApp(firebaseConfig);
-        const auth = firebase.auth();
-        const db = firebase.firestore();
-
-        // Check if already logged in
-        auth.onAuthStateChanged((user) => {
-            if (user) {
-                const session = localStorage.getItem('taagc_admin') || sessionStorage.getItem('taagc_admin');
-                if (session) {
-                    window.location.href = 'dashboard/index.html';
+        // Wait for Firebase to be ready
+        function waitForFirebase() {
+            return new Promise((resolve) => {
+                if (typeof firebase !== 'undefined') {
+                    resolve();
+                } else {
+                    let attempts = 0;
+                    const interval = setInterval(() => {
+                        attempts++;
+                        if (typeof firebase !== 'undefined') {
+                            clearInterval(interval);
+                            resolve();
+                        } else if (attempts > 100) { // 10 seconds timeout
+                            clearInterval(interval);
+                            resolve();
+                        }
+                    }, 100);
                 }
+            });
+        }
+
+        // Initialize when page loads
+        window.onload = async function() {
+            const statusDiv = document.getElementById('status');
+            const loginBtn = document.getElementById('loginBtn');
+            
+            await waitForFirebase();
+            
+            if (typeof firebase === 'undefined') {
+                statusDiv.innerHTML = '❌ Firebase failed to load. Please contact administrator.';
+                statusDiv.style.color = 'red';
+                return;
             }
-        });
+            
+            try {
+                const config = {
+                    apiKey: "AIzaSyAI1MrcP977UgRLQoePxl64JOSyj9v4WpI",
+                    authDomain: "xtaagc.firebaseapp.com",
+                    projectId: "xtaagc",
+                    storageBucket: "xtaagc.firebasestorage.app",
+                    messagingSenderId: "256073982437",
+                    appId: "1:256073982437:web:8da63bb7acc86c0ca98f0c"
+                };
+                
+                firebase.initializeApp(config);
+                statusDiv.innerHTML = '✅ Firebase ready';
+                statusDiv.style.color = 'green';
+                loginBtn.disabled = false;
+                
+                // Check if already logged in
+                firebase.auth().onAuthStateChanged((user) => {
+                    if (user) {
+                        const session = localStorage.getItem('taagc_admin') || sessionStorage.getItem('taagc_admin');
+                        if (session) {
+                            window.location.href = 'dashboard/index.html';
+                        }
+                    }
+                });
+                
+            } catch (e) {
+                statusDiv.innerHTML = `❌ Firebase init failed: ${e.message}`;
+                statusDiv.style.color = 'red';
+            }
+        };
 
         // Login handler
         document.getElementById('loginForm').addEventListener('submit', async function(e) {
@@ -252,6 +295,9 @@
             alertDiv.style.display = 'none';
 
             try {
+                const auth = firebase.auth();
+                const db = firebase.firestore();
+                
                 const userCredential = await auth.signInWithEmailAndPassword(email, password);
                 const user = userCredential.user;
 
@@ -259,7 +305,6 @@
                 let isAdmin = false;
                 let adminData = null;
 
-                // Check admins collection
                 try {
                     const adminDoc = await db.collection('admins').doc(user.uid).get();
                     if (adminDoc.exists) {
@@ -267,7 +312,7 @@
                         adminData = adminDoc.data();
                     }
                 } catch (e) {
-                    console.log('Error checking admins:', e);
+                    console.log('Error checking admin:', e);
                 }
 
                 // Hardcoded super admins
@@ -275,11 +320,7 @@
                     const superAdmins = ['admin@taagc.com', 'priahmz@gmail.com'];
                     if (superAdmins.includes(email)) {
                         isAdmin = true;
-                        adminData = {
-                            name: 'Super Admin',
-                            email: email,
-                            role: 'super-admin'
-                        };
+                        adminData = { name: 'Super Admin', email: email, role: 'super-admin' };
                         
                         // Create admin document for future
                         try {
@@ -289,9 +330,7 @@
                                 role: 'super-admin',
                                 createdAt: new Date().toISOString()
                             }, { merge: true });
-                        } catch (e) {
-                            console.log('Could not create admin doc:', e);
-                        }
+                        } catch (e) {}
                     }
                 }
 
@@ -304,8 +343,7 @@
                     uid: user.uid,
                     email: user.email,
                     name: adminData?.name || 'Admin',
-                    role: adminData?.role || 'admin',
-                    loginTime: new Date().toISOString()
+                    role: adminData?.role || 'admin'
                 };
 
                 if (remember) {
@@ -327,7 +365,7 @@
                 
                 let errorMessage = error.message;
                 if (error.code === 'auth/user-not-found') {
-                    errorMessage = 'No account found. <a href="../create-admin.html">Create admin</a> first.';
+                    errorMessage = 'No account found. Please run setup-admin.html first.';
                 } else if (error.code === 'auth/wrong-password') {
                     errorMessage = 'Incorrect password.';
                 }
