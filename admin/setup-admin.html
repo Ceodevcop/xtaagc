@@ -2,47 +2,41 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <title>Admin Setup | TAAGC</title>
+  <title>TAAGC Admin Setup</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
   <style>
     body {
-      font-family: Arial, sans-serif;
-      background: #0f172a;
+      font-family: system-ui, Arial, sans-serif;
+      background: #020617;
       color: #e5e7eb;
       display: flex;
       justify-content: center;
       align-items: center;
       height: 100vh;
     }
-    .box {
+    .card {
       background: #020617;
-      padding: 30px;
+      border: 1px solid #1e293b;
+      padding: 28px;
       width: 100%;
       max-width: 420px;
       border-radius: 10px;
-      box-shadow: 0 20px 40px rgba(0,0,0,.4);
     }
-    h2 {
-      text-align: center;
-      margin-bottom: 10px;
-    }
-    p {
-      text-align: center;
-      font-size: 14px;
-      opacity: .8;
-    }
+    h2 { text-align: center; margin-bottom: 10px; }
+    p { text-align: center; font-size: 14px; opacity: .8; }
     input {
       width: 100%;
       padding: 12px;
       margin-top: 12px;
       border-radius: 6px;
-      border: none;
-      outline: none;
+      border: 1px solid #1e293b;
+      background: #020617;
+      color: #fff;
     }
     button {
       width: 100%;
-      margin-top: 20px;
+      margin-top: 18px;
       padding: 12px;
       border-radius: 6px;
       border: none;
@@ -51,40 +45,30 @@
       font-size: 16px;
       cursor: pointer;
     }
-    button:disabled {
-      background: #334155;
-      cursor: not-allowed;
-    }
-    #status {
-      margin-top: 15px;
-      text-align: center;
-      font-size: 14px;
-    }
+    button:disabled { background: #334155; }
+    #status { margin-top: 14px; text-align: center; font-size: 14px; }
   </style>
 </head>
 <body>
 
-<div class="box">
+<div class="card">
   <h2>Create Super Admin</h2>
-  <p>This page works only once</p>
+  <p>This page can be used only once</p>
 
   <input id="email" type="email" placeholder="Admin Email" />
   <input id="password" type="password" placeholder="Password (min 6 chars)" />
 
-  <button id="createBtn" onclick="createAdmin()">Create Admin</button>
-
+  <button id="createBtn">Create Admin</button>
   <div id="status"></div>
 </div>
 
-<!-- 🔥 Firebase CDN (COMPAT – REQUIRED) -->
+<!-- Firebase CDN (COMPAT – REQUIRED) -->
 <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
 
 <script>
-/* ==============================
-   Firebase Configuration
-============================== */
+/* ================= FIREBASE CONFIG ================= */
 const firebaseConfig = {
   apiKey: "AIzaSyAI1MrcP977UgRLQoePxl64JOSyj9v4WpI",
   authDomain: "xtaagc.firebaseapp.com",
@@ -99,23 +83,19 @@ firebase.initializeApp(firebaseConfig);
 const auth = firebase.auth();
 const db = firebase.firestore();
 
-/* ==============================
-   Lock page if admin exists
-============================== */
+/* ================= PAGE LOCK ================= */
 (async () => {
-  const snap = await db.collection("settings").doc("system").get();
-  if (snap.exists && snap.data().adminInitialized) {
+  const doc = await db.collection("settings").doc("system").get();
+  if (doc.exists) {
     document.body.innerHTML =
       "<h2 style='color:white;text-align:center'>❌ Admin already created</h2>";
   }
 })();
 
-/* ==============================
-   Create First Admin
-============================== */
-async function createAdmin() {
-  const email = email.value.trim();
-  const password = password.value.trim();
+/* ================= CREATE ADMIN ================= */
+document.getElementById("createBtn").onclick = async () => {
+  const email = document.getElementById("email").value.trim();
+  const password = document.getElementById("password").value.trim();
   const status = document.getElementById("status");
   const btn = document.getElementById("createBtn");
 
@@ -131,9 +111,8 @@ async function createAdmin() {
     const settingsRef = db.collection("settings").doc("system");
     const settingsSnap = await settingsRef.get();
 
-    if (settingsSnap.exists && settingsSnap.data().adminInitialized) {
+    if (settingsSnap.exists) {
       status.innerText = "❌ Admin already exists";
-      btn.disabled = true;
       return;
     }
 
@@ -153,13 +132,12 @@ async function createAdmin() {
     });
 
     status.innerText = "✅ Super Admin created successfully";
-    btn.disabled = true;
 
   } catch (err) {
     status.innerText = "❌ " + err.message;
     btn.disabled = false;
   }
-}
+};
 </script>
 
 </body>
