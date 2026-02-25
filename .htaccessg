@@ -7,16 +7,17 @@ RewriteRule ^ - [L]
 RewriteCond %{REQUEST_FILENAME} -d
 RewriteRule ^ - [L]
 
-# Special rule for admin dashboard - don't redirect to 404
-RewriteRule ^admin/dashboard\.html$ - [L]
+# Special rules for admin files - these are in root directory, not /admin/ folder
+RewriteRule ^admin\.html$ - [L]
+RewriteRule ^admin\dashboard\.html$ - [L]
+RewriteRule ^create-admin\.html$ - [L]
 
 # All other non-existent files go to 404.html
 RewriteRule ^(.*)$ 404.html [L]
 
-# Protect admin directory (optional IP restrictions)
-<IfModule mod_rewrite.c>
-    RewriteCond %{REQUEST_URI} ^/admin/
-    # Add your IP restriction if needed
-    # RewriteCond %{REMOTE_ADDR} !^192\.168\.1\.
-    # RewriteRule ^ - [F]
+# Security headers
+<IfModule mod_headers.c>
+    Header set X-Content-Type-Options "nosniff"
+    Header set X-Frame-Options "DENY"
+    Header set X-XSS-Protection "1; mode=block"
 </IfModule>
