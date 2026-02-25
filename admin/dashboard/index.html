@@ -4,8 +4,24 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Admin Dashboard - TAAGC</title>
+    
+    <!-- Try multiple CDN sources -->
+    <script src="https://cdn.jsdelivr.net/npm/firebase@10.7.1/dist/firebase-app.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/firebase@10.7.1/dist/firebase-auth.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/firebase@10.7.1/dist/firebase-firestore.js"></script>
+    
+    <!-- Fallback to local -->
+    <script>
+        window.onerror = function() {
+            document.write('<script src="../js/firebase-app.js"><\/script>');
+            document.write('<script src="../js/firebase-auth.js"><\/script>');
+            document.write('<script src="../js/firebase-firestore.js"><\/script>');
+        };
+    </script>
+    
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
     <style>
         * {
             margin: 0;
@@ -192,19 +208,17 @@
             padding: 12px;
             border-bottom: 1px solid #e2e8f0;
         }
-        .hidden {
-            display: none;
+        .status-box {
+            background: #f8fafc;
+            border-radius: 8px;
+            padding: 15px;
+            margin-bottom: 20px;
+            font-size: 13px;
         }
     </style>
-    
-    <!-- Load Firebase -->
-    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js"></script>
 </head>
 <body>
-    <div class="dashboard" id="dashboardSection">
-        <!-- Sidebar -->
+    <div class="dashboard">
         <aside class="sidebar">
             <div class="sidebar-header">
                 <div class="sidebar-logo">
@@ -232,16 +246,17 @@
             </div>
         </aside>
 
-        <!-- Main Content -->
         <main class="main-content">
+            <div id="status" class="status-box">Loading dashboard...</div>
+            
             <div class="header">
                 <h1><i class="fas fa-tachometer-alt" style="color:#c19a6b; margin-right:10px;"></i> Admin Dashboard</h1>
-                <button class="logout-btn" id="logoutBtn">
+                <button class="logout-btn" id="logoutBtn" disabled>
                     <i class="fas fa-sign-out-alt"></i> Logout
                 </button>
             </div>
 
-            <div class="stats-grid">
+            <div class="stats-grid" id="statsSection" style="display:none;">
                 <div class="stat-card">
                     <div class="stat-icon"><i class="fas fa-users"></i></div>
                     <div class="stat-number" id="totalUsers">0</div>
@@ -264,7 +279,7 @@
                 </div>
             </div>
 
-            <div class="section">
+            <div class="section" id="activitySection" style="display:none;">
                 <div class="section-header">
                     <h2><i class="fas fa-clock" style="color:#c19a6b;"></i> Recent Activity</h2>
                 </div>
@@ -274,42 +289,84 @@
     </div>
 
     <script>
-        // Initialize Firebase
-        const firebaseConfig = {
-            apiKey: "AIzaSyAI1MrcP977UgRLQoePxl64JOSyj9v4WpI",
-            authDomain: "xtaagc.firebaseapp.com",
-            projectId: "xtaagc",
-            storageBucket: "xtaagc.firebasestorage.app",
-            messagingSenderId: "256073982437",
-            appId: "1:256073982437:web:8da63bb7acc86c0ca98f0c"
-        };
+        function waitForFirebase() {
+            return new Promise((resolve) => {
+                if (typeof firebase !== 'undefined') {
+                    resolve();
+                } else {
+                    let attempts = 0;
+                    const interval = setInterval(() => {
+                        attempts++;
+                        if (typeof firebase !== 'undefined') {
+                            clearInterval(interval);
+                            resolve();
+                        } else if (attempts > 100) {
+                            clearInterval(interval);
+                            resolve();
+                        }
+                    }, 100);
+                }
+            });
+        }
 
-        firebase.initializeApp(firebaseConfig);
-        const auth = firebase.auth();
-        const db = firebase.firestore();
-
-        // Check authentication
-        auth.onAuthStateChanged(async (user) => {
-            if (!user) {
-                window.location.href = '../index.html';
+        window.onload = async function() {
+            const statusDiv = document.getElementById('status');
+            const logoutBtn = document.getElementById('logoutBtn');
+            
+            await waitForFirebase();
+            
+            if (typeof firebase === 'undefined') {
+                statusDiv.innerHTML = '❌ Firebase failed to load. Please refresh.';
+                statusDiv.style.color = 'red';
                 return;
             }
+            
+            try {
+                const config = {
+                    apiKey: "AIzaSyAI1MrcP977UgRLQoePxl64JOSyj9v4WpI",
+                    authDomain: "xtaagc.firebaseapp.com",
+                    projectId: "xtaagc",
+                    storageBucket: "xtaagc.firebasestorage.app",
+                    messagingSenderId: "256073982437",
+                    appId: "1:256073982437:web:8da63bb7acc86c0ca98f0c"
+                };
+                
+                firebase.initializeApp(config);
+                
+                // Check authentication
+                firebase.auth().onAuthStateChanged(async (user) => {
+                    if (!user) {
+                        window.location.href = '../index.html';
+                        return;
+                    }
 
-            // Load admin data
-            const sessionData = JSON.parse(localStorage.getItem('taagc_admin') || sessionStorage.getItem('taagc_admin'));
-            if (sessionData) {
-                document.getElementById('adminName').innerHTML = sessionData.name || 'Admin';
-                document.getElementById('adminEmail').innerHTML = sessionData.email || user.email;
-                document.getElementById('adminAvatar').innerHTML = (sessionData.name || 'A').charAt(0);
+                    const session = JSON.parse(localStorage.getItem('taagc_admin') || sessionStorage.getItem('taagc_admin'));
+                    if (session) {
+                        document.getElementById('adminName').innerHTML = session.name || 'Admin';
+                        document.getElementById('adminEmail').innerHTML = session.email || user.email;
+                        document.getElementById('adminAvatar').innerHTML = (session.name || 'A').charAt(0);
+                    }
+
+                    statusDiv.innerHTML = '✅ Dashboard loaded';
+                    statusDiv.style.color = 'green';
+                    logoutBtn.disabled = false;
+                    
+                    document.getElementById('statsSection').style.display = 'grid';
+                    document.getElementById('activitySection').style.display = 'block';
+                    
+                    loadDashboardData();
+                });
+                
+            } catch (e) {
+                statusDiv.innerHTML = `❌ Firebase init failed: ${e.message}`;
+                statusDiv.style.color = 'red';
             }
-
-            // Load dashboard data
-            loadDashboardData();
-        });
+        };
 
         async function loadDashboardData() {
             try {
-                // Get counts
+                const db = firebase.firestore();
+                
                 const usersSnap = await db.collection('users').get();
                 const companiesSnap = await db.collection('companies').get();
                 const pendingSnap = await db.collection('companies').where('status', '==', 'pending').get();
@@ -318,7 +375,6 @@
                 document.getElementById('totalCompanies').innerHTML = companiesSnap.size || 0;
                 document.getElementById('pendingVerifications').innerHTML = pendingSnap.size || 0;
 
-                // Load recent activity
                 const activitySnap = await db.collection('audit_logs')
                     .orderBy('timestamp', 'desc')
                     .limit(5)
@@ -349,16 +405,14 @@
                 document.getElementById('recentActivity').innerHTML = html;
 
             } catch (error) {
-                console.error('Error loading dashboard data:', error);
-                document.getElementById('recentActivity').innerHTML = 'Error loading data';
+                document.getElementById('recentActivity').innerHTML = 'Error loading data: ' + error.message;
             }
         }
 
-        // Logout
         document.getElementById('logoutBtn').addEventListener('click', function() {
             localStorage.removeItem('taagc_admin');
             sessionStorage.removeItem('taagc_admin');
-            auth.signOut().then(() => {
+            firebase.auth().signOut().then(() => {
                 window.location.href = '../index.html';
             });
         });
