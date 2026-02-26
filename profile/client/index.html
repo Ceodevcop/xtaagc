@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Investor Profile - TAAGC</title>
+    <title>Client Profile - TAAGC</title>
     
     <!-- Firebase 8.10.1 SDK -->
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
@@ -52,8 +52,8 @@
             color: #c19a6b;
             font-weight: 700;
         }
-        .investor-badge {
-            background: #0a2540;
+        .client-badge {
+            background: #c19a6b;
             color: white;
             padding: 5px 15px;
             border-radius: 20px;
@@ -81,7 +81,7 @@
             padding: 0 20px;
         }
         .profile-header {
-            background: linear-gradient(135deg, #0a2540, #1a3a4f);
+            background: linear-gradient(135deg, #c19a6b, #b38b5f);
             border-radius: 20px;
             padding: 40px;
             color: white;
@@ -92,7 +92,7 @@
         .profile-avatar {
             width: 100px;
             height: 100px;
-            background: #c19a6b;
+            background: #0a2540;
             border-radius: 50%;
             display: flex;
             align-items: center;
@@ -107,10 +107,10 @@
             font-weight: 700;
             margin-bottom: 10px;
         }
-        .investor-id {
+        .client-id {
             font-size: 24px;
             font-family: monospace;
-            background: rgba(255,255,255,0.1);
+            background: rgba(0,0,0,0.1);
             padding: 10px 20px;
             border-radius: 10px;
             display: inline-block;
@@ -172,10 +172,10 @@
 <body>
     <nav class="navbar">
         <div class="logo">
-            <div class="logo-icon">I</div>
-            <div><span>TAAGC</span> Investor Portal</div>
+            <div class="logo-icon">C</div>
+            <div><span>TAAGC</span> Client Portal</div>
         </div>
-        <div class="investor-badge" id="investorId">Loading...</div>
+        <div class="client-badge" id="clientId">Loading...</div>
         <button class="logout-btn" id="logoutBtn">
             <i class="fas fa-sign-out-alt"></i> Logout
         </button>
@@ -189,9 +189,9 @@
 
         <div id="profileContent" style="display: none;">
             <div class="profile-header">
-                <div class="profile-avatar" id="userAvatar">I</div>
+                <div class="profile-avatar" id="userAvatar">C</div>
                 <div class="profile-title" id="userName">Loading...</div>
-                <div class="investor-id" id="userId">Loading...</div>
+                <div class="client-id" id="userId">Loading...</div>
             </div>
 
             <div class="info-grid">
@@ -215,10 +215,10 @@
                     <h3><i class="fas fa-id-card" style="color: #c19a6b;"></i> Account Details</h3>
                     <div class="info-item">
                         <div class="info-label">Account Type</div>
-                        <div class="info-value">Investor</div>
+                        <div class="info-value">Client</div>
                     </div>
                     <div class="info-item">
-                        <div class="info-label">Investor ID</div>
+                        <div class="info-label">Client ID</div>
                         <div class="info-value" id="displayId">-</div>
                     </div>
                     <div class="info-item">
@@ -287,12 +287,12 @@
 
                 const userData = userDoc.data();
 
-                // Verify this is an investor
-                if (userData.role !== 'investor') {
+                // Verify this is a client
+                if (userData.role !== 'client') {
                     if (userData.role === 'admin') {
-                        showError('Admins cannot access investor portal.');
+                        showError('Admins cannot access client portal.');
                     } else {
-                        showError('This portal is for investors only.');
+                        showError('This portal is for clients only.');
                     }
                     setTimeout(() => {
                         auth.signOut();
@@ -306,9 +306,9 @@
                 document.getElementById('profileContent').style.display = 'block';
 
                 // Update UI with user data
-                document.getElementById('investorId').textContent = userData.generatedId || 'Ti001/03/2025';
-                document.getElementById('userAvatar').textContent = (userData.fullName || 'I').charAt(0).toUpperCase();
-                document.getElementById('userName').textContent = userData.fullName || 'Investor';
+                document.getElementById('clientId').textContent = userData.generatedId || 'Tc001/03/2025';
+                document.getElementById('userAvatar').textContent = (userData.fullName || 'C').charAt(0).toUpperCase();
+                document.getElementById('userName').textContent = userData.fullName || 'Client';
                 document.getElementById('userId').textContent = userData.generatedId || 'Not assigned';
                 document.getElementById('fullName').textContent = userData.fullName || 'Not provided';
                 document.getElementById('email').textContent = userData.email || user.email;
