@@ -109,7 +109,7 @@
 
             try {
                 await auth.signInWithEmailAndPassword(email, password);
-                window.location.href = 'admin-dashboard.html';
+                window.location.href = 'dashboard';
             } catch (error) {
                 alertDiv.className = 'alert alert-error';
                 alertDiv.style.display = 'block';
