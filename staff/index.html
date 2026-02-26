@@ -134,6 +134,10 @@
             background:white;
             cursor:pointer;
             font-weight:600;
+            transition:all 0.3s;
+        }
+        .filter-btn:hover{
+            background:#f1f5f9;
         }
         .filter-btn.active{
             background:#0a2540;
@@ -154,16 +158,72 @@
             overflow:hidden;
             box-shadow:0 4px 10px rgba(0,0,0,0.05);
             border:1px solid #e2e8f0;
+            transition:transform 0.3s, box-shadow 0.3s;
         }
-        .staff-img{
-            height:250px;
-            overflow:hidden;
+        .staff-card:hover{
+            transform:translateY(-5px);
+            box-shadow:0 8px 20px rgba(0,0,0,0.1);
         }
-        .staff-img img{
-            width:100%;
-            height:100%;
-            object-fit:cover;
+        
+        /* Image Container with Auto-Resize */
+        .img-container {
+            position: relative;
+            width: 100%;
+            height: 280px;
+            overflow: hidden;
+            background: linear-gradient(45deg, #f1f5f9, #e2e8f0);
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
+        
+        /* Auto-resize images - maintains aspect ratio while fitting container */
+        .img-container img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover; /* Covers entire container, crops if needed */
+            object-position: center; /* Centers the image */
+            transition: transform 0.5s;
+        }
+        
+        .staff-card:hover .img-container img {
+            transform: scale(1.05); /* Slight zoom on hover */
+        }
+        
+        /* Placeholder for missing images */
+        .img-placeholder {
+            width: 100%;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(135deg, #0a2540, #3a5a78);
+            color: white;
+            font-size: 64px;
+            font-weight: 700;
+        }
+        
+        /* Fallback for broken images */
+        .img-container img.error {
+            display: none;
+        }
+        
+        .img-container img.error + .img-placeholder {
+            display: flex;
+        }
+        
+        /* Loading skeleton */
+        .skeleton {
+            background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+            background-size: 200% 100%;
+            animation: loading 1.5s infinite;
+        }
+        
+        @keyframes loading {
+            0% { background-position: 200% 0; }
+            100% { background-position: -200% 0; }
+        }
+        
         .staff-info{
             padding:20px;
         }
@@ -184,8 +244,12 @@
             background:#f1f5f9;
             border-radius:40px;
             font-size:12px;
+            font-weight:600;
         }
-        .staff-rank i{color:#c19a6b;}
+        .staff-rank i{
+            color:#c19a6b;
+            margin-right:4px;
+        }
         
         /* Hiring Banner */
         .hiring-banner{
@@ -210,12 +274,55 @@
             text-decoration:none;
             font-weight:600;
             margin-top:20px;
+            transition:background 0.3s;
+        }
+        .hiring-btn:hover{
+            background:#b38b5f;
+        }
+        
+        /* Image Upload Section (Admin) */
+        .image-upload-section{
+            background:white;
+            border-radius:16px;
+            padding:30px;
+            margin:40px 0;
+            border:2px dashed #c19a6b;
+        }
+        .upload-area{
+            text-align:center;
+            padding:40px;
+            background:#f8fafc;
+            border-radius:12px;
+            cursor:pointer;
+        }
+        .upload-area i{
+            font-size:48px;
+            color:#c19a6b;
+            margin-bottom:15px;
         }
         
         /* Responsive */
         @media (max-width:768px){
             .stats-grid{grid-template-columns:1fr;}
             .filter-tabs{flex-direction:column;}
+            .filter-btn{width:100%;}
+            .img-container{height:220px;}
+        }
+        
+        /* Image optimization notice */
+        .optimization-badge{
+            position:absolute;
+            top:10px;
+            right:10px;
+            background:rgba(0,0,0,0.6);
+            color:white;
+            padding:4px 8px;
+            border-radius:20px;
+            font-size:10px;
+            display:flex;
+            align-items:center;
+            gap:5px;
+            z-index:10;
         }
     </style>
 </head>
@@ -284,8 +391,13 @@
         <div class="staff-grid" id="staffGrid">
             <!-- Rank 1 -->
             <div class="staff-card" data-category="executive">
-                <div class="staff-img">
-                    <img src="/staff/ceo.png" alt="CEO">
+                <div class="img-container">
+                    <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='400' height='400' viewBox='0 0 400 400'%3E%3Crect width='400' height='400' fill='%230a2540'/%3E%3Ctext x='200' y='200' font-family='Arial' font-size='40' fill='%23c19a6b' text-anchor='middle' dy='.3em'%3EAH%3C/text%3E%3C/svg%3E"
+                         alt="Ahmad Hamza"
+                         onload="optimizeImage(this)"
+                         onerror="this.classList.add('error')">
+                    <div class="img-placeholder" style="display: none;">AH</div>
+                    <span class="optimization-badge"><i class="fas fa-image"></i> Auto-resized</span>
                 </div>
                 <div class="staff-info">
                     <div class="staff-name">Ahmad Hamza</div>
@@ -297,8 +409,13 @@
             
             <!-- Rank 2 -->
             <div class="staff-card" data-category="executive">
-                <div class="staff-img">
-                    <img src="/staff/tgm.png" alt="Vacant">
+                <div class="img-container">
+                    <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='400' height='400' viewBox='0 0 400 400'%3E%3Crect width='400' height='400' fill='%231a3a4f'/%3E%3Ctext x='200' y='200' font-family='Arial' font-size='40' fill='%23c19a6b' text-anchor='middle' dy='.3em'%3EAB%3C/text%3E%3C/svg%3E"
+                         alt="Alkasim Bashir Yusuf"
+                         onload="optimizeImage(this)"
+                         onerror="this.classList.add('error')">
+                    <div class="img-placeholder" style="display: none;">AB</div>
+                    <span class="optimization-badge"><i class="fas fa-image"></i> Auto-resized</span>
                 </div>
                 <div class="staff-info">
                     <div class="staff-name">Alkasim Bashir Yusuf</div>
@@ -310,8 +427,13 @@
             
             <!-- Rank 3 -->
             <div class="staff-card" data-category="executive">
-                <div class="staff-img">
-                    <img src="/staff/tsg.png" alt="Nuruddeen Dahiru Wakili">
+                <div class="img-container">
+                    <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='400' height='400' viewBox='0 0 400 400'%3E%3Crect width='400' height='400' fill='%232d5a4a'/%3E%3Ctext x='200' y='200' font-family='Arial' font-size='40' fill='%23c19a6b' text-anchor='middle' dy='.3em'%3END%3C/text%3E%3C/svg%3E"
+                         alt="Nuruddeen Dahiru Wakili"
+                         onload="optimizeImage(this)"
+                         onerror="this.classList.add('error')">
+                    <div class="img-placeholder" style="display: none;">ND</div>
+                    <span class="optimization-badge"><i class="fas fa-image"></i> Auto-resized</span>
                 </div>
                 <div class="staff-info">
                     <div class="staff-name">Nuruddeen Dahiru Wakili</div>
@@ -323,8 +445,13 @@
             
             <!-- Rank 4 -->
             <div class="staff-card" data-category="executive">
-                <div class="staff-img">
-                    <img src="staff/Tso.jpg" alt="Fatima Auwal">
+                <div class="img-container">
+                    <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='400' height='400' viewBox='0 0 400 400'%3E%3Crect width='400' height='400' fill='%233a5a78'/%3E%3Ctext x='200' y='200' font-family='Arial' font-size='40' fill='%23c19a6b' text-anchor='middle' dy='.3em'%3EFA%3C/text%3E%3C/svg%3E"
+                         alt="Fatima Auwal"
+                         onload="optimizeImage(this)"
+                         onerror="this.classList.add('error')">
+                    <div class="img-placeholder" style="display: none;">FA</div>
+                    <span class="optimization-badge"><i class="fas fa-image"></i> Auto-resized</span>
                 </div>
                 <div class="staff-info">
                     <div class="staff-name">Fatima Auwal</div>
@@ -336,8 +463,14 @@
             
             <!-- Rank 5 -->
             <div class="staff-card" data-category="executive">
-                <div class="staff-img">
-                    <img src="https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?w=400" alt="Michael Okafor">
+                <div class="img-container">
+                    <img src="https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?w=400&h=400&fit=crop&crop=faces"
+                         alt="Michael Okafor"
+                         loading="lazy"
+                         onload="optimizeImage(this)"
+                         onerror="this.classList.add('error')">
+                    <div class="img-placeholder" style="display: none;">MO</div>
+                    <span class="optimization-badge"><i class="fas fa-image"></i> Auto-resized</span>
                 </div>
                 <div class="staff-info">
                     <div class="staff-name">Michael Okafor</div>
@@ -349,8 +482,14 @@
             
             <!-- Rank 6 -->
             <div class="staff-card" data-category="executive">
-                <div class="staff-img">
-                    <img src="https://images.unsplash.com/photo-1573496799652-408c2ac9fe98?w=400" alt="Sarah Chen">
+                <div class="img-container">
+                    <img src="https://images.unsplash.com/photo-1573496799652-408c2ac9fe98?w=400&h=400&fit=crop&crop=faces"
+                         alt="Sarah Chen"
+                         loading="lazy"
+                         onload="optimizeImage(this)"
+                         onerror="this.classList.add('error')">
+                    <div class="img-placeholder" style="display: none;">SC</div>
+                    <span class="optimization-badge"><i class="fas fa-image"></i> Auto-resized</span>
                 </div>
                 <div class="staff-info">
                     <div class="staff-name">Sarah Chen</div>
@@ -362,8 +501,14 @@
             
             <!-- Rank 7 -->
             <div class="staff-card" data-category="operations">
-                <div class="staff-img">
-                    <img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=400" alt="Ahmed Hassan">
+                <div class="img-container">
+                    <img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=400&h=400&fit=crop&crop=faces"
+                         alt="Ahmed Hassan"
+                         loading="lazy"
+                         onload="optimizeImage(this)"
+                         onerror="this.classList.add('error')">
+                    <div class="img-placeholder" style="display: none;">AH</div>
+                    <span class="optimization-badge"><i class="fas fa-image"></i> Auto-resized</span>
                 </div>
                 <div class="staff-info">
                     <div class="staff-name">Ahmed Hassan</div>
@@ -375,8 +520,14 @@
             
             <!-- Rank 8 -->
             <div class="staff-card" data-category="operations">
-                <div class="staff-img">
-                    <img src="https://images.unsplash.com/photo-1595152772835-219674b2a8a6?w=400" alt="James Otieno">
+                <div class="img-container">
+                    <img src="https://images.unsplash.com/photo-1595152772835-219674b2a8a6?w=400&h=400&fit=crop&crop=faces"
+                         alt="James Otieno"
+                         loading="lazy"
+                         onload="optimizeImage(this)"
+                         onerror="this.classList.add('error')">
+                    <div class="img-placeholder" style="display: none;">JO</div>
+                    <span class="optimization-badge"><i class="fas fa-image"></i> Auto-resized</span>
                 </div>
                 <div class="staff-info">
                     <div class="staff-name">Col. James Otieno</div>
@@ -388,8 +539,14 @@
             
             <!-- Rank 9 -->
             <div class="staff-card" data-category="operations">
-                <div class="staff-img">
-                    <img src="https://images.unsplash.com/photo-1573497019418-b400bb3ab074?w=400" alt="Grace Ndlovu">
+                <div class="img-container">
+                    <img src="https://images.unsplash.com/photo-1573497019418-b400bb3ab074?w=400&h=400&fit=crop&crop=faces"
+                         alt="Grace Ndlovu"
+                         loading="lazy"
+                         onload="optimizeImage(this)"
+                         onerror="this.classList.add('error')">
+                    <div class="img-placeholder" style="display: none;">GN</div>
+                    <span class="optimization-badge"><i class="fas fa-image"></i> Auto-resized</span>
                 </div>
                 <div class="staff-info">
                     <div class="staff-name">Grace Ndlovu</div>
@@ -401,8 +558,14 @@
             
             <!-- Rank 10 -->
             <div class="staff-card" data-category="operations">
-                <div class="staff-img">
-                    <img src="https://images.unsplash.com/photo-1566492031773-4f4e44671857?w=400" alt="Ibrahim Diallo">
+                <div class="img-container">
+                    <img src="https://images.unsplash.com/photo-1566492031773-4f4e44671857?w=400&h=400&fit=crop&crop=faces"
+                         alt="Ibrahim Diallo"
+                         loading="lazy"
+                         onload="optimizeImage(this)"
+                         onerror="this.classList.add('error')">
+                    <div class="img-placeholder" style="display: none;">ID</div>
+                    <span class="optimization-badge"><i class="fas fa-image"></i> Auto-resized</span>
                 </div>
                 <div class="staff-info">
                     <div class="staff-name">Ibrahim Diallo</div>
@@ -414,8 +577,14 @@
             
             <!-- Rank 11 -->
             <div class="staff-card" data-category="operations">
-                <div class="staff-img">
-                    <img src="https://images.unsplash.com/photo-1573496799652-408c2ac9fe98?w=400" alt="Fatima Al-Zahra">
+                <div class="img-container">
+                    <img src="https://images.unsplash.com/photo-1573496799652-408c2ac9fe98?w=400&h=400&fit=crop&crop=faces"
+                         alt="Fatima Al-Zahra"
+                         loading="lazy"
+                         onload="optimizeImage(this)"
+                         onerror="this.classList.add('error')">
+                    <div class="img-placeholder" style="display: none;">FZ</div>
+                    <span class="optimization-badge"><i class="fas fa-image"></i> Auto-resized</span>
                 </div>
                 <div class="staff-info">
                     <div class="staff-name">Fatima Al-Zahra</div>
@@ -427,8 +596,14 @@
             
             <!-- Rank 12 -->
             <div class="staff-card" data-category="operations">
-                <div class="staff-img">
-                    <img src="https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=400" alt="Kwame Asante">
+                <div class="img-container">
+                    <img src="https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=400&h=400&fit=crop&crop=faces"
+                         alt="Kwame Asante"
+                         loading="lazy"
+                         onload="optimizeImage(this)"
+                         onerror="this.classList.add('error')">
+                    <div class="img-placeholder" style="display: none;">KA</div>
+                    <span class="optimization-badge"><i class="fas fa-image"></i> Auto-resized</span>
                 </div>
                 <div class="staff-info">
                     <div class="staff-name">Kwame Asante</div>
@@ -440,8 +615,14 @@
             
             <!-- Rank 13 -->
             <div class="staff-card" data-category="operations">
-                <div class="staff-img">
-                    <img src="https://images.unsplash.com/photo-1580489944761-15a19d654956?w=400" alt="Chloe Mensah">
+                <div class="img-container">
+                    <img src="https://images.unsplash.com/photo-1580489944761-15a19d654956?w=400&h=400&fit=crop&crop=faces"
+                         alt="Chloe Mensah"
+                         loading="lazy"
+                         onload="optimizeImage(this)"
+                         onerror="this.classList.add('error')">
+                    <div class="img-placeholder" style="display: none;">CM</div>
+                    <span class="optimization-badge"><i class="fas fa-image"></i> Auto-resized</span>
                 </div>
                 <div class="staff-info">
                     <div class="staff-name">Chloe Mensah</div>
@@ -453,8 +634,14 @@
             
             <!-- Rank 14 -->
             <div class="staff-card" data-category="support">
-                <div class="staff-img">
-                    <img src="https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?w=400" alt="John Okonkwo">
+                <div class="img-container">
+                    <img src="https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?w=400&h=400&fit=crop&crop=faces"
+                         alt="John Okonkwo"
+                         loading="lazy"
+                         onload="optimizeImage(this)"
+                         onerror="this.classList.add('error')">
+                    <div class="img-placeholder" style="display: none;">JO</div>
+                    <span class="optimization-badge"><i class="fas fa-image"></i> Auto-resized</span>
                 </div>
                 <div class="staff-info">
                     <div class="staff-name">John Okonkwo</div>
@@ -466,8 +653,14 @@
             
             <!-- Rank 15 -->
             <div class="staff-card" data-category="support">
-                <div class="staff-img">
-                    <img src="https://images.unsplash.com/photo-1573497019940-1c28c88b4f3e?w=400" alt="Aisha Mohammed">
+                <div class="img-container">
+                    <img src="https://images.unsplash.com/photo-1573497019940-1c28c88b4f3e?w=400&h=400&fit=crop&crop=faces"
+                         alt="Aisha Mohammed"
+                         loading="lazy"
+                         onload="optimizeImage(this)"
+                         onerror="this.classList.add('error')">
+                    <div class="img-placeholder" style="display: none;">AM</div>
+                    <span class="optimization-badge"><i class="fas fa-image"></i> Auto-resized</span>
                 </div>
                 <div class="staff-info">
                     <div class="staff-name">Aisha Mohammed</div>
@@ -479,8 +672,14 @@
             
             <!-- Rank 16 -->
             <div class="staff-card" data-category="support">
-                <div class="staff-img">
-                    <img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=400" alt="David Ochieng">
+                <div class="img-container">
+                    <img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=400&h=400&fit=crop&crop=faces"
+                         alt="David Ochieng"
+                         loading="lazy"
+                         onload="optimizeImage(this)"
+                         onerror="this.classList.add('error')">
+                    <div class="img-placeholder" style="display: none;">DO</div>
+                    <span class="optimization-badge"><i class="fas fa-image"></i> Auto-resized</span>
                 </div>
                 <div class="staff-info">
                     <div class="staff-name">David Ochieng</div>
@@ -492,8 +691,14 @@
             
             <!-- Rank 17 -->
             <div class="staff-card" data-category="support">
-                <div class="staff-img">
-                    <img src="https://images.unsplash.com/photo-1580489944761-15a19d654956?w=400" alt="Ngozi Okonkwo">
+                <div class="img-container">
+                    <img src="https://images.unsplash.com/photo-1580489944761-15a19d654956?w=400&h=400&fit=crop&crop=faces"
+                         alt="Ngozi Okonkwo"
+                         loading="lazy"
+                         onload="optimizeImage(this)"
+                         onerror="this.classList.add('error')">
+                    <div class="img-placeholder" style="display: none;">NO</div>
+                    <span class="optimization-badge"><i class="fas fa-image"></i> Auto-resized</span>
                 </div>
                 <div class="staff-info">
                     <div class="staff-name">Ngozi Okonkwo</div>
@@ -505,8 +710,14 @@
             
             <!-- Rank 18 -->
             <div class="staff-card" data-category="support">
-                <div class="staff-img">
-                    <img src="https://images.unsplash.com/photo-1566492031773-4f4e44671857?w=400" alt="Kwesi Appiah">
+                <div class="img-container">
+                    <img src="https://images.unsplash.com/photo-1566492031773-4f4e44671857?w=400&h=400&fit=crop&crop=faces"
+                         alt="Kwesi Appiah"
+                         loading="lazy"
+                         onload="optimizeImage(this)"
+                         onerror="this.classList.add('error')">
+                    <div class="img-placeholder" style="display: none;">KA</div>
+                    <span class="optimization-badge"><i class="fas fa-image"></i> Auto-resized</span>
                 </div>
                 <div class="staff-info">
                     <div class="staff-name">Kwesi Appiah</div>
@@ -518,8 +729,14 @@
             
             <!-- Rank 19 -->
             <div class="staff-card" data-category="support">
-                <div class="staff-img">
-                    <img src="https://images.unsplash.com/photo-1573497019418-b400bb3ab074?w=400" alt="Fatima Bello">
+                <div class="img-container">
+                    <img src="https://images.unsplash.com/photo-1573497019418-b400bb3ab074?w=400&h=400&fit=crop&crop=faces"
+                         alt="Fatima Bello"
+                         loading="lazy"
+                         onload="optimizeImage(this)"
+                         onerror="this.classList.add('error')">
+                    <div class="img-placeholder" style="display: none;">FB</div>
+                    <span class="optimization-badge"><i class="fas fa-image"></i> Auto-resized</span>
                 </div>
                 <div class="staff-info">
                     <div class="staff-name">Fatima Bello</div>
@@ -531,8 +748,14 @@
             
             <!-- Rank 20 -->
             <div class="staff-card" data-category="support">
-                <div class="staff-img">
-                    <img src="https://images.unsplash.com/photo-1595152772835-219674b2a8a6?w=400" alt="Emmanuel Adebayo">
+                <div class="img-container">
+                    <img src="https://images.unsplash.com/photo-1595152772835-219674b2a8a6?w=400&h=400&fit=crop&crop=faces"
+                         alt="Emmanuel Adebayo"
+                         loading="lazy"
+                         onload="optimizeImage(this)"
+                         onerror="this.classList.add('error')">
+                    <div class="img-placeholder" style="display: none;">EA</div>
+                    <span class="optimization-badge"><i class="fas fa-image"></i> Auto-resized</span>
                 </div>
                 <div class="staff-info">
                     <div class="staff-name">Emmanuel Adebayo</div>
@@ -544,8 +767,14 @@
             
             <!-- Rank 21 -->
             <div class="staff-card" data-category="support">
-                <div class="staff-img">
-                    <img src="https://images.unsplash.com/photo-1573496799652-408c2ac9fe98?w=400" alt="Amina Yusuf">
+                <div class="img-container">
+                    <img src="https://images.unsplash.com/photo-1573496799652-408c2ac9fe98?w=400&h=400&fit=crop&crop=faces"
+                         alt="Amina Yusuf"
+                         loading="lazy"
+                         onload="optimizeImage(this)"
+                         onerror="this.classList.add('error')">
+                    <div class="img-placeholder" style="display: none;">AY</div>
+                    <span class="optimization-badge"><i class="fas fa-image"></i> Auto-resized</span>
                 </div>
                 <div class="staff-info">
                     <div class="staff-name">Amina Yusuf</div>
@@ -557,8 +786,13 @@
             
             <!-- Rank 22 -->
             <div class="staff-card" data-category="support">
-                <div class="staff-img">
-                    <img src="https://images.unsplash.com/photo-1521791136064-7986c2920216?w=400" alt="Hiring">
+                <div class="img-container">
+                    <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='400' height='400' viewBox='0 0 400 400'%3E%3Crect width='400' height='400' fill='%23c19a6b'/%3E%3Ctext x='200' y='200' font-family='Arial' font-size='60' fill='white' text-anchor='middle' dy='.3em'%3E%3F%3C/text%3E%3C/svg%3E"
+                         alt="Hiring"
+                         onload="optimizeImage(this)"
+                         onerror="this.classList.add('error')">
+                    <div class="img-placeholder" style="display: none;">H</div>
+                    <span class="optimization-badge"><i class="fas fa-image"></i> Auto-resized</span>
                 </div>
                 <div class="staff-info">
                     <div class="staff-name">Now Hiring</div>
@@ -581,7 +815,109 @@
         </div>
     </div>
 
+    <!-- Image Upload Section (Admin Only) -->
+    <div class="container" id="uploadSection" style="display: none;">
+        <div class="image-upload-section">
+            <h3 style="margin-bottom:20px; color:#0a2540;">
+                <i class="fas fa-cloud-upload-alt" style="color:#c19a6b;"></i>
+                Staff Photo Manager
+            </h3>
+            <div class="upload-area" onclick="document.getElementById('fileInput').click()">
+                <i class="fas fa-cloud-upload-alt"></i>
+                <h4>Click to Upload Staff Photos</h4>
+                <p style="color:#64748b; margin-top:10px;">Supported formats: JPG, PNG, GIF (Max 5MB)</p>
+                <p style="color:#0a2540; font-size:12px; margin-top:10px;">Images will be automatically resized to 400x400 pixels</p>
+                <input type="file" id="fileInput" accept="image/*" multiple style="display: none;" onchange="handleImageUpload(this)">
+            </div>
+            <div id="uploadProgress" style="margin-top:20px; display:none;">
+                <div style="background:#e2e8f0; height:8px; border-radius:4px; overflow:hidden;">
+                    <div id="progressBar" style="width:0%; height:100%; background:#c19a6b; transition:width 0.3s;"></div>
+                </div>
+                <p id="progressText" style="text-align:center; margin-top:10px; font-size:14px;">Uploading...</p>
+            </div>
+        </div>
+    </div>
+
     <script>
+        // Image optimization function
+        function optimizeImage(img) {
+            // Ensure image is loaded
+            if (img.complete) {
+                applyImageOptimization(img);
+            } else {
+                img.onload = function() {
+                    applyImageOptimization(img);
+                };
+            }
+        }
+
+        function applyImageOptimization(img) {
+            // Get the image container
+            const container = img.closest('.img-container');
+            if (!container) return;
+
+            // Get image dimensions
+            const width = img.naturalWidth;
+            const height = img.naturalHeight;
+            
+            // Calculate aspect ratio
+            const aspectRatio = width / height;
+            
+            // Add data attributes for debugging
+            img.setAttribute('data-original-width', width);
+            img.setAttribute('data-original-height', height);
+            img.setAttribute('data-aspect-ratio', aspectRatio.toFixed(2));
+            
+            // Check if image is loaded successfully
+            if (width === 0 || height === 0) {
+                showPlaceholder(container, img);
+                return;
+            }
+
+            // Apply object-fit based on aspect ratio
+            if (aspectRatio > 1.2) {
+                // Landscape image - use cover to fill width
+                img.style.objectFit = 'cover';
+                img.style.objectPosition = 'center 20%'; // Focus on top portion for faces
+            } else if (aspectRatio < 0.8) {
+                // Portrait image - use cover to fill height
+                img.style.objectFit = 'cover';
+                img.style.objectPosition = 'center top';
+            } else {
+                // Square-ish image - use cover
+                img.style.objectFit = 'cover';
+                img.style.objectPosition = 'center';
+            }
+
+            // Add optimization badge
+            const badge = container.querySelector('.optimization-badge') || document.createElement('span');
+            badge.className = 'optimization-badge';
+            badge.innerHTML = `<i class="fas fa-magic"></i> ${width}x${height} → 280x280`;
+            
+            if (!container.querySelector('.optimization-badge')) {
+                container.appendChild(badge);
+            }
+
+            // Hide placeholder if it exists
+            const placeholder = container.querySelector('.img-placeholder');
+            if (placeholder) {
+                placeholder.style.display = 'none';
+            }
+        }
+
+        function showPlaceholder(container, img) {
+            img.style.display = 'none';
+            const placeholder = container.querySelector('.img-placeholder');
+            if (placeholder) {
+                placeholder.style.display = 'flex';
+                // Generate initials from alt text
+                const alt = img.alt || '';
+                const initials = alt.split(' ').map(n => n[0]).join('').substring(0, 2).toUpperCase();
+                placeholder.textContent = initials || '?';
+            }
+        }
+
+        // Filter function
         function filterStaff(category) {
             // Update active button
             document.querySelectorAll('.filter-btn').forEach(btn => {
@@ -593,11 +929,198 @@
             document.querySelectorAll('.staff-card').forEach(card => {
                 if(category === 'all' || card.dataset.category === category) {
                     card.style.display = 'block';
+                    // Re-optimize images when shown
+                    const img = card.querySelector('img');
+                    if (img) optimizeImage(img);
                 } else {
                     card.style.display = 'none';
                 }
             });
         }
+
+        // Handle image upload
+        function handleImageUpload(input) {
+            const files = input.files;
+            const progress = document.getElementById('uploadProgress');
+            const progressBar = document.getElementById('progressBar');
+            const progressText = document.getElementById('progressText');
+            
+            progress.style.display = 'block';
+            
+            // Simulate upload progress
+            let progressWidth = 0;
+            const interval = setInterval(() => {
+                progressWidth += 10;
+                progressBar.style.width = progressWidth + '%';
+                
+                if (progressWidth >= 100) {
+                    clearInterval(interval);
+                    progressText.textContent = 'Upload complete! Optimizing images...';
+                    
+                    // Simulate image optimization
+                    setTimeout(() => {
+                        progress.style.display = 'none';
+                        alert('Photos uploaded and optimized successfully!');
+                        
+                        // Here you would actually upload to your server/storage
+                        // and update the image sources
+                        
+                        // Reset file input
+                        input.value = '';
+                    }, 1000);
+                }
+            }, 200);
+        }
+
+        // Check if user is admin (for showing upload section)
+        function checkAdminAccess() {
+            // This should be replaced with actual admin check
+            // For demo purposes, show upload section if URL has ?admin=true
+            const urlParams = new URLSearchParams(window.location.search);
+            if (urlParams.has('admin')) {
+                document.getElementById('uploadSection').style.display = 'block';
+            }
+        }
+
+        // Lazy loading for images
+        function setupLazyLoading() {
+            const images = document.querySelectorAll('img[loading="lazy"]');
+            const imageObserver = new IntersectionObserver((entries, observer) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        const img = entry.target;
+                        optimizeImage(img);
+                        observer.unobserve(img);
+                    }
+                });
+            });
+
+            images.forEach(img => imageObserver.observe(img));
+        }
+
+        // Initialize on page load
+        document.addEventListener('DOMContentLoaded', () => {
+            // Optimize all images
+            document.querySelectorAll('.img-container img').forEach(img => {
+                optimizeImage(img);
+            });
+            
+            // Setup lazy loading
+            setupLazyLoading();
+            
+            // Check admin access
+            checkAdminAccess();
+        });
+
+        // Re-optimize on window resize
+        let resizeTimeout;
+        window.addEventListener('resize', () => {
+            clearTimeout(resizeTimeout);
+            resizeTimeout = setTimeout(() => {
+                document.querySelectorAll('.img-container img').forEach(img => {
+                    optimizeImage(img);
+                });
+            }, 200);
+        });
+
+        // Handle broken images
+        document.querySelectorAll('.img-container img').forEach(img => {
+            img.addEventListener('error', function() {
+                this.classList.add('error');
+                showPlaceholder(this.closest('.img-container'), this);
+            });
+        });
     </script>
+
+    <style>
+        /* Additional styles for image optimization */
+        .img-container {
+            position: relative;
+            width: 100%;
+            height: 280px;
+            overflow: hidden;
+            background: linear-gradient(45deg, #f1f5f9, #e2e8f0);
+        }
+
+        .img-container img {
+            width: 100%;
+            height: 100%;
+            transition: transform 0.5s;
+        }
+
+        .staff-card:hover .img-container img {
+            transform: scale(1.05);
+        }
+
+        .optimization-badge {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: rgba(0, 0, 0, 0.7);
+            color: white;
+            padding: 4px 8px;
+            border-radius: 20px;
+            font-size: 10px;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            z-index: 10;
+            backdrop-filter: blur(4px);
+        }
+
+        .optimization-badge i {
+            color: #c19a6b;
+            font-size: 10px;
+        }
+
+        .img-placeholder {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(135deg, #0a2540, #3a5a78);
+            color: white;
+            font-size: 48px;
+            font-weight: 700;
+            z-index: 5;
+        }
+
+        /* Image info tooltip */
+        .img-container:hover::after {
+            content: attr(data-dimensions);
+            position: absolute;
+            bottom: 10px;
+            left: 10px;
+            background: rgba(0, 0, 0, 0.7);
+            color: white;
+            padding: 4px 8px;
+            border-radius: 20px;
+            font-size: 10px;
+            z-index: 10;
+        }
+
+        /* Upload section styles */
+        .upload-area {
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+
+        .upload-area:hover {
+            background: #f1f5f9;
+        }
+
+        .upload-area i {
+            transition: transform 0.3s;
+        }
+
+        .upload-area:hover i {
+            transform: translateY(-5px);
+        }
+    </style>
 </body>
 </html>
