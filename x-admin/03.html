@@ -1,0 +1,794 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🔥 XTAAGC - Super Admin (CDN Fixed)</title>
+    <!-- Multiple CDN fallbacks for Firebase -->
+    <script>
+        // Load Firebase with fallbacks
+        function loadFirebase() {
+            return new Promise((resolve, reject) => {
+                // Try primary CDN
+                const script = document.createElement('script');
+                script.src = 'https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js';
+                script.onload = () => {
+                    // Load Auth after App
+                    const authScript = document.createElement('script');
+                    authScript.src = 'https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js';
+                    authScript.onload = () => {
+                        console.log('✅ Firebase loaded successfully');
+                        resolve();
+                    };
+                    authScript.onerror = () => {
+                        // Try fallback CDN for auth
+                        const fallbackAuth = document.createElement('script');
+                        fallbackAuth.src = 'https://cdn.jsdelivr.net/npm/firebase@10.8.0/auth/dist/index.min.js';
+                        fallbackAuth.onload = () => resolve();
+                        fallbackAuth.onerror = () => reject(new Error('Failed to load Firebase Auth'));
+                        document.head.appendChild(fallbackAuth);
+                    };
+                    document.head.appendChild(authScript);
+                };
+                script.onerror = () => {
+                    // Try fallback CDN
+                    const fallbackScript = document.createElement('script');
+                    fallbackScript.src = 'https://cdn.jsdelivr.net/npm/firebase@10.8.0/app/dist/index.min.js';
+                    fallbackScript.onload = () => {
+                        // Load auth from fallback
+                        const fallbackAuth = document.createElement('script');
+                        fallbackAuth.src = 'https://cdn.jsdelivr.net/npm/firebase@10.8.0/auth/dist/index.min.js';
+                        fallbackAuth.onload = () => resolve();
+                        fallbackAuth.onerror = () => reject(new Error('Failed to load Firebase from fallback'));
+                        document.head.appendChild(fallbackAuth);
+                    };
+                    fallbackScript.onerror = () => reject(new Error('Failed to load Firebase SDK'));
+                    document.head.appendChild(fallbackScript);
+                };
+                document.head.appendChild(script);
+            });
+        }
+    </script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+        .container {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            width: 100%;
+            max-width: 500px;
+            padding: 40px;
+        }
+        h1 {
+            color: #333;
+            margin-bottom: 5px;
+            font-size: 28px;
+            text-align: center;
+        }
+        .project-badge {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 8px 15px;
+            border-radius: 20px;
+            display: inline-block;
+            margin: 10px auto 20px;
+            text-align: center;
+            font-weight: 600;
+            font-size: 14px;
+            width: 100%;
+        }
+        .fixed-badge {
+            background: #28a745;
+            color: white;
+            padding: 5px 10px;
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: 600;
+            display: inline-block;
+            margin-left: 10px;
+            animation: pulse 2s infinite;
+        }
+        @keyframes pulse {
+            0% { opacity: 1; }
+            50% { opacity: 0.8; }
+            100% { opacity: 1; }
+        }
+        .loading-container {
+            text-align: center;
+            padding: 40px;
+        }
+        .loading-spinner {
+            display: inline-block;
+            width: 50px;
+            height: 50px;
+            border: 5px solid #f3f3f3;
+            border-top: 5px solid #667eea;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin-bottom: 20px;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        .status-container {
+            background: #f8f9fa;
+            border-radius: 10px;
+            padding: 20px;
+            margin: 20px 0;
+        }
+        .user-avatar {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            margin: 0 auto 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 40px;
+            font-weight: bold;
+        }
+        .input-group {
+            margin-bottom: 15px;
+        }
+        input {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 14px;
+            transition: border-color 0.3s;
+        }
+        input:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+        .button-group {
+            display: flex;
+            gap: 10px;
+            margin-top: 20px;
+            flex-wrap: wrap;
+        }
+        button {
+            flex: 1;
+            padding: 14px 20px;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            min-width: 120px;
+        }
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+        .btn-success {
+            background: #28a745;
+            color: white;
+        }
+        .btn-danger {
+            background: #dc3545;
+            color: white;
+        }
+        .btn-info {
+            background: #17a2b8;
+            color: white;
+        }
+        button:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        }
+        button:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+        .user-info {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        .user-email {
+            font-size: 18px;
+            font-weight: 600;
+            color: #333;
+            word-break: break-all;
+        }
+        .user-uid {
+            font-size: 12px;
+            color: #666;
+            font-family: monospace;
+            background: #e9ecef;
+            padding: 8px;
+            border-radius: 5px;
+            margin: 10px 0;
+            word-break: break-all;
+        }
+        .admin-status {
+            font-size: 16px;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 15px 0;
+            text-align: center;
+        }
+        .admin-status.active {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+        .admin-status.inactive {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+        .admin-status.checking {
+            background: #fff3cd;
+            color: #856404;
+            border: 1px solid #ffeeba;
+        }
+        .claims-box {
+            background: #2d2d2d;
+            color: #fff;
+            padding: 15px;
+            border-radius: 8px;
+            font-family: 'Courier New', monospace;
+            font-size: 12px;
+            margin-top: 15px;
+            max-height: 200px;
+            overflow-y: auto;
+            display: none;
+            text-align: left;
+            white-space: pre-wrap;
+        }
+        .claims-box.show {
+            display: block;
+        }
+        .notification {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            padding: 15px 25px;
+            border-radius: 8px;
+            color: white;
+            font-weight: 600;
+            transform: translateX(400px);
+            transition: transform 0.3s ease;
+            z-index: 1000;
+        }
+        .notification.show {
+            transform: translateX(0);
+        }
+        .notification.success {
+            background: #28a745;
+        }
+        .notification.error {
+            background: #dc3545;
+        }
+        .notification.info {
+            background: #17a2b8;
+        }
+        .link-button {
+            background: none;
+            border: none;
+            color: #667eea;
+            text-decoration: underline;
+            cursor: pointer;
+            font-size: 13px;
+            padding: 5px;
+        }
+        .footer {
+            margin-top: 30px;
+            text-align: center;
+            font-size: 12px;
+            color: #888;
+        }
+        .hidden {
+            display: none !important;
+        }
+        .error-box {
+            background: #f8d7da;
+            color: #721c24;
+            padding: 20px;
+            border-radius: 8px;
+            margin: 20px 0;
+            text-align: center;
+        }
+        .retry-button {
+            background: #dc3545;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            margin-top: 10px;
+        }
+        .cdn-info {
+            font-size: 12px;
+            color: #666;
+            margin-top: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div id="notification" class="notification"></div>
+    
+    <div class="container">
+        <h1>🔥 XTAAGC</h1>
+        <div class="project-badge">
+            Project: xtaagc 
+            <span class="fixed-badge">✅ CDN FIXED</span>
+        </div>
+
+        <!-- Loading View -->
+        <div id="loadingView" class="loading-container">
+            <div class="loading-spinner"></div>
+            <p>Loading Firebase SDK...</p>
+            <p class="cdn-info">Using multiple CDN fallbacks</p>
+        </div>
+
+        <!-- Error View (if Firebase fails to load) -->
+        <div id="errorView" class="hidden">
+            <div class="error-box">
+                <h3>❌ Failed to Load Firebase</h3>
+                <p id="errorMessage">Could not load Firebase SDK</p>
+                <button class="retry-button" onclick="retryLoadFirebase()">🔄 Retry Loading</button>
+                <div style="margin-top: 20px; text-align: left;">
+                    <p><strong>🔧 Troubleshooting:</strong></p>
+                    <ul style="margin-left: 20px; margin-top: 10px;">
+                        <li>Check internet connection</li>
+                        <li>Disable ad blocker</li>
+                        <li>Try different browser</li>
+                        <li>Check firewall settings</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <!-- Unauthenticated View -->
+        <div id="unauthView" class="status-container hidden">
+            <div class="user-avatar">👤</div>
+            <p style="color: #666; margin-bottom: 20px; text-align: center;">Sign in to get super admin access</p>
+            
+            <div class="input-group">
+                <input type="email" id="emailInput" placeholder="Email" autocomplete="off">
+            </div>
+            <div class="input-group">
+                <input type="password" id="passwordInput" placeholder="Password" autocomplete="off">
+            </div>
+            
+            <div class="button-group">
+                <button class="btn-primary" onclick="handleSignUp()" id="signUpBtn">
+                    ✨ Sign Up & Get Admin
+                </button>
+            </div>
+            
+            <p style="margin-top: 15px; text-align: center;">
+                <button class="link-button" onclick="toggleMode()" id="toggleModeBtn">
+                    Already have an account? Sign in
+                </button>
+            </p>
+        </div>
+
+        <!-- Authenticated View -->
+        <div id="authView" class="status-container hidden">
+            <div class="user-avatar" id="userAvatar">👤</div>
+            
+            <div class="user-info">
+                <div class="user-email" id="displayEmail"></div>
+                <div class="user-uid" id="displayUid"></div>
+            </div>
+            
+            <div id="adminStatus" class="admin-status checking">
+                <span class="loading-spinner"></span> Checking status...
+            </div>
+            
+            <div id="claimsDisplay" class="claims-box"></div>
+            
+            <div class="button-group">
+                <button class="btn-success" onclick="makeSuperAdmin()" id="makeAdminBtn">
+                    👑 Make Super Admin
+                </button>
+                <button class="btn-info" onclick="refreshToken()" id="refreshBtn">
+                    🔄 Refresh Token
+                </button>
+                <button class="btn-danger" onclick="signOut()">
+                    🚪 Sign Out
+                </button>
+            </div>
+        </div>
+
+        <!-- Cloud Function Code -->
+        <div id="codeView" class="claims-box"></div>
+
+        <div class="footer">
+            <p>✅ CDN Fallbacks Active • Primary + jsDelivr + UNPKG</p>
+        </div>
+    </div>
+
+    <script>
+        // ==================== CONFIGURATION ====================
+        const firebaseConfig = {
+            apiKey: "AIzaSyAI1MrcP977UgRLQoePxl64JOSyj9v4WpI",
+            authDomain: "xtaagc.firebaseapp.com",
+            projectId: "xtaagc",
+            storageBucket: "xtaagc.firebasestorage.app",
+            messagingSenderId: "256073982437",
+            appId: "1:256073982437:web:8da63bb7acc86c0ca98f0c"
+        };
+
+        // ==================== GLOBAL VARIABLES ====================
+        let app = null;
+        let auth = null;
+        let currentUser = null;
+        let isSignUpMode = true;
+        let firebaseLoaded = false;
+
+        // ==================== LOAD FIREBASE WITH FALLBACKS ====================
+        async function loadFirebaseWithFallbacks() {
+            const cdnList = [
+                // Primary Google CDN
+                {
+                    app: 'https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js',
+                    auth: 'https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js'
+                },
+                // jsDelivr CDN
+                {
+                    app: 'https://cdn.jsdelivr.net/npm/firebase@10.8.0/app/dist/index.min.js',
+                    auth: 'https://cdn.jsdelivr.net/npm/firebase@10.8.0/auth/dist/index.min.js'
+                },
+                // UNPKG CDN
+                {
+                    app: 'https://unpkg.com/firebase@10.8.0/app/dist/index.min.js',
+                    auth: 'https://unpkg.com/firebase@10.8.0/auth/dist/index.min.js'
+                },
+                // Cloudflare CDN
+                {
+                    app: 'https://cdnjs.cloudflare.com/ajax/libs/firebase/10.8.0/firebase-app.min.js',
+                    auth: 'https://cdnjs.cloudflare.com/ajax/libs/firebase/10.8.0/firebase-auth.min.js'
+                }
+            ];
+
+            for (let i = 0; i < cdnList.length; i++) {
+                try {
+                    console.log(`Attempting to load Firebase from CDN ${i + 1}...`);
+                    
+                    // Load App script
+                    await loadScript(cdnList[i].app);
+                    console.log('Firebase App loaded');
+                    
+                    // Load Auth script
+                    await loadScript(cdnList[i].auth);
+                    console.log('Firebase Auth loaded');
+                    
+                    // Verify Firebase is available
+                    if (typeof firebase !== 'undefined' && firebase.auth) {
+                        console.log(`✅ Firebase loaded successfully from CDN ${i + 1}`);
+                        return true;
+                    }
+                } catch (error) {
+                    console.warn(`CDN ${i + 1} failed:`, error);
+                    // Continue to next CDN
+                }
+            }
+            
+            throw new Error('All CDNs failed to load Firebase');
+        }
+
+        // Helper to load script as Promise
+        function loadScript(src) {
+            return new Promise((resolve, reject) => {
+                const script = document.createElement('script');
+                script.src = src;
+                script.onload = resolve;
+                script.onerror = () => reject(new Error(`Failed to load: ${src}`));
+                document.head.appendChild(script);
+            });
+        }
+
+        // ==================== INITIALIZE FIREBASE ====================
+        async function initializeFirebase() {
+            try {
+                if (!firebaseLoaded) {
+                    await loadFirebaseWithFallbacks();
+                    firebaseLoaded = true;
+                }
+
+                if (!firebase.apps.length) {
+                    app = firebase.initializeApp(firebaseConfig);
+                } else {
+                    app = firebase.apps[0];
+                }
+                
+                auth = firebase.auth(app);
+                
+                console.log('✅ Firebase initialized successfully');
+                
+                // Hide loading, show auth view
+                document.getElementById('loadingView').classList.add('hidden');
+                
+                // Set up auth observer
+                setupAuthObserver();
+                
+                return true;
+            } catch (error) {
+                console.error('Firebase initialization failed:', error);
+                
+                // Show error view
+                document.getElementById('loadingView').classList.add('hidden');
+                document.getElementById('errorView').classList.remove('hidden');
+                document.getElementById('errorMessage').textContent = error.message;
+                
+                return false;
+            }
+        }
+
+        // ==================== RETRY LOADING ====================
+        async function retryLoadFirebase() {
+            document.getElementById('errorView').classList.add('hidden');
+            document.getElementById('loadingView').classList.remove('hidden');
+            firebaseLoaded = false;
+            await initializeFirebase();
+        }
+
+        // ==================== AUTH OBSERVER ====================
+        function setupAuthObserver() {
+            if (!auth) return;
+
+            auth.onAuthStateChanged((user) => {
+                currentUser = user;
+                
+                if (user) {
+                    document.getElementById('unauthView').classList.add('hidden');
+                    document.getElementById('authView').classList.remove('hidden');
+                    updateUserInfo(user);
+                    checkAdminStatus(user);
+                } else {
+                    document.getElementById('authView').classList.add('hidden');
+                    document.getElementById('unauthView').classList.remove('hidden');
+                    resetAuthView();
+                }
+            });
+        }
+
+        // ==================== UPDATE USER INFO ====================
+        function updateUserInfo(user) {
+            const emailEl = document.getElementById('displayEmail');
+            const uidEl = document.getElementById('displayUid');
+            const avatarEl = document.getElementById('userAvatar');
+            
+            if (emailEl) emailEl.textContent = user.email || 'No email';
+            if (uidEl) uidEl.textContent = `UID: ${user.uid}`;
+            if (avatarEl) avatarEl.textContent = user.email ? user.email[0].toUpperCase() : '👤';
+        }
+
+        // ==================== RESET AUTH VIEW ====================
+        function resetAuthView() {
+            const claimsEl = document.getElementById('claimsDisplay');
+            const statusEl = document.getElementById('adminStatus');
+            
+            if (claimsEl) claimsEl.classList.remove('show');
+            if (statusEl) {
+                statusEl.className = 'admin-status checking';
+                statusEl.innerHTML = '<span class="loading-spinner"></span> Checking status...';
+            }
+        }
+
+        // ==================== CHECK ADMIN STATUS ====================
+        async function checkAdminStatus(user) {
+            if (!user || !auth) return;
+
+            const statusEl = document.getElementById('adminStatus');
+            const claimsEl = document.getElementById('claimsDisplay');
+            
+            try {
+                const tokenResult = await user.getIdTokenResult(true);
+                const claims = tokenResult.claims;
+                
+                if (claimsEl) {
+                    claimsEl.textContent = JSON.stringify(claims, null, 2);
+                    claimsEl.classList.add('show');
+                }
+                
+                const isAdmin = claims.role === 'super-admin' || claims.admin === true;
+                
+                if (statusEl) {
+                    statusEl.className = isAdmin ? 'admin-status active' : 'admin-status inactive';
+                    statusEl.innerHTML = isAdmin ? 
+                        '✅ SUPER ADMIN ACTIVE' : 
+                        '❌ Regular User - Click "Make Super Admin"';
+                }
+                
+            } catch (error) {
+                console.error('Error checking admin status:', error);
+                if (statusEl) {
+                    statusEl.className = 'admin-status inactive';
+                    statusEl.innerHTML = '❌ Error checking status';
+                }
+            }
+        }
+
+        // ==================== HANDLE SIGN UP ====================
+        async function handleSignUp() {
+            const email = document.getElementById('emailInput')?.value.trim();
+            const password = document.getElementById('passwordInput')?.value.trim();
+
+            if (!email || !password) {
+                showNotification('Please enter email and password', 'error');
+                return;
+            }
+
+            if (password.length < 6) {
+                showNotification('Password must be at least 6 characters', 'error');
+                return;
+            }
+
+            setButtonsDisabled(true);
+
+            try {
+                let userCredential;
+                
+                if (isSignUpMode) {
+                    userCredential = await auth.createUserWithEmailAndPassword(email, password);
+                    showNotification('Account created!', 'success');
+                    showCloudFunctionCode(userCredential.user.uid);
+                } else {
+                    userCredential = await auth.signInWithEmailAndPassword(email, password);
+                    showNotification('Signed in successfully!', 'success');
+                }
+                
+                // Clear inputs
+                const emailInput = document.getElementById('emailInput');
+                const passwordInput = document.getElementById('passwordInput');
+                if (emailInput) emailInput.value = '';
+                if (passwordInput) passwordInput.value = '';
+                
+            } catch (error) {
+                let message = error.message;
+                if (error.code === 'auth/email-already-in-use') {
+                    message = 'Email already exists. Switch to sign in mode.';
+                    toggleMode();
+                }
+                showNotification('Error: ' + message, 'error');
+            } finally {
+                setButtonsDisabled(false);
+            }
+        }
+
+        // ==================== TOGGLE MODE ====================
+        function toggleMode() {
+            isSignUpMode = !isSignUpMode;
+            
+            const btn = document.getElementById('signUpBtn');
+            const toggleBtn = document.getElementById('toggleModeBtn');
+            
+            if (btn) {
+                btn.innerHTML = isSignUpMode ? 
+                    '✨ Sign Up & Get Admin' : 
+                    '🔐 Sign In';
+            }
+            
+            if (toggleBtn) {
+                toggleBtn.textContent = isSignUpMode ? 
+                    'Already have an account? Sign in' : 
+                    'Need an account? Sign up';
+            }
+        }
+
+        // ==================== MAKE SUPER ADMIN ====================
+        function makeSuperAdmin() {
+            if (!currentUser) {
+                showNotification('No user logged in', 'error');
+                return;
+            }
+            showCloudFunctionCode(currentUser.uid);
+        }
+
+        // ==================== SHOW CLOUD FUNCTION CODE ====================
+        function showCloudFunctionCode(uid) {
+            const codeEl = document.getElementById('codeView');
+            if (!codeEl) return;
+            
+            const code = `// Cloud Function for Auto Super Admin
+const functions = require('firebase-functions');
+const admin = require('firebase-admin');
+admin.initializeApp();
+
+// Auto-make every new user a super admin
+exports.autoMakeSuperAdmin = functions.auth.user().onCreate(async (user) => {
+    await admin.auth().setCustomUserClaims(user.uid, {
+        role: 'super-admin',
+        admin: true,
+        permissions: ['manage_users', 'manage_content', 'delete_data'],
+        project: 'xtaagc',
+        access_level: 999
+    });
+    console.log(\`✅ Super admin created: \${user.uid}\`);
+});
+
+// Deploy: firebase deploy --only functions
+// UID: ${uid}`;
+
+            codeEl.textContent = code;
+            codeEl.classList.add('show');
+            showNotification('Cloud Function code generated!', 'success');
+        }
+
+        // ==================== REFRESH TOKEN ====================
+        async function refreshToken() {
+            if (!currentUser) return;
+            setButtonsDisabled(true);
+            try {
+                await currentUser.getIdTokenResult(true);
+                await checkAdminStatus(currentUser);
+                showNotification('Token refreshed!', 'success');
+            } catch (error) {
+                showNotification('Error: ' + error.message, 'error');
+            } finally {
+                setButtonsDisabled(false);
+            }
+        }
+
+        // ==================== SIGN OUT ====================
+        async function signOut() {
+            if (!auth) return;
+            setButtonsDisabled(true);
+            try {
+                await auth.signOut();
+                showNotification('Signed out successfully', 'success');
+            } catch (error) {
+                showNotification('Error: ' + error.message, 'error');
+            } finally {
+                setButtonsDisabled(false);
+            }
+        }
+
+        // ==================== HELPER FUNCTIONS ====================
+        function setButtonsDisabled(disabled) {
+            document.querySelectorAll('button').forEach(btn => {
+                if (btn) btn.disabled = disabled;
+            });
+        }
+
+        function showNotification(message, type) {
+            const notification = document.getElementById('notification');
+            if (!notification) return;
+            
+            notification.className = `notification ${type}`;
+            notification.innerHTML = message;
+            notification.classList.add('show');
+            
+            setTimeout(() => {
+                notification.classList.remove('show');
+            }, 5000);
+        }
+
+        // ==================== START ====================
+        window.addEventListener('load', () => {
+            initializeFirebase();
+        });
+
+        // Expose functions globally
+        window.handleSignUp = handleSignUp;
+        window.toggleMode = toggleMode;
+        window.makeSuperAdmin = makeSuperAdmin;
+        window.refreshToken = refreshToken;
+        window.signOut = signOut;
+        window.retryLoadFirebase = retryLoadFirebase;
+    </script>
+</body>
+</html>
