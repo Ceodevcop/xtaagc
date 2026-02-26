@@ -1,82 +1,324 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>TAAGC | Login</title>
-
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=Playfair+Display:wght@700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
-<link rel="stylesheet" href="assets/css/style.css">
-
-<script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-auth-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Login - TAAGC</title>
+    
+    <!-- Firebase 8.10.1 SDK -->
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
+    
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Inter', sans-serif;
+        }
+        body {
+            background: linear-gradient(135deg, #0a2540, #1a3a4f);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+        .login-card {
+            max-width: 400px;
+            width: 100%;
+            background: #fff;
+            border-radius: 24px;
+            padding: 40px;
+            box-shadow: 0 20px 40px rgba(0,0,0,.3);
+        }
+        .logo {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        .logo-icon {
+            width: 60px;
+            height: 60px;
+            background: linear-gradient(135deg, #0a2540, #3a5a78);
+            border-radius: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #fff;
+            font-size: 28px;
+            font-weight: 700;
+            margin: 0 auto 15px;
+        }
+        .logo h2 {
+            color: #0a2540;
+            font-size: 24px;
+        }
+        .logo p {
+            color: #64748b;
+            font-size: 14px;
+        }
+        .form-group {
+            margin-bottom: 20px;
+        }
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #0a2540;
+        }
+        .input-wrapper {
+            position: relative;
+        }
+        .input-wrapper i {
+            position: absolute;
+            left: 16px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #a0aec0;
+        }
+        input {
+            width: 100%;
+            padding: 14px 16px 14px 48px;
+            border: 2px solid #e2e8f0;
+            border-radius: 12px;
+            font-size: 15px;
+        }
+        input:focus {
+            border-color: #c19a6b;
+            outline: none;
+        }
+        .checkbox-label {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            cursor: pointer;
+            color: #4a5568;
+        }
+        .btn {
+            width: 100%;
+            padding: 16px;
+            background: #0a2540;
+            color: #fff;
+            border: none;
+            border-radius: 12px;
+            font-weight: 600;
+            cursor: pointer;
+            margin-top: 20px;
+            transition: background 0.2s;
+        }
+        .btn:hover {
+            background: #1a3a4f;
+        }
+        .btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+        .alert {
+            padding: 15px;
+            border-radius: 8px;
+            margin-top: 20px;
+            display: none;
+        }
+        .alert-error {
+            background: #fff5f5;
+            border-left: 4px solid #e53e3e;
+            color: #742a2a;
+            display: block;
+        }
+        .alert-success {
+            background: #f0fff4;
+            border-left: 4px solid #2e7d5e;
+            color: #22543d;
+            display: block;
+        }
+        .loading {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid rgba(255,255,255,.3);
+            border-top-color: #fff;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+        .status-box {
+            background: #f8fafc;
+            border-radius: 8px;
+            padding: 10px;
+            margin-bottom: 20px;
+            font-size: 13px;
+            text-align: center;
+        }
+    </style>
 </head>
-
 <body>
-<div class="container">
-    <div class="card" style="max-width:480px;margin:100px auto;">
-        <div class="section-header">
-            <span class="section-subtitle">TAAGC GLOBAL</span>
-            <h2 class="section-title">Login</h2>
+    <div class="login-card">
+        <div class="logo">
+            <div class="logo-icon">A</div>
+            <h2>TAAGC Admin</h2>
+            <p>Secure administration portal</p>
         </div>
-
-        <div id="msg"></div>
-
-        <form onsubmit="login(event)">
+        
+        <div id="status" class="status-box">Loading Firebase...</div>
+        
+        <div id="alertMessage" class="alert"></div>
+        
+        <form id="loginForm">
             <div class="form-group">
-                <label>Email</label>
+                <label><i class="fas fa-envelope"></i> Email</label>
                 <div class="input-wrapper">
                     <i class="fas fa-envelope"></i>
-                    <input class="form-control" id="email" required>
+                    <input type="email" id="email" value="admin@taagc.com" required>
                 </div>
             </div>
-
             <div class="form-group">
-                <label>Password</label>
+                <label><i class="fas fa-lock"></i> Password</label>
                 <div class="input-wrapper">
                     <i class="fas fa-lock"></i>
-                    <input class="form-control" id="password" type="password" required>
+                    <input type="password" id="password" value="Admin123!" required>
                 </div>
             </div>
-
-            <button class="btn btn-primary btn-block btn-lg">
-                Login
+            <div style="margin:15px 0">
+                <label class="checkbox-label">
+                    <input type="checkbox" id="remember" checked> Remember me
+                </label>
+            </div>
+            <button type="submit" class="btn" id="loginBtn">
+                <i class="fas fa-sign-in-alt"></i> Access Admin Panel
             </button>
         </form>
-
-        <p class="text-center" style="margin-top:20px;">
-            Don’t have an account?
-            <a href="register.html" class="text-gold">Register</a>
-        </p>
+        
+        <div style="margin-top: 15px; text-align: center;">
+            <a href="setup-admin.html" style="color: #64748b; font-size: 12px;">First time? Create admin account</a>
+        </div>
+        
+        <div class="footer-note">
+            <i class="fas fa-lock"></i> All access is logged
+        </div>
     </div>
-</div>
 
-<script>
-firebase.initializeApp({
-  apiKey: "AIzaSyAI1MrcP977UgRLQoePxl64JOSyj9v4WpI",
-  authDomain: "xtaagc.firebaseapp.com",
-  projectId: "xtaagc",
-  storageBucket: "xtaagc.firebasestorage.app",
-  messagingSenderId: "256073982437",
-  appId: "1:256073982437:web:8da63bb7acc86c0ca98f0c"
-});
+    <script>
+        // Firebase 8.10.1 Configuration
+        const firebaseConfig = {
+            apiKey: "AIzaSyAI1MrcP977UgRLQoePxl64JOSyj9v4WpI",
+            authDomain: "xtaagc.firebaseapp.com",
+            projectId: "xtaagc",
+            storageBucket: "xtaagc.firebasestorage.app",
+            messagingSenderId: "256073982437",
+            appId: "1:256073982437:web:8da63bb7acc86c0ca98f0c"
+        };
 
-async function login(e){
- e.preventDefault();
- try{
-  const cred = await firebase.auth()
-    .signInWithEmailAndPassword(email.value,password.value);
+        // Initialize Firebase
+        if (!firebase.apps.length) {
+            firebase.initializeApp(firebaseConfig);
+        }
+        
+        const auth = firebase.auth();
+        const db = firebase.firestore();
+        
+        const statusDiv = document.getElementById('status');
+        statusDiv.innerHTML = '✅ Firebase ready';
+        statusDiv.style.color = 'green';
+        
+        // Check if already logged in
+        auth.onAuthStateChanged((user) => {
+            if (user) {
+                const session = localStorage.getItem('taagc_admin') || sessionStorage.getItem('taagc_admin');
+                if (session) {
+                    window.location.href = 'dashboard/index.html';
+                }
+            }
+        });
 
-  const admin = await firebase.firestore()
-    .collection("admins").doc(cred.user.uid).get();
+        // Login handler
+        document.getElementById('loginForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+            const remember = document.getElementById('remember').checked;
+            const btn = document.getElementById('loginBtn');
+            const alertDiv = document.getElementById('alertMessage');
 
-  location.href = admin.exists ? "/admin/dashboard.html" : "/dashboard.html";
- }catch(err){
-  msg.innerHTML=`<div class="alert alert-error">${err.message}</div>`;
- }
-}
-</script>
+            btn.innerHTML = '<span class="loading"></span> Verifying...';
+            btn.disabled = true;
+
+            try {
+                const userCredential = await auth.signInWithEmailAndPassword(email, password);
+                const user = userCredential.user;
+
+                // Check if admin
+                let isAdmin = false;
+                let adminData = null;
+
+                try {
+                    const adminDoc = await db.collection('admins').doc(user.uid).get();
+                    if (adminDoc.exists) {
+                        isAdmin = true;
+                        adminData = adminDoc.data();
+                    }
+                } catch (e) {}
+
+                // Hardcoded super admins
+                if (!isAdmin) {
+                    const superAdmins = ['admin@taagc.com', 'priahmz@gmail.com'];
+                    if (superAdmins.includes(email)) {
+                        isAdmin = true;
+                        adminData = { name: 'Super Admin', email: email, role: 'super-admin' };
+                        
+                        // Create admin document for future
+                        try {
+                            await db.collection('admins').doc(user.uid).set({
+                                name: 'Super Admin',
+                                email: email,
+                                role: 'super-admin',
+                                createdAt: new Date().toISOString()
+                            }, { merge: true });
+                        } catch (e) {}
+                    }
+                }
+
+                if (!isAdmin) {
+                    throw new Error('Access denied. Admin privileges required.');
+                }
+
+                // Save session
+                const sessionData = {
+                    uid: user.uid,
+                    email: user.email,
+                    name: adminData?.name || 'Admin',
+                    role: adminData?.role || 'admin'
+                };
+
+                if (remember) {
+                    localStorage.setItem('taagc_admin', JSON.stringify(sessionData));
+                } else {
+                    sessionStorage.setItem('taagc_admin', JSON.stringify(sessionData));
+                }
+
+                alertDiv.className = 'alert alert-success';
+                alertDiv.innerHTML = '<i class="fas fa-check-circle"></i> Login successful! Redirecting...';
+                alertDiv.style.display = 'block';
+
+                setTimeout(() => {
+                    window.location.href = 'dashboard/index.html';
+                }, 1500);
+
+            } catch (error) {
+                alertDiv.className = 'alert alert-error';
+                alertDiv.innerHTML = '<i class="fas fa-exclamation-circle"></i> ' + error.message;
+                alertDiv.style.display = 'block';
+                
+                btn.innerHTML = '<i class="fas fa-sign-in-alt"></i> Access Admin Panel';
+                btn.disabled = false;
+            }
+        });
+    </script>
 </body>
 </html>
