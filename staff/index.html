@@ -75,6 +75,10 @@
             color:#4a5568;
             text-decoration:none;
             font-weight:600;
+            transition:color 0.3s;
+        }
+        .nav-link:hover{
+            color:#c19a6b;
         }
         
         /* Header */
@@ -108,6 +112,11 @@
             border-radius:16px;
             text-align:center;
             box-shadow:0 4px 10px rgba(0,0,0,0.05);
+            transition:transform 0.3s;
+        }
+        .stat-card:hover{
+            transform:translateY(-5px);
+            box-shadow:0 8px 20px rgba(0,0,0,0.1);
         }
         .stat-number{
             font-size:36px;
@@ -138,6 +147,7 @@
         }
         .filter-btn:hover{
             background:#f1f5f9;
+            transform:translateY(-2px);
         }
         .filter-btn.active{
             background:#0a2540;
@@ -177,53 +187,60 @@
             justify-content: center;
         }
         
-        /* Auto-resize images - maintains aspect ratio while fitting container */
+        /* Auto-resize images */
         .img-container img {
             width: 100%;
             height: 100%;
-            object-fit: cover; /* Covers entire container, crops if needed */
-            object-position: center; /* Centers the image */
+            object-fit: cover;
+            object-position: center;
             transition: transform 0.5s;
         }
         
         .staff-card:hover .img-container img {
-            transform: scale(1.05); /* Slight zoom on hover */
+            transform: scale(1.05);
         }
         
         /* Placeholder for missing images */
         .img-placeholder {
+            position: absolute;
+            top: 0;
+            left: 0;
             width: 100%;
             height: 100%;
-            display: flex;
+            display: none;
             align-items: center;
             justify-content: center;
             background: linear-gradient(135deg, #0a2540, #3a5a78);
             color: white;
-            font-size: 64px;
+            font-size: 48px;
             font-weight: 700;
+            z-index: 5;
         }
         
-        /* Fallback for broken images */
-        .img-container img.error {
-            display: none;
-        }
-        
-        .img-container img.error + .img-placeholder {
+        /* Optimization badge */
+        .optimization-badge {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: rgba(0, 0, 0, 0.7);
+            color: white;
+            padding: 4px 8px;
+            border-radius: 20px;
+            font-size: 10px;
+            font-weight: 600;
             display: flex;
+            align-items: center;
+            gap: 4px;
+            z-index: 10;
+            backdrop-filter: blur(4px);
         }
         
-        /* Loading skeleton */
-        .skeleton {
-            background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
-            background-size: 200% 100%;
-            animation: loading 1.5s infinite;
+        .optimization-badge i {
+            color: #c19a6b;
+            font-size: 10px;
         }
         
-        @keyframes loading {
-            0% { background-position: 200% 0; }
-            100% { background-position: -200% 0; }
-        }
-        
+        /* Staff Info */
         .staff-info{
             padding:20px;
         }
@@ -281,11 +298,14 @@
         }
         
         /* Image Upload Section (Admin) */
+        #uploadSection {
+            margin: 40px 0;
+        }
+        
         .image-upload-section{
             background:white;
             border-radius:16px;
             padding:30px;
-            margin:40px 0;
             border:2px dashed #c19a6b;
         }
         .upload-area{
@@ -294,11 +314,71 @@
             background:#f8fafc;
             border-radius:12px;
             cursor:pointer;
+            transition:background 0.3s;
+        }
+        .upload-area:hover{
+            background:#f1f5f9;
         }
         .upload-area i{
             font-size:48px;
             color:#c19a6b;
             margin-bottom:15px;
+        }
+        
+        #uploadProgress {
+            margin-top: 20px;
+        }
+        
+        .progress-bar {
+            width: 100%;
+            height: 8px;
+            background: #e2e8f0;
+            border-radius: 4px;
+            overflow: hidden;
+        }
+        
+        .progress-fill {
+            width: 0%;
+            height: 100%;
+            background: #c19a6b;
+            transition: width 0.3s;
+        }
+        
+        #uploadStatus {
+            text-align: center;
+            margin-top: 10px;
+            font-size: 14px;
+        }
+        
+        /* Modal */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.5);
+            z-index: 2000;
+            justify-content: center;
+            align-items: center;
+        }
+        
+        .modal.active {
+            display: flex;
+        }
+        
+        .modal-content {
+            background: white;
+            border-radius: 16px;
+            padding: 30px;
+            width: 90%;
+            max-width: 500px;
+        }
+        
+        .modal-content h3 {
+            color: #0a2540;
+            margin-bottom: 20px;
         }
         
         /* Responsive */
@@ -307,22 +387,6 @@
             .filter-tabs{flex-direction:column;}
             .filter-btn{width:100%;}
             .img-container{height:220px;}
-        }
-        
-        /* Image optimization notice */
-        .optimization-badge{
-            position:absolute;
-            top:10px;
-            right:10px;
-            background:rgba(0,0,0,0.6);
-            color:white;
-            padding:4px 8px;
-            border-radius:20px;
-            font-size:10px;
-            display:flex;
-            align-items:center;
-            gap:5px;
-            z-index:10;
         }
     </style>
 </head>
@@ -338,8 +402,9 @@
                 <div class="navbar-menu">
                     <ul class="navbar-nav">
                         <li><a href="/" class="nav-link">Home</a></li>
-                        <li><a href="/staff" class="nav-link">Team</a></li>
+                        <li><a href="#" class="nav-link">Team</a></li>
                         <li><a href="/register.html" class="nav-link">Register</a></li>
+                        <li><a href="/login.html" class="nav-link">Login</a></li>
                     </ul>
                 </div>
             </div>
@@ -358,19 +423,19 @@
     <div class="container">
         <div class="stats-grid">
             <div class="stat-card">
-                <div class="stat-number">22</div>
+                <div class="stat-number" id="totalStaff">22</div>
                 <div class="stat-label">Total Ranks</div>
             </div>
             <div class="stat-card">
-                <div class="stat-number">4</div>
+                <div class="stat-number" id="executiveCount">4</div>
                 <div class="stat-label">Executive</div>
             </div>
             <div class="stat-card">
-                <div class="stat-number">10</div>
+                <div class="stat-number" id="operationsCount">10</div>
                 <div class="stat-label">Operations</div>
             </div>
             <div class="stat-card">
-                <div class="stat-number">8</div>
+                <div class="stat-number" id="supportCount">8</div>
                 <div class="stat-label">Support</div>
             </div>
         </div>
@@ -388,420 +453,7 @@
 
     <!-- Staff Grid -->
     <div class="container">
-        <div class="staff-grid" id="staffGrid">
-            <!-- Rank 1 -->
-            <div class="staff-card" data-category="executive">
-                <div class="img-container">
-                    <img src="staff/ceo.png' width='400' height='400' viewBox='0 0 400 400'%3E%3Crect width='400' height='400' fill='%230a2540'/%3E%3Ctext x='200' y='200' font-family='Arial' font-size='40' fill='%23c19a6b' text-anchor='middle' dy='.3em'%3EAH%3C/text%3E%3C/svg%3E"
-                         alt="Ahmad Hamza"
-                         onload="optimizeImage(this)"
-                         onerror="this.classList.add('error')">
-                    <div class="img-placeholder" style="display: none;"></div>
-                    <span class="optimization-badge"><i class="fas fa-image"></i> Auto-resized</span>
-                </div>
-                <div class="staff-info">
-                    <div class="staff-name">Ahmad Hamza</div>
-                    <div class="staff-role">CEO & Founder</div>
-                    <p style="font-size:13px; color:#64748b; margin:10px 0;">15+ years global trade. 50+ countries.</p>
-                    <span class="staff-rank"><i class="fas fa-crown"></i> Rank 01</span>
-                </div>
-            </div>
-            
-            <!-- Rank 2 -->
-            <div class="staff-card" data-category="executive">
-                <div class="img-container">
-                    <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='400' height='400' viewBox='0 0 400 400'%3E%3Crect width='400' height='400' fill='%231a3a4f'/%3E%3Ctext x='200' y='200' font-family='Arial' font-size='40' fill='%23c19a6b' text-anchor='middle' dy='.3em'%3EAB%3C/text%3E%3C/svg%3E"
-                         alt="Alkasim Bashir Yusuf"
-                         onload="optimizeImage(this)"
-                         onerror="this.classList.add('error')">
-                    <div class="img-placeholder" style="display: none;">AB</div>
-                    <span class="optimization-badge"><i class="fas fa-image"></i> Auto-resized</span>
-                </div>
-                <div class="staff-info">
-                    <div class="staff-name">Alkasim Bashir Yusuf</div>
-                    <div class="staff-role">General Manager</div>
-                    <p style="font-size:13px; color:#64748b; margin:10px 0;">Executive leadership opportunity</p>
-                    <span class="staff-rank"><i class="fas fa-crown"></i> Rank 02 • Staffs officer</span>
-                </div>
-            </div>
-            
-            <!-- Rank 3 -->
-            <div class="staff-card" data-category="executive">
-                <div class="img-container">
-                    <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='400' height='400' viewBox='0 0 400 400'%3E%3Crect width='400' height='400' fill='%232d5a4a'/%3E%3Ctext x='200' y='200' font-family='Arial' font-size='40' fill='%23c19a6b' text-anchor='middle' dy='.3em'%3END%3C/text%3E%3C/svg%3E"
-                         alt="Nuruddeen Dahiru Wakili"
-                         onload="optimizeImage(this)"
-                         onerror="this.classList.add('error')">
-                    <div class="img-placeholder" style="display: none;">ND</div>
-                    <span class="optimization-badge"><i class="fas fa-image"></i> Auto-resized</span>
-                </div>
-                <div class="staff-info">
-                    <div class="staff-name">Nuruddeen Dahiru Wakili</div>
-                    <div class="staff-role">Taagc secretary General</div>
-                    <p style="font-size:13px; color:#64748b; margin:10px 0;">M&A, investor relations</p>
-                    <span class="staff-rank"><i class="fas fa-crown"></i> Rank 03 • Hiring</span>
-                </div>
-            </div>
-            
-            <!-- Rank 4 -->
-            <div class="staff-card" data-category="executive">
-                <div class="img-container">
-                    <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='400' height='400' viewBox='0 0 400 400'%3E%3Crect width='400' height='400' fill='%233a5a78'/%3E%3Ctext x='200' y='200' font-family='Arial' font-size='40' fill='%23c19a6b' text-anchor='middle' dy='.3em'%3EFA%3C/text%3E%3C/svg%3E"
-                         alt="Fatima Auwal"
-                         onload="optimizeImage(this)"
-                         onerror="this.classList.add('error')">
-                    <div class="img-placeholder" style="display: none;">FA</div>
-                    <span class="optimization-badge"><i class="fas fa-image"></i> Auto-resized</span>
-                </div>
-                <div class="staff-info">
-                    <div class="staff-name">Fatima Auwal</div>
-                    <div class="staff-role">Cyberscurity Officer</div>
-                    <p style="font-size:13px; color:#64748b; margin:10px 0;">15 countries, 200K+ hectares</p>
-                    <span class="staff-rank"><i class="fas fa-crown"></i> Rank 04</span>
-                </div>
-            </div>
-            
-            <!-- Rank 5 -->
-            <div class="staff-card" data-category="executive">
-                <div class="img-container">
-                    <img src="https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?w=400&h=400&fit=crop&crop=faces"
-                         alt="Michael Okafor"
-                         loading="lazy"
-                         onload="optimizeImage(this)"
-                         onerror="this.classList.add('error')">
-                    <div class="img-placeholder" style="display: none;">MO</div>
-                    <span class="optimization-badge"><i class="fas fa-image"></i> Auto-resized</span>
-                </div>
-                <div class="staff-info">
-                    <div class="staff-name">Michael Okafor</div>
-                    <div class="staff-role">VP, Finance</div>
-                    <p style="font-size:13px; color:#64748b; margin:10px 0;">$2.1B AUM, CFA</p>
-                    <span class="staff-rank"><i class="fas fa-star"></i> Rank 05</span>
-                </div>
-            </div>
-            
-            <!-- Rank 6 -->
-            <div class="staff-card" data-category="executive">
-                <div class="img-container">
-                    <img src="https://images.unsplash.com/photo-1573496799652-408c2ac9fe98?w=400&h=400&fit=crop&crop=faces"
-                         alt="Sarah Chen"
-                         loading="lazy"
-                         onload="optimizeImage(this)"
-                         onerror="this.classList.add('error')">
-                    <div class="img-placeholder" style="display: none;">SC</div>
-                    <span class="optimization-badge"><i class="fas fa-image"></i> Auto-resized</span>
-                </div>
-                <div class="staff-info">
-                    <div class="staff-name">Sarah Chen</div>
-                    <div class="staff-role">AVP, Digital</div>
-                    <p style="font-size:13px; color:#64748b; margin:10px 0;">150+ enterprise clients</p>
-                    <span class="staff-rank"><i class="fas fa-star"></i> Rank 06</span>
-                </div>
-            </div>
-            
-            <!-- Rank 7 -->
-            <div class="staff-card" data-category="operations">
-                <div class="img-container">
-                    <img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=400&h=400&fit=crop&crop=faces"
-                         alt="Ahmed Hassan"
-                         loading="lazy"
-                         onload="optimizeImage(this)"
-                         onerror="this.classList.add('error')">
-                    <div class="img-placeholder" style="display: none;">AH</div>
-                    <span class="optimization-badge"><i class="fas fa-image"></i> Auto-resized</span>
-                </div>
-                <div class="staff-info">
-                    <div class="staff-name">Ahmed Hassan</div>
-                    <div class="staff-role">Director, MENA</div>
-                    <p style="font-size:13px; color:#64748b; margin:10px 0;">Middle East & North Africa</p>
-                    <span class="staff-rank"><i class="fas fa-star"></i> Rank 07</span>
-                </div>
-            </div>
-            
-            <!-- Rank 8 -->
-            <div class="staff-card" data-category="operations">
-                <div class="img-container">
-                    <img src="https://images.unsplash.com/photo-1595152772835-219674b2a8a6?w=400&h=400&fit=crop&crop=faces"
-                         alt="James Otieno"
-                         loading="lazy"
-                         onload="optimizeImage(this)"
-                         onerror="this.classList.add('error')">
-                    <div class="img-placeholder" style="display: none;">JO</div>
-                    <span class="optimization-badge"><i class="fas fa-image"></i> Auto-resized</span>
-                </div>
-                <div class="staff-info">
-                    <div class="staff-name">Col. James Otieno</div>
-                    <div class="staff-role">Deputy Director</div>
-                    <p style="font-size:13px; color:#64748b; margin:10px 0;">$450M infrastructure</p>
-                    <span class="staff-rank"><i class="fas fa-star"></i> Rank 08</span>
-                </div>
-            </div>
-            
-            <!-- Rank 9 -->
-            <div class="staff-card" data-category="operations">
-                <div class="img-container">
-                    <img src="https://images.unsplash.com/photo-1573497019418-b400bb3ab074?w=400&h=400&fit=crop&crop=faces"
-                         alt="Grace Ndlovu"
-                         loading="lazy"
-                         onload="optimizeImage(this)"
-                         onerror="this.classList.add('error')">
-                    <div class="img-placeholder" style="display: none;">GN</div>
-                    <span class="optimization-badge"><i class="fas fa-image"></i> Auto-resized</span>
-                </div>
-                <div class="staff-info">
-                    <div class="staff-name">Grace Ndlovu</div>
-                    <div class="staff-role">Major, Agriculture</div>
-                    <p style="font-size:13px; color:#64748b; margin:10px 0;">200K+ hectares</p>
-                    <span class="staff-rank"><i class="fas fa-medal"></i> Rank 09</span>
-                </div>
-            </div>
-            
-            <!-- Rank 10 -->
-            <div class="staff-card" data-category="operations">
-                <div class="img-container">
-                    <img src="https://images.unsplash.com/photo-1566492031773-4f4e44671857?w=400&h=400&fit=crop&crop=faces"
-                         alt="Ibrahim Diallo"
-                         loading="lazy"
-                         onload="optimizeImage(this)"
-                         onerror="this.classList.add('error')">
-                    <div class="img-placeholder" style="display: none;">ID</div>
-                    <span class="optimization-badge"><i class="fas fa-image"></i> Auto-resized</span>
-                </div>
-                <div class="staff-info">
-                    <div class="staff-name">Ibrahim Diallo</div>
-                    <div class="staff-role">Captain, Grain</div>
-                    <p style="font-size:13px; color:#64748b; margin:10px 0;">2M MT capacity</p>
-                    <span class="staff-rank"><i class="fas fa-medal"></i> Rank 10</span>
-                </div>
-            </div>
-            
-            <!-- Rank 11 -->
-            <div class="staff-card" data-category="operations">
-                <div class="img-container">
-                    <img src="https://images.unsplash.com/photo-1573496799652-408c2ac9fe98?w=400&h=400&fit=crop&crop=faces"
-                         alt="Fatima Al-Zahra"
-                         loading="lazy"
-                         onload="optimizeImage(this)"
-                         onerror="this.classList.add('error')">
-                    <div class="img-placeholder" style="display: none;">FZ</div>
-                    <span class="optimization-badge"><i class="fas fa-image"></i> Auto-resized</span>
-                </div>
-                <div class="staff-info">
-                    <div class="staff-name">Fatima Al-Zahra</div>
-                    <div class="staff-role">Lieutenant, ICT</div>
-                    <p style="font-size:13px; color:#64748b; margin:10px 0;">Cybersecurity, CISSP</p>
-                    <span class="staff-rank"><i class="fas fa-medal"></i> Rank 11</span>
-                </div>
-            </div>
-            
-            <!-- Rank 12 -->
-            <div class="staff-card" data-category="operations">
-                <div class="img-container">
-                    <img src="https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=400&h=400&fit=crop&crop=faces"
-                         alt="Kwame Asante"
-                         loading="lazy"
-                         onload="optimizeImage(this)"
-                         onerror="this.classList.add('error')">
-                    <div class="img-placeholder" style="display: none;">KA</div>
-                    <span class="optimization-badge"><i class="fas fa-image"></i> Auto-resized</span>
-                </div>
-                <div class="staff-info">
-                    <div class="staff-name">Kwame Asante</div>
-                    <div class="staff-role">Sgt Major, Contracts</div>
-                    <p style="font-size:13px; color:#64748b; margin:10px 0;">$450M projects</p>
-                    <span class="staff-rank"><i class="fas fa-medal"></i> Rank 12</span>
-                </div>
-            </div>
-            
-            <!-- Rank 13 -->
-            <div class="staff-card" data-category="operations">
-                <div class="img-container">
-                    <img src="https://images.unsplash.com/photo-1580489944761-15a19d654956?w=400&h=400&fit=crop&crop=faces"
-                         alt="Chloe Mensah"
-                         loading="lazy"
-                         onload="optimizeImage(this)"
-                         onerror="this.classList.add('error')">
-                    <div class="img-placeholder" style="display: none;">CM</div>
-                    <span class="optimization-badge"><i class="fas fa-image"></i> Auto-resized</span>
-                </div>
-                <div class="staff-info">
-                    <div class="staff-name">Chloe Mensah</div>
-                    <div class="staff-role">Sgt, Merchandise</div>
-                    <p style="font-size:13px; color:#64748b; margin:10px 0;">10K+ SKUs</p>
-                    <span class="staff-rank"><i class="fas fa-medal"></i> Rank 13</span>
-                </div>
-            </div>
-            
-            <!-- Rank 14 -->
-            <div class="staff-card" data-category="support">
-                <div class="img-container">
-                    <img src="https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?w=400&h=400&fit=crop&crop=faces"
-                         alt="John Okonkwo"
-                         loading="lazy"
-                         onload="optimizeImage(this)"
-                         onerror="this.classList.add('error')">
-                    <div class="img-placeholder" style="display: none;">JO</div>
-                    <span class="optimization-badge"><i class="fas fa-image"></i> Auto-resized</span>
-                </div>
-                <div class="staff-info">
-                    <div class="staff-name">John Okonkwo</div>
-                    <div class="staff-role">Corporal, Logistics</div>
-                    <p style="font-size:13px; color:#64748b; margin:10px 0;">200+ fleet</p>
-                    <span class="staff-rank"><i class="fas fa-shield"></i> Rank 14</span>
-                </div>
-            </div>
-            
-            <!-- Rank 15 -->
-            <div class="staff-card" data-category="support">
-                <div class="img-container">
-                    <img src="https://images.unsplash.com/photo-1573497019940-1c28c88b4f3e?w=400&h=400&fit=crop&crop=faces"
-                         alt="Aisha Mohammed"
-                         loading="lazy"
-                         onload="optimizeImage(this)"
-                         onerror="this.classList.add('error')">
-                    <div class="img-placeholder" style="display: none;">AM</div>
-                    <span class="optimization-badge"><i class="fas fa-image"></i> Auto-resized</span>
-                </div>
-                <div class="staff-info">
-                    <div class="staff-name">Aisha Mohammed</div>
-                    <div class="staff-role">Lance Corporal</div>
-                    <p style="font-size:13px; color:#64748b; margin:10px 0;">25 staff</p>
-                    <span class="staff-rank"><i class="fas fa-shield"></i> Rank 15</span>
-                </div>
-            </div>
-            
-            <!-- Rank 16 -->
-            <div class="staff-card" data-category="support">
-                <div class="img-container">
-                    <img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=400&h=400&fit=crop&crop=faces"
-                         alt="David Ochieng"
-                         loading="lazy"
-                         onload="optimizeImage(this)"
-                         onerror="this.classList.add('error')">
-                    <div class="img-placeholder" style="display: none;">DO</div>
-                    <span class="optimization-badge"><i class="fas fa-image"></i> Auto-resized</span>
-                </div>
-                <div class="staff-info">
-                    <div class="staff-name">David Ochieng</div>
-                    <div class="staff-role">Sr Specialist, Finance</div>
-                    <p style="font-size:13px; color:#64748b; margin:10px 0;">CPA, ACCA</p>
-                    <span class="staff-rank"><i class="fas fa-shield"></i> Rank 16</span>
-                </div>
-            </div>
-            
-            <!-- Rank 17 -->
-            <div class="staff-card" data-category="support">
-                <div class="img-container">
-                    <img src="https://images.unsplash.com/photo-1580489944761-15a19d654956?w=400&h=400&fit=crop&crop=faces"
-                         alt="Ngozi Okonkwo"
-                         loading="lazy"
-                         onload="optimizeImage(this)"
-                         onerror="this.classList.add('error')">
-                    <div class="img-placeholder" style="display: none;">NO</div>
-                    <span class="optimization-badge"><i class="fas fa-image"></i> Auto-resized</span>
-                </div>
-                <div class="staff-info">
-                    <div class="staff-name">Ngozi Okonkwo</div>
-                    <div class="staff-role">Specialist, HR</div>
-                    <p style="font-size:13px; color:#64748b; margin:10px 0;">127 staff</p>
-                    <span class="staff-rank"><i class="fas fa-shield"></i> Rank 17</span>
-                </div>
-            </div>
-            
-            <!-- Rank 18 -->
-            <div class="staff-card" data-category="support">
-                <div class="img-container">
-                    <img src="https://images.unsplash.com/photo-1566492031773-4f4e44671857?w=400&h=400&fit=crop&crop=faces"
-                         alt="Kwesi Appiah"
-                         loading="lazy"
-                         onload="optimizeImage(this)"
-                         onerror="this.classList.add('error')">
-                    <div class="img-placeholder" style="display: none;">KA</div>
-                    <span class="optimization-badge"><i class="fas fa-image"></i> Auto-resized</span>
-                </div>
-                <div class="staff-info">
-                    <div class="staff-name">Kwesi Appiah</div>
-                    <div class="staff-role">Jr Specialist, IT</div>
-                    <p style="font-size:13px; color:#64748b; margin:10px 0;">200+ users</p>
-                    <span class="staff-rank"><i class="fas fa-shield"></i> Rank 18</span>
-                </div>
-            </div>
-            
-            <!-- Rank 19 -->
-            <div class="staff-card" data-category="support">
-                <div class="img-container">
-                    <img src="https://images.unsplash.com/photo-1573497019418-b400bb3ab074?w=400&h=400&fit=crop&crop=faces"
-                         alt="Fatima Bello"
-                         loading="lazy"
-                         onload="optimizeImage(this)"
-                         onerror="this.classList.add('error')">
-                    <div class="img-placeholder" style="display: none;">FB</div>
-                    <span class="optimization-badge"><i class="fas fa-image"></i> Auto-resized</span>
-                </div>
-                <div class="staff-info">
-                    <div class="staff-name">Fatima Bello</div>
-                    <div class="staff-role">Sr Associate, Procurement</div>
-                    <p style="font-size:13px; color:#64748b; margin:10px 0;">CIPS</p>
-                    <span class="staff-rank"><i class="fas fa-user"></i> Rank 19</span>
-                </div>
-            </div>
-            
-            <!-- Rank 20 -->
-            <div class="staff-card" data-category="support">
-                <div class="img-container">
-                    <img src="https://images.unsplash.com/photo-1595152772835-219674b2a8a6?w=400&h=400&fit=crop&crop=faces"
-                         alt="Emmanuel Adebayo"
-                         loading="lazy"
-                         onload="optimizeImage(this)"
-                         onerror="this.classList.add('error')">
-                    <div class="img-placeholder" style="display: none;">EA</div>
-                    <span class="optimization-badge"><i class="fas fa-image"></i> Auto-resized</span>
-                </div>
-                <div class="staff-info">
-                    <div class="staff-name">Emmanuel Adebayo</div>
-                    <div class="staff-role">Associate, Logistics</div>
-                    <p style="font-size:13px; color:#64748b; margin:10px 0;">Supply chain</p>
-                    <span class="staff-rank"><i class="fas fa-user"></i> Rank 20</span>
-                </div>
-            </div>
-            
-            <!-- Rank 21 -->
-            <div class="staff-card" data-category="support">
-                <div class="img-container">
-                    <img src="https://images.unsplash.com/photo-1573496799652-408c2ac9fe98?w=400&h=400&fit=crop&crop=faces"
-                         alt="Amina Yusuf"
-                         loading="lazy"
-                         onload="optimizeImage(this)"
-                         onerror="this.classList.add('error')">
-                    <div class="img-placeholder" style="display: none;">AY</div>
-                    <span class="optimization-badge"><i class="fas fa-image"></i> Auto-resized</span>
-                </div>
-                <div class="staff-info">
-                    <div class="staff-name">Amina Yusuf</div>
-                    <div class="staff-role">Jr Associate, Marketing</div>
-                    <p style="font-size:13px; color:#64748b; margin:10px 0;">Social media</p>
-                    <span class="staff-rank"><i class="fas fa-user"></i> Rank 21</span>
-                </div>
-            </div>
-            
-            <!-- Rank 22 -->
-            <div class="staff-card" data-category="support">
-                <div class="img-container">
-                    <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='400' height='400' viewBox='0 0 400 400'%3E%3Crect width='400' height='400' fill='%23c19a6b'/%3E%3Ctext x='200' y='200' font-family='Arial' font-size='60' fill='white' text-anchor='middle' dy='.3em'%3E%3F%3C/text%3E%3C/svg%3E"
-                         alt="Hiring"
-                         onload="optimizeImage(this)"
-                         onerror="this.classList.add('error')">
-                    <div class="img-placeholder" style="display: none;">H</div>
-                    <span class="optimization-badge"><i class="fas fa-image"></i> Auto-resized</span>
-                </div>
-                <div class="staff-info">
-                    <div class="staff-name">Now Hiring</div>
-                    <div class="staff-role">Entry Level</div>
-                    <p style="font-size:13px; color:#64748b; margin:10px 0;">2 positions available</p>
-                    <span class="staff-rank"><i class="fas fa-user"></i> Rank 22 • Apply</span>
-                </div>
-            </div>
-        </div>
+        <div class="staff-grid" id="staffGrid"></div>
     </div>
 
     <!-- Hiring Banner -->
@@ -825,80 +477,139 @@
             <div class="upload-area" onclick="document.getElementById('fileInput').click()">
                 <i class="fas fa-cloud-upload-alt"></i>
                 <h4>Click to Upload Staff Photos</h4>
-                <p style="color:#64748b; margin-top:10px;">Supported formats: JPG, PNG, GIF (Max 5MB)</p>
+                <p style="color:#64748b; margin-top:10px;">Supported formats: JPG, PNG, GIF, WEBP (Max 5MB)</p>
                 <p style="color:#0a2540; font-size:12px; margin-top:10px;">Images will be automatically resized to 400x400 pixels</p>
                 <input type="file" id="fileInput" accept="image/*" multiple style="display: none;" onchange="handleImageUpload(this)">
             </div>
-            <div id="uploadProgress" style="margin-top:20px; display:none;">
-                <div style="background:#e2e8f0; height:8px; border-radius:4px; overflow:hidden;">
-                    <div id="progressBar" style="width:0%; height:100%; background:#c19a6b; transition:width 0.3s;"></div>
+            <div id="uploadProgress" style="display: none;">
+                <div class="progress-bar">
+                    <div id="progressFill" class="progress-fill"></div>
                 </div>
-                <p id="progressText" style="text-align:center; margin-top:10px; font-size:14px;">Uploading...</p>
+                <p id="uploadStatus">Uploading...</p>
             </div>
+            <div id="uploadResult" style="margin-top: 15px; text-align: center;"></div>
+        </div>
+    </div>
+
+    <!-- Image Preview Modal -->
+    <div id="imageModal" class="modal">
+        <div class="modal-content">
+            <h3><i class="fas fa-image"></i> Image Preview</h3>
+            <img id="previewImage" src="" alt="Preview" style="width:100%; border-radius:8px; margin-bottom:15px;">
+            <p id="imageInfo"></p>
+            <button class="hiring-btn" onclick="closeModal()" style="width:100%;">Close</button>
         </div>
     </div>
 
     <script>
+        // Staff Data
+        const staffData = [
+            // Executive (Ranks 1-6)
+            { rank: 1, name: "Ahmad Hamza", role: "CEO & Founder", description: "15+ years global trade. 50+ countries.", category: "executive", icon: "crown", initials: "AH" },
+            { rank: 2, name: "Alkasim Bashir Yusuf", role: "General Manager", description: "Executive leadership opportunity", category: "executive", icon: "crown", initials: "AB", hiring: true },
+            { rank: 3, name: "Nuruddeen Dahiru Wakili", role: "Taagc secretary General", description: "M&A, investor relations", category: "executive", icon: "crown", initials: "ND", hiring: true },
+            { rank: 4, name: "Fatima Auwal", role: "Cyberscurity Officer", description: "15 countries, 200K+ hectares", category: "executive", icon: "crown", initials: "FA" },
+            { rank: 5, name: "Michael Okafor", role: "VP, Finance", description: "$2.1B AUM, CFA", category: "executive", icon: "star", initials: "MO" },
+            { rank: 6, name: "Sarah Chen", role: "AVP, Digital", description: "150+ enterprise clients", category: "executive", icon: "star", initials: "SC" },
+            
+            // Operations (Ranks 7-13)
+            { rank: 7, name: "Ahmed Hassan", role: "Director, MENA", description: "Middle East & North Africa", category: "operations", icon: "star", initials: "AH" },
+            { rank: 8, name: "Col. James Otieno", role: "Deputy Director", description: "$450M infrastructure", category: "operations", icon: "star", initials: "JO" },
+            { rank: 9, name: "Grace Ndlovu", role: "Major, Agriculture", description: "200K+ hectares", category: "operations", icon: "medal", initials: "GN" },
+            { rank: 10, name: "Ibrahim Diallo", role: "Captain, Grain", description: "2M MT capacity", category: "operations", icon: "medal", initials: "ID" },
+            { rank: 11, name: "Fatima Al-Zahra", role: "Lieutenant, ICT", description: "Cybersecurity, CISSP", category: "operations", icon: "medal", initials: "FZ" },
+            { rank: 12, name: "Kwame Asante", role: "Sgt Major, Contracts", description: "$450M projects", category: "operations", icon: "medal", initials: "KA" },
+            { rank: 13, name: "Chloe Mensah", role: "Sgt, Merchandise", description: "10K+ SKUs", category: "operations", icon: "medal", initials: "CM" },
+            
+            // Support (Ranks 14-22)
+            { rank: 14, name: "John Okonkwo", role: "Corporal, Logistics", description: "200+ fleet", category: "support", icon: "shield", initials: "JO" },
+            { rank: 15, name: "Aisha Mohammed", role: "Lance Corporal", description: "25 staff", category: "support", icon: "shield", initials: "AM" },
+            { rank: 16, name: "David Ochieng", role: "Sr Specialist, Finance", description: "CPA, ACCA", category: "support", icon: "shield", initials: "DO" },
+            { rank: 17, name: "Ngozi Okonkwo", role: "Specialist, HR", description: "127 staff", category: "support", icon: "shield", initials: "NO" },
+            { rank: 18, name: "Kwesi Appiah", role: "Jr Specialist, IT", description: "200+ users", category: "support", icon: "shield", initials: "KA" },
+            { rank: 19, name: "Fatima Bello", role: "Sr Associate, Procurement", description: "CIPS", category: "support", icon: "user", initials: "FB" },
+            { rank: 20, name: "Emmanuel Adebayo", role: "Associate, Logistics", description: "Supply chain", category: "support", icon: "user", initials: "EA" },
+            { rank: 21, name: "Amina Yusuf", role: "Jr Associate, Marketing", description: "Social media", category: "support", icon: "user", initials: "AY" },
+            { rank: 22, name: "Now Hiring", role: "Entry Level", description: "2 positions available", category: "support", icon: "user", initials: "H", hiring: true }
+        ];
+
+        // Load staff grid
+        function loadStaffGrid() {
+            const grid = document.getElementById('staffGrid');
+            let html = '';
+
+            staffData.forEach(staff => {
+                const icon = getIcon(staff.icon);
+                const hiringText = staff.hiring ? ' • Hiring' : '';
+                
+                html += `
+                    <div class="staff-card" data-category="${staff.category}" data-rank="${staff.rank}">
+                        <div class="img-container" data-rank="${staff.rank}" data-initials="${staff.initials}">
+                            <img src="getStaffImage.php?rank=${staff.rank}&initials=${staff.initials}" 
+                                 alt="${staff.name}"
+                                 data-rank="${staff.rank}"
+                                 onload="optimizeImage(this)"
+                                 onerror="handleImageError(this)">
+                            <div class="img-placeholder" style="display: none;">${staff.initials}</div>
+                            <span class="optimization-badge"><i class="fas fa-magic"></i> Loading...</span>
+                        </div>
+                        <div class="staff-info">
+                            <div class="staff-name">${staff.name}</div>
+                            <div class="staff-role">${staff.role}</div>
+                            <p style="font-size:13px; color:#64748b; margin:10px 0;">${staff.description}</p>
+                            <span class="staff-rank"><i class="fas fa-${staff.icon}"></i> Rank ${String(staff.rank).padStart(2, '0')}${hiringText}</span>
+                        </div>
+                    </div>
+                `;
+            });
+
+            grid.innerHTML = html;
+        }
+
+        // Get icon class
+        function getIcon(icon) {
+            const icons = {
+                crown: 'fa-crown',
+                star: 'fa-star',
+                medal: 'fa-medal',
+                shield: 'fa-shield',
+                user: 'fa-user'
+            };
+            return icons[icon] || 'fa-user';
+        }
+
         // Image optimization function
         function optimizeImage(img) {
-            // Ensure image is loaded
-            if (img.complete) {
-                applyImageOptimization(img);
+            if (!img.complete) {
+                img.onload = function() { applyOptimization(img); };
             } else {
-                img.onload = function() {
-                    applyImageOptimization(img);
-                };
+                applyOptimization(img);
             }
         }
 
-        function applyImageOptimization(img) {
-            // Get the image container
+        function applyOptimization(img) {
             const container = img.closest('.img-container');
             if (!container) return;
 
-            // Get image dimensions
             const width = img.naturalWidth;
             const height = img.naturalHeight;
             
-            // Calculate aspect ratio
-            const aspectRatio = width / height;
-            
-            // Add data attributes for debugging
-            img.setAttribute('data-original-width', width);
-            img.setAttribute('data-original-height', height);
-            img.setAttribute('data-aspect-ratio', aspectRatio.toFixed(2));
-            
-            // Check if image is loaded successfully
             if (width === 0 || height === 0) {
                 showPlaceholder(container, img);
                 return;
             }
 
-            // Apply object-fit based on aspect ratio
-            if (aspectRatio > 1.2) {
-                // Landscape image - use cover to fill width
-                img.style.objectFit = 'cover';
-                img.style.objectPosition = 'center 20%'; // Focus on top portion for faces
-            } else if (aspectRatio < 0.8) {
-                // Portrait image - use cover to fill height
-                img.style.objectFit = 'cover';
-                img.style.objectPosition = 'center top';
-            } else {
-                // Square-ish image - use cover
-                img.style.objectFit = 'cover';
-                img.style.objectPosition = 'center';
-            }
-
-            // Add optimization badge
-            const badge = container.querySelector('.optimization-badge') || document.createElement('span');
-            badge.className = 'optimization-badge';
-            badge.innerHTML = `<i class="fas fa-magic"></i> ${width}x${height} → 280x280`;
+            // Set image attributes
+            img.setAttribute('data-original-width', width);
+            img.setAttribute('data-original-height', height);
             
-            if (!container.querySelector('.optimization-badge')) {
-                container.appendChild(badge);
+            // Update optimization badge
+            const badge = container.querySelector('.optimization-badge');
+            if (badge) {
+                badge.innerHTML = `<i class="fas fa-magic"></i> ${width}x${height} → 280x280`;
             }
 
-            // Hide placeholder if it exists
+            // Hide placeholder
             const placeholder = container.querySelector('.img-placeholder');
             if (placeholder) {
                 placeholder.style.display = 'none';
@@ -910,14 +621,17 @@
             const placeholder = container.querySelector('.img-placeholder');
             if (placeholder) {
                 placeholder.style.display = 'flex';
-                // Generate initials from alt text
-                const alt = img.alt || '';
-                const initials = alt.split(' ').map(n => n[0]).join('').substring(0, 2).toUpperCase();
-                placeholder.textContent = initials || '?';
             }
         }
 
-        // Filter function
+        function handleImageError(img) {
+            const container = img.closest('.img-container');
+            if (container) {
+                showPlaceholder(container, img);
+            }
+        }
+
+        // Filter staff
         function filterStaff(category) {
             // Update active button
             document.querySelectorAll('.filter-btn').forEach(btn => {
@@ -927,70 +641,119 @@
             
             // Filter cards
             document.querySelectorAll('.staff-card').forEach(card => {
-                if(category === 'all' || card.dataset.category === category) {
+                if (category === 'all' || card.dataset.category === category) {
                     card.style.display = 'block';
-                    // Re-optimize images when shown
-                    const img = card.querySelector('img');
-                    if (img) optimizeImage(img);
                 } else {
                     card.style.display = 'none';
                 }
             });
+
+            // Update stats
+            updateStats(category);
+        }
+
+        // Update statistics
+        function updateStats(category) {
+            let total = staffData.length;
+            let executive = staffData.filter(s => s.category === 'executive').length;
+            let operations = staffData.filter(s => s.category === 'operations').length;
+            let support = staffData.filter(s => s.category === 'support').length;
+
+            if (category !== 'all') {
+                total = staffData.filter(s => s.category === category).length;
+            }
+
+            document.getElementById('totalStaff').textContent = total;
+            document.getElementById('executiveCount').textContent = category === 'all' ? executive : (category === 'executive' ? total : 0);
+            document.getElementById('operationsCount').textContent = category === 'all' ? operations : (category === 'operations' ? total : 0);
+            document.getElementById('supportCount').textContent = category === 'all' ? support : (category === 'support' ? total : 0);
         }
 
         // Handle image upload
         function handleImageUpload(input) {
             const files = input.files;
+            if (files.length === 0) return;
+
             const progress = document.getElementById('uploadProgress');
-            const progressBar = document.getElementById('progressBar');
-            const progressText = document.getElementById('progressText');
-            
+            const progressFill = document.getElementById('progressFill');
+            const uploadStatus = document.getElementById('uploadStatus');
+            const uploadResult = document.getElementById('uploadResult');
+            const formData = new FormData();
+
+            for (let i = 0; i < files.length; i++) {
+                formData.append('staff_photos[]', files[i]);
+            }
+
             progress.style.display = 'block';
-            
+            progressFill.style.width = '0%';
+            uploadStatus.textContent = 'Starting upload...';
+            uploadResult.innerHTML = '';
+
             // Simulate upload progress
             let progressWidth = 0;
             const interval = setInterval(() => {
-                progressWidth += 10;
-                progressBar.style.width = progressWidth + '%';
+                progressWidth += 5;
+                progressFill.style.width = progressWidth + '%';
                 
                 if (progressWidth >= 100) {
                     clearInterval(interval);
-                    progressText.textContent = 'Upload complete! Optimizing images...';
+                    uploadStatus.textContent = 'Processing images...';
                     
-                    // Simulate image optimization
+                    // Simulate processing
                     setTimeout(() => {
                         progress.style.display = 'none';
-                        alert('Photos uploaded and optimized successfully!');
+                        uploadResult.innerHTML = '<p style="color: #10b981;">✅ Photos uploaded and optimized successfully!</p>';
                         
-                        // Here you would actually upload to your server/storage
-                        // and update the image sources
-                        
-                        // Reset file input
-                        input.value = '';
+                        // Reload images after upload
+                        setTimeout(() => {
+                            location.reload();
+                        }, 2000);
                     }, 1000);
                 }
-            }, 200);
+            }, 100);
+
+            // Here you would actually upload to server
+            // For now, we'll just simulate
+            setTimeout(() => {
+                // Clear file input
+                input.value = '';
+            }, 500);
         }
 
-        // Check if user is admin (for showing upload section)
+        // Preview image
+        function previewImage(rank, initials) {
+            const modal = document.getElementById('imageModal');
+            const preview = document.getElementById('previewImage');
+            const info = document.getElementById('imageInfo');
+            
+            preview.src = `getStaffImage.php?rank=${rank}&initials=${initials}&preview=1`;
+            info.textContent = `Rank ${rank} - ${initials}`;
+            
+            modal.classList.add('active');
+        }
+
+        // Close modal
+        function closeModal() {
+            document.getElementById('imageModal').classList.remove('active');
+        }
+
+        // Check admin access
         function checkAdminAccess() {
-            // This should be replaced with actual admin check
-            // For demo purposes, show upload section if URL has ?admin=true
             const urlParams = new URLSearchParams(window.location.search);
             if (urlParams.has('admin')) {
                 document.getElementById('uploadSection').style.display = 'block';
             }
         }
 
-        // Lazy loading for images
+        // Lazy loading setup
         function setupLazyLoading() {
-            const images = document.querySelectorAll('img[loading="lazy"]');
-            const imageObserver = new IntersectionObserver((entries, observer) => {
+            const images = document.querySelectorAll('.img-container img');
+            const imageObserver = new IntersectionObserver((entries) => {
                 entries.forEach(entry => {
                     if (entry.isIntersecting) {
                         const img = entry.target;
                         optimizeImage(img);
-                        observer.unobserve(img);
+                        imageObserver.unobserve(img);
                     }
                 });
             });
@@ -998,21 +761,56 @@
             images.forEach(img => imageObserver.observe(img));
         }
 
+        // Export staff data
+        function exportStaffData() {
+            const data = staffData.map(s => `${s.rank},${s.name},${s.role},${s.category}`).join('\n');
+            const blob = new Blob([data], { type: 'text/csv' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'staff_data.csv';
+            a.click();
+        }
+
+        // Search staff
+        function searchStaff(query) {
+            query = query.toLowerCase();
+            document.querySelectorAll('.staff-card').forEach(card => {
+                const name = card.querySelector('.staff-name').textContent.toLowerCase();
+                const role = card.querySelector('.staff-role').textContent.toLowerCase();
+                
+                if (name.includes(query) || role.includes(query)) {
+                    card.style.display = 'block';
+                } else {
+                    card.style.display = 'none';
+                }
+            });
+        }
+
         // Initialize on page load
         document.addEventListener('DOMContentLoaded', () => {
-            // Optimize all images
-            document.querySelectorAll('.img-container img').forEach(img => {
-                optimizeImage(img);
-            });
+            loadStaffGrid();
             
-            // Setup lazy loading
-            setupLazyLoading();
-            
-            // Check admin access
-            checkAdminAccess();
+            // Small delay to ensure images are loaded
+            setTimeout(() => {
+                setupLazyLoading();
+                checkAdminAccess();
+            }, 100);
+
+            // Add search input to navbar (optional)
+            const navbar = document.querySelector('.navbar-menu');
+            if (navbar) {
+                const searchDiv = document.createElement('div');
+                searchDiv.innerHTML = `
+                    <input type="text" placeholder="Search staff..." 
+                           style="padding:8px 12px; border:2px solid #e2e8f0; border-radius:8px;"
+                           onkeyup="searchStaff(this.value)">
+                `;
+                navbar.insertBefore(searchDiv, navbar.firstChild);
+            }
         });
 
-        // Re-optimize on window resize
+        // Handle window resize
         let resizeTimeout;
         window.addEventListener('resize', () => {
             clearTimeout(resizeTimeout);
@@ -1022,104 +820,91 @@
                 });
             }, 200);
         });
-
-        // Handle broken images
-        document.querySelectorAll('.img-container img').forEach(img => {
-            img.addEventListener('error', function() {
-                this.classList.add('error');
-                showPlaceholder(this.closest('.img-container'), this);
-            });
-        });
     </script>
 
+    <!-- Additional styles for new features -->
     <style>
-        /* Additional styles for image optimization */
-        .img-container {
-            position: relative;
-            width: 100%;
-            height: 280px;
+        /* Search input */
+        .navbar-menu input {
+            transition: all 0.3s;
+        }
+        .navbar-menu input:focus {
+            border-color: #c19a6b;
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(193, 154, 107, 0.1);
+        }
+        
+        /* Upload section animations */
+        .upload-area {
+            transition: all 0.3s;
+        }
+        
+        .progress-bar {
+            background: #e2e8f0;
+            border-radius: 4px;
             overflow: hidden;
-            background: linear-gradient(45deg, #f1f5f9, #e2e8f0);
         }
-
-        .img-container img {
-            width: 100%;
-            height: 100%;
-            transition: transform 0.5s;
+        
+        .progress-fill {
+            background: #c19a6b;
+            transition: width 0.3s;
         }
-
-        .staff-card:hover .img-container img {
-            transform: scale(1.05);
-        }
-
-        .optimization-badge {
-            position: absolute;
-            top: 10px;
-            right: 10px;
-            background: rgba(0, 0, 0, 0.7);
-            color: white;
-            padding: 4px 8px;
-            border-radius: 20px;
-            font-size: 10px;
-            font-weight: 600;
-            display: flex;
-            align-items: center;
-            gap: 4px;
-            z-index: 10;
-            backdrop-filter: blur(4px);
-        }
-
-        .optimization-badge i {
-            color: #c19a6b;
-            font-size: 10px;
-        }
-
-        .img-placeholder {
-            position: absolute;
+        
+        /* Modal styles */
+        .modal {
+            display: none;
+            position: fixed;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
-            display: flex;
-            align-items: center;
+            background: rgba(0,0,0,0.5);
+            z-index: 2000;
             justify-content: center;
-            background: linear-gradient(135deg, #0a2540, #3a5a78);
-            color: white;
-            font-size: 48px;
-            font-weight: 700;
-            z-index: 5;
+            align-items: center;
         }
-
-        /* Image info tooltip */
-        .img-container:hover::after {
-            content: attr(data-dimensions);
-            position: absolute;
-            bottom: 10px;
-            left: 10px;
-            background: rgba(0, 0, 0, 0.7);
-            color: white;
-            padding: 4px 8px;
-            border-radius: 20px;
-            font-size: 10px;
-            z-index: 10;
+        
+        .modal.active {
+            display: flex;
         }
-
-        /* Upload section styles */
-        .upload-area {
+        
+        .modal-content {
+            background: white;
+            border-radius: 16px;
+            padding: 30px;
+            width: 90%;
+            max-width: 500px;
+            animation: modalSlideIn 0.3s;
+        }
+        
+        @keyframes modalSlideIn {
+            from {
+                transform: translateY(-50px);
+                opacity: 0;
+            }
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+        
+        /* Staff card click effect */
+        .staff-card {
             cursor: pointer;
-            transition: background 0.3s;
         }
-
-        .upload-area:hover {
-            background: #f1f5f9;
+        
+        .staff-card:active {
+            transform: scale(0.98);
         }
-
-        .upload-area i {
-            transition: transform 0.3s;
+        
+        /* Optimization badge hover */
+        .optimization-badge {
+            opacity: 0.8;
+            transition: opacity 0.3s;
         }
-
-        .upload-area:hover i {
-            transform: translateY(-5px);
+        
+        .optimization-badge:hover {
+            opacity: 1;
         }
     </style>
 </body>
