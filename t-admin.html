@@ -1,0 +1,561 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Setup - TAAGC</title>
+    
+    <!-- Firebase 8.10.1 SDK -->
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
+    
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Inter', sans-serif;
+        }
+
+        body {
+            background: linear-gradient(135deg, #0a2540 0%, #1e3a5f 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .setup-container {
+            max-width: 500px;
+            width: 100%;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+            color: white;
+        }
+
+        .logo-icon {
+            width: 80px;
+            height: 80px;
+            background: #c19a6b;
+            border-radius: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 20px;
+            color: white;
+            font-size: 36px;
+            font-weight: 700;
+        }
+
+        .header h1 {
+            font-size: 28px;
+            margin-bottom: 10px;
+        }
+
+        .header h1 span {
+            color: #c19a6b;
+        }
+
+        .header p {
+            color: rgba(255,255,255,0.8);
+            font-size: 14px;
+        }
+
+        .setup-card {
+            background: white;
+            border-radius: 24px;
+            padding: 30px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.2);
+        }
+
+        .card-header {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 25px;
+            padding-bottom: 20px;
+            border-bottom: 2px solid #e2e8f0;
+        }
+
+        .card-icon {
+            width: 50px;
+            height: 50px;
+            background: linear-gradient(135deg, #0a2540, #1e3a5f);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 20px;
+        }
+
+        .card-header h2 {
+            color: #0a2540;
+            font-size: 20px;
+            font-weight: 600;
+        }
+
+        .card-header p {
+            color: #64748b;
+            font-size: 14px;
+            margin-top: 5px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            color: #0a2540;
+            font-weight: 600;
+            font-size: 14px;
+        }
+
+        .form-group label i {
+            color: #c19a6b;
+            margin-right: 8px;
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 14px 16px;
+            border: 2px solid #e2e8f0;
+            border-radius: 12px;
+            font-size: 15px;
+            transition: all 0.3s;
+        }
+
+        .form-control:focus {
+            border-color: #c19a6b;
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(193, 154, 107, 0.1);
+        }
+
+        .btn-primary {
+            width: 100%;
+            padding: 14px;
+            background: #0a2540;
+            color: white;
+            border: none;
+            border-radius: 12px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            transition: all 0.3s;
+            margin-top: 10px;
+        }
+
+        .btn-primary:hover:not(:disabled) {
+            background: #1e3a5f;
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(10, 37, 64, 0.2);
+        }
+
+        .btn-primary:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .alert {
+            padding: 15px;
+            border-radius: 12px;
+            margin: 20px 0;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 14px;
+        }
+
+        .alert-success {
+            background: #10b98120;
+            color: #10b981;
+            border: 1px solid #10b981;
+        }
+
+        .alert-error {
+            background: #e53e3e20;
+            color: #e53e3e;
+            border: 1px solid #e53e3e;
+        }
+
+        .alert-info {
+            background: #3b82f620;
+            color: #3b82f6;
+            border: 1px solid #3b82f6;
+        }
+
+        .password-strength {
+            margin-top: 10px;
+        }
+
+        .strength-bar {
+            height: 4px;
+            background: #e2e8f0;
+            border-radius: 2px;
+            overflow: hidden;
+            margin-bottom: 5px;
+        }
+
+        .strength-bar-fill {
+            height: 100%;
+            width: 0%;
+            transition: all 0.3s;
+        }
+
+        .strength-weak { background: #e53e3e; width: 33.33%; }
+        .strength-medium { background: #f59e0b; width: 66.66%; }
+        .strength-strong { background: #10b981; width: 100%; }
+
+        .strength-text {
+            font-size: 12px;
+            color: #64748b;
+        }
+
+        .credentials-display {
+            background: #0a2540;
+            color: white;
+            padding: 20px;
+            border-radius: 12px;
+            margin: 20px 0;
+            font-family: monospace;
+        }
+
+        .credential-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 10px 0;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+        }
+
+        .credential-row:last-child {
+            border-bottom: none;
+        }
+
+        .credential-label {
+            color: #c19a6b;
+        }
+
+        .info-box {
+            background: #f8fafc;
+            border-radius: 12px;
+            padding: 15px;
+            margin-top: 20px;
+            font-size: 13px;
+            color: #64748b;
+        }
+
+        .info-box i {
+            color: #c19a6b;
+            margin-right: 8px;
+        }
+    </style>
+</head>
+<body>
+    <div class="setup-container">
+        <!-- Header -->
+        <div class="header">
+            <div class="logo-icon">
+                <i class="fas fa-crown"></i>
+            </div>
+            <h1><span>TAAGC</span> Admin Setup</h1>
+            <p>Create your first super admin account</p>
+        </div>
+
+        <!-- Setup Card -->
+        <div class="setup-card">
+            <div class="card-header">
+                <div class="card-icon">
+                    <i class="fas fa-user-shield"></i>
+                </div>
+                <div>
+                    <h2>Initial Admin Setup</h2>
+                    <p>This will create the first administrator account</p>
+                </div>
+            </div>
+
+            <!-- Alert Messages -->
+            <div id="setupAlert" class="alert" style="display: none;"></div>
+
+            <!-- Setup Form -->
+            <form id="setupForm">
+                <div class="form-group">
+                    <label><i class="fas fa-user"></i> Full Name</label>
+                    <input type="text" class="form-control" id="adminName" placeholder="Enter your full name" required>
+                </div>
+
+                <div class="form-group">
+                    <label><i class="fas fa-envelope"></i> Email Address</label>
+                    <input type="email" class="form-control" id="adminEmail" placeholder="admin@company.com" required>
+                </div>
+
+                <div class="form-group">
+                    <label><i class="fas fa-lock"></i> Password</label>
+                    <input type="password" class="form-control" id="adminPassword" placeholder="Enter password" required onkeyup="checkPasswordStrength()">
+                    <div class="password-strength">
+                        <div class="strength-bar">
+                            <div id="strengthBar" class="strength-bar-fill"></div>
+                        </div>
+                        <span id="strengthText" class="strength-text">Enter a strong password</span>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label><i class="fas fa-lock"></i> Confirm Password</label>
+                    <input type="password" class="form-control" id="adminConfirmPassword" placeholder="Confirm password" required>
+                </div>
+
+                <button type="submit" class="btn-primary" id="setupBtn">
+                    <i class="fas fa-shield-alt"></i>
+                    Create Admin Account
+                </button>
+            </form>
+
+            <!-- Credentials Display (shown after success) -->
+            <div id="credentialsDisplay" style="display: none;">
+                <div class="credentials-display">
+                    <div class="credential-row">
+                        <span class="credential-label">Admin ID:</span>
+                        <span id="generatedAdminId">Ad001/03/2025</span>
+                    </div>
+                    <div class="credential-row">
+                        <span class="credential-label">Email:</span>
+                        <span id="generatedEmail">admin@company.com</span>
+                    </div>
+                    <div class="credential-row">
+                        <span class="credential-label">Password:</span>
+                        <span id="generatedPassword">••••••••</span>
+                    </div>
+                    <div class="credential-row">
+                        <span class="credential-label">Role:</span>
+                        <span>Super Admin</span>
+                    </div>
+                </div>
+                <div class="info-box">
+                    <i class="fas fa-info-circle"></i>
+                    <strong>Save these credentials!</strong> You'll need them to log in to the admin panel.
+                </div>
+                <button class="btn-primary" onclick="goToLogin()" style="background: #c19a6b;">
+                    <i class="fas fa-sign-in-alt"></i> Go to Login
+                </button>
+            </div>
+
+            <!-- Setup Info -->
+            <div class="info-box" id="setupInfo">
+                <i class="fas fa-shield-alt"></i>
+                <strong>First-time setup only:</strong> This page will create the initial super admin account. 
+                After creation, you can log in and manage other admins from the admin panel.
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Firebase Configuration
+        const firebaseConfig = {
+            apiKey: "AIzaSyAI1MrcP977UgRLQoePxl64JOSyj9v4WpI",
+            authDomain: "xtaagc.firebaseapp.com",
+            projectId: "xtaagc",
+            storageBucket: "xtaagc.appspot.com",
+            messagingSenderId: "256073982437",
+            appId: "1:256073982437:web:8da63bb7acc86c0ca98f0c"
+        };
+
+        // Initialize Firebase
+        if (!firebase.apps.length) {
+            firebase.initializeApp(firebaseConfig);
+        }
+        
+        const auth = firebase.auth();
+        const db = firebase.firestore();
+
+        // Check if any admin exists
+        async function checkExistingAdmins() {
+            try {
+                const snapshot = await db.collection('users')
+                    .where('role', 'in', ['super_admin', 'admin'])
+                    .limit(1)
+                    .get();
+                
+                if (!snapshot.empty) {
+                    // Admins already exist, show warning but allow setup anyway
+                    const infoBox = document.getElementById('setupInfo');
+                    infoBox.innerHTML = `
+                        <i class="fas fa-exclamation-triangle" style="color: #f59e0b;"></i>
+                        <strong>Warning:</strong> Admin accounts already exist. 
+                        Creating another admin is allowed, but make sure you have permission.
+                    `;
+                }
+            } catch (error) {
+                console.log('Error checking admins:', error);
+                // If we can't check, proceed anyway
+            }
+        }
+
+        // Run check on load
+        checkExistingAdmins();
+
+        // Password strength checker
+        window.checkPasswordStrength = function() {
+            const password = document.getElementById('adminPassword').value;
+            const strengthBar = document.getElementById('strengthBar');
+            const strengthText = document.getElementById('strengthText');
+            
+            strengthBar.className = 'strength-bar-fill';
+            
+            if (password.length === 0) {
+                strengthText.textContent = 'Enter a strong password';
+                return;
+            }
+            
+            let strength = 0;
+            if (password.length >= 8) strength++;
+            if (password.match(/[a-z]+/)) strength++;
+            if (password.match(/[A-Z]+/)) strength++;
+            if (password.match(/[0-9]+/)) strength++;
+            if (password.match(/[$@#&!]+/)) strength++;
+            
+            if (strength <= 2) {
+                strengthBar.classList.add('strength-weak');
+                strengthText.textContent = 'Weak password';
+                strengthText.style.color = '#e53e3e';
+            } else if (strength <= 4) {
+                strengthBar.classList.add('strength-medium');
+                strengthText.textContent = 'Medium password';
+                strengthText.style.color = '#f59e0b';
+            } else {
+                strengthBar.classList.add('strength-strong');
+                strengthText.textContent = 'Strong password';
+                strengthText.style.color = '#10b981';
+            }
+        };
+
+        // Generate Admin ID
+        function generateAdminId() {
+            const now = new Date();
+            const month = String(now.getMonth() + 1).padStart(2, '0');
+            const year = now.getFullYear();
+            const random = Math.floor(Math.random() * 900 + 100);
+            return `Ad${random}/${month}/${year}`;
+        }
+
+        // Handle form submission
+        document.getElementById('setupForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const name = document.getElementById('adminName').value;
+            const email = document.getElementById('adminEmail').value;
+            const password = document.getElementById('adminPassword').value;
+            const confirmPassword = document.getElementById('adminConfirmPassword').value;
+            const alertDiv = document.getElementById('setupAlert');
+            const setupBtn = document.getElementById('setupBtn');
+
+            // Hide previous alerts
+            alertDiv.style.display = 'none';
+
+            // Validation
+            if (password !== confirmPassword) {
+                showAlert(alertDiv, 'Passwords do not match!', 'error');
+                return;
+            }
+
+            if (password.length < 6) {
+                showAlert(alertDiv, 'Password must be at least 6 characters!', 'error');
+                return;
+            }
+
+            try {
+                // Show loading
+                setupBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Creating...';
+                setupBtn.disabled = true;
+
+                // Create auth user
+                const userCred = await auth.createUserWithEmailAndPassword(email, password);
+                const user = userCred.user;
+
+                // Update profile
+                await user.updateProfile({
+                    displayName: name
+                });
+
+                // Generate admin ID
+                const adminId = generateAdminId();
+
+                // Create admin profile in Firestore
+                await db.collection('users').doc(user.uid).set({
+                    uid: user.uid,
+                    fullName: name,
+                    email: email,
+                    role: 'super_admin',
+                    generatedId: adminId,
+                    status: 'active',
+                    createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+                    setupBy: 'initial-setup'
+                });
+
+                // Show success
+                showAlert(alertDiv, 'Admin account created successfully!', 'success');
+
+                // Hide form, show credentials
+                document.getElementById('setupForm').style.display = 'none';
+                document.getElementById('setupInfo').style.display = 'none';
+                document.getElementById('credentialsDisplay').style.display = 'block';
+
+                // Update credentials display
+                document.getElementById('generatedAdminId').textContent = adminId;
+                document.getElementById('generatedEmail').textContent = email;
+                document.getElementById('generatedPassword').textContent = '•'.repeat(password.length);
+
+            } catch (error) {
+                console.error('Setup error:', error);
+                
+                let errorMessage = error.message;
+                if (error.code === 'auth/email-already-in-use') {
+                    errorMessage = 'Email already in use. Try logging in instead.';
+                } else if (error.code === 'auth/weak-password') {
+                    errorMessage = 'Password is too weak. Use at least 6 characters.';
+                }
+                
+                showAlert(alertDiv, errorMessage, 'error');
+                
+                // Reset button
+                setupBtn.innerHTML = '<i class="fas fa-shield-alt"></i> Create Admin Account';
+                setupBtn.disabled = false;
+            }
+        });
+
+        // Helper to show alerts
+        function showAlert(element, message, type) {
+            element.className = `alert alert-${type}`;
+            element.style.display = 'flex';
+            element.innerHTML = `<i class="fas fa-${type === 'success' ? 'check-circle' : 'exclamation-circle'}"></i> ${message}`;
+        }
+
+        // Go to login page
+        window.goToLogin = function() {
+            window.location.href = 'admin-login.html';
+        };
+
+        // Check if already logged in
+        auth.onAuthStateChanged((user) => {
+            if (user) {
+                // User is already logged in, maybe redirect to admin panel
+                console.log('Already logged in as:', user.email);
+                // Don't auto-redirect, let user decide
+            }
+        });
+    </script>
+</body>
+</html>
