@@ -1,5 +1,5 @@
 <?php
-// upload.php - Handle staff photo uploads
+// upload.php - Handle staff photo uploads with rank assignment
 
 header('Content-Type: application/json');
 
@@ -26,59 +26,70 @@ if (empty($_FILES['staff_photos'])) {
 }
 
 $files = $_FILES['staff_photos'];
+$totalFiles = isset($_POST['total_files']) ? intval($_POST['total_files']) : count($files['name']);
 $successCount = 0;
+$uploadedFiles = [];
 
 // Process each file
-for ($i = 0; $i < count($files['name']); $i++) {
+for ($i = 0; $i < $totalFiles; $i++) {
+    // Check if this file index exists
+    if (!isset($files['name'][$i])) continue;
+    
     $fileName = basename($files['name'][$i]);
     $fileTmp = $files['tmp_name'][$i];
     $fileSize = $files['size'][$i];
     $fileType = $files['type'][$i];
     $fileError = $files['error'][$i];
+    
+    // Get assigned rank from POST data
+    $rank = isset($_POST["rank_$i"]) ? intval($_POST["rank_$i"]) : 0;
+    $originalName = isset($_POST["filename_$i"]) ? $_POST["filename_$i"] : $fileName;
 
     // Check for upload errors
     if ($fileError !== UPLOAD_ERR_OK) {
-        $response['message'] .= "Error uploading $fileName. ";
+        $response['message'] .= "Error uploading $originalName. ";
         continue;
     }
 
     // Check file size
     if ($fileSize > $maxFileSize) {
-        $response['message'] .= "$fileName exceeds 5MB limit. ";
+        $response['message'] .= "$originalName exceeds 5MB limit. ";
         continue;
     }
 
     // Check file type
     if (!in_array($fileType, $allowedTypes)) {
-        $response['message'] .= "$fileName has invalid type. ";
+        $response['message'] .= "$originalName has invalid type. ";
         continue;
     }
 
-    // Try to extract rank from filename or use timestamp
-    $rank = 0;
-    if (preg_match('/rank[_\s]*(\d+)/i', $fileName, $matches)) {
-        $rank = intval($matches[1]);
-    }
-
-    // Generate unique filename
+    // Generate unique filename with rank and timestamp
     $ext = pathinfo($fileName, PATHINFO_EXTENSION);
-    $newFileName = uniqid() . "_rank_{$rank}_" . time() . "." . $ext;
+    $timestamp = time();
+    $newFileName = "rank_{$rank}_" . uniqid() . "_{$timestamp}." . $ext;
     $uploadPath = $uploadDir . $newFileName;
 
     // Move uploaded file
     if (move_uploaded_file($fileTmp, $uploadPath)) {
         $successCount++;
-        $response['files'][] = [
-            'original' => $fileName,
+        $uploadedFiles[] = [
+            'original' => $originalName,
             'saved' => $newFileName,
             'rank' => $rank,
-            'path' => $uploadPath
+            'path' => $uploadPath,
+            'size' => $fileSize
         ];
         
-        // Optional: Resize image
+        // Resize image to standard size
         resizeImage($uploadPath, 400, 400);
+        
+        // Also create a thumbnail
+        $thumbPath = $uploadDir . "thumb_{$newFileName}";
+        copy($uploadPath, $thumbPath);
+        resizeImage($thumbPath, 150, 150);
+        
     } else {
-        $response['message'] .= "Failed to move $fileName. ";
+        $response['message'] .= "Failed to move $originalName. ";
     }
 }
 
@@ -86,6 +97,12 @@ for ($i = 0; $i < count($files['name']); $i++) {
 if ($successCount > 0) {
     $response['success'] = true;
     $response['message'] = "$successCount file(s) uploaded successfully";
+    $response['files'] = $uploadedFiles;
+    
+    // Log the upload
+    $logEntry = date('Y-m-d H:i:s') . " - Uploaded " . $successCount . " files: " . json_encode($uploadedFiles) . "\n";
+    file_put_contents($uploadDir . 'upload_log.txt', $logEntry, FILE_APPEND);
+    
 } else {
     $response['success'] = false;
     if (empty($response['message'])) {
@@ -101,8 +118,8 @@ function resizeImage($filePath, $maxWidth, $maxHeight) {
     
     // Calculate new dimensions
     $ratio = min($maxWidth / $width, $maxHeight / $height);
-    $newWidth = $width * $ratio;
-    $newHeight = $height * $ratio;
+    $newWidth = intval($width * $ratio);
+    $newHeight = intval($height * $ratio);
     
     // Create image resource based on type
     switch ($type) {
