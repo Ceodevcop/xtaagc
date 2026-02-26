@@ -1,0 +1,1806 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Investor Dashboard - TAAGC</title>
+    
+    <!-- Firebase 8.10.1 SDK -->
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
+    
+    <!-- Chart.js for performance charts -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+    
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Inter', sans-serif;
+        }
+
+        body {
+            background: #f3f4f6;
+        }
+
+        /* Dashboard Layout */
+        .dashboard {
+            display: flex;
+            min-height: 100vh;
+        }
+
+        /* Sidebar Navigation */
+        .sidebar {
+            width: 280px;
+            background: linear-gradient(180deg, #0a2540 0%, #1e3a5f 100%);
+            color: white;
+            position: fixed;
+            height: 100vh;
+            overflow-y: auto;
+            box-shadow: 4px 0 10px rgba(0,0,0,0.1);
+            z-index: 1000;
+        }
+
+        .sidebar-header {
+            padding: 30px 20px;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .logo-icon {
+            width: 48px;
+            height: 48px;
+            background: #c19a6b;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            font-weight: 700;
+        }
+
+        .logo-text {
+            font-size: 20px;
+            font-weight: 700;
+        }
+
+        .logo-text span {
+            color: #c19a6b;
+        }
+
+        .investor-badge {
+            background: rgba(193, 154, 107, 0.2);
+            border: 1px solid #c19a6b;
+            border-radius: 20px;
+            padding: 8px 16px;
+            font-size: 14px;
+            margin-top: 15px;
+            display: inline-block;
+            font-weight: 500;
+        }
+
+        .nav-menu {
+            padding: 20px;
+        }
+
+        .nav-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 14px 16px;
+            border-radius: 10px;
+            color: rgba(255,255,255,0.8);
+            margin-bottom: 5px;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-size: 15px;
+            font-weight: 500;
+            border: none;
+            background: none;
+            width: 100%;
+            text-align: left;
+        }
+
+        .nav-item i {
+            width: 20px;
+            color: #c19a6b;
+            font-size: 16px;
+        }
+
+        .nav-item:hover {
+            background: rgba(255,255,255,0.1);
+            color: white;
+        }
+
+        .nav-item.active {
+            background: #c19a6b;
+            color: white;
+        }
+
+        .nav-item.active i {
+            color: white;
+        }
+
+        .nav-divider {
+            height: 1px;
+            background: rgba(255,255,255,0.1);
+            margin: 20px 0;
+        }
+
+        /* Main Content Area */
+        .main-content {
+            flex: 1;
+            margin-left: 280px;
+            padding: 30px;
+        }
+
+        /* Top Header */
+        .top-header {
+            background: white;
+            border-radius: 16px;
+            padding: 20px 30px;
+            margin-bottom: 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+        }
+
+        .header-title h1 {
+            color: #0a2540;
+            font-size: 24px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .header-actions {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .notification-badge {
+            position: relative;
+            cursor: pointer;
+        }
+
+        .notification-badge i {
+            font-size: 20px;
+            color: #64748b;
+        }
+
+        .badge-count {
+            position: absolute;
+            top: -8px;
+            right: -8px;
+            background: #e53e3e;
+            color: white;
+            font-size: 11px;
+            padding: 2px 6px;
+            border-radius: 10px;
+            font-weight: 600;
+        }
+
+        .investor-profile-mini {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 8px 16px;
+            background: #f8fafc;
+            border-radius: 40px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .investor-profile-mini:hover {
+            background: #e2e8f0;
+        }
+
+        .investor-avatar {
+            width: 40px;
+            height: 40px;
+            background: #c19a6b;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 600;
+            font-size: 16px;
+        }
+
+        /* Account Summary Cards */
+        .summary-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .summary-card {
+            background: white;
+            border-radius: 16px;
+            padding: 24px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+            transition: transform 0.3s;
+        }
+
+        .summary-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 16px rgba(0,0,0,0.1);
+        }
+
+        .summary-icon {
+            width: 48px;
+            height: 48px;
+            background: linear-gradient(135deg, #0a2540, #1e3a5f);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            margin-bottom: 16px;
+        }
+
+        .summary-label {
+            color: #64748b;
+            font-size: 14px;
+            margin-bottom: 8px;
+        }
+
+        .summary-value {
+            font-size: 28px;
+            font-weight: 700;
+            color: #0a2540;
+            margin-bottom: 5px;
+        }
+
+        .summary-change {
+            font-size: 13px;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .positive { color: #10b981; }
+        .negative { color: #e53e3e; }
+
+        /* Key Investment Metrics */
+        .metrics-section {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .metrics-card {
+            background: white;
+            border-radius: 16px;
+            padding: 24px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+        }
+
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .section-header h2 {
+            color: #0a2540;
+            font-size: 18px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-weight: 600;
+        }
+
+        .section-header select {
+            padding: 8px 12px;
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+            color: #0a2540;
+            font-size: 14px;
+            cursor: pointer;
+        }
+
+        .metric-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 20px;
+        }
+
+        .metric-item {
+            padding: 15px;
+            background: #f8fafc;
+            border-radius: 12px;
+        }
+
+        .metric-label {
+            color: #64748b;
+            font-size: 13px;
+            margin-bottom: 5px;
+        }
+
+        .metric-value {
+            font-size: 24px;
+            font-weight: 700;
+            color: #0a2540;
+        }
+
+        .metric-sub {
+            font-size: 13px;
+            color: #64748b;
+            margin-top: 5px;
+        }
+
+        /* Performance Chart */
+        .chart-container {
+            height: 300px;
+            margin-top: 20px;
+            position: relative;
+        }
+
+        .chart-controls {
+            display: flex;
+            gap: 8px;
+        }
+
+        .chart-btn {
+            padding: 6px 12px;
+            border: 1px solid #e2e8f0;
+            background: white;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 13px;
+            transition: all 0.3s;
+        }
+
+        .chart-btn:hover,
+        .chart-btn.active {
+            background: #0a2540;
+            color: white;
+            border-color: #0a2540;
+        }
+
+        /* Portfolio Table */
+        .portfolio-section {
+            background: white;
+            border-radius: 16px;
+            padding: 24px;
+            margin-bottom: 30px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+        }
+
+        .portfolio-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .portfolio-table th {
+            text-align: left;
+            padding: 15px;
+            background: #f8fafc;
+            color: #0a2540;
+            font-weight: 600;
+            font-size: 14px;
+        }
+
+        .portfolio-table td {
+            padding: 15px;
+            border-bottom: 1px solid #e2e8f0;
+        }
+
+        .company-name {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .company-logo {
+            width: 32px;
+            height: 32px;
+            background: #0a2540;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 14px;
+            font-weight: 600;
+        }
+
+        .status-badge {
+            padding: 4px 8px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+            display: inline-block;
+        }
+
+        .status-active { 
+            background: #10b98120; 
+            color: #10b981; 
+        }
+        
+        .status-pending { 
+            background: #f59e0b20; 
+            color: #f59e0b; 
+        }
+
+        /* Wallet Section */
+        .wallet-section {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .wallet-card {
+            background: white;
+            border-radius: 16px;
+            padding: 24px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+        }
+
+        .balance-card {
+            background: linear-gradient(135deg, #0a2540, #1e3a5f);
+            color: white;
+        }
+
+        .balance-card .section-header h2 {
+            color: white;
+        }
+
+        .balance-amount {
+            font-size: 36px;
+            font-weight: 700;
+            margin: 20px 0;
+        }
+
+        .wallet-actions {
+            display: flex;
+            gap: 10px;
+        }
+
+        .wallet-btn {
+            flex: 1;
+            padding: 12px;
+            border: none;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            font-size: 14px;
+            transition: all 0.3s;
+        }
+
+        .btn-primary {
+            background: #c19a6b;
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: #b38b5f;
+        }
+
+        .btn-secondary {
+            background: rgba(255,255,255,0.2);
+            color: white;
+        }
+
+        .btn-secondary:hover {
+            background: rgba(255,255,255,0.3);
+        }
+
+        .btn-outline {
+            background: transparent;
+            border: 1px solid #c19a6b;
+            color: #c19a6b;
+        }
+
+        .btn-outline:hover {
+            background: #c19a6b;
+            color: white;
+        }
+
+        /* Transactions List */
+        .transactions-list {
+            max-height: 300px;
+            overflow-y: auto;
+        }
+
+        .transaction-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 15px;
+            border-bottom: 1px solid #e2e8f0;
+            transition: background 0.3s;
+        }
+
+        .transaction-item:hover {
+            background: #f8fafc;
+        }
+
+        .transaction-info {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .transaction-icon {
+            width: 40px;
+            height: 40px;
+            background: #f8fafc;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #c19a6b;
+            font-size: 16px;
+        }
+
+        .transaction-details h4 {
+            font-size: 14px;
+            margin-bottom: 4px;
+            color: #0a2540;
+        }
+
+        .transaction-details p {
+            font-size: 12px;
+            color: #64748b;
+        }
+
+        .transaction-amount {
+            font-weight: 600;
+            font-size: 16px;
+        }
+
+        .transaction-amount.positive { color: #10b981; }
+        .transaction-amount.negative { color: #e53e3e; }
+
+        /* Documents Grid */
+        .documents-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .document-card {
+            background: white;
+            border-radius: 12px;
+            padding: 24px;
+            text-align: center;
+            border: 1px solid #e2e8f0;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .document-card:hover {
+            border-color: #c19a6b;
+            transform: translateY(-5px);
+            box-shadow: 0 8px 16px rgba(0,0,0,0.1);
+        }
+
+        .document-icon {
+            width: 56px;
+            height: 56px;
+            background: #f8fafc;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 15px;
+            color: #c19a6b;
+            font-size: 28px;
+        }
+
+        .document-card h4 {
+            color: #0a2540;
+            margin-bottom: 8px;
+            font-size: 16px;
+        }
+
+        .document-card p {
+            color: #64748b;
+            font-size: 13px;
+            margin-bottom: 5px;
+        }
+
+        .document-size {
+            color: #c19a6b;
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        /* Notifications Panel */
+        .notifications-panel {
+            background: white;
+            border-radius: 16px;
+            padding: 20px;
+            margin-bottom: 30px;
+        }
+
+        .notification-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 15px;
+            padding: 20px;
+            border-bottom: 1px solid #e2e8f0;
+            transition: background 0.3s;
+        }
+
+        .notification-item:hover {
+            background: #f8fafc;
+        }
+
+        .notification-item:last-child {
+            border-bottom: none;
+        }
+
+        .notification-icon {
+            width: 48px;
+            height: 48px;
+            background: #f8fafc;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+        }
+
+        .notification-content {
+            flex: 1;
+        }
+
+        .notification-content h4 {
+            font-size: 16px;
+            margin-bottom: 5px;
+            color: #0a2540;
+        }
+
+        .notification-content p {
+            font-size: 14px;
+            color: #64748b;
+            margin-bottom: 8px;
+        }
+
+        .notification-time {
+            font-size: 12px;
+            color: #94a3b8;
+        }
+
+        /* Settings Panel */
+        .settings-section {
+            background: white;
+            border-radius: 16px;
+            padding: 30px;
+            margin-bottom: 30px;
+        }
+
+        .settings-tabs {
+            display: flex;
+            gap: 10px;
+            border-bottom: 2px solid #e2e8f0;
+            padding-bottom: 20px;
+            margin-bottom: 30px;
+        }
+
+        .settings-tab {
+            padding: 10px 20px;
+            cursor: pointer;
+            border-radius: 8px;
+            font-weight: 600;
+            font-size: 14px;
+            transition: all 0.3s;
+        }
+
+        .settings-tab:hover {
+            background: #f8fafc;
+        }
+
+        .settings-tab.active {
+            background: #0a2540;
+            color: white;
+        }
+
+        .settings-form {
+            max-width: 600px;
+        }
+
+        .form-group {
+            margin-bottom: 25px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #0a2540;
+            font-size: 14px;
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 12px 16px;
+            border: 2px solid #e2e8f0;
+            border-radius: 10px;
+            font-size: 15px;
+            transition: all 0.3s;
+        }
+
+        .form-control:focus {
+            border-color: #c19a6b;
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(193, 154, 107, 0.1);
+        }
+
+        .security-option {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px;
+            background: #f8fafc;
+            border-radius: 12px;
+            margin-bottom: 15px;
+        }
+
+        .security-option h4 {
+            color: #0a2540;
+            margin-bottom: 5px;
+            font-size: 16px;
+        }
+
+        .security-option p {
+            color: #64748b;
+            font-size: 13px;
+        }
+
+        /* Toggle Switch */
+        .switch {
+            position: relative;
+            display: inline-block;
+            width: 60px;
+            height: 34px;
+        }
+
+        .switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: #ccc;
+            transition: .4s;
+            border-radius: 34px;
+        }
+
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 26px;
+            width: 26px;
+            left: 4px;
+            bottom: 4px;
+            background-color: white;
+            transition: .4s;
+            border-radius: 50%;
+        }
+
+        input:checked + .slider {
+            background-color: #c19a6b;
+        }
+
+        input:checked + .slider:before {
+            transform: translateX(26px);
+        }
+
+        /* Loading States */
+        .loading {
+            text-align: center;
+            padding: 50px;
+            color: #64748b;
+        }
+
+        .loading i {
+            font-size: 40px;
+            color: #c19a6b;
+            margin-bottom: 20px;
+        }
+
+        /* Error Message */
+        .error-message {
+            text-align: center;
+            padding: 50px;
+            color: #e53e3e;
+            background: white;
+            border-radius: 16px;
+            margin-bottom: 30px;
+        }
+
+        /* Responsive */
+        @media (max-width: 1200px) {
+            .summary-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            .metrics-section {
+                grid-template-columns: 1fr;
+            }
+            .wallet-section {
+                grid-template-columns: 1fr;
+            }
+            .documents-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        @media (max-width: 768px) {
+            .sidebar {
+                width: 80px;
+            }
+            .sidebar .logo-text,
+            .sidebar .nav-item span,
+            .sidebar .investor-badge {
+                display: none;
+            }
+            .main-content {
+                margin-left: 80px;
+            }
+            .nav-item {
+                justify-content: center;
+                padding: 14px;
+            }
+            .nav-item i {
+                margin: 0;
+            }
+            .summary-grid {
+                grid-template-columns: 1fr;
+            }
+            .documents-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="dashboard">
+        <!-- Sidebar Navigation -->
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <div class="logo">
+                    <div class="logo-icon">I</div>
+                    <div class="logo-text"><span>TAAGC</span> Investor</div>
+                </div>
+                <div class="investor-badge" id="investorId">Loading...</div>
+            </div>
+
+            <div class="nav-menu">
+                <!-- Main Navigation -->
+                <button class="nav-item active" data-section="account-summary">
+                    <i class="fas fa-chart-pie"></i>
+                    <span>Account Summary</span>
+                </button>
+                <button class="nav-item" data-section="key-metrics">
+                    <i class="fas fa-chart-line"></i>
+                    <span>Key Investment Metrics</span>
+                </button>
+                <button class="nav-item" data-section="performance">
+                    <i class="fas fa-chart-bar"></i>
+                    <span>Performance Overview</span>
+                </button>
+                <button class="nav-item" data-section="portfolio">
+                    <i class="fas fa-briefcase"></i>
+                    <span>Investment Portfolio</span>
+                </button>
+                <button class="nav-item" data-section="wallet">
+                    <i class="fas fa-wallet"></i>
+                    <span>Wallet & Transactions</span>
+                </button>
+                
+                <div class="nav-divider"></div>
+                
+                <!-- Documents & Reports -->
+                <button class="nav-item" data-section="documents">
+                    <i class="fas fa-file-alt"></i>
+                    <span>Documents & Reports</span>
+                </button>
+                <button class="nav-item" data-section="notifications">
+                    <i class="fas fa-bell"></i>
+                    <span>Notifications</span>
+                </button>
+                <button class="nav-item" data-section="settings">
+                    <i class="fas fa-cog"></i>
+                    <span>Profile & Security</span>
+                </button>
+                
+                <div class="nav-divider"></div>
+                
+                <!-- Logout -->
+                <button class="nav-item" id="logoutBtn">
+                    <i class="fas fa-sign-out-alt"></i>
+                    <span>Logout</span>
+                </button>
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Top Header -->
+            <div class="top-header">
+                <div class="header-title">
+                    <h1>
+                        <i class="fas fa-chart-pie" style="color: #c19a6b;"></i>
+                        <span id="pageTitle">Account Summary</span>
+                    </h1>
+                </div>
+                <div class="header-actions">
+                    <div class="notification-badge" id="notificationBell">
+                        <i class="far fa-bell"></i>
+                        <span class="badge-count" id="notificationCount">0</span>
+                    </div>
+                    <div class="investor-profile-mini" id="profileMenu">
+                        <div class="investor-avatar" id="investorAvatar">I</div>
+                        <div>
+                            <div id="investorName" style="font-weight: 600;">Loading...</div>
+                            <div style="font-size: 12px; color: #64748b;" id="investorType">Investor</div>
+                        </div>
+                        <i class="fas fa-chevron-down" style="color: #64748b; font-size: 12px;"></i>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Dynamic Content Sections -->
+            <div id="content-area">
+                <!-- Content will be loaded here -->
+                <div class="loading">
+                    <i class="fas fa-spinner fa-spin"></i>
+                    <p>Loading dashboard...</p>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Templates for each section -->
+    <template id="account-summary-template">
+        <div class="summary-grid">
+            <div class="summary-card">
+                <div class="summary-icon"><i class="fas fa-dollar-sign"></i></div>
+                <div class="summary-label">Total Investment</div>
+                <div class="summary-value" id="totalInvestment">$0</div>
+                <div class="summary-change positive" id="investmentChange">
+                    <i class="fas fa-arrow-up"></i> +0%
+                </div>
+            </div>
+            <div class="summary-card">
+                <div class="summary-icon"><i class="fas fa-chart-line"></i></div>
+                <div class="summary-label">Current Value</div>
+                <div class="summary-value" id="currentValue">$0</div>
+                <div class="summary-change positive" id="valueChange">
+                    <i class="fas fa-arrow-up"></i> +0%
+                </div>
+            </div>
+            <div class="summary-card">
+                <div class="summary-icon"><i class="fas fa-percent"></i></div>
+                <div class="summary-label">Total Return</div>
+                <div class="summary-value" id="totalReturn">$0</div>
+                <div class="summary-change positive" id="returnChange">
+                    <i class="fas fa-arrow-up"></i> +0%
+                </div>
+            </div>
+            <div class="summary-card">
+                <div class="summary-icon"><i class="fas fa-calendar"></i></div>
+                <div class="summary-label">Invested Since</div>
+                <div class="summary-value" id="investedSince">2025</div>
+                <div class="summary-change" id="investmentDuration">0 months</div>
+            </div>
+        </div>
+    </template>
+
+    <template id="key-metrics-template">
+        <div class="metrics-section">
+            <div class="metrics-card">
+                <div class="section-header">
+                    <h2><i class="fas fa-chart-pie"></i> Investment Distribution</h2>
+                    <select id="distributionPeriod">
+                        <option value="month">This Month</option>
+                        <option value="quarter">This Quarter</option>
+                        <option value="year">This Year</option>
+                    </select>
+                </div>
+                <div class="metric-grid" id="distributionGrid">
+                    <!-- Will be populated by JavaScript -->
+                </div>
+            </div>
+            <div class="metrics-card">
+                <div class="section-header">
+                    <h2><i class="fas fa-chart-simple"></i> Key Ratios</h2>
+                </div>
+                <div id="ratiosContainer">
+                    <!-- Will be populated by JavaScript -->
+                </div>
+            </div>
+        </div>
+    </template>
+
+    <template id="performance-template">
+        <div class="metrics-card">
+            <div class="section-header">
+                <h2><i class="fas fa-chart-line"></i> Performance Over Time</h2>
+                <div class="chart-controls">
+                    <button class="chart-btn active" data-period="1M">1M</button>
+                    <button class="chart-btn" data-period="3M">3M</button>
+                    <button class="chart-btn" data-period="6M">6M</button>
+                    <button class="chart-btn" data-period="1Y">1Y</button>
+                </div>
+            </div>
+            <div class="chart-container">
+                <canvas id="performanceChart"></canvas>
+            </div>
+        </div>
+    </template>
+
+    <template id="portfolio-template">
+        <div class="portfolio-section">
+            <div class="section-header">
+                <h2><i class="fas fa-briefcase"></i> Investment Portfolio</h2>
+                <button class="wallet-btn btn-outline" id="exportPortfolio">
+                    <i class="fas fa-download"></i> Export
+                </button>
+            </div>
+            <div class="table-responsive">
+                <table class="portfolio-table">
+                    <thead>
+                        <tr>
+                            <th>Company</th>
+                            <th>Shares</th>
+                            <th>Avg Price</th>
+                            <th>Current Price</th>
+                            <th>Total Value</th>
+                            <th>Return</th>
+                            <th>Status</th>
+                        </tr>
+                    </thead>
+                    <tbody id="portfolioBody">
+                        <!-- Will be populated by JavaScript -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </template>
+
+    <template id="wallet-template">
+        <div class="wallet-section">
+            <div class="wallet-card balance-card">
+                <div class="section-header">
+                    <h2><i class="fas fa-wallet"></i> Available Balance</h2>
+                </div>
+                <div class="balance-amount" id="walletBalance">$0.00</div>
+                <div class="wallet-actions">
+                    <button class="wallet-btn btn-primary" id="addFunds">
+                        <i class="fas fa-plus"></i> Add Funds
+                    </button>
+                    <button class="wallet-btn btn-secondary" id="transferFunds">
+                        <i class="fas fa-exchange-alt"></i> Transfer
+                    </button>
+                </div>
+            </div>
+            <div class="wallet-card">
+                <div class="section-header">
+                    <h2><i class="fas fa-history"></i> Recent Transactions</h2>
+                    <a href="#" id="viewAllTransactions" style="color: #c19a6b; font-size: 14px;">View All</a>
+                </div>
+                <div class="transactions-list" id="transactionsList">
+                    <!-- Will be populated by JavaScript -->
+                </div>
+            </div>
+        </div>
+    </template>
+
+    <template id="documents-template">
+        <div class="section-header">
+            <h2><i class="fas fa-file-alt"></i> Documents & Reports</h2>
+        </div>
+        <div class="documents-grid" id="documentsGrid">
+            <!-- Will be populated by JavaScript -->
+        </div>
+    </template>
+
+    <template id="notifications-template">
+        <div class="section-header">
+            <h2><i class="fas fa-bell"></i> Notifications & Updates</h2>
+            <button class="wallet-btn btn-outline" id="markAllRead">
+                <i class="fas fa-check-double"></i> Mark All Read
+            </button>
+        </div>
+        <div class="notifications-panel" id="notificationsList">
+            <!-- Will be populated by JavaScript -->
+        </div>
+    </template>
+
+    <template id="settings-template">
+        <div class="settings-section">
+            <div class="settings-tabs">
+                <button class="settings-tab active" data-tab="profile">Profile</button>
+                <button class="settings-tab" data-tab="security">Security</button>
+                <button class="settings-tab" data-tab="preferences">Preferences</button>
+                <button class="settings-tab" data-tab="notifications">Notifications</button>
+            </div>
+            
+            <div id="profile-tab" class="settings-tab-content">
+                <form class="settings-form" id="profileForm">
+                    <div class="form-group">
+                        <label>Full Name</label>
+                        <input type="text" class="form-control" id="profileName" value="">
+                    </div>
+                    <div class="form-group">
+                        <label>Email Address</label>
+                        <input type="email" class="form-control" id="profileEmail" value="" readonly>
+                    </div>
+                    <div class="form-group">
+                        <label>Phone Number</label>
+                        <input type="tel" class="form-control" id="profilePhone" value="">
+                    </div>
+                    <div class="form-group">
+                        <label>Address</label>
+                        <textarea class="form-control" id="profileAddress" rows="3"></textarea>
+                    </div>
+                    <button type="submit" class="wallet-btn btn-primary" style="width: auto; padding: 12px 30px;">
+                        Save Changes
+                    </button>
+                </form>
+            </div>
+
+            <div id="security-tab" class="settings-tab-content" style="display: none;">
+                <div class="security-option">
+                    <div>
+                        <h4>Two-Factor Authentication</h4>
+                        <p>Add an extra layer of security to your account</p>
+                    </div>
+                    <label class="switch">
+                        <input type="checkbox" id="twoFactorAuth">
+                        <span class="slider"></span>
+                    </label>
+                </div>
+                <div class="security-option">
+                    <div>
+                        <h4>Change Password</h4>
+                        <p>Update your password regularly for security</p>
+                    </div>
+                    <button class="wallet-btn btn-outline" id="changePasswordBtn">
+                        Change
+                    </button>
+                </div>
+                <div class="security-option">
+                    <div>
+                        <h4>Login History</h4>
+                        <p>Review recent account activity and devices</p>
+                    </div>
+                    <button class="wallet-btn btn-outline" id="viewLoginHistory">
+                        View
+                    </button>
+                </div>
+                <div class="security-option">
+                    <div>
+                        <h4>Session Management</h4>
+                        <p>Manage active sessions and devices</p>
+                    </div>
+                    <button class="wallet-btn btn-outline" id="manageSessions">
+                        Manage
+                    </button>
+                </div>
+            </div>
+
+            <div id="preferences-tab" class="settings-tab-content" style="display: none;">
+                <div class="security-option">
+                    <div>
+                        <h4>Currency Display</h4>
+                        <p>Choose your preferred currency</p>
+                    </div>
+                    <select id="currencyPref" class="form-control" style="width: 120px;">
+                        <option value="USD">USD ($)</option>
+                        <option value="EUR">EUR (€)</option>
+                        <option value="GBP">GBP (£)</option>
+                    </select>
+                </div>
+                <div class="security-option">
+                    <div>
+                        <h4>Date Format</h4>
+                        <p>Choose how dates are displayed</p>
+                    </div>
+                    <select id="dateFormat" class="form-control" style="width: 150px;">
+                        <option value="MM/DD/YYYY">MM/DD/YYYY</option>
+                        <option value="DD/MM/YYYY">DD/MM/YYYY</option>
+                        <option value="YYYY-MM-DD">YYYY-MM-DD</option>
+                    </select>
+                </div>
+                <div class="security-option">
+                    <div>
+                        <h4>Theme</h4>
+                        <p>Choose your preferred theme</p>
+                    </div>
+                    <select id="themePref" class="form-control" style="width: 120px;">
+                        <option value="light">Light</option>
+                        <option value="dark">Dark</option>
+                        <option value="system">System</option>
+                    </select>
+                </div>
+            </div>
+
+            <div id="notifications-tab" class="settings-tab-content" style="display: none;">
+                <div class="security-option">
+                    <div>
+                        <h4>Email Notifications</h4>
+                        <p>Receive updates via email</p>
+                    </div>
+                    <label class="switch">
+                        <input type="checkbox" id="emailNotifications" checked>
+                        <span class="slider"></span>
+                    </label>
+                </div>
+                <div class="security-option">
+                    <div>
+                        <h4>Investment Alerts</h4>
+                        <p>Get notified about investment opportunities</p>
+                    </div>
+                    <label class="switch">
+                        <input type="checkbox" id="investmentAlerts" checked>
+                        <span class="slider"></span>
+                    </label>
+                </div>
+                <div class="security-option">
+                    <div>
+                        <h4>Transaction Updates</h4>
+                        <p>Receive transaction confirmations</p>
+                    </div>
+                    <label class="switch">
+                        <input type="checkbox" id="transactionUpdates" checked>
+                        <span class="slider"></span>
+                    </label>
+                </div>
+                <div class="security-option">
+                    <div>
+                        <h4>Report Availability</h4>
+                        <p>Get notified when new reports are available</p>
+                    </div>
+                    <label class="switch">
+                        <input type="checkbox" id="reportAlerts" checked>
+                        <span class="slider"></span>
+                    </label>
+                </div>
+            </div>
+        </div>
+    </template>
+
+    <script>
+        // Firebase Configuration
+        const firebaseConfig = {
+            apiKey: "AIzaSyAI1MrcP977UgRLQoePxl64JOSyj9v4WpI",
+            authDomain: "xtaagc.firebaseapp.com",
+            projectId: "xtaagc",
+            storageBucket: "xtaagc.appspot.com",
+            messagingSenderId: "256073982437",
+            appId: "1:256073982437:web:8da63bb7acc86c0ca98f0c"
+        };
+
+        // Initialize Firebase
+        if (!firebase.apps.length) {
+            firebase.initializeApp(firebaseConfig);
+        }
+        
+        const auth = firebase.auth();
+        const db = firebase.firestore();
+
+        // Global variables
+        let currentUser = null;
+        let userData = null;
+        let currentChart = null;
+
+        // Check authentication and role
+        auth.onAuthStateChanged(async (user) => {
+            if (!user) {
+                window.location.href = '../index.html';
+                return;
+            }
+
+            try {
+                // Get user data
+                const userDoc = await db.collection('users').doc(user.uid).get();
+                
+                if (!userDoc.exists) {
+                    showError('User profile not found. Please contact support.');
+                    return;
+                }
+
+                userData = userDoc.data();
+
+                // Verify this is an investor
+                if (userData.role !== 'investor') {
+                    showError('This portal is for investors only.');
+                    setTimeout(() => {
+                        auth.signOut();
+                        window.location.href = '../index.html';
+                    }, 3000);
+                    return;
+                }
+
+                currentUser = user;
+
+                // Update header with user info
+                document.getElementById('investorId').textContent = userData.generatedId || 'Ti001/03/2025';
+                document.getElementById('investorAvatar').textContent = (userData.fullName || 'I').charAt(0).toUpperCase();
+                document.getElementById('investorName').textContent = userData.fullName || 'Investor';
+                document.getElementById('investorType').textContent = 'Investor';
+
+                // Load initial section
+                showSection('account-summary');
+
+            } catch (error) {
+                console.error('Auth error:', error);
+                showError('Error loading profile. Please try again.');
+            }
+        });
+
+        // Navigation
+        document.querySelectorAll('.nav-item[data-section]').forEach(item => {
+            item.addEventListener('click', function() {
+                const section = this.dataset.section;
+                showSection(section);
+            });
+        });
+
+        // Profile menu click
+        document.getElementById('profileMenu').addEventListener('click', () => {
+            showSection('settings');
+        });
+
+        // Notification bell click
+        document.getElementById('notificationBell').addEventListener('click', () => {
+            showSection('notifications');
+        });
+
+        // Show selected section
+        function showSection(sectionId) {
+            // Update active nav
+            document.querySelectorAll('.nav-item').forEach(nav => {
+                nav.classList.remove('active');
+            });
+            document.querySelector(`[data-section="${sectionId}"]`).classList.add('active');
+
+            // Update page title
+            const titles = {
+                'account-summary': 'Account Summary',
+                'key-metrics': 'Key Investment Metrics',
+                'performance': 'Performance Overview',
+                'portfolio': 'Investment Portfolio',
+                'wallet': 'Wallet & Transactions',
+                'documents': 'Documents & Reports',
+                'notifications': 'Notifications & Updates',
+                'settings': 'Profile & Security Settings'
+            };
+            document.getElementById('pageTitle').textContent = titles[sectionId];
+
+            // Load section content
+            loadSection(sectionId);
+        }
+
+        // Load section content
+        function loadSection(sectionId) {
+            const template = document.getElementById(`${sectionId}-template`);
+            const contentArea = document.getElementById('content-area');
+            
+            if (template) {
+                contentArea.innerHTML = '';
+                contentArea.appendChild(template.content.cloneNode(true));
+                
+                // Load section-specific data
+                switch(sectionId) {
+                    case 'account-summary':
+                        loadAccountSummary();
+                        break;
+                    case 'key-metrics':
+                        loadKeyMetrics();
+                        break;
+                    case 'performance':
+                        loadPerformanceData();
+                        break;
+                    case 'portfolio':
+                        loadPortfolio();
+                        break;
+                    case 'wallet':
+                        loadWallet();
+                        break;
+                    case 'documents':
+                        loadDocuments();
+                        break;
+                    case 'notifications':
+                        loadNotifications();
+                        break;
+                    case 'settings':
+                        loadSettings();
+                        break;
+                }
+            }
+        }
+
+        // Load Account Summary
+        function loadAccountSummary() {
+            // In production, fetch from Firestore
+            document.getElementById('totalInvestment').textContent = '$125,000';
+            document.getElementById('currentValue').textContent = '$143,750';
+            document.getElementById('totalReturn').textContent = '$18,750';
+            document.getElementById('investedSince').textContent = '2025';
+            document.getElementById('investmentDuration').textContent = '3 months';
+        }
+
+        // Load Key Metrics
+        function loadKeyMetrics() {
+            const distributionGrid = document.getElementById('distributionGrid');
+            distributionGrid.innerHTML = `
+                <div class="metric-item">
+                    <div class="metric-label">Stocks</div>
+                    <div class="metric-value">45%</div>
+                    <div class="metric-sub">$56,250</div>
+                </div>
+                <div class="metric-item">
+                    <div class="metric-label">Bonds</div>
+                    <div class="metric-value">25%</div>
+                    <div class="metric-sub">$31,250</div>
+                </div>
+                <div class="metric-item">
+                    <div class="metric-label">Real Estate</div>
+                    <div class="metric-value">20%</div>
+                    <div class="metric-sub">$25,000</div>
+                </div>
+                <div class="metric-item">
+                    <div class="metric-label">Cash</div>
+                    <div class="metric-value">10%</div>
+                    <div class="metric-sub">$12,500</div>
+                </div>
+            `;
+
+            const ratiosContainer = document.getElementById('ratiosContainer');
+            ratiosContainer.innerHTML = `
+                <div class="metric-item">
+                    <div class="metric-label">Sharpe Ratio</div>
+                    <div class="metric-value">1.8</div>
+                    <div class="metric-sub">Good</div>
+                </div>
+                <div class="metric-item">
+                    <div class="metric-label">Alpha</div>
+                    <div class="metric-value">2.4%</div>
+                    <div class="metric-sub">Above Market</div>
+                </div>
+                <div class="metric-item">
+                    <div class="metric-label">Beta</div>
+                    <div class="metric-value">1.1</div>
+                    <div class="metric-sub">Moderate Risk</div>
+                </div>
+            `;
+        }
+
+        // Load Performance Data
+        function loadPerformanceData() {
+            const ctx = document.getElementById('performanceChart')?.getContext('2d');
+            if (!ctx) return;
+
+            if (currentChart) {
+                currentChart.destroy();
+            }
+
+            currentChart = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'],
+                    datasets: [{
+                        label: 'Portfolio Value',
+                        data: [125000, 132000, 138000, 141000, 143750, 148000],
+                        borderColor: '#c19a6b',
+                        backgroundColor: 'rgba(193, 154, 107, 0.1)',
+                        tension: 0.4,
+                        fill: true,
+                        pointBackgroundColor: '#0a2540',
+                        pointBorderColor: 'white',
+                        pointBorderWidth: 2,
+                        pointRadius: 4,
+                        pointHoverRadius: 6
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            display: false
+                        },
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    return `$${context.raw.toLocaleString()}`;
+                                }
+                            }
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: false,
+                            grid: {
+                                display: true,
+                                color: 'rgba(0,0,0,0.05)'
+                            },
+                            ticks: {
+                                callback: function(value) {
+                                    return '$' + value.toLocaleString();
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+
+            // Chart period buttons
+            document.querySelectorAll('.chart-btn').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    document.querySelectorAll('.chart-btn').forEach(b => b.classList.remove('active'));
+                    this.classList.add('active');
+                    // In production, fetch new data based on period
+                });
+            });
+        }
+
+        // Load Portfolio
+        function loadPortfolio() {
+            const portfolioBody = document.getElementById('portfolioBody');
+            const investments = [
+                { company: 'Tech Corp', symbol: 'TC', shares: 100, avgPrice: 150, currentPrice: 175, total: 17500, return: '+16.7%', status: 'active' },
+                { company: 'Green Energy', symbol: 'GE', shares: 250, avgPrice: 45, currentPrice: 52, total: 13000, return: '+15.6%', status: 'active' },
+                { company: 'Real Estate Fund', symbol: 'RE', shares: 50, avgPrice: 200, currentPrice: 215, total: 10750, return: '+7.5%', status: 'active' },
+                { company: 'Healthcare Inc', symbol: 'HC', shares: 75, avgPrice: 120, currentPrice: 118, total: 8850, return: '-1.7%', status: 'pending' }
+            ];
+
+            let html = '';
+            investments.forEach(inv => {
+                const returnClass = inv.return.startsWith('+') ? 'positive' : 'negative';
+                html += `
+                    <tr>
+                        <td>
+                            <div class="company-name">
+                                <div class="company-logo">${inv.symbol}</div>
+                                ${inv.company}
+                            </div>
+                        </td>
+                        <td>${inv.shares}</td>
+                        <td>$${inv.avgPrice}</td>
+                        <td>$${inv.currentPrice}</td>
+                        <td>$${inv.total.toLocaleString()}</td>
+                        <td class="${returnClass}">${inv.return}</td>
+                        <td><span class="status-badge status-${inv.status}">${inv.status}</span></td>
+                    </tr>
+                `;
+            });
+            portfolioBody.innerHTML = html;
+
+            document.getElementById('exportPortfolio').addEventListener('click', () => {
+                alert('Export functionality will be implemented here');
+            });
+        }
+
+        // Load Wallet
+        function loadWallet() {
+            document.getElementById('walletBalance').textContent = '$25,000.00';
+            
+            const transactionsList = document.getElementById('transactionsList');
+            const transactions = [
+                { icon: 'fa-arrow-down', type: 'deposit', desc: 'Deposit from Bank', date: 'Mar 15, 2025', amount: '+$10,000', amountClass: 'positive' },
+                { icon: 'fa-chart-line', type: 'investment', desc: 'Investment in Tech Corp', date: 'Mar 14, 2025', amount: '-$5,000', amountClass: 'negative' },
+                { icon: 'fa-coins', type: 'dividend', desc: 'Dividend Payment', date: 'Mar 10, 2025', amount: '+$1,250', amountClass: 'positive' },
+                { icon: 'fa-exchange-alt', type: 'transfer', desc: 'Transfer to Savings', date: 'Mar 8, 2025', amount: '-$2,500', amountClass: 'negative' }
+            ];
+
+            let html = '';
+            transactions.forEach(t => {
+                html += `
+                    <div class="transaction-item">
+                        <div class="transaction-info">
+                            <div class="transaction-icon">
+                                <i class="fas ${t.icon}"></i>
+                            </div>
+                            <div class="transaction-details">
+                                <h4>${t.desc}</h4>
+                                <p>${t.date}</p>
+                            </div>
+                        </div>
+                        <div class="transaction-amount ${t.amountClass}">
+                            ${t.amount}
+                        </div>
+                    </div>
+                `;
+            });
+            transactionsList.innerHTML = html;
+
+            document.getElementById('addFunds').addEventListener('click', () => {
+                alert('Add funds functionality will be implemented here');
+            });
+
+            document.getElementById('transferFunds').addEventListener('click', () => {
+                alert('Transfer funds functionality will be implemented here');
+            });
+
+            document.getElementById('viewAllTransactions').addEventListener('click', (e) => {
+                e.preventDefault();
+                alert('View all transactions functionality will be implemented here');
+            });
+        }
+
+        // Load Documents
+        function loadDocuments() {
+            const documentsGrid = document.getElementById('documentsGrid');
+            const documents = [
+                { icon: 'fa-file-pdf', name: 'Investment Report', period: 'Q1 2025', size: '2.3 MB', type: 'PDF' },
+                { icon: 'fa-file-excel', name: 'Transaction History', period: 'March 2025', size: '1.1 MB', type: 'XLSX' },
+                { icon: 'fa-file-contract', name: 'Tax Documents', period: '2024-2025', size: '5.7 MB', type: 'PDF' },
+                { icon: 'fa-file-chart-pie', name: 'Performance Summary', period: 'Annual 2024', size: '3.2 MB', type: 'PDF' },
+                { icon: 'fa-file-invoice', name: 'Statements', period: 'February 2025', size: '0.8 MB', type: 'PDF' },
+                { icon: 'fa-file-signature', name: 'Agreements', period: 'Signed', size: '1.5 MB', type: 'PDF' }
+            ];
+
+            let html = '';
+            documents.forEach(doc => {
+                html += `
+                    <div class="document-card" onclick="alert('Downloading ${doc.name}')">
+                        <div class="document-icon"><i class="fas ${doc.icon}"></i></div>
+                        <h4>${doc.name}</h4>
+                        <p>${doc.period}</p>
+                        <p class="document-size">${doc.type} • ${doc.size}</p>
+                    </div>
+                `;
+            });
+            documentsGrid.innerHTML = html;
+        }
+
+        // Load Notifications
+        function loadNotifications() {
+            const notificationsList = document.getElementById('notificationsList');
+            document.getElementById('notificationCount').textContent = '3';
+
+            const notifications = [
+                { icon: 'fa-check-circle', iconColor: '#10b981', bgColor: '#10b98120',
+                  title: 'Investment Successful', message: 'Your investment in Tech Corp has been confirmed',
+                  time: '2 hours ago' },
+                { icon: 'fa-clock', iconColor: '#f59e0b', bgColor: '#f59e0b20',
+                  title: 'Dividend Payment', message: 'Dividend payment of $1,250 will be processed tomorrow',
+                  time: '5 hours ago' },
+                { icon: 'fa-file-alt', iconColor: '#3b82f6', bgColor: '#3b82f620',
+                  title: 'Report Available', message: 'Monthly investment report for March is now available',
+                  time: '1 day ago' }
+            ];
+
+            let html = '';
+            notifications.forEach(n => {
+                html += `
+                    <div class="notification-item">
+                        <div class="notification-icon" style="background: ${n.bgColor}; color: ${n.iconColor};">
+                            <i class="fas ${n.icon}"></i>
+                        </div>
+                        <div class="notification-content">
+                            <h4>${n.title}</h4>
+                            <p>${n.message}</p>
+                            <div class="notification-time">${n.time}</div>
+                        </div>
+                    </div>
+                `;
+            });
+            notificationsList.innerHTML = html;
+
+            document.getElementById('markAllRead').addEventListener('click', () => {
+                document.getElementById('notificationCount').textContent = '0';
+                alert('All notifications marked as read');
+            });
+        }
+
+        // Load Settings
+        function loadSettings() {
+            // Pre-fill profile form with user data
+            if (userData) {
+                document.getElementById('profileName').value = userData.fullName || '';
+                document.getElementById('profileEmail').value = userData.email || '';
+                document.getElementById('profilePhone').value = userData.phone || '';
+                document.getElementById('profileAddress').value = userData.address || '';
+            }
+
+            // Settings tabs
+            document.querySelectorAll('.settings-tab').forEach(tab => {
+                tab.addEventListener('click', function() {
+                    document.querySelectorAll('.settings-tab').forEach(t => t.classList.remove('active'));
+                    this.classList.add('active');
+                    
+                    const tabName = this.dataset.tab;
+                    document.querySelectorAll('.settings-tab-content').forEach(content => {
+                        content.style.display = 'none';
+                    });
+                    document.getElementById(`${tabName}-tab`).style.display = 'block';
+                });
+            });
+
+            // Profile form submit
+            document.getElementById('profileForm').addEventListener('submit', async (e) => {
+                e.preventDefault();
+                
+                const updates = {
+                    fullName: document.getElementById('profileName').value,
+                    phone: document.getElementById('profilePhone').value,
+                    address: document.getElementById('profileAddress').value
+                };
+
+                try {
+                    await db.collection('users').doc(currentUser.uid).update(updates);
+                    alert('Profile updated successfully!');
+                    
+                    // Update header
+                    document.getElementById('investorName').textContent = updates.fullName || 'Investor';
+                    document.getElementById('investorAvatar').textContent = (updates.fullName || 'I').charAt(0).toUpperCase();
+                } catch (error) {
+                    alert('Error updating profile: ' + error.message);
+                }
+            });
+
+            // Security buttons
+            document.getElementById('changePasswordBtn')?.addEventListener('click', () => {
+                alert('Change password functionality will be implemented here');
+            });
+
+            document.getElementById('viewLoginHistory')?.addEventListener('click', () => {
+                alert('Login history will be displayed here');
+            });
+
+            document.getElementById('manageSessions')?.addEventListener('click', () => {
+                alert('Session management will be displayed here');
+            });
+        }
+
+        // Show error message
+        function showError(message) {
+            const contentArea = document.getElementById('content-area');
+            contentArea.innerHTML = `
+                <div class="error-message">
+                    <i class="fas fa-exclamation-circle" style="font-size: 48px; margin-bottom: 20px;"></i>
+                    <p>${message}</p>
+                </div>
+            `;
+        }
+
+        // Logout
+        document.getElementById('logoutBtn').addEventListener('click', async () => {
+            try {
+                await auth.signOut();
+                window.location.href = '../index.html';
+            } catch (error) {
+                console.error('Logout error:', error);
+            }
+        });
+    </script>
+</body>
+</html>
