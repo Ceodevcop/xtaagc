@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Admin Login - TAAGC</title>
+    <title>Login - TAAGC</title>
     
     <!-- Firebase 8.10.1 SDK -->
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
@@ -21,45 +21,43 @@
             font-family: 'Inter', sans-serif;
         }
         body {
-            background: linear-gradient(135deg, #0a2540, #1a3a4f);
+            background: linear-gradient(135deg, #0a2540 0%, #1a3a4f 100%);
             min-height: 100vh;
             display: flex;
             align-items: center;
             justify-content: center;
-            padding: 20px;
         }
-        .login-card {
-            max-width: 400px;
-            width: 100%;
-            background: #fff;
+        .login-container {
+            background: white;
             border-radius: 24px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.2);
+            width: 90%;
+            max-width: 450px;
             padding: 40px;
-            box-shadow: 0 20px 40px rgba(0,0,0,.3);
         }
         .logo {
             text-align: center;
             margin-bottom: 30px;
         }
         .logo-icon {
-            width: 60px;
-            height: 60px;
-            background: linear-gradient(135deg, #0a2540, #3a5a78);
-            border-radius: 16px;
+            width: 80px;
+            height: 80px;
+            background: #0a2540;
+            border-radius: 20px;
             display: flex;
             align-items: center;
             justify-content: center;
-            color: #fff;
-            font-size: 28px;
-            font-weight: 700;
             margin: 0 auto 15px;
+            color: white;
+            font-size: 36px;
+            font-weight: 700;
         }
-        .logo h2 {
+        .logo h1 {
             color: #0a2540;
-            font-size: 24px;
+            font-size: 28px;
         }
-        .logo p {
-            color: #64748b;
-            font-size: 14px;
+        .logo span {
+            color: #c19a6b;
         }
         .form-group {
             margin-bottom: 20px;
@@ -67,147 +65,212 @@
         label {
             display: block;
             margin-bottom: 8px;
+            color: #333;
             font-weight: 600;
-            color: #0a2540;
-        }
-        .input-wrapper {
-            position: relative;
-        }
-        .input-wrapper i {
-            position: absolute;
-            left: 16px;
-            top: 50%;
-            transform: translateY(-50%);
-            color: #a0aec0;
+            font-size: 14px;
         }
         input {
             width: 100%;
-            padding: 14px 16px 14px 48px;
+            padding: 14px 16px;
             border: 2px solid #e2e8f0;
             border-radius: 12px;
-            font-size: 15px;
+            font-size: 16px;
+            transition: all 0.3s;
         }
         input:focus {
             border-color: #c19a6b;
             outline: none;
+            box-shadow: 0 0 0 3px rgba(193, 154, 107, 0.1);
         }
-        .checkbox-label {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            cursor: pointer;
-            color: #4a5568;
-        }
-        .btn {
+        .btn-login {
             width: 100%;
-            padding: 16px;
+            padding: 14px;
             background: #0a2540;
-            color: #fff;
+            color: white;
             border: none;
             border-radius: 12px;
+            font-size: 16px;
             font-weight: 600;
             cursor: pointer;
-            margin-top: 20px;
-            transition: background 0.2s;
+            transition: all 0.3s;
+            margin-top: 10px;
         }
-        .btn:hover {
+        .btn-login:hover {
             background: #1a3a4f;
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(10, 37, 64, 0.2);
         }
-        .btn:disabled {
-            opacity: 0.6;
-            cursor: not-allowed;
+        .links {
+            text-align: center;
+            margin-top: 25px;
+        }
+        .links a {
+            color: #c19a6b;
+            text-decoration: none;
+            font-weight: 600;
+            margin: 0 10px;
+        }
+        .links a:hover {
+            text-decoration: underline;
         }
         .alert {
-            padding: 15px;
+            padding: 12px;
             border-radius: 8px;
-            margin-top: 20px;
+            margin-bottom: 20px;
             display: none;
         }
         .alert-error {
-            background: #fff5f5;
-            border-left: 4px solid #e53e3e;
-            color: #742a2a;
-            display: block;
+            background: #fee2e2;
+            color: #dc2626;
+            border: 1px solid #fecaca;
         }
         .alert-success {
-            background: #f0fff4;
-            border-left: 4px solid #2e7d5e;
-            color: #22543d;
-            display: block;
+            background: #dcfce7;
+            color: #16a34a;
+            border: 1px solid #bbf7d0;
         }
-        .loading {
+        .role-indicator {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            margin: 20px 0;
+            padding: 15px;
+            background: #f8fafc;
+            border-radius: 12px;
+        }
+        .role-item {
+            text-align: center;
+            padding: 10px;
+            border-radius: 8px;
+            flex: 1;
+        }
+        .role-item.admin {
+            background: #e53e3e20;
+            border: 1px solid #e53e3e;
+        }
+        .role-item.investor {
+            background: #0a254020;
+            border: 1px solid #0a2540;
+        }
+        .role-item.client {
+            background: #c19a6b20;
+            border: 1px solid #c19a6b;
+        }
+        .role-item i {
+            font-size: 24px;
+            margin-bottom: 5px;
+        }
+        .loading-spinner {
             display: inline-block;
             width: 20px;
             height: 20px;
-            border: 3px solid rgba(255,255,255,.3);
-            border-top-color: #fff;
+            border: 3px solid #f3f3f3;
+            border-top: 3px solid #c19a6b;
             border-radius: 50%;
             animation: spin 1s linear infinite;
+            margin-right: 10px;
         }
         @keyframes spin {
-            to { transform: rotate(360deg); }
-        }
-        .status-box {
-            background: #f8fafc;
-            border-radius: 8px;
-            padding: 10px;
-            margin-bottom: 20px;
-            font-size: 13px;
-            text-align: center;
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
         }
     </style>
 </head>
 <body>
-    <div class="login-card">
+    <div class="login-container">
         <div class="logo">
-            <div class="logo-icon">A</div>
-            <h2>TAAGC Admin</h2>
-            <p>Secure administration portal</p>
+            <div class="logo-icon">TA</div>
+            <h1><span>TAAGC</span> Login</h1>
         </div>
-        
-        <div id="status" class="status-box">Loading Firebase...</div>
-        
+
         <div id="alertMessage" class="alert"></div>
-        
+
+        <!-- Role Information -->
+        <div class="role-indicator">
+            <div class="role-item admin">
+                <i class="fas fa-crown"></i>
+                <div>Admin</div>
+                <small>Full Access</small>
+            </div>
+            <div class="role-item investor">
+                <i class="fas fa-chart-line"></i>
+                <div>Investor</div>
+                <small>Investment Portal</small>
+            </div>
+            <div class="role-item client">
+                <i class="fas fa-user"></i>
+                <div>Client</div>
+                <small>Client Portal</small>
+            </div>
+        </div>
+
         <form id="loginForm">
             <div class="form-group">
-                <label><i class="fas fa-envelope"></i> Email</label>
-                <div class="input-wrapper">
-                    <i class="fas fa-envelope"></i>
-                    <input type="email" id="email" value="Email" required>
-                </div>
+                <label for="email">
+                    <i class="fas fa-envelope" style="color: #c19a6b; margin-right: 5px;"></i>
+                    Email Address
+                </label>
+                <input type="email" id="email" placeholder="Enter your email" required>
             </div>
             <div class="form-group">
-                <label><i class="fas fa-lock"></i> Password</label>
-                <div class="input-wrapper">
-                    <i class="fas fa-lock"></i>
-                    <input type="password" id="password" value="password" required>
-                </div>
-            </div>
-            <div style="margin:15px 0">
-                <label class="checkbox-label">
-                    <input type="checkbox" id="remember" checked> Remember me
+                <label for="password">
+                    <i class="fas fa-lock" style="color: #c19a6b; margin-right: 5px;"></i>
+                    Password
                 </label>
+                <input type="password" id="password" placeholder="Enter your password" required>
             </div>
-            <button type="submit" class="btn" id="loginBtn">
-                <i class="fas fa-sign-in-alt"></i> Access Admin Panel
+            <button type="submit" class="btn-login" id="loginBtn">
+                <i class="fas fa-sign-in-alt"></i> Login
             </button>
         </form>
-        
-        
-        
-        <div class="footer-note">
-            <i class="fas fa-lock"></i> All access is logged
+
+        <div class="links">
+            <a href="register.html"><i class="fas fa-user-plus"></i> Create Account</a>
+            <a href="#" onclick="showForgotPassword()"><i class="fas fa-key"></i> Forgot Password?</a>
+        </div>
+
+        <!-- Demo Credentials -->
+        <div style="margin-top: 30px; padding: 20px; background: #f8fafc; border-radius: 12px; font-size: 14px;">
+            <p style="color: #0a2540; font-weight: 600; margin-bottom: 10px;">
+                <i class="fas fa-info-circle"></i> Demo Credentials:
+            </p>
+            <div style="display: grid; gap: 10px;">
+                <div style="padding: 8px; background: white; border-radius: 6px;">
+                    <strong style="color: #e53e3e;">Admin:</strong> admin@taagc.com / admin123
+                </div>
+                <div style="padding: 8px; background: white; border-radius: 6px;">
+                    <strong style="color: #0a2540;">Investor:</strong> investor@test.com / test123
+                </div>
+                <div style="padding: 8px; background: white; border-radius: 6px;">
+                    <strong style="color: #c19a6b;">Client:</strong> client@test.com / test123
+                </div>
+            </div>
+            <p style="color: #64748b; margin-top: 10px; font-size: 12px;">
+                <i class="fas fa-info-circle"></i> After login, you'll be automatically redirected based on your role.
+            </p>
+        </div>
+    </div>
+
+    <!-- Forgot Password Modal -->
+    <div id="forgotModal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 1000;">
+        <div style="background: white; width: 90%; max-width: 400px; margin: 100px auto; padding: 30px; border-radius: 16px;">
+            <h3 style="color: #0a2540; margin-bottom: 20px;">Reset Password</h3>
+            <p style="margin-bottom: 20px; color: #64748b;">Enter your email to receive a password reset link.</p>
+            <input type="email" id="resetEmail" placeholder="Your email" style="width: 100%; padding: 12px; border: 1px solid #e2e8f0; border-radius: 8px; margin-bottom: 20px;">
+            <div style="display: flex; gap: 10px;">
+                <button onclick="sendPasswordReset()" style="flex: 1; background: #0a2540; color: white; border: none; padding: 12px; border-radius: 8px; cursor: pointer;">Send Reset</button>
+                <button onclick="hideForgotModal()" style="flex: 1; background: #e2e8f0; color: #333; border: none; padding: 12px; border-radius: 8px; cursor: pointer;">Cancel</button>
+            </div>
         </div>
     </div>
 
     <script>
-        // Firebase 8.10.1 Configuration
+        // Firebase Configuration
         const firebaseConfig = {
             apiKey: "AIzaSyAI1MrcP977UgRLQoePxl64JOSyj9v4WpI",
             authDomain: "xtaagc.firebaseapp.com",
             projectId: "xtaagc",
-            storageBucket: "xtaagc.firebasestorage.app",
+            storageBucket: "xtaagc.appspot.com",
             messagingSenderId: "256073982437",
             appId: "1:256073982437:web:8da63bb7acc86c0ca98f0c"
         };
@@ -219,103 +282,223 @@
         
         const auth = firebase.auth();
         const db = firebase.firestore();
-        
-        const statusDiv = document.getElementById('status');
-        statusDiv.innerHTML = '✅ Firebase ready';
-        statusDiv.style.color = 'green';
-        
-        // Check if already logged in
-        auth.onAuthStateChanged((user) => {
+
+        // Enable persistence
+        db.enablePersistence().catch(err => console.log('Persistence error:', err));
+
+        // Check if user is already logged in (auto-redirect)
+        auth.onAuthStateChanged(async (user) => {
             if (user) {
-                const session = localStorage.getItem('taagc_admin') || sessionStorage.getItem('taagc_admin');
-                if (session) {
-                    window.location.href = 'profile';
+                try {
+                    // Show loading message
+                    showAlert('info', 'Checking your account...');
+                    
+                    // Get user role from Firestore
+                    const userDoc = await db.collection('users').doc(user.uid).get();
+                    
+                    if (userDoc.exists) {
+                        const userData = userDoc.data();
+                        const role = userData.role || 'client'; // Default to client if no role
+                        
+                        // Update last login time
+                        await db.collection('users').doc(user.uid).update({
+                            lastLogin: firebase.firestore.FieldValue.serverTimestamp()
+                        });
+                        
+                        // Redirect based on role
+                        if (role === 'admin') {
+                            console.log('Redirecting admin to admin panel');
+                            window.location.href = 'admin.html';
+                        } else {
+                            console.log('Redirecting user to profile');
+                            window.location.href = 'profile.html';
+                        }
+                    } else {
+                        // User exists in Auth but not in Firestore - create basic profile
+                        console.log('User exists in Auth but not Firestore, creating profile');
+                        await db.collection('users').doc(user.uid).set({
+                            uid: user.uid,
+                            email: user.email,
+                            fullName: user.displayName || 'User',
+                            role: 'client', // Default role
+                            generatedId: 'Tc' + Date.now().toString().slice(-6),
+                            createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+                            lastLogin: firebase.firestore.FieldValue.serverTimestamp()
+                        });
+                        
+                        // Redirect to profile
+                        window.location.href = 'profile.html';
+                    }
+                } catch (error) {
+                    console.error('Auto-redirect error:', error);
+                    // If we can't get the role, still try to redirect to profile
+                    window.location.href = 'profile.html';
                 }
             }
         });
 
-        // Login handler
-        document.getElementById('loginForm').addEventListener('submit', async function(e) {
+        // Login Form Handler
+        document.getElementById('loginForm').addEventListener('submit', async (e) => {
             e.preventDefault();
             
             const email = document.getElementById('email').value;
             const password = document.getElementById('password').value;
-            const remember = document.getElementById('remember').checked;
-            const btn = document.getElementById('loginBtn');
             const alertDiv = document.getElementById('alertMessage');
-
-            btn.innerHTML = '<span class="loading"></span> Verifying...';
-            btn.disabled = true;
+            const loginBtn = document.getElementById('loginBtn');
 
             try {
-                const userCredential = await auth.signInWithEmailAndPassword(email, password);
-                const user = userCredential.user;
+                // Show loading state
+                loginBtn.innerHTML = '<span class="loading-spinner"></span> Logging in...';
+                loginBtn.disabled = true;
 
-                // Check if admin
-                let isAdmin = false;
-                let adminData = null;
+                // Attempt login
+                const userCred = await auth.signInWithEmailAndPassword(email, password);
+                const user = userCred.user;
 
-                try {
-                    const adminDoc = await db.collection('admins').doc(user.uid).get();
-                    if (adminDoc.exists) {
-                        isAdmin = true;
-                        adminData = adminDoc.data();
-                    }
-                } catch (e) {}
+                // Show success message
+                showAlert('success', 'Login successful! Redirecting...');
 
-                // Hardcoded super admins
-                if (!isAdmin) {
-                    const superAdmins = ['admin@taagc.com', 'priahmz@gmail.com'];
-                    if (superAdmins.includes(email)) {
-                        isAdmin = true;
-                        adminData = { name: 'Super Admin', email: email, role: 'super-admin' };
-                        
-                        // Create admin document for future
-                        try {
-                            await db.collection('admins').doc(user.uid).set({
-                                name: 'Super Admin',
-                                email: email,
-                                role: 'super-admin',
-                                createdAt: new Date().toISOString()
-                            }, { merge: true });
-                        } catch (e) {}
-                    }
-                }
-
-                if (!isAdmin) {
-                    throw new Error('Access denied. Admin privileges required.');
-                }
-
-                // Save session
-                const sessionData = {
-                    uid: user.uid,
-                    email: user.email,
-                    name: adminData?.name || 'Admin',
-                    role: adminData?.role || 'admin'
-                };
-
-                if (remember) {
-                    localStorage.setItem('taagc_admin', JSON.stringify(sessionData));
+                // Get or create user profile
+                let userDoc = await db.collection('users').doc(user.uid).get();
+                
+                if (!userDoc.exists) {
+                    // Create profile if it doesn't exist
+                    const newUserData = {
+                        uid: user.uid,
+                        email: user.email,
+                        fullName: user.displayName || email.split('@')[0],
+                        role: email.includes('admin') ? 'admin' : 'client', // Guess role from email
+                        generatedId: email.includes('investor') ? 'Ti' + Date.now().toString().slice(-6) : 'Tc' + Date.now().toString().slice(-6),
+                        createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+                        lastLogin: firebase.firestore.FieldValue.serverTimestamp()
+                    };
+                    
+                    await db.collection('users').doc(user.uid).set(newUserData);
+                    userDoc = await db.collection('users').doc(user.uid).get();
                 } else {
-                    sessionStorage.setItem('taagc_admin', JSON.stringify(sessionData));
+                    // Update last login
+                    await db.collection('users').doc(user.uid).update({
+                        lastLogin: firebase.firestore.FieldValue.serverTimestamp()
+                    });
                 }
 
-                alertDiv.className = 'alert alert-success';
-                alertDiv.innerHTML = '<i class="fas fa-check-circle"></i> Login successful! Redirecting...';
-                alertDiv.style.display = 'block';
+                const userData = userDoc.data();
+                const role = userData.role || 'client';
 
+                // Log the login event
+                try {
+                    await db.collection('logs').add({
+                        action: 'User Login',
+                        userId: user.uid,
+                        userEmail: user.email,
+                        role: role,
+                        timestamp: firebase.firestore.FieldValue.serverTimestamp()
+                    });
+                } catch (logError) {
+                    console.log('Log creation skipped:', logError);
+                }
+
+                // Redirect based on role after a short delay
                 setTimeout(() => {
-                    window.location.href = 'dashboard/index.html';
+                    if (role === 'admin') {
+                        console.log('Redirecting admin to admin panel');
+                        window.location.href = 'admin/dashboard';
+                    } else {
+                        console.log('Redirecting user to profile');
+                        window.location.href = 'profile';
+                    }
                 }, 1500);
 
             } catch (error) {
-                alertDiv.className = 'alert alert-error';
-                alertDiv.innerHTML = '<i class="fas fa-exclamation-circle"></i> ' + error.message;
-                alertDiv.style.display = 'block';
+                console.error('Login error:', error);
                 
-                btn.innerHTML = '<i class="fas fa-sign-in-alt"></i> Access Admin Panel';
-                btn.disabled = false;
+                // Hide loading state
+                loginBtn.innerHTML = '<i class="fas fa-sign-in-alt"></i> Login';
+                loginBtn.disabled = false;
+
+                // Show error message
+                let errorMessage = '';
+                if (error.code === 'auth/user-not-found') {
+                    errorMessage = 'No account found with this email. Please register.';
+                } else if (error.code === 'auth/wrong-password') {
+                    errorMessage = 'Incorrect password. Please try again.';
+                } else if (error.code === 'auth/invalid-email') {
+                    errorMessage = 'Invalid email format.';
+                } else if (error.code === 'auth/too-many-requests') {
+                    errorMessage = 'Too many failed attempts. Please try again later.';
+                } else if (error.code === 'auth/user-disabled') {
+                    errorMessage = 'This account has been disabled. Contact support.';
+                } else {
+                    errorMessage = 'Login failed: ' + error.message;
+                }
+
+                showAlert('error', errorMessage);
             }
+        });
+
+        // Helper function to show alerts
+        function showAlert(type, message) {
+            const alertDiv = document.getElementById('alertMessage');
+            alertDiv.className = `alert alert-${type}`;
+            alertDiv.style.display = 'block';
+            alertDiv.innerHTML = message;
+        }
+
+        // Forgot password functions
+        window.showForgotPassword = function() {
+            document.getElementById('forgotModal').style.display = 'block';
+        };
+
+        window.hideForgotModal = function() {
+            document.getElementById('forgotModal').style.display = 'none';
+        };
+
+        window.sendPasswordReset = async function() {
+            const email = document.getElementById('resetEmail').value;
+            if (!email) {
+                alert('Please enter your email');
+                return;
+            }
+
+            try {
+                await auth.sendPasswordResetEmail(email);
+                alert('Password reset email sent! Check your inbox.');
+                hideForgotModal();
+            } catch (error) {
+                alert('Error: ' + error.message);
+            }
+        };
+
+        // Close modal when clicking outside
+        window.onclick = function(event) {
+            const modal = document.getElementById('forgotModal');
+            if (event.target === modal) {
+                modal.style.display = 'none';
+            }
+        };
+
+        // Optional: Quick fill demo credentials
+        function fillDemoCredentials(role) {
+            if (role === 'admin') {
+                document.getElementById('email').value = 'admin@taagc.com';
+                document.getElementById('password').value = 'admin123';
+            } else if (role === 'investor') {
+                document.getElementById('email').value = 'investor@test.com';
+                document.getElementById('password').value = 'test123';
+            } else if (role === 'client') {
+                document.getElementById('email').value = 'client@test.com';
+                document.getElementById('password').value = 'test123';
+            }
+        }
+
+        // Add click handlers to role items for quick fill
+        document.querySelectorAll('.role-item').forEach((item, index) => {
+            item.style.cursor = 'pointer';
+            item.addEventListener('click', () => {
+                if (index === 0) fillDemoCredentials('admin');
+                else if (index === 1) fillDemoCredentials('investor');
+                else if (index === 2) fillDemoCredentials('client');
+            });
         });
     </script>
 </body>
