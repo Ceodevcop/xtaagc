@@ -230,7 +230,7 @@
                     alertDiv.textContent = 'Admins must use the admin portal. Redirecting to admin login...';
                     
                     setTimeout(() => {
-                        window.location.href = 'admin-login.html';
+                        window.location.href = 'admin';
                     }, 2000);
                     return;
                 }
@@ -263,9 +263,9 @@
                 // Redirect based on role (investor or client only)
                 setTimeout(() => {
                     if (userData.role === 'investor') {
-                        window.location.href = 'profile/investor.html';
+                        window.location.href = 'profile/investor';
                     } else if (userData.role === 'client') {
-                        window.location.href = 'profile/client.html';
+                        window.location.href = 'profile/client';
                     }
                 }, 2000);
 
@@ -337,9 +337,9 @@
                         
                         // Auto-redirect investors and clients
                         if (userData.role === 'investor') {
-                            window.location.href = 'profile/investor.html';
+                            window.location.href = 'profile/investor';
                         } else if (userData.role === 'client') {
-                            window.location.href = 'profile/client.html';
+                            window.location.href = 'profile/client';
                         }
                     }
                 } catch (error) {
