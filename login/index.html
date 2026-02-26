@@ -308,10 +308,10 @@
                         // Redirect based on role
                         if (role === 'admin') {
                             console.log('Redirecting admin to admin panel');
-                            window.location.href = 'admin.html';
+                            window.location.href = 'admin/dashboard';
                         } else {
                             console.log('Redirecting user to profile');
-                            window.location.href = 'profile.html';
+                            window.location.href = 'profile';
                         }
                     } else {
                         // User exists in Auth but not in Firestore - create basic profile
@@ -327,12 +327,12 @@
                         });
                         
                         // Redirect to profile
-                        window.location.href = 'profile.html';
+                        window.location.href = 'profile';
                     }
                 } catch (error) {
                     console.error('Auto-redirect error:', error);
                     // If we can't get the role, still try to redirect to profile
-                    window.location.href = 'profile.html';
+                    window.location.href = 'profile';
                 }
             }
         });
