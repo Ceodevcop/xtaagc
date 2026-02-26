@@ -431,9 +431,9 @@
                         const userData = userDoc.data();
                         // Auto-redirect if already logged in
                         if (userData.role === 'admin') {
-                            window.location.href = 'admin.html';
+                            window.location.href = '';
                         } else {
-                            window.location.href = 'profile.html';
+                            window.location.href = 'profile';
                         }
                     }
                 } catch (error) {
