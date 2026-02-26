@@ -959,7 +959,7 @@
         // Check if current user is super admin
         auth.onAuthStateChanged(async (user) => {
             if (!user) {
-                window.location.href = 'admin-login.html';
+                window.location.href = 'xtaagc';
                 return;
             }
 
@@ -967,7 +967,7 @@
                 const userDoc = await db.collection('users').doc(user.uid).get();
                 if (!userDoc.exists || userDoc.data().role !== 'super_admin') {
                     alert('Access denied. Super admin only.');
-                    window.location.href = 'admin.html';
+                    window.location.href = 'admin';
                 }
             } catch (error) {
                 console.error('Auth error:', error);
