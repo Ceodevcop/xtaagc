@@ -1,0 +1,1619 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Super Admin Credentials - TAAGC</title>
+    
+    <!-- Firebase 8.10.1 SDK -->
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
+    
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        /* Your existing styles remain exactly the same */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Inter', sans-serif;
+        }
+
+        body {
+            background: linear-gradient(135deg, #0a2540 0%, #1e3a5f 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .credentials-container {
+            max-width: 1200px;
+            width: 100%;
+        }
+
+        /* Header */
+        .header {
+            text-align: center;
+            margin-bottom: 40px;
+            color: white;
+        }
+
+        .logo-icon {
+            width: 80px;
+            height: 80px;
+            background: #c19a6b;
+            border-radius: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 20px;
+            color: white;
+            font-size: 36px;
+            font-weight: 700;
+        }
+
+        .header h1 {
+            font-size: 32px;
+            margin-bottom: 10px;
+        }
+
+        .header h1 span {
+            color: #c19a6b;
+        }
+
+        .header p {
+            color: rgba(255,255,255,0.8);
+            font-size: 16px;
+        }
+
+        /* Grid Layout */
+        .credentials-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+        }
+
+        /* Cards */
+        .card {
+            background: white;
+            border-radius: 24px;
+            padding: 30px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.2);
+        }
+
+        .card-header {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 30px;
+            padding-bottom: 20px;
+            border-bottom: 2px solid #e2e8f0;
+        }
+
+        .card-icon {
+            width: 50px;
+            height: 50px;
+            background: linear-gradient(135deg, #0a2540, #1e3a5f);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 20px;
+        }
+
+        .card-header h2 {
+            color: #0a2540;
+            font-size: 20px;
+            font-weight: 600;
+        }
+
+        .card-header p {
+            color: #64748b;
+            font-size: 14px;
+            margin-top: 5px;
+        }
+
+        /* Forms */
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            color: #0a2540;
+            font-weight: 600;
+            font-size: 14px;
+        }
+
+        .form-group label i {
+            color: #c19a6b;
+            margin-right: 8px;
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 14px 16px;
+            border: 2px solid #e2e8f0;
+            border-radius: 12px;
+            font-size: 15px;
+            transition: all 0.3s;
+        }
+
+        .form-control:focus {
+            border-color: #c19a6b;
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(193, 154, 107, 0.1);
+        }
+
+        .form-control.error {
+            border-color: #e53e3e;
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+        }
+
+        /* Password Strength */
+        .password-strength {
+            margin-top: 10px;
+        }
+
+        .strength-bar {
+            height: 4px;
+            background: #e2e8f0;
+            border-radius: 2px;
+            overflow: hidden;
+            margin-bottom: 5px;
+        }
+
+        .strength-bar-fill {
+            height: 100%;
+            width: 0%;
+            transition: all 0.3s;
+        }
+
+        .strength-weak { background: #e53e3e; width: 33.33%; }
+        .strength-medium { background: #f59e0b; width: 66.66%; }
+        .strength-strong { background: #10b981; width: 100%; }
+
+        .strength-text {
+            font-size: 12px;
+            color: #64748b;
+        }
+
+        /* Buttons */
+        .btn-primary {
+            width: 100%;
+            padding: 14px;
+            background: #0a2540;
+            color: white;
+            border: none;
+            border-radius: 12px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            transition: all 0.3s;
+        }
+
+        .btn-primary:hover {
+            background: #1e3a5f;
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(10, 37, 64, 0.2);
+        }
+
+        .btn-primary:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .btn-secondary {
+            padding: 10px 20px;
+            background: #f8fafc;
+            color: #0a2540;
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.3s;
+        }
+
+        .btn-secondary:hover {
+            background: #e2e8f0;
+        }
+
+        .btn-danger {
+            background: #e53e3e20;
+            color: #e53e3e;
+            border: 1px solid #e53e3e;
+        }
+
+        .btn-danger:hover {
+            background: #e53e3e;
+            color: white;
+        }
+
+        /* Alert Messages */
+        .alert {
+            padding: 15px;
+            border-radius: 12px;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 14px;
+        }
+
+        .alert-success {
+            background: #10b98120;
+            color: #10b981;
+            border: 1px solid #10b981;
+        }
+
+        .alert-error {
+            background: #e53e3e20;
+            color: #e53e3e;
+            border: 1px solid #e53e3e;
+        }
+
+        .alert-warning {
+            background: #f59e0b20;
+            color: #f59e0b;
+            border: 1px solid #f59e0b;
+        }
+
+        .alert-info {
+            background: #3b82f620;
+            color: #3b82f6;
+            border: 1px solid #3b82f6;
+        }
+
+        /* Admin List */
+        .admin-list {
+            margin-top: 30px;
+        }
+
+        .admin-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 15px;
+            background: #f8fafc;
+            border-radius: 12px;
+            margin-bottom: 10px;
+            transition: all 0.3s;
+        }
+
+        .admin-item:hover {
+            background: #e2e8f0;
+        }
+
+        .admin-info {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .admin-avatar {
+            width: 48px;
+            height: 48px;
+            background: #0a2540;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 600;
+            font-size: 18px;
+        }
+
+        .admin-details h4 {
+            color: #0a2540;
+            margin-bottom: 5px;
+            font-size: 16px;
+        }
+
+        .admin-details p {
+            color: #64748b;
+            font-size: 13px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .admin-details p i {
+            color: #c19a6b;
+            width: 16px;
+        }
+
+        .admin-role {
+            padding: 4px 8px;
+            background: #c19a6b20;
+            color: #c19a6b;
+            border-radius: 20px;
+            font-size: 11px;
+            font-weight: 600;
+        }
+
+        .admin-role.super {
+            background: #0a2540;
+            color: white;
+        }
+
+        .admin-actions {
+            display: flex;
+            gap: 8px;
+        }
+
+        .icon-btn {
+            width: 36px;
+            height: 36px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s;
+        }
+
+        .icon-btn.edit {
+            background: #3b82f620;
+            color: #3b82f6;
+        }
+
+        .icon-btn.edit:hover {
+            background: #3b82f6;
+            color: white;
+        }
+
+        .icon-btn.delete {
+            background: #e53e3e20;
+            color: #e53e3e;
+        }
+
+        .icon-btn.delete:hover {
+            background: #e53e3e;
+            color: white;
+        }
+
+        .icon-btn.reset {
+            background: #f59e0b20;
+            color: #f59e0b;
+        }
+
+        .icon-btn.reset:hover {
+            background: #f59e0b;
+            color: white;
+        }
+
+        /* Credentials Display */
+        .credentials-display {
+            background: #0a2540;
+            color: white;
+            padding: 20px;
+            border-radius: 12px;
+            margin: 20px 0;
+            font-family: monospace;
+            position: relative;
+        }
+
+        .credentials-display .copy-btn {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: rgba(255,255,255,0.1);
+            border: none;
+            color: white;
+            padding: 5px 10px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 12px;
+        }
+
+        .credentials-display .copy-btn:hover {
+            background: rgba(255,255,255,0.2);
+        }
+
+        .credential-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 10px 0;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+        }
+
+        .credential-row:last-child {
+            border-bottom: none;
+        }
+
+        .credential-label {
+            color: #c19a6b;
+        }
+
+        /* Tabs */
+        .tabs {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 30px;
+        }
+
+        .tab {
+            flex: 1;
+            padding: 15px;
+            background: rgba(255,255,255,0.1);
+            border: none;
+            color: white;
+            border-radius: 12px;
+            cursor: pointer;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            transition: all 0.3s;
+        }
+
+        .tab:hover {
+            background: rgba(255,255,255,0.2);
+        }
+
+        .tab.active {
+            background: #c19a6b;
+        }
+
+        /* Modal */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.5);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .modal.active {
+            display: flex;
+        }
+
+        .modal-content {
+            background: white;
+            border-radius: 24px;
+            padding: 30px;
+            width: 90%;
+            max-width: 500px;
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+
+        .modal-content h3 {
+            color: #0a2540;
+            margin-bottom: 20px;
+            font-size: 20px;
+        }
+
+        .modal-actions {
+            display: flex;
+            gap: 10px;
+            margin-top: 30px;
+        }
+
+        .modal-actions button {
+            flex: 1;
+            padding: 12px;
+            border: none;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+        }
+
+        /* Loading */
+        .loading {
+            text-align: center;
+            padding: 40px;
+            color: #64748b;
+        }
+
+        .loading i {
+            font-size: 40px;
+            color: #c19a6b;
+            margin-bottom: 20px;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .credentials-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .form-row {
+                grid-template-columns: 1fr;
+            }
+            
+            .admin-item {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 15px;
+            }
+            
+            .admin-actions {
+                width: 100%;
+                justify-content: flex-end;
+            }
+        }
+
+        /* Additional styles for switches */
+        .switch {
+            position: relative;
+            display: inline-block;
+            width: 60px;
+            height: 34px;
+        }
+
+        .switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: #ccc;
+            transition: .4s;
+            border-radius: 34px;
+        }
+
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 26px;
+            width: 26px;
+            left: 4px;
+            bottom: 4px;
+            background-color: white;
+            transition: .4s;
+            border-radius: 50%;
+        }
+
+        input:checked + .slider {
+            background-color: #c19a6b;
+        }
+
+        input:checked + .slider:before {
+            transform: translateX(26px);
+        }
+
+        .security-option {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px;
+            background: #f8fafc;
+            border-radius: 12px;
+            margin-bottom: 15px;
+        }
+
+        .security-option h4 {
+            color: #0a2540;
+            margin-bottom: 5px;
+            font-size: 16px;
+        }
+
+        .status-badge {
+            padding: 4px 8px;
+            border-radius: 20px;
+            font-size: 11px;
+            font-weight: 600;
+            margin-left: 8px;
+        }
+
+        .status-active {
+            background: #10b98120;
+            color: #10b981;
+        }
+
+        .status-inactive {
+            background: #64748b20;
+            color: #64748b;
+        }
+
+        .status-suspended {
+            background: #e53e3e20;
+            color: #e53e3e;
+        }
+    </style>
+</head>
+<body>
+    <div class="credentials-container">
+        <!-- Header -->
+        <div class="header">
+            <div class="logo-icon">
+                <i class="fas fa-crown"></i>
+            </div>
+            <h1><span>TAAGC</span> Super Admin Credentials</h1>
+            <p>Manage super admin accounts and credentials securely</p>
+        </div>
+
+        <!-- Tabs -->
+        <div class="tabs">
+            <button class="tab active" data-tab="create">
+                <i class="fas fa-plus-circle"></i>
+                Create Admin
+            </button>
+            <button class="tab" data-tab="manage">
+                <i class="fas fa-users-cog"></i>
+                Manage Admins
+            </button>
+            <button class="tab" data-tab="security">
+                <i class="fas fa-shield-alt"></i>
+                Security Settings
+            </button>
+        </div>
+
+        <!-- Create Admin Tab -->
+        <div id="create-tab" class="tab-content">
+            <div class="credentials-grid">
+                <!-- Create New Admin Form -->
+                <div class="card">
+                    <div class="card-header">
+                        <div class="card-icon">
+                            <i class="fas fa-user-plus"></i>
+                        </div>
+                        <div>
+                            <h2>Create New Super Admin</h2>
+                            <p>Add a new super admin to the system</p>
+                        </div>
+                    </div>
+
+                    <div id="createAlert" class="alert" style="display: none;"></div>
+
+                    <form id="createAdminForm">
+                        <div class="form-group">
+                            <label><i class="fas fa-user"></i> Full Name</label>
+                            <input type="text" class="form-control" id="adminFullName" placeholder="Enter full name" required>
+                        </div>
+
+                        <div class="form-group">
+                            <label><i class="fas fa-envelope"></i> Email Address</label>
+                            <input type="email" class="form-control" id="adminEmail" placeholder="admin@taagc.com" required>
+                        </div>
+
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label><i class="fas fa-phone"></i> Phone Number</label>
+                                <input type="tel" class="form-control" id="adminPhone" placeholder="+1 234 567 8900">
+                            </div>
+                            <div class="form-group">
+                                <label><i class="fas fa-tag"></i> Admin Role</label>
+                                <select class="form-control" id="adminRole">
+                                    <option value="super_admin">Super Admin</option>
+                                    <option value="admin">Admin</option>
+                                    <option value="finance_admin">Finance Admin</option>
+                                    <option value="support_admin">Support Admin</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label><i class="fas fa-lock"></i> Password</label>
+                            <input type="password" class="form-control" id="adminPassword" placeholder="Enter password" required onkeyup="checkPasswordStrength()">
+                            <div class="password-strength">
+                                <div class="strength-bar">
+                                    <div id="strengthBar" class="strength-bar-fill"></div>
+                                </div>
+                                <span id="strengthText" class="strength-text">Enter a strong password</span>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label><i class="fas fa-lock"></i> Confirm Password</label>
+                            <input type="password" class="form-control" id="adminConfirmPassword" placeholder="Confirm password" required>
+                        </div>
+
+                        <div class="form-group">
+                            <label style="display: flex; align-items: center; gap: 10px;">
+                                <input type="checkbox" id="sendCredentials" checked>
+                                <span>Send credentials to admin via email</span>
+                            </label>
+                        </div>
+
+                        <button type="submit" class="btn-primary" id="createAdminBtn">
+                            <i class="fas fa-plus-circle"></i>
+                            Create Super Admin
+                        </button>
+                    </form>
+                </div>
+
+                <!-- Generated Credentials Display -->
+                <div class="card">
+                    <div class="card-header">
+                        <div class="card-icon">
+                            <i class="fas fa-key"></i>
+                        </div>
+                        <div>
+                            <h2>Generated Credentials</h2>
+                            <p>Recently created admin credentials</p>
+                        </div>
+                    </div>
+
+                    <div id="recentCredentials">
+                        <div class="credentials-display">
+                            <button class="copy-btn" onclick="copyCredentials()">
+                                <i class="fas fa-copy"></i> Copy All
+                            </button>
+                            <div class="credential-row">
+                                <span class="credential-label">Admin ID:</span>
+                                <span id="generatedAdminId">Ad001/03/2025</span>
+                            </div>
+                            <div class="credential-row">
+                                <span class="credential-label">Email:</span>
+                                <span id="generatedEmail">admin@taagc.com</span>
+                            </div>
+                            <div class="credential-row">
+                                <span class="credential-label">Password:</span>
+                                <span id="generatedPassword">••••••••</span>
+                            </div>
+                            <div class="credential-row">
+                                <span class="credential-label">Role:</span>
+                                <span id="generatedRole">Super Admin</span>
+                            </div>
+                            <div class="credential-row">
+                                <span class="credential-label">Created:</span>
+                                <span id="generatedDate">Just now</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="admin-list" style="margin-top: 20px;">
+                        <h3 style="color: #0a2540; margin-bottom: 15px; font-size: 16px;">
+                            <i class="fas fa-clock"></i> Recent Activity
+                        </h3>
+                        <div id="recentActivity">
+                            <!-- Filled by JavaScript -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Manage Admins Tab -->
+        <div id="manage-tab" class="tab-content" style="display: none;">
+            <div class="card">
+                <div class="card-header">
+                    <div class="card-icon">
+                        <i class="fas fa-users-cog"></i>
+                    </div>
+                    <div>
+                        <h2>Manage Administrators</h2>
+                        <p>View and manage all admin accounts</p>
+                    </div>
+                </div>
+
+                <div class="form-group" style="display: flex; gap: 15px;">
+                    <input type="text" class="form-control" placeholder="Search admins..." id="searchAdmins" style="flex: 1;">
+                    <select class="form-control" style="width: 200px;" id="filterRole">
+                        <option value="all">All Roles</option>
+                        <option value="super_admin">Super Admin</option>
+                        <option value="admin">Admin</option>
+                        <option value="finance_admin">Finance Admin</option>
+                        <option value="support_admin">Support Admin</option>
+                    </select>
+                </div>
+
+                <div id="adminsList" class="admin-list">
+                    <!-- Filled by JavaScript -->
+                    <div class="loading">
+                        <i class="fas fa-spinner fa-spin"></i>
+                        <p>Loading admins...</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Security Settings Tab -->
+        <div id="security-tab" class="tab-content" style="display: none;">
+            <div class="card">
+                <div class="card-header">
+                    <div class="card-icon">
+                        <i class="fas fa-shield-alt"></i>
+                    </div>
+                    <div>
+                        <h2>Security Settings</h2>
+                        <p>Configure admin account security</p>
+                    </div>
+                </div>
+
+                <div id="securityAlert" class="alert" style="display: none;"></div>
+
+                <form id="securityForm">
+                    <div class="security-option">
+                        <div>
+                            <h4>Two-Factor Authentication</h4>
+                            <p style="color: #64748b; font-size: 14px;">Require 2FA for all admin accounts</p>
+                        </div>
+                        <label class="switch">
+                            <input type="checkbox" id="require2FA" checked>
+                            <span class="slider"></span>
+                        </label>
+                    </div>
+
+                    <div class="security-option">
+                        <div>
+                            <h4>Session Timeout</h4>
+                            <p style="color: #64748b; font-size: 14px;">Automatically log out after inactivity</p>
+                        </div>
+                        <select class="form-control" style="width: 150px;" id="sessionTimeout">
+                            <option value="30">30 minutes</option>
+                            <option value="60">1 hour</option>
+                            <option value="120">2 hours</option>
+                            <option value="240">4 hours</option>
+                        </select>
+                    </div>
+
+                    <div class="security-option">
+                        <div>
+                            <h4>Password Expiry</h4>
+                            <p style="color: #64748b; font-size: 14px;">Force password change after</p>
+                        </div>
+                        <select class="form-control" style="width: 150px;" id="passwordExpiry">
+                            <option value="30">30 days</option>
+                            <option value="60">60 days</option>
+                            <option value="90">90 days</option>
+                            <option value="0">Never</option>
+                        </select>
+                    </div>
+
+                    <div class="security-option">
+                        <div>
+                            <h4>Login Attempts</h4>
+                            <p style="color: #64748b; font-size: 14px;">Maximum failed attempts before lockout</p>
+                        </div>
+                        <select class="form-control" style="width: 150px;" id="maxAttempts">
+                            <option value="3">3 attempts</option>
+                            <option value="5">5 attempts</option>
+                            <option value="10">10 attempts</option>
+                        </select>
+                    </div>
+
+                    <div class="security-option">
+                        <div>
+                            <h4>IP Whitelist</h4>
+                            <p style="color: #64748b; font-size: 14px;">Restrict admin access to specific IPs</p>
+                        </div>
+                        <button type="button" class="btn-secondary" onclick="showIPWhitelistModal()">
+                            Configure IPs
+                        </button>
+                    </div>
+
+                    <div class="security-option">
+                        <div>
+                            <h4>Audit Logging</h4>
+                            <p style="color: #64748b; font-size: 14px;">Log all admin actions</p>
+                        </div>
+                        <label class="switch">
+                            <input type="checkbox" id="auditLogging" checked>
+                            <span class="slider"></span>
+                        </label>
+                    </div>
+
+                    <button type="submit" class="btn-primary" style="margin-top: 30px;">
+                        <i class="fas fa-save"></i>
+                        Save Security Settings
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Edit Admin Modal -->
+    <div id="editAdminModal" class="modal">
+        <div class="modal-content">
+            <h3><i class="fas fa-edit"></i> Edit Admin</h3>
+            <input type="hidden" id="editAdminId">
+            <div class="form-group">
+                <label>Full Name</label>
+                <input type="text" class="form-control" id="editFullName">
+            </div>
+            <div class="form-group">
+                <label>Email</label>
+                <input type="email" class="form-control" id="editEmail" readonly>
+            </div>
+            <div class="form-group">
+                <label>Phone</label>
+                <input type="tel" class="form-control" id="editPhone">
+            </div>
+            <div class="form-group">
+                <label>Role</label>
+                <select class="form-control" id="editRole">
+                    <option value="super_admin">Super Admin</option>
+                    <option value="admin">Admin</option>
+                    <option value="finance_admin">Finance Admin</option>
+                    <option value="support_admin">Support Admin</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label>Status</label>
+                <select class="form-control" id="editStatus">
+                    <option value="active">Active</option>
+                    <option value="inactive">Inactive</option>
+                    <option value="suspended">Suspended</option>
+                </select>
+            </div>
+            <div class="modal-actions">
+                <button class="btn-primary" onclick="saveAdminChanges()">Save Changes</button>
+                <button class="btn-secondary" onclick="closeEditModal()">Cancel</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Reset Password Modal -->
+    <div id="resetPasswordModal" class="modal">
+        <div class="modal-content">
+            <h3><i class="fas fa-key"></i> Reset Password</h3>
+            <input type="hidden" id="resetAdminId">
+            <input type="hidden" id="resetAdminEmail">
+            <div class="form-group">
+                <label>New Password</label>
+                <input type="password" class="form-control" id="newPassword" placeholder="Enter new password">
+            </div>
+            <div class="form-group">
+                <label>Confirm Password</label>
+                <input type="password" class="form-control" id="confirmNewPassword" placeholder="Confirm new password">
+            </div>
+            <div class="form-group">
+                <label style="display: flex; align-items: center; gap: 10px;">
+                    <input type="checkbox" id="sendNewCredentials" checked>
+                    <span>Send new credentials to admin email</span>
+                </label>
+            </div>
+            <div class="modal-actions">
+                <button class="btn-primary" onclick="resetAdminPassword()">Reset Password</button>
+                <button class="btn-secondary" onclick="closeResetModal()">Cancel</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- IP Whitelist Modal -->
+    <div id="ipWhitelistModal" class="modal">
+        <div class="modal-content">
+            <h3><i class="fas fa-network-wired"></i> IP Whitelist</h3>
+            <p style="color: #64748b; margin-bottom: 20px;">Add IP addresses that can access admin panel</p>
+            
+            <div class="form-group">
+                <label>IP Address</label>
+                <div style="display: flex; gap: 10px;">
+                    <input type="text" class="form-control" id="newIP" placeholder="192.168.1.100" style="flex: 1;">
+                    <button class="btn-secondary" onclick="addIPToWhitelist()">Add</button>
+                </div>
+            </div>
+
+            <div id="ipList" class="admin-list">
+                <!-- Filled by JavaScript -->
+            </div>
+
+            <div class="modal-actions">
+                <button class="btn-primary" onclick="saveIPWhitelist()">Save</button>
+                <button class="btn-secondary" onclick="closeIPModal()">Cancel</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Firebase Configuration
+        const firebaseConfig = {
+            apiKey: "AIzaSyAI1MrcP977UgRLQoePxl64JOSyj9v4WpI",
+            authDomain: "xtaagc.firebaseapp.com",
+            projectId: "xtaagc",
+            storageBucket: "xtaagc.appspot.com",
+            messagingSenderId: "256073982437",
+            appId: "1:256073982437:web:8da63bb7acc86c0ca98f0c"
+        };
+
+        // Initialize Firebase
+        if (!firebase.apps.length) {
+            firebase.initializeApp(firebaseConfig);
+        }
+        
+        const auth = firebase.auth();
+        const db = firebase.firestore();
+
+        // IMPORTANT FIX: Check authentication without auto-redirect
+        let isCheckingAuth = false;
+
+        auth.onAuthStateChanged(async (user) => {
+            // Prevent multiple simultaneous checks
+            if (isCheckingAuth) return;
+            isCheckingAuth = true;
+
+            try {
+                if (!user) {
+                    // Only redirect if we're sure there's no user
+                    console.log('No user found, redirecting to login...');
+                    window.location.href = 'admin-login.html';
+                    return;
+                }
+
+                // Get user data from Firestore
+                const userDoc = await db.collection('users').doc(user.uid).get();
+                
+                if (!userDoc.exists) {
+                    console.log('User document not found');
+                    await auth.signOut();
+                    window.location.href = 'admin-login.html';
+                    return;
+                }
+
+                const userData = userDoc.data();
+                
+                // Check if user has admin role
+                if (userData.role !== 'super_admin' && userData.role !== 'admin') {
+                    console.log('User does not have admin role');
+                    alert('Access denied. Admin privileges required.');
+                    await auth.signOut();
+                    window.location.href = '../../index.html';
+                    return;
+                }
+
+                // User is authenticated and has proper role
+                console.log('Admin authenticated successfully:', user.email);
+                
+                // Load initial data
+                loadSecuritySettings();
+                
+                // Load admins if on manage tab
+                if (document.querySelector('.tab.active').dataset.tab === 'manage') {
+                    loadAdmins();
+                }
+
+            } catch (error) {
+                console.error('Auth check error:', error);
+                // Don't redirect on error, just show error message
+                showAlert(document.getElementById('createAlert'), 'Authentication error: ' + error.message, 'error');
+            } finally {
+                isCheckingAuth = false;
+            }
+        });
+
+        // Tab switching
+        document.querySelectorAll('.tab').forEach(tab => {
+            tab.addEventListener('click', function() {
+                document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+                this.classList.add('active');
+                
+                const tabName = this.dataset.tab;
+                document.querySelectorAll('.tab-content').forEach(content => {
+                    content.style.display = 'none';
+                });
+                document.getElementById(`${tabName}-tab`).style.display = 'block';
+                
+                if (tabName === 'manage') {
+                    loadAdmins();
+                }
+            });
+        });
+
+        // Password strength checker
+        window.checkPasswordStrength = function() {
+            const password = document.getElementById('adminPassword').value;
+            const strengthBar = document.getElementById('strengthBar');
+            const strengthText = document.getElementById('strengthText');
+            
+            strengthBar.className = 'strength-bar-fill';
+            
+            if (password.length === 0) {
+                strengthText.textContent = 'Enter a strong password';
+                return;
+            }
+            
+            let strength = 0;
+            if (password.length >= 8) strength++;
+            if (password.match(/[a-z]+/)) strength++;
+            if (password.match(/[A-Z]+/)) strength++;
+            if (password.match(/[0-9]+/)) strength++;
+            if (password.match(/[$@#&!]+/)) strength++;
+            
+            if (strength <= 2) {
+                strengthBar.classList.add('strength-weak');
+                strengthText.textContent = 'Weak password';
+                strengthText.style.color = '#e53e3e';
+            } else if (strength <= 4) {
+                strengthBar.classList.add('strength-medium');
+                strengthText.textContent = 'Medium password';
+                strengthText.style.color = '#f59e0b';
+            } else {
+                strengthBar.classList.add('strength-strong');
+                strengthText.textContent = 'Strong password';
+                strengthText.style.color = '#10b981';
+            }
+        };
+
+        // Generate admin ID
+        function generateAdminId() {
+            const now = new Date();
+            const month = String(now.getMonth() + 1).padStart(2, '0');
+            const year = now.getFullYear();
+            const random = Math.floor(Math.random() * 900 + 100);
+            return `Ad${random}/${month}/${year}`;
+        }
+
+        // Create Admin Form Handler
+        document.getElementById('createAdminForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const fullName = document.getElementById('adminFullName').value;
+            const email = document.getElementById('adminEmail').value;
+            const phone = document.getElementById('adminPhone').value;
+            const role = document.getElementById('adminRole').value;
+            const password = document.getElementById('adminPassword').value;
+            const confirmPassword = document.getElementById('adminConfirmPassword').value;
+            const sendCredentials = document.getElementById('sendCredentials').checked;
+            const alertDiv = document.getElementById('createAlert');
+            const createBtn = document.getElementById('createAdminBtn');
+
+            // Validation
+            if (password !== confirmPassword) {
+                showAlert(alertDiv, 'Passwords do not match!', 'error');
+                return;
+            }
+
+            if (password.length < 8) {
+                showAlert(alertDiv, 'Password must be at least 8 characters long!', 'error');
+                return;
+            }
+
+            try {
+                createBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Creating...';
+                createBtn.disabled = true;
+
+                // Create auth user
+                const userCred = await auth.createUserWithEmailAndPassword(email, password);
+                const user = userCred.user;
+
+                // Update profile
+                await user.updateProfile({
+                    displayName: fullName
+                });
+
+                // Generate admin ID
+                const adminId = generateAdminId();
+
+                // Create admin profile in Firestore
+                await db.collection('users').doc(user.uid).set({
+                    uid: user.uid,
+                    fullName: fullName,
+                    email: email,
+                    phone: phone || '',
+                    role: role,
+                    generatedId: adminId,
+                    status: 'active',
+                    createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+                    createdBy: auth.currentUser?.email,
+                    permissions: getPermissionsForRole(role)
+                });
+
+                // Log the action
+                await db.collection('audit_logs').add({
+                    action: 'Admin Created',
+                    admin: auth.currentUser?.email,
+                    targetAdmin: email,
+                    role: role,
+                    timestamp: firebase.firestore.FieldValue.serverTimestamp()
+                });
+
+                // Update UI with generated credentials
+                document.getElementById('generatedAdminId').textContent = adminId;
+                document.getElementById('generatedEmail').textContent = email;
+                document.getElementById('generatedPassword').textContent = '•'.repeat(password.length);
+                document.getElementById('generatedRole').textContent = formatRole(role);
+                document.getElementById('generatedDate').textContent = new Date().toLocaleString();
+
+                // Show success message
+                showAlert(alertDiv, `Super admin created successfully! Admin ID: ${adminId}`, 'success');
+
+                // Clear form
+                document.getElementById('adminFullName').value = '';
+                document.getElementById('adminEmail').value = '';
+                document.getElementById('adminPhone').value = '';
+                document.getElementById('adminPassword').value = '';
+                document.getElementById('adminConfirmPassword').value = '';
+
+                // Add to recent activity
+                addRecentActivity(fullName, email, role);
+
+            } catch (error) {
+                console.error('Creation error:', error);
+                showAlert(alertDiv, error.message, 'error');
+            } finally {
+                createBtn.innerHTML = '<i class="fas fa-plus-circle"></i> Create Super Admin';
+                createBtn.disabled = false;
+            }
+        });
+
+        // Load admins list
+        async function loadAdmins() {
+            const adminsList = document.getElementById('adminsList');
+            adminsList.innerHTML = '<div class="loading"><i class="fas fa-spinner fa-spin"></i><p>Loading admins...</p></div>';
+            
+            try {
+                const snapshot = await db.collection('users')
+                    .where('role', 'in', ['super_admin', 'admin', 'finance_admin', 'support_admin'])
+                    .get();
+
+                let html = '';
+                
+                if (snapshot.empty) {
+                    html = '<p style="text-align: center; color: #64748b; padding: 40px;">No admin accounts found</p>';
+                } else {
+                    snapshot.forEach(doc => {
+                        const admin = doc.data();
+                        const created = admin.createdAt?.toDate?.() || new Date();
+                        
+                        html += `
+                            <div class="admin-item">
+                                <div class="admin-info">
+                                    <div class="admin-avatar">${(admin.fullName || 'A').charAt(0).toUpperCase()}</div>
+                                    <div class="admin-details">
+                                        <h4>${admin.fullName || 'Unknown'}</h4>
+                                        <p>
+                                            <i class="fas fa-envelope"></i> ${admin.email}
+                                            <i class="fas fa-id-card"></i> ${admin.generatedId || 'No ID'}
+                                            <i class="fas fa-calendar"></i> ${created.toLocaleDateString()}
+                                        </p>
+                                        <div>
+                                            <span class="admin-role ${admin.role === 'super_admin' ? 'super' : ''}">${formatRole(admin.role)}</span>
+                                            <span class="status-badge status-${admin.status || 'active'}">${admin.status || 'active'}</span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="admin-actions">
+                                    <button class="icon-btn edit" onclick="editAdmin('${doc.id}')" title="Edit Admin">
+                                        <i class="fas fa-edit"></i>
+                                    </button>
+                                    <button class="icon-btn reset" onclick="showResetModal('${doc.id}', '${admin.email}')" title="Reset Password">
+                                        <i class="fas fa-key"></i>
+                                    </button>
+                                    <button class="icon-btn delete" onclick="deleteAdmin('${doc.id}')" title="Delete Admin">
+                                        <i class="fas fa-trash"></i>
+                                    </button>
+                                </div>
+                            </div>
+                        `;
+                    });
+                }
+                
+                adminsList.innerHTML = html;
+
+                // Add search and filter functionality
+                document.getElementById('searchAdmins').addEventListener('input', filterAdmins);
+                document.getElementById('filterRole').addEventListener('change', filterAdmins);
+
+            } catch (error) {
+                console.error('Load admins error:', error);
+                adminsList.innerHTML = `<p style="color: #e53e3e; text-align: center;">Error loading admins: ${error.message}</p>`;
+            }
+        }
+
+        // Filter admins
+        function filterAdmins() {
+            const searchTerm = document.getElementById('searchAdmins').value.toLowerCase();
+            const roleFilter = document.getElementById('filterRole').value;
+            
+            const adminItems = document.querySelectorAll('.admin-item');
+            
+            adminItems.forEach(item => {
+                const text = item.textContent.toLowerCase();
+                const role = item.querySelector('.admin-role').textContent.toLowerCase();
+                
+                let show = text.includes(searchTerm);
+                if (roleFilter !== 'all') {
+                    show = show && role.includes(formatRole(roleFilter).toLowerCase());
+                }
+                
+                item.style.display = show ? 'flex' : 'none';
+            });
+        }
+
+        // Edit admin
+        window.editAdmin = async function(adminId) {
+            try {
+                const adminDoc = await db.collection('users').doc(adminId).get();
+                const admin = adminDoc.data();
+                
+                document.getElementById('editAdminId').value = adminId;
+                document.getElementById('editFullName').value = admin.fullName || '';
+                document.getElementById('editEmail').value = admin.email || '';
+                document.getElementById('editPhone').value = admin.phone || '';
+                document.getElementById('editRole').value = admin.role || 'admin';
+                document.getElementById('editStatus').value = admin.status || 'active';
+                
+                document.getElementById('editAdminModal').classList.add('active');
+            } catch (error) {
+                alert('Error loading admin data: ' + error.message);
+            }
+        };
+
+        // Save admin changes
+        window.saveAdminChanges = async function() {
+            const adminId = document.getElementById('editAdminId').value;
+            const updates = {
+                fullName: document.getElementById('editFullName').value,
+                phone: document.getElementById('editPhone').value,
+                role: document.getElementById('editRole').value,
+                status: document.getElementById('editStatus').value
+            };
+
+            try {
+                await db.collection('users').doc(adminId).update(updates);
+                
+                await db.collection('audit_logs').add({
+                    action: 'Admin Updated',
+                    admin: auth.currentUser?.email,
+                    targetAdmin: document.getElementById('editEmail').value,
+                    changes: updates,
+                    timestamp: firebase.firestore.FieldValue.serverTimestamp()
+                });
+
+                closeEditModal();
+                loadAdmins();
+                showAlert(document.getElementById('createAlert'), 'Admin updated successfully!', 'success');
+            } catch (error) {
+                alert('Error updating admin: ' + error.message);
+            }
+        };
+
+        // Show reset password modal
+        window.showResetModal = function(adminId, adminEmail) {
+            document.getElementById('resetAdminId').value = adminId;
+            document.getElementById('resetAdminEmail').value = adminEmail;
+            document.getElementById('resetPasswordModal').classList.add('active');
+        };
+
+        // Reset admin password
+        window.resetAdminPassword = async function() {
+            const adminId = document.getElementById('resetAdminId').value;
+            const adminEmail = document.getElementById('resetAdminEmail').value;
+            const newPassword = document.getElementById('newPassword').value;
+            const confirmPassword = document.getElementById('confirmNewPassword').value;
+            const sendCredentials = document.getElementById('sendNewCredentials').checked;
+
+            if (!newPassword || newPassword.length < 8) {
+                alert('Password must be at least 8 characters long');
+                return;
+            }
+
+            if (newPassword !== confirmPassword) {
+                alert('Passwords do not match');
+                return;
+            }
+
+            try {
+                // Note: Password reset for another user requires Admin SDK
+                // This is a placeholder - in production, use Firebase Admin SDK via Cloud Function
+                alert('Password reset functionality requires Firebase Admin SDK. Please use Firebase Console.');
+                
+                closeResetModal();
+            } catch (error) {
+                alert('Error resetting password: ' + error.message);
+            }
+        };
+
+        // Delete admin
+        window.deleteAdmin = async function(adminId) {
+            if (!confirm('Are you sure you want to delete this admin? This action cannot be undone.')) return;
+
+            try {
+                // Note: Deleting auth user requires Admin SDK
+                // This deletes only the Firestore document
+                await db.collection('users').doc(adminId).delete();
+                
+                await db.collection('audit_logs').add({
+                    action: 'Admin Deleted',
+                    admin: auth.currentUser?.email,
+                    targetAdminId: adminId,
+                    timestamp: firebase.firestore.FieldValue.serverTimestamp()
+                });
+
+                loadAdmins();
+                showAlert(document.getElementById('createAlert'), 'Admin deleted successfully!', 'success');
+            } catch (error) {
+                alert('Error deleting admin: ' + error.message);
+            }
+        };
+
+        // Security settings form
+        document.getElementById('securityForm').addEventListener('submit', (e) => {
+            e.preventDefault();
+            
+            const settings = {
+                require2FA: document.getElementById('require2FA').checked,
+                sessionTimeout: document.getElementById('sessionTimeout').value,
+                passwordExpiry: document.getElementById('passwordExpiry').value,
+                maxAttempts: document.getElementById('maxAttempts').value,
+                auditLogging: document.getElementById('auditLogging').checked
+            };
+
+            // Save to localStorage for demo
+            localStorage.setItem('adminSecuritySettings', JSON.stringify(settings));
+            
+            showAlert(document.getElementById('securityAlert'), 'Security settings saved successfully!', 'success');
+        });
+
+        // Helper functions
+        function showAlert(element, message, type) {
+            element.className = `alert alert-${type}`;
+            element.style.display = 'flex';
+            element.innerHTML = `<i class="fas fa-${type === 'success' ? 'check-circle' : 'exclamation-circle'}"></i> ${message}`;
+            
+            setTimeout(() => {
+                element.style.display = 'none';
+            }, 5000);
+        }
+
+        function formatRole(role) {
+            const roles = {
+                'super_admin': 'Super Admin',
+                'admin': 'Admin',
+                'finance_admin': 'Finance Admin',
+                'support_admin': 'Support Admin'
+            };
+            return roles[role] || role;
+        }
+
+        function getPermissionsForRole(role) {
+            const permissions = {
+                'super_admin': ['all'],
+                'admin': ['investor_management', 'project_management', 'reports'],
+                'finance_admin': ['transactions', 'withdrawals', 'profits'],
+                'support_admin': ['investor_support', 'notifications']
+            };
+            return permissions[role] || [];
+        }
+
+        function addRecentActivity(name, email, role) {
+            const activityDiv = document.getElementById('recentActivity');
+            const activity = `
+                <div class="info-item">
+                    <span class="info-label">${new Date().toLocaleTimeString()}</span>
+                    <span class="info-value">Created ${formatRole(role)}: ${name}</span>
+                </div>
+            `;
+            activityDiv.innerHTML = activity + activityDiv.innerHTML;
+        }
+
+        // Copy credentials
+        window.copyCredentials = function() {
+            const credentials = `
+Admin ID: ${document.getElementById('generatedAdminId').textContent}
+Email: ${document.getElementById('generatedEmail').textContent}
+Role: ${document.getElementById('generatedRole').textContent}
+Created: ${document.getElementById('generatedDate').textContent}
+            `;
+            
+            navigator.clipboard.writeText(credentials).then(() => {
+                alert('Credentials copied to clipboard!');
+            }).catch(() => {
+                alert('Failed to copy credentials');
+            });
+        };
+
+        // Modal controls
+        window.closeEditModal = function() {
+            document.getElementById('editAdminModal').classList.remove('active');
+        };
+
+        window.closeResetModal = function() {
+            document.getElementById('resetPasswordModal').classList.remove('active');
+            document.getElementById('newPassword').value = '';
+            document.getElementById('confirmNewPassword').value = '';
+        };
+
+        window.closeIPModal = function() {
+            document.getElementById('ipWhitelistModal').classList.remove('active');
+        };
+
+        // IP Whitelist functions
+        window.showIPWhitelistModal = function() {
+            const savedIPs = localStorage.getItem('ipWhitelist');
+            const ips = savedIPs ? JSON.parse(savedIPs) : ['192.168.1.100', '10.0.0.50'];
+            
+            let html = '';
+            ips.forEach(ip => {
+                html += `
+                    <div class="admin-item">
+                        <span>${ip}</span>
+                        <button class="icon-btn delete" onclick="removeIP('${ip}')">
+                            <i class="fas fa-times"></i>
+                        </button>
+                    </div>
+                `;
+            });
+            
+            document.getElementById('ipList').innerHTML = html;
+            document.getElementById('ipWhitelistModal').classList.add('active');
+        };
+
+        window.addIPToWhitelist = function() {
+            const newIP = document.getElementById('newIP').value;
+            if (!newIP) return;
+            
+            const savedIPs = localStorage.getItem('ipWhitelist');
+            const ips = savedIPs ? JSON.parse(savedIPs) : [];
+            ips.push(newIP);
+            localStorage.setItem('ipWhitelist', JSON.stringify(ips));
+            
+            document.getElementById('newIP').value = '';
+            showIPWhitelistModal();
+        };
+
+        window.removeIP = function(ip) {
+            const savedIPs = localStorage.getItem('ipWhitelist');
+            const ips = savedIPs ? JSON.parse(savedIPs) : [];
+            const filtered = ips.filter(i => i !== ip);
+            localStorage.setItem('ipWhitelist', JSON.stringify(filtered));
+            showIPWhitelistModal();
+        };
+
+        window.saveIPWhitelist = function() {
+            closeIPModal();
+            showAlert(document.getElementById('securityAlert'), 'IP whitelist updated successfully!', 'success');
+        };
+
+        // Load saved security settings
+        function loadSecuritySettings() {
+            const saved = localStorage.getItem('adminSecuritySettings');
+            if (saved) {
+                try {
+                    const settings = JSON.parse(saved);
+                    document.getElementById('require2FA').checked = settings.require2FA;
+                    document.getElementById('sessionTimeout').value = settings.sessionTimeout;
+                    document.getElementById('passwordExpiry').value = settings.passwordExpiry;
+                    document.getElementById('maxAttempts').value = settings.maxAttempts;
+                    document.getElementById('auditLogging').checked = settings.auditLogging;
+                } catch (e) {
+                    console.error('Error loading settings:', e);
+                }
+            }
+        }
+
+        // Close modals when clicking outside
+        window.onclick = function(event) {
+            if (event.target.classList.contains('modal')) {
+                event.target.classList.remove('active');
+            }
+        };
+
+        // Add error boundary for Firebase operations
+        window.addEventListener('unhandledrejection', function(event) {
+            console.error('Unhandled promise rejection:', event.reason);
+            if (event.reason.code === 'permission-denied') {
+                showAlert(document.getElementById('createAlert'), 'Permission denied. Please check Firebase rules.', 'error');
+            }
+        });
+    </script>
+</body>
+</html>
