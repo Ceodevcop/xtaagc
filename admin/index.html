@@ -3,119 +3,36 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Admin Login - TAAGC</title>
-    
-    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
-    
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
-    <style>
-        *{margin:0;padding:0;box-sizing:border-box;font-family:'Inter',sans-serif;}
-        body{
-            background:linear-gradient(135deg,#0a2540,#1e3a5f);
-            min-height:100vh;
-            display:flex;
-            align-items:center;
-            justify-content:center;
-            padding:20px;
-        }
-        .login-box{
-            background:white;
-            border-radius:24px;
-            padding:40px;
-            width:100%;
-            max-width:400px;
-            box-shadow:0 20px 40px rgba(0,0,0,0.2);
-        }
-        h1{
-            color:#0a2540;
-            text-align:center;
-            margin-bottom:30px;
-        }
-        h1 span{color:#c19a6b;}
-        .form-group{margin-bottom:20px;}
-        label{
-            display:block;
-            margin-bottom:8px;
-            color:#0a2540;
-            font-weight:600;
-        }
-        input{
-            width:100%;
-            padding:14px;
-            border:2px solid #e2e8f0;
-            border-radius:12px;
-            font-size:16px;
-        }
-        input:focus{
-            border-color:#c19a6b;
-            outline:none;
-        }
-        button{
-            width:100%;
-            padding:14px;
-            background:#0a2540;
-            color:white;
-            border:none;
-            border-radius:12px;
-            font-size:16px;
-            font-weight:600;
-            cursor:pointer;
-        }
-        button:hover{background:#1e3a5f;}
-        .alert{
-            padding:12px;
-            border-radius:8px;
-            margin-bottom:20px;
-            display:none;
-        }
-        .alert-error{background:#fee2e2;color:#e53e3e;}
-    </style>
+    <title>Admin Login - TAAGC Global</title>
+    <link rel="stylesheet" href="/assets/css/login.css">
 </head>
 <body>
-    <div class="login-box">
-        <h1><span>TAAGC</span> Admin</h1>
-        <div id="alert" class="alert"></div>
-        <form id="loginForm">
-            <div class="form-group">
-                <label>Email</label>
-                <input type="email" id="email" required>
+    <div class="login-container">
+        <div class="login-box">
+            <div class="logo">
+                <img src="/assets/images/logos/logo-white.png" alt="TAAGC">
+                <h2>Admin Portal</h2>
             </div>
-            <div class="form-group">
-                <label>Password</label>
-                <input type="password" id="password" required>
+            <form action="/authentication/login.php" method="POST">
+                <div class="form-group">
+                    <label for="email">Email</label>
+                    <input type="email" id="email" name="email" required>
+                </div>
+                <div class="form-group">
+                    <label for="password">Password</label>
+                    <input type="password" id="password" name="password" required>
+                </div>
+                <div class="form-group">
+                    <label>
+                        <input type="checkbox" name="remember"> Remember me
+                    </label>
+                </div>
+                <button type="submit" class="btn-primary">Login</button>
+            </form>
+            <div class="login-footer">
+                <a href="/authentication/forgot-password.php">Forgot Password?</a>
             </div>
-            <button type="submit">Login</button>
-        </form>
-        <p style="text-align:center; margin-top:20px;">
-            <a href="super-admin-setup.html" style="color:#c19a6b;">First time? Setup Super Admin</a>
-        </p>
+        </div>
     </div>
-
-    <script>
-        const firebaseConfig = {
-            apiKey: "AIzaSyAI1MrcP977UgRLQoePxl64JOSyj9v4WpI",
-            authDomain: "xtaagc.firebaseapp.com",
-            projectId: "xtaagc"
-        };
-        firebase.initializeApp(firebaseConfig);
-        const auth = firebase.auth();
-
-        document.getElementById('loginForm').addEventListener('submit', async (e) => {
-            e.preventDefault();
-            const email = document.getElementById('email').value;
-            const password = document.getElementById('password').value;
-            const alertDiv = document.getElementById('alert');
-
-            try {
-                await auth.signInWithEmailAndPassword(email, password);
-                window.location.href = 'dashboard';
-            } catch (error) {
-                alertDiv.className = 'alert alert-error';
-                alertDiv.style.display = 'block';
-                alertDiv.textContent = error.message;
-            }
-        });
-    </script>
 </body>
 </html>
