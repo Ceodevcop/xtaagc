@@ -1,0 +1,28 @@
+# Admin Subdomain .htaccess
+RewriteEngine On
+RewriteCond %{HTTPS} off
+RewriteRule ^(.*)$ https://admin.taagc.website/$1 [R=301,L]
+
+# Protect admin with basic auth
+AuthType Basic
+AuthName "Admin Access"
+AuthUserFile /var/www/admin.taagc.website/.htpasswd
+Require valid-user
+
+# Additional security
+<FilesMatch "\.(php|inc)$">
+    Order Deny,Allow
+    Deny from all
+</FilesMatch>
+
+<FilesMatch "index\.php|login\.php">
+    Order Allow,Deny
+    Allow from all
+</FilesMatch>
+
+# Block access to includes
+RedirectMatch 403 /includes/.*\.php$
+
+# Security headers
+Header set X-Frame-Options "DENY"
+Header set X-XSS-Protection "1; mode=block"
