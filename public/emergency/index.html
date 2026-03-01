@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ULTIMATE EMERGENCY ADMIN CREATION</title>
+    <style>
+        body {
+            background: #0a0a0a;
+            color: #00ff00;
+            font-family: monospace;
+            padding: 20px;
+        }
+        .container { max-width: 800px; margin: 0 auto; }
+        .step { margin: 20px 0; padding: 15px; border: 1px solid #00ff00; }
+        button {
+            background: #000;
+            color: #00ff00;
+            border: 2px solid #00ff00;
+            padding: 10px 20px;
+            font-family: monospace;
+            cursor: pointer;
+            margin: 5px;
+        }
+        button:hover { background: #00ff00; color: #000; }
+        .output {
+            background: #1a1a1a;
+            padding: 15px;
+            margin: 10px 0;
+            white-space: pre-wrap;
+            border: 1px solid #00ff00;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🔥 EMERGENCY ADMIN CREATION</h1>
+        <p>Step-by-step manual process</p>
+
+        <div class="step">
+            <h2>Step 1: Create Auth User via REST</h2>
+            <button onclick="step1()">Run Step 1</button>
+            <div id="step1-output" class="output">Ready...</div>
+        </div>
+
+        <div class="step">
+            <h2>Step 2: Get UID from Response</h2>
+            <input type="text" id="uid" placeholder="Paste UID here" style="width:100%; padding:10px; margin:10px 0;">
+            <button onclick="step2()">Save UID</button>
+        </div>
+
+        <div class="step">
+            <h2>Step 3: Create Firestore Profile</h2>
+            <button onclick="step3()">Run Step 3</button>
+            <div id="step3-output" class="output">Ready...</div>
+        </div>
+
+        <div class="step">
+            <h2>Step 4: Verify Creation</h2>
+            <button onclick="step4()">Verify Admin</button>
+            <div id="step4-output" class="output">Ready...</div>
+        </div>
+    </div>
+
+    <script>
+        let userData = null;
+
+        async function step1() {
+            const output = document.getElementById('step1-output');
+            output.innerHTML = '⏳ Creating user...';
+            
+            try {
+                const response = await fetch('https://identitytoolkit.googleapis.com/v1/accounts:signUp?key=AIzaSyAI1MrcP977UgRLQoePxl64JOSyj9v4WpI', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        email: 'ceo@taagc.website',
+                        password: 'Admin123!@#',
+                        returnSecureToken: true
+                    })
+                });
+                
+                const data = await response.json();
+                userData = data;
+                
+                if (response.ok) {
+                    output.innerHTML = `✅ SUCCESS!\nUID: ${data.localId}\nEmail: ${data.email}\n\nCopy this UID to Step 2: ${data.localId}`;
+                } else {
+                    output.innerHTML = `❌ FAILED: ${data.error.message}`;
+                }
+            } catch (error) {
+                output.innerHTML = `❌ ERROR: ${error.message}`;
+            }
+        }
+
+        function step2() {
+            const uid = document.getElementById('uid').value;
+            if (!uid) {
+                alert('Please enter UID from Step 1');
+                return;
+            }
+            alert(`UID saved: ${uid}`);
+        }
+
+        async function step3() {
+            const output = document.getElementById('step3-output');
+            const uid = document.getElementById('uid').value;
+            
+            if (!uid) {
+                output.innerHTML = '❌ Please enter UID first';
+                return;
+            }
+            
+            output.innerHTML = '⏳ Creating Firestore profile...';
+            
+            // Generate Admin ID
+            const now = new Date();
+            const month = String(now.getMonth() + 1).padStart(2, '0');
+            const year = now.getFullYear();
+            const random = Math.floor(Math.random() * 900 + 100);
+            const adminId = `Ad${random}/${month}/${year}`;
+            
+            // Create profile data
+            const profile = {
+                fields: {
+                    uid: { stringValue: uid },
+                    fullName: { stringValue: 'Ahmad Hamza' },
+                    email: { stringValue: 'ceo@taagc.website' },
+                    role: { stringValue: 'super_admin' },
+                    generatedId: { stringValue: adminId },
+                    status: { stringValue: 'active' },
+                    createdAt: { timestampValue: new Date().toISOString() }
+                }
+            };
+            
+            try {
+                // Try Firestore REST API
+                const response = await fetch(`https://firestore.googleapis.com/v1/projects/xtaagc/databases/(default)/documents/users/${uid}`, {
+                    method: 'PATCH',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(profile)
+                });
+                
+                const data = await response.json();
+                
+                if (response.ok) {
+                    output.innerHTML = `✅ PROFILE CREATED!\nAdmin ID: ${adminId}\nName: Ahmad Hamza\nEmail: ceo@taagc.website`;
+                } else {
+                    output.innerHTML = `❌ FIRESTORE ERROR: ${JSON.stringify(data)}`;
+                }
+            } catch (error) {
+                output.innerHTML = `❌ ERROR: ${error.message}`;
+            }
+        }
+
+        async function step4() {
+            const output = document.getElementById('step4-output');
+            output.innerHTML = '⏳ Verifying...';
+            
+            try {
+                const response = await fetch('https://firestore.googleapis.com/v1/projects/xtaagc/databases/(default)/documents/users');
+                const data = await response.json();
+                
+                if (data.documents) {
+                    output.innerHTML = `✅ FIRESTORE ACCESSIBLE\nFound ${data.documents.length} users`;
+                } else {
+                    output.innerHTML = `ℹ️ Response: ${JSON.stringify(data)}`;
+                }
+            } catch (error) {
+                output.innerHTML = `❌ ERROR: ${error.message}`;
+            }
+        }
+    </script>
+</body>
+</html>
