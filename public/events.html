@@ -1,0 +1,534 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Events & Webinars - TAAGC Global</title>
+    
+    <!-- Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="events.css">
+    
+    <!-- Meta Tags for SEO -->
+    <meta name="description" content="Join TAAGC Global's investment webinars, conferences, workshops and networking events. Learn from industry experts and connect with fellow investors.">
+    <meta name="keywords" content="investment events, trading webinars, finance conferences, investor workshops, networking events">
+    <meta property="og:title" content="Events & Webinars - TAAGC Global">
+    <meta property="og:description" content="Join our investment seminars, workshops, and networking events">
+    <meta property="og:image" content="/assets/images/events/og-event.jpg">
+    <meta property="og:url" content="https://taagc.website/events.html">
+    <meta name="twitter:card" content="summary_large_image">
+</head>
+<body>
+    <!-- Navbar -->
+    <nav class="navbar">
+        <div class="container">
+            <div class="navbar-content">
+                <a href="/" class="navbar-brand">
+                    <div class="logo-icon">TA</div>
+                    <div class="brand-text"><span>TAAGC</span> GLOBAL</div>
+                </a>
+                
+                <div class="nav-menu">
+                    <ul class="nav-links">
+                        <li><a href="/" class="nav-link">Home</a></li>
+                        <li><a href="/about.html" class="nav-link">About</a></li>
+                        <li><a href="/investment-opportunities.html" class="nav-link">Investments</a></li>
+                        <li><a href="/events.html" class="nav-link active">Events</a></li>
+                        <li><a href="/contact.html" class="nav-link">Contact</a></li>
+                    </ul>
+                    
+                    <div class="nav-buttons">
+                        <a href="/login.html" class="btn-outline">Login</a>
+                        <a href="/register.html" class="btn-primary">Get Started</a>
+                    </div>
+                </div>
+                
+                <button class="mobile-menu-btn">
+                    <i class="fas fa-bars"></i>
+                </button>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Page Header -->
+    <header class="page-header">
+        <div class="container">
+            <div class="header-content">
+                <span class="header-badge">Live & Virtual Events</span>
+                <h1>Events & <span>Webinars</span></h1>
+                <p>Join our investment seminars, workshops, and networking events with industry experts</p>
+                
+                <div class="header-stats">
+                    <div class="header-stat">
+                        <span class="stat-number">50+</span>
+                        <span class="stat-label">Events Yearly</span>
+                    </div>
+                    <div class="header-stat">
+                        <span class="stat-number">10k+</span>
+                        <span class="stat-label">Attendees</span>
+                    </div>
+                    <div class="header-stat">
+                        <span class="stat-number">25+</span>
+                        <span class="stat-label">Countries</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Filter Section -->
+    <section class="filter-section">
+        <div class="container">
+            <div class="filter-wrapper">
+                <div class="filter-tabs">
+                    <button class="filter-btn active" data-filter="all">All Events</button>
+                    <button class="filter-btn" data-filter="webinar">Webinars</button>
+                    <button class="filter-btn" data-filter="conference">Conferences</button>
+                    <button class="filter-btn" data-filter="workshop">Workshops</button>
+                    <button class="filter-btn" data-filter="networking">Networking</button>
+                </div>
+                
+                <div class="filter-actions">
+                    <div class="search-box">
+                        <i class="fas fa-search"></i>
+                        <input type="text" id="eventSearch" placeholder="Search events...">
+                    </div>
+                    
+                    <select id="sortEvents" class="sort-select">
+                        <option value="date">Sort by Date</option>
+                        <option value="popular">Most Popular</option>
+                        <option value="upcoming">Upcoming First</option>
+                    </select>
+                    
+                    <button class="view-toggle" id="viewToggle">
+                        <i class="fas fa-th-large"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Featured Event -->
+    <section class="featured-event">
+        <div class="container">
+            <div class="featured-card">
+                <div class="featured-image">
+                    <img src="/assets/images/events/featured-summit.jpg" alt="Global Investment Summit" onerror="this.src='/assets/images/events/default-event.jpg'">
+                    <span class="featured-badge">Featured</span>
+                    <span class="event-format"><i class="fas fa-video"></i> Hybrid Event</span>
+                </div>
+                
+                <div class="featured-content">
+                    <div class="event-countdown">
+                        <div class="countdown-item">
+                            <span class="countdown-number" id="days">12</span>
+                            <span class="countdown-label">Days</span>
+                        </div>
+                        <div class="countdown-item">
+                            <span class="countdown-number" id="hours">08</span>
+                            <span class="countdown-label">Hours</span>
+                        </div>
+                        <div class="countdown-item">
+                            <span class="countdown-number" id="minutes">45</span>
+                            <span class="countdown-label">Mins</span>
+                        </div>
+                        <div class="countdown-item">
+                            <span class="countdown-number" id="seconds">32</span>
+                            <span class="countdown-label">Secs</span>
+                        </div>
+                    </div>
+                    
+                    <div class="event-meta">
+                        <span><i class="far fa-calendar"></i> June 15-17, 2025</span>
+                        <span><i class="far fa-clock"></i> 10:00 AM - 6:00 PM</span>
+                        <span><i class="fas fa-map-marker-alt"></i> Dubai, UAE & Online</span>
+                        <span><i class="fas fa-ticket-alt"></i> Limited: 500 seats</span>
+                    </div>
+                    
+                    <h2>Global Investment Summit 2025</h2>
+                    <p>Join 500+ investors, fund managers, and industry leaders for the largest investment event of the year. Network with top professionals, discover exclusive opportunities, and gain insights from world-class speakers.</p>
+                    
+                    <div class="event-speakers">
+                        <h4>Featured Speakers:</h4>
+                        <div class="speaker-avatars">
+                            <img src="/assets/images/events/speaker1.jpg" alt="Speaker">
+                            <img src="/assets/images/events/speaker2.jpg" alt="Speaker">
+                            <img src="/assets/images/events/speaker3.jpg" alt="Speaker">
+                            <div class="speaker-count">+12</div>
+                        </div>
+                    </div>
+                    
+                    <div class="event-pricing">
+                        <div class="price-card">
+                            <span class="price-type">Virtual</span>
+                            <span class="price-amount">$99</span>
+                        </div>
+                        <div class="price-card featured">
+                            <span class="price-type">In-Person</span>
+                            <span class="price-amount">$499</span>
+                            <span class="price-badge">Best Value</span>
+                        </div>
+                        <div class="price-card">
+                            <span class="price-type">VIP</span>
+                            <span class="price-amount">$999</span>
+                        </div>
+                    </div>
+                    
+                    <div class="event-actions">
+                        <button class="btn-primary" onclick="openRegistration('featured')">
+                            <i class="fas fa-ticket"></i> Register Now
+                        </button>
+                        <button class="btn-secondary" onclick="addToCalendar('featured')">
+                            <i class="far fa-calendar-plus"></i> Add to Calendar
+                        </button>
+                        <button class="btn-icon" onclick="shareEvent('featured')">
+                            <i class="fas fa-share-alt"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Events Grid -->
+    <section class="events-grid-section">
+        <div class="container">
+            <div class="section-header">
+                <h2 class="section-title">Upcoming <span>Events</span></h2>
+                <div class="section-actions">
+                    <a href="#past-events" class="view-past">View Past Events <i class="fas fa-arrow-right"></i></a>
+                </div>
+            </div>
+            
+            <div class="events-grid" id="eventsGrid">
+                <!-- Event cards will be dynamically loaded -->
+            </div>
+            
+            <div class="load-more">
+                <button class="btn-outline" id="loadMoreBtn">
+                    <i class="fas fa-spinner"></i> Load More Events
+                </button>
+            </div>
+        </div>
+    </section>
+
+    <!-- Calendar Section -->
+    <section class="calendar-section">
+        <div class="container">
+            <h2 class="section-title">Event <span>Calendar</span></h2>
+            
+            <div class="calendar-wrapper">
+                <div class="calendar-container">
+                    <div class="calendar-header">
+                        <button class="calendar-nav" id="prevMonth"><i class="fas fa-chevron-left"></i></button>
+                        <h3 id="currentMonth">March 2025</h3>
+                        <button class="calendar-nav" id="nextMonth"><i class="fas fa-chevron-right"></i></button>
+                    </div>
+                    
+                    <div class="calendar-weekdays">
+                        <div>Sun</div>
+                        <div>Mon</div>
+                        <div>Tue</div>
+                        <div>Wed</div>
+                        <div>Thu</div>
+                        <div>Fri</div>
+                        <div>Sat</div>
+                    </div>
+                    
+                    <div class="calendar-days" id="calendarDays"></div>
+                </div>
+                
+                <div class="calendar-sidebar">
+                    <h4>Upcoming This Month</h4>
+                    <div class="mini-event-list" id="monthEvents">
+                        <!-- Events will be populated by JS -->
+                    </div>
+                    
+                    <div class="calendar-legend">
+                        <h4>Event Types</h4>
+                        <span><i class="fas fa-circle" style="color: #c19a6b;"></i> Webinar</span>
+                        <span><i class="fas fa-circle" style="color: #0a2540;"></i> Conference</span>
+                        <span><i class="fas fa-circle" style="color: #10b981;"></i> Workshop</span>
+                        <span><i class="fas fa-circle" style="color: #3b82f6;"></i> Networking</span>
+                    </div>
+                    
+                    <button class="btn-outline" style="width: 100%; margin-top: 20px;" onclick="downloadCalendar()">
+                        <i class="fas fa-download"></i> Download Calendar
+                    </button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Past Events -->
+    <section class="past-events" id="past-events">
+        <div class="container">
+            <h2 class="section-title">Past <span>Events</span></h2>
+            <p class="section-subtitle">Watch recordings and access materials from previous events</p>
+            
+            <div class="past-events-grid" id="pastEventsGrid">
+                <!-- Past events will be dynamically loaded -->
+            </div>
+            
+            <div class="load-more">
+                <button class="btn-outline" id="loadMorePastBtn">
+                    <i class="fas fa-history"></i> Load More Recordings
+                </button>
+            </div>
+        </div>
+    </section>
+
+    <!-- Testimonials -->
+    <section class="testimonials-section">
+        <div class="container">
+            <h2 class="section-title">What <span>Attendees Say</span></h2>
+            
+            <div class="testimonials-slider">
+                <div class="testimonial-card">
+                    <div class="testimonial-rating">
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                    </div>
+                    <p>"The Global Investment Summit was incredible! Networked with top investors and gained valuable insights."</p>
+                    <div class="testimonial-author">
+                        <img src="/assets/images/events/testimonial1.jpg" alt="Author">
+                        <div>
+                            <h4>Michael Chen</h4>
+                            <span>Investor, Singapore</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="testimonial-card">
+                    <div class="testimonial-rating">
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                    </div>
+                    <p>"The trading workshop was hands-on and practical. My portfolio has improved significantly since attending."</p>
+                    <div class="testimonial-author">
+                        <img src="/assets/images/events/testimonial2.jpg" alt="Author">
+                        <div>
+                            <h4>Sarah Ahmed</h4>
+                            <span>Trader, UAE</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="testimonial-card">
+                    <div class="testimonial-rating">
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                    </div>
+                    <p>"Excellent organization and world-class speakers. Already registered for next year!"</p>
+                    <div class="testimonial-author">
+                        <img src="/assets/images/events/testimonial3.jpg" alt="Author">
+                        <div>
+                            <h4>David Okonkwo</h4>
+                            <span>Fund Manager, Nigeria</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- FAQ Section -->
+    <section class="faq-section">
+        <div class="container">
+            <h2 class="section-title">Frequently Asked <span>Questions</span></h2>
+            
+            <div class="faq-grid">
+                <div class="faq-item">
+                    <div class="faq-question" onclick="toggleFAQ(this)">
+                        <h4>How do I register for an event?</h4>
+                        <i class="fas fa-chevron-down"></i>
+                    </div>
+                    <div class="faq-answer">
+                        <p>Click the "Register Now" button on any event card. You'll be guided through our secure registration process. You can pay via credit card, bank transfer, or cryptocurrency.</p>
+                    </div>
+                </div>
+                
+                <div class="faq-item">
+                    <div class="faq-question" onclick="toggleFAQ(this)">
+                        <h4>Can I get a recording if I miss the live event?</h4>
+                        <i class="fas fa-chevron-down"></i>
+                    </div>
+                    <div class="faq-answer">
+                        <p>Yes! All registered attendees receive access to event recordings and materials for 30 days after the event. Past events are available in our "Past Events" section.</p>
+                    </div>
+                </div>
+                
+                <div class="faq-item">
+                    <div class="faq-question" onclick="toggleFAQ(this)">
+                        <h4>Are there group discounts?</h4>
+                        <i class="fas fa-chevron-down"></i>
+                    </div>
+                    <div class="faq-answer">
+                        <p>Yes, we offer 15% discount for groups of 3 or more. Contact our events team at events@taagc.com for group registration.</p>
+                    </div>
+                </div>
+                
+                <div class="faq-item">
+                    <div class="faq-question" onclick="toggleFAQ(this)">
+                        <h4>How do I become a speaker?</h4>
+                        <i class="fas fa-chevron-down"></i>
+                    </div>
+                    <div class="faq-answer">
+                        <p>We're always looking for industry experts. Submit your speaking proposal at speakers@taagc.com with your topic and bio.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Newsletter Section -->
+    <section class="newsletter-section">
+        <div class="container">
+            <div class="newsletter-card">
+                <div class="newsletter-icon">
+                    <i class="far fa-bell"></i>
+                </div>
+                <h3>Never Miss an Event</h3>
+                <p>Subscribe to our newsletter and get notified about upcoming webinars, early-bird discounts, and exclusive invitations.</p>
+                
+                <form class="newsletter-form" id="newsletterForm" onsubmit="subscribeNewsletter(event)">
+                    <div class="form-group">
+                        <input type="email" placeholder="Enter your email address" required>
+                        <button type="submit">Subscribe</button>
+                    </div>
+                    <label class="checkbox">
+                        <input type="checkbox" checked> I agree to receive event notifications and marketing emails
+                    </label>
+                </form>
+                
+                <p class="newsletter-note">We respect your privacy. Unsubscribe at any time.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-grid">
+                <div class="footer-col">
+                    <h4>About TAAGC</h4>
+                    <ul>
+                        <li><a href="/about.html">About Us</a></li>
+                        <li><a href="/careers.html">Careers</a></li>
+                        <li><a href="/press.html">Press</a></li>
+                        <li><a href="/blog.html">Blog</a></li>
+                    </ul>
+                </div>
+                
+                <div class="footer-col">
+                    <h4>Events</h4>
+                    <ul>
+                        <li><a href="/events.html">Upcoming Events</a></li>
+                        <li><a href="/events.html#past-events">Past Recordings</a></li>
+                        <li><a href="/speakers.html">Become a Speaker</a></li>
+                        <li><a href="/sponsors.html">Sponsorship</a></li>
+                    </ul>
+                </div>
+                
+                <div class="footer-col">
+                    <h4>Support</h4>
+                    <ul>
+                        <li><a href="/contact.html">Contact Us</a></li>
+                        <li><a href="/faq.html">FAQ</a></li>
+                        <li><a href="/terms.html">Terms of Service</a></li>
+                        <li><a href="/privacy.html">Privacy Policy</a></li>
+                    </ul>
+                </div>
+                
+                <div class="footer-col">
+                    <h4>Connect With Us</h4>
+                    <div class="social-links">
+                        <a href="#"><i class="fab fa-linkedin"></i></a>
+                        <a href="#"><i class="fab fa-twitter"></i></a>
+                        <a href="#"><i class="fab fa-facebook"></i></a>
+                        <a href="#"><i class="fab fa-youtube"></i></a>
+                        <a href="#"><i class="fab fa-telegram"></i></a>
+                    </div>
+                    
+                    <div class="app-badges">
+                        <a href="#"><img src="/assets/images/app-store.svg" alt="App Store"></a>
+                        <a href="#"><img src="/assets/images/google-play.svg" alt="Google Play"></a>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="footer-bottom">
+                <p>&copy; 2025 TAAGC Global. All rights reserved.</p>
+                <div class="footer-links">
+                    <a href="/sitemap.xml">Sitemap</a>
+                    <a href="/terms.html">Terms</a>
+                    <a href="/privacy.html">Privacy</a>
+                    <a href="/cookies.html">Cookies</a>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Registration Modal -->
+    <div class="modal" id="registrationModal">
+        <div class="modal-content">
+            <span class="modal-close" onclick="closeModal()">&times;</span>
+            <h2>Register for Event</h2>
+            <form id="registrationForm" onsubmit="submitRegistration(event)">
+                <div class="form-group">
+                    <label>Full Name *</label>
+                    <input type="text" required>
+                </div>
+                
+                <div class="form-group">
+                    <label>Email Address *</label>
+                    <input type="email" required>
+                </div>
+                
+                <div class="form-group">
+                    <label>Phone Number</label>
+                    <input type="tel">
+                </div>
+                
+                <div class="form-group">
+                    <label>Ticket Type *</label>
+                    <select required>
+                        <option value="virtual">Virtual ($99)</option>
+                        <option value="in-person">In-Person ($499)</option>
+                        <option value="vip">VIP ($999)</option>
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label>Payment Method</label>
+                    <div class="payment-options">
+                        <label><input type="radio" name="payment" value="card" checked> Credit Card</label>
+                        <label><input type="radio" name="payment" value="bank"> Bank Transfer</label>
+                        <label><input type="radio" name="payment" value="crypto"> Crypto</label>
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label class="checkbox">
+                        <input type="checkbox" required> I agree to the <a href="/terms.html">Terms & Conditions</a>
+                    </label>
+                </div>
+                
+                <button type="submit" class="btn-primary">Complete Registration</button>
+            </form>
+        </div>
+    </div>
+
+    <script src="events.js"></script>
+</body>
+</html>
