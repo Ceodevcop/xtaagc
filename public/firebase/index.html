@@ -1,0 +1,493 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Firebase Proxy Setup - TAAGC</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Inter', sans-serif;
+        }
+
+        body {
+            background: #0f172a;
+            color: #e2e8f0;
+            padding: 30px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        h1 {
+            color: #c19a6b;
+            font-size: 32px;
+            margin-bottom: 10px;
+        }
+
+        .error-badge {
+            background: rgba(229, 62, 62, 0.1);
+            border: 2px solid #e53e3e;
+            color: #e53e3e;
+            padding: 15px;
+            border-radius: 12px;
+            margin-bottom: 30px;
+            font-weight: 600;
+        }
+
+        .solution-card {
+            background: #1e293b;
+            border-radius: 16px;
+            padding: 25px;
+            margin-bottom: 25px;
+            border: 1px solid #334155;
+        }
+
+        .card-header {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .card-icon {
+            width: 50px;
+            height: 50px;
+            background: #c19a6b20;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #c19a6b;
+            font-size: 24px;
+        }
+
+        h2 {
+            font-size: 20px;
+            color: #c19a6b;
+        }
+
+        .code-block {
+            background: #0f172a;
+            padding: 20px;
+            border-radius: 12px;
+            font-family: monospace;
+            margin: 15px 0;
+            border: 1px solid #334155;
+            white-space: pre-wrap;
+            word-break: break-all;
+        }
+
+        .btn {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            margin-right: 10px;
+            margin-bottom: 10px;
+            transition: all 0.3s;
+        }
+
+        .btn-primary {
+            background: #c19a6b;
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: #b38b5f;
+            transform: translateY(-2px);
+        }
+
+        .btn-success {
+            background: #10b981;
+            color: white;
+        }
+
+        .btn-danger {
+            background: #e53e3e;
+            color: white;
+        }
+
+        .btn-warning {
+            background: #f59e0b;
+            color: white;
+        }
+
+        .test-result {
+            background: #0f172a;
+            padding: 15px;
+            border-radius: 8px;
+            margin-top: 15px;
+            font-family: monospace;
+        }
+
+        .success { color: #10b981; }
+        .error { color: #e53e3e; }
+        .warning { color: #f59e0b; }
+
+        .step {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 20px;
+            padding: 15px;
+            background: #0f172a;
+            border-radius: 12px;
+        }
+
+        .step-number {
+            width: 30px;
+            height: 30px;
+            background: #c19a6b;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            flex-shrink: 0;
+        }
+
+        .proxy-option {
+            background: #2a3a4a;
+            padding: 20px;
+            border-radius: 12px;
+            margin: 15px 0;
+            border-left: 4px solid #c19a6b;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🔥 Firebase Connection Failed</h1>
+        <div class="error-badge">
+            <i class="fas fa-exclamation-triangle"></i>
+            Error: Failed to fetch - Cannot reach Firebase Authentication servers
+        </div>
+
+        <!-- Quick Diagnostic -->
+        <div class="solution-card">
+            <div class="card-header">
+                <div class="card-icon"><i class="fas fa-stethoscope"></i></div>
+                <h2>Quick Diagnostic</h2>
+            </div>
+            
+            <button class="btn btn-primary" onclick="testConnection()">Test Connection Now</button>
+            <button class="btn btn-warning" onclick="testCORS()">Test CORS</button>
+            
+            <div id="diagnosticResult" class="test-result">
+                Click a button to test...
+            </div>
+        </div>
+
+        <!-- Solution 1: CORS Proxy -->
+        <div class="solution-card">
+            <div class="card-header">
+                <div class="card-icon"><i class="fas fa-globe"></i></div>
+                <h2>Solution 1: Use CORS Proxy</h2>
+            </div>
+            
+            <p style="color: #94a3b8; margin-bottom: 15px;">
+                If Firebase is blocked by CORS, use a proxy server to forward requests.
+            </p>
+
+            <div class="proxy-option">
+                <h3 style="color: #c19a6b; margin-bottom: 10px;">Option A: Using cors-anywhere (Quick Test)</h3>
+                <div class="code-block">
+// Test with CORS proxy
+const PROXY_URL = 'https://cors-anywhere.herokuapp.com/';
+const FIREBASE_URL = 'https://identitytoolkit.googleapis.com/v1/accounts:signUp?key=AIzaSyAI1MrcP977UgRLQoePxl64JOSyj9v4WpI';
+
+fetch(PROXY_URL + FIREBASE_URL, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+        email: 'ceo@taagc.website',
+        password: 'Admin123!@#',
+        returnSecureToken: true
+    })
+})
+                </div>
+                <button class="btn btn-success" onclick="testWithProxy()">Test with CORS Proxy</button>
+            </div>
+
+            <div class="proxy-option">
+                <h3 style="color: #c19a6b; margin-bottom: 10px;">Option B: Your Own Proxy (PHP)</h3>
+                <p>Create a proxy PHP file on your server:</p>
+                <div class="code-block">
+&lt;?php
+// firebase-proxy.php
+header('Access-Control-Allow-Origin: *');
+header('Access-Control-Allow-Methods: POST, GET, OPTIONS');
+header('Access-Control-Allow-Headers: Content-Type');
+
+$url = 'https://identitytoolkit.googleapis.com/v1/accounts:signUp?key=' . $_GET['key'];
+$data = file_get_contents('php://input');
+
+$ch = curl_init($url);
+curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+curl_setopt($ch, CURLOPT_POST, true);
+curl_setopt($ch, CURLOPT_POSTFIELDS, $data);
+curl_setopt($ch, CURLOPT_HTTPHEADER, ['Content-Type: application/json']);
+
+$response = curl_exec($ch);
+$httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+curl_close($ch);
+
+http_response_code($httpCode);
+echo $response;
+?&gt;
+                </div>
+                <button class="btn btn-primary" onclick="setupProxyInstructions()">Show Proxy Setup</button>
+            </div>
+        </div>
+
+        <!-- Solution 2: JSONP Alternative -->
+        <div class="solution-card">
+            <div class="card-header">
+                <div class="card-icon"><i class="fas fa-code"></i></div>
+                <h2>Solution 2: JSONP Workaround</h2>
+            </div>
+            
+            <p style="color: #94a3b8; margin-bottom: 15px;">
+                Use JSONP to bypass CORS restrictions (limited functionality).
+            </p>
+
+            <div class="code-block">
+&lt;script&gt;
+function handleResponse(data) {
+    console.log('Auth response:', data);
+}
+
+const script = document.createElement('script');
+script.src = 'https://identitytoolkit.googleapis.com/v1/accounts:signUp?key=AIzaSyAI1MrcP977UgRLQoePxl64JOSyj9v4WpI&callback=handleResponse';
+document.head.appendChild(script);
+&lt;/script&gt;
+            </div>
+        </div>
+
+        <!-- Solution 3: Node.js Backend -->
+        <div class="solution-card">
+            <div class="card-header">
+                <div class="card-icon"><i class="fas fa-server"></i></div>
+                <h2>Solution 3: Create Node.js Backend</h2>
+            </div>
+
+            <div class="code-block">
+// server.js - Run this on your server
+const express = require('express');
+const cors = require('cors');
+const fetch = require('node-fetch');
+
+const app = express();
+app.use(cors());
+app.use(express.json());
+
+app.post('/create-admin', async (req, res) => {
+    try {
+        const response = await fetch(
+            'https://identitytoolkit.googleapis.com/v1/accounts:signUp?key=AIzaSyAI1MrcP977UgRLQoePxl64JOSyj9v4WpI',
+            {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(req.body)
+            }
+        );
+        const data = await response.json();
+        res.json(data);
+    } catch (error) {
+        res.status(500).json({ error: error.message });
+    }
+});
+
+app.listen(3000, () => console.log('Proxy server running on port 3000'));
+            </div>
+        </div>
+
+        <!-- Emergency Manual Creation -->
+        <div class="solution-card">
+            <div class="card-header">
+                <div class="card-icon"><i class="fas fa-ambulance"></i></div>
+                <h2>Emergency: Manual Firebase Console Creation</h2>
+            </div>
+
+            <div class="step">
+                <div class="step-number">1</div>
+                <div>
+                    <strong>Go to Firebase Console</strong>
+                    <p style="color: #94a3b8;">Open https://console.firebase.google.com/project/xtaagc/authentication/users</p>
+                </div>
+            </div>
+
+            <div class="step">
+                <div class="step-number">2</div>
+                <div>
+                    <strong>Add User Manually</strong>
+                    <p style="color: #94a3b8;">Click "Add User" and enter:</p>
+                    <ul style="color: #94a3b8; margin-left: 20px;">
+                        <li>Email: ceo@taagc.website</li>
+                        <li>Password: Admin123!@#</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="step">
+                <div class="step-number">3</div>
+                <div>
+                    <strong>Add to Firestore</strong>
+                    <p style="color: #94a3b8;">Go to Firestore → users collection → Add document with UID from step 2</p>
+                </div>
+            </div>
+
+            <div class="code-block">
+{
+    "uid": "USER_UID_FROM_AUTH",
+    "fullName": "Ahmad Hamza",
+    "email": "ceo@taagc.website",
+    "role": "super_admin",
+    "generatedId": "Ad001/03/2026",
+    "status": "active",
+    "createdAt": "2026-03-01T03:47:54.000Z"
+}
+            </div>
+
+            <button class="btn btn-danger" onclick="openFirebaseConsole()">
+                <i class="fas fa-external-link-alt"></i> Open Firebase Console
+            </button>
+        </div>
+
+        <!-- Network Fix Commands -->
+        <div class="solution-card">
+            <div class="card-header">
+                <div class="card-icon"><i class="fas fa-terminal"></i></div>
+                <h2>Server-Side Fix (SSH Commands)</h2>
+            </div>
+
+            <div class="code-block">
+# Check if Firebase is reachable from server
+curl -I https://identitytoolkit.googleapis.com
+
+# Check DNS resolution
+nslookup identitytoolkit.googleapis.com
+nslookup firebase.googleapis.com
+
+# Test with different DNS (Google DNS)
+echo "nameserver 8.8.8.8" >> /etc/resolv.conf
+
+# Check firewall rules
+iptables -L -n | grep 443
+ufw status
+
+# Allow outbound HTTPS
+iptables -A OUTPUT -p tcp --dport 443 -j ACCEPT
+
+# If using Cloudflare, disable proxy for API subdomain
+            </div>
+
+            <button class="btn btn-warning" onclick="showSSHHelp()">
+                <i class="fas fa-terminal"></i> Show SSH Commands
+            </button>
+        </div>
+    </div>
+
+    <script>
+        async function testConnection() {
+            const result = document.getElementById('diagnosticResult');
+            result.innerHTML = 'Testing connection to Firebase...\n';
+            
+            try {
+                const start = Date.now();
+                const response = await fetch('https://identitytoolkit.googleapis.com', { 
+                    mode: 'no-cors',
+                    cache: 'no-cache'
+                });
+                const time = Date.now() - start;
+                result.innerHTML += `✅ Firebase reachable (${time}ms)\n`;
+            } catch (error) {
+                result.innerHTML += `❌ Firebase unreachable: ${error.message}\n`;
+            }
+
+            try {
+                const start = Date.now();
+                const response = await fetch('https://www.google.com', { mode: 'no-cors' });
+                const time = Date.now() - start;
+                result.innerHTML += `✅ Google reachable (${time}ms)\n`;
+            } catch (error) {
+                result.innerHTML += `❌ Google unreachable: ${error.message}\n`;
+            }
+        }
+
+        async function testCORS() {
+            const result = document.getElementById('diagnosticResult');
+            result.innerHTML = 'Testing CORS headers...\n';
+            
+            try {
+                const response = await fetch('https://identitytoolkit.googleapis.com/v1/accounts:signUp?key=AIzaSyAI1MrcP977UgRLQoePxl64JOSyj9v4WpI', {
+                    method: 'OPTIONS'
+                });
+                result.innerHTML += `✅ CORS preflight: ${response.status}\n`;
+            } catch (error) {
+                result.innerHTML += `❌ CORS error: ${error.message}\n`;
+            }
+        }
+
+        async function testWithProxy() {
+            const result = document.getElementById('diagnosticResult');
+            result.innerHTML = 'Testing with CORS proxy...\n';
+            
+            try {
+                const PROXY = 'https://cors-anywhere.herokuapp.com/';
+                const URL = 'https://identitytoolkit.googleapis.com/v1/accounts:signUp?key=AIzaSyAI1MrcP977UgRLQoePxl64JOSyj9v4WpI';
+                
+                const response = await fetch(PROXY + URL, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        email: 'test@taagc.com',
+                        password: 'Test123!@#',
+                        returnSecureToken: true
+                    })
+                });
+                
+                const data = await response.json();
+                result.innerHTML += `✅ Proxy working! Response: ${JSON.stringify(data, null, 2)}\n`;
+            } catch (error) {
+                result.innerHTML += `❌ Proxy failed: ${error.message}\n`;
+            }
+        }
+
+        function setupProxyInstructions() {
+            alert(`
+1. Create file: firebase-proxy.php
+2. Copy the PHP code from above
+3. Place in your website root
+4. Use endpoint: /firebase-proxy.php?key=YOUR_API_KEY
+            `);
+        }
+
+        function showSSHHelp() {
+            alert(`
+SSH Commands to Run:
+
+1. ssh user@your-server.com
+2. curl -I https://identitytoolkit.googleapis.com
+3. nslookup identitytoolkit.googleapis.com
+4. sudo iptables -L -n | grep 443
+5. sudo ufw status
+
+If blocked, contact hosting support to allow:
+- identitytoolkit.googleapis.com
+- firebase.googleapis.com
+- securetoken.googleapis.com
+            `);
+        }
+
+        function openFirebaseConsole() {
+            window.open('https://console.firebase.google.com/project/xtaagc/authentication/users', '_blank');
+        }
+    </script>
+</body>
+</html>
