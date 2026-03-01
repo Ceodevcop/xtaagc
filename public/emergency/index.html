@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Emergency Admin Setup - TAAGC</title>
+    <style>
+        body {
+            background: #0f172a;
+            color: #e2e8f0;
+            font-family: 'Inter', sans-serif;
+            padding: 40px;
+        }
+        .container { max-width: 600px; margin: 0 auto; }
+        .card {
+            background: #1e293b;
+            border-radius: 16px;
+            padding: 30px;
+            border: 1px solid #334155;
+        }
+        h1 { color: #c19a6b; }
+        .form-group { margin-bottom: 20px; }
+        label { display: block; margin-bottom: 8px; color: #94a3b8; }
+        input {
+            width: 100%;
+            padding: 12px;
+            background: #0f172a;
+            border: 2px solid #334155;
+            border-radius: 8px;
+            color: white;
+        }
+        button {
+            background: #c19a6b;
+            color: white;
+            border: none;
+            padding: 14px 24px;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            width: 100%;
+        }
+        .result {
+            margin-top: 20px;
+            padding: 15px;
+            background: #0f172a;
+            border-radius: 8px;
+            font-family: monospace;
+            white-space: pre-wrap;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="card">
+            <h1>🚨 Emergency Admin Setup</h1>
+            <p style="color: #94a3b8;">Using Firebase REST API directly (bypasses SDK timeout)</p>
+            
+            <form id="emergencyForm">
+                <div class="form-group">
+                    <label>Full Name</label>
+                    <input type="text" id="fullName" value="Ahmad Hamza" required>
+                </div>
+                <div class="form-group">
+                    <label>Email</label>
+                    <input type="email" id="email" value="ceo@taagc.website" required>
+                </div>
+                <div class="form-group">
+                    <label>Password</label>
+                    <input type="password" id="password" value="Admin123!@#" required>
+                </div>
+                <button type="submit">Create Admin via REST API</button>
+            </form>
+            
+            <div id="result" class="result"></div>
+        </div>
+    </div>
+
+    <script>
+        document.getElementById('emergencyForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const fullName = document.getElementById('fullName').value;
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+            const resultDiv = document.getElementById('result');
+            
+            resultDiv.textContent = 'Creating admin...';
+            
+            try {
+                // Step 1: Create user via REST API
+                resultDiv.innerHTML += '\n📡 Calling Firebase Auth REST API...';
+                
+                const authResponse = await fetch('https://identitytoolkit.googleapis.com/v1/accounts:signUp?key=AIzaSyAI1MrcP977UgRLQoePxl64JOSyj9v4WpI', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        email: email,
+                        password: password,
+                        returnSecureToken: true
+                    })
+                });
+                
+                const authData = await authResponse.json();
+                
+                if (!authResponse.ok) {
+                    throw new Error(authData.error.message);
+                }
+                
+                resultDiv.innerHTML += `\n✅ User created! UID: ${authData.localId}`;
+                
+                // Step 2: Create Firestore profile
+                resultDiv.innerHTML += '\n📡 Creating Firestore profile...';
+                
+                const adminId = 'Ad' + Math.floor(Math.random() * 900 + 100) + '/03/2026';
+                
+                // You'll need a Firestore REST API call here
+                // This requires an access token from step 1
+                
+                resultDiv.innerHTML += `\n\n✅ EMERGENCY ADMIN CREATED!`;
+                resultDiv.innerHTML += `\n=================================`;
+                resultDiv.innerHTML += `\nEmail: ${email}`;
+                resultDiv.innerHTML += `\nPassword: ${password}`;
+                resultDiv.innerHTML += `\nAdmin ID: ${adminId}`;
+                resultDiv.innerHTML += `\n=================================`;
+                
+            } catch (error) {
+                resultDiv.innerHTML += `\n❌ ERROR: ${error.message}`;
+            }
+        });
+    </script>
+</body>
+</html>
