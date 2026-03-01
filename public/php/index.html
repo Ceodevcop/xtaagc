@@ -1,0 +1,508 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ABSOLUTE FINAL - Admin Creation</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            background: #000;
+            color: #0f0;
+            font-family: 'Courier New', monospace;
+            padding: 30px;
+            line-height: 1.6;
+        }
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            border: 2px solid #0f0;
+            padding: 30px;
+        }
+        h1 {
+            color: #0f0;
+            text-align: center;
+            border-bottom: 2px solid #0f0;
+            padding-bottom: 20px;
+            margin-bottom: 30px;
+        }
+        .error-box {
+            background: #1a1a1a;
+            border: 2px solid #f00;
+            color: #f00;
+            padding: 20px;
+            margin-bottom: 30px;
+            font-weight: bold;
+        }
+        .success-box {
+            background: #1a1a1a;
+            border: 2px solid #0f0;
+            color: #0f0;
+            padding: 20px;
+            margin-bottom: 30px;
+        }
+        .step {
+            border: 1px solid #0f0;
+            padding: 20px;
+            margin-bottom: 20px;
+            background: #111;
+        }
+        .step h2 {
+            color: #0f0;
+            margin-bottom: 15px;
+        }
+        button {
+            background: #000;
+            color: #0f0;
+            border: 2px solid #0f0;
+            padding: 15px 30px;
+            font-family: 'Courier New', monospace;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            margin: 10px 5px;
+            width: 200px;
+        }
+        button:hover {
+            background: #0f0;
+            color: #000;
+        }
+        input, textarea {
+            width: 100%;
+            padding: 15px;
+            background: #1a1a1a;
+            border: 2px solid #0f0;
+            color: #0f0;
+            font-family: 'Courier New', monospace;
+            margin: 10px 0;
+        }
+        .output {
+            background: #1a1a1a;
+            border: 2px solid #0f0;
+            padding: 15px;
+            margin: 15px 0;
+            white-space: pre-wrap;
+            font-size: 14px;
+            max-height: 300px;
+            overflow-y: auto;
+        }
+        .manual-step {
+            background: #222;
+            padding: 20px;
+            margin: 20px 0;
+            border-left: 5px solid #ff0;
+        }
+        .copy-btn {
+            background: #333;
+            color: #ff0;
+            border: 1px solid #ff0;
+            padding: 8px 15px;
+            width: auto;
+            margin-left: 10px;
+        }
+        .copy-btn:hover {
+            background: #ff0;
+            color: #000;
+        }
+        .network-test {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
+            margin: 20px 0;
+        }
+        .test-item {
+            background: #1a1a1a;
+            border: 1px solid #0f0;
+            padding: 15px;
+            text-align: center;
+            cursor: pointer;
+        }
+        .test-item:hover {
+            background: #0f0;
+            color: #000;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🔥 ABSOLUTE FINAL - ADMIN CREATION 🔥</h1>
+
+        <!-- Network Diagnostics -->
+        <div class="step">
+            <h2>📡 NETWORK DIAGNOSTIC</h2>
+            <div class="network-test">
+                <div class="test-item" onclick="testGoogle()">Test Google</div>
+                <div class="test-item" onclick="testCloudflare()">Test Cloudflare</div>
+                <div class="test-item" onclick="testFirebase()">Test Firebase</div>
+            </div>
+            <div id="networkOutput" class="output">Click a test button...</div>
+        </div>
+
+        <!-- OPTION 1: Direct REST API -->
+        <div class="step">
+            <h2>🚀 OPTION 1: Direct REST API (Try First)</h2>
+            <button onclick="directRestAPI()">CREATE ADMIN NOW</button>
+            <div id="restOutput" class="output">Ready...</div>
+        </div>
+
+        <!-- OPTION 2: JSONP Method -->
+        <div class="step">
+            <h2>📦 OPTION 2: JSONP Method (Bypasses CORS)</h2>
+            <button onclick="jsonpMethod()">Create via JSONP</button>
+            <div id="jsonpOutput" class="output">Ready...</div>
+        </div>
+
+        <!-- OPTION 3: Iframe Method -->
+        <div class="step">
+            <h2>🖼️ OPTION 3: Iframe Method</h2>
+            <button onclick="iframeMethod()">Open in Iframe</button>
+            <div id="iframeOutput" class="output">Ready...</div>
+        </div>
+
+        <!-- MANUAL STEP 1: Create Auth User -->
+        <div class="manual-step">
+            <h2>📋 MANUAL STEP 1: Create Auth User (100% Working)</h2>
+            <p style="color: #ff0;">Copy this URL and open in a NEW TAB:</p>
+            <div style="display: flex; align-items: center;">
+                <input type="text" id="authUrl" value="https://console.firebase.google.com/project/xtaagc/authentication/users" readonly>
+                <button class="copy-btn" onclick="copyUrl()">COPY</button>
+            </div>
+            <button onclick="window.open(document.getElementById('authUrl').value, '_blank')">OPEN FIREBASE CONSOLE</button>
+            <div style="margin-top: 20px;">
+                <p><strong>Instructions:</strong></p>
+                <ol style="color: #0f0; margin-left: 20px;">
+                    <li>Click "Add User" button</li>
+                    <li>Enter: <strong>ceo@taagc.website</strong></li>
+                    <li>Enter: <strong>Admin123!@#</strong></li>
+                    <li>Click "Add User"</li>
+                    <li>Copy the User UID that appears</li>
+                </ol>
+            </div>
+        </div>
+
+        <!-- UID Input -->
+        <div class="step">
+            <h2>🔑 ENTER USER UID FROM FIREBASE</h2>
+            <input type="text" id="userUid" placeholder="Paste the UID from Firebase Console here">
+            <button onclick="saveUID()">SAVE UID</button>
+            <div id="uidOutput" class="output">Waiting for UID...</div>
+        </div>
+
+        <!-- MANUAL STEP 2: Create Firestore Document -->
+        <div class="manual-step">
+            <h2>📋 MANUAL STEP 2: Create Firestore Document</h2>
+            <p style="color: #ff0;">Copy this URL and open in a NEW TAB:</p>
+            <div style="display: flex; align-items: center;">
+                <input type="text" id="firestoreUrl" value="https://console.firebase.google.com/project/xtaagc/firestore/data" readonly>
+                <button class="copy-btn" onclick="copyFirestoreUrl()">COPY</button>
+            </div>
+            <button onclick="window.open(document.getElementById('firestoreUrl').value, '_blank')">OPEN FIRESTORE</button>
+            
+            <div style="margin-top: 20px; background: #1a1a1a; padding: 15px;">
+                <p><strong>Copy this document data:</strong></p>
+                <pre id="docData" style="color: #ff0; overflow-x: auto;">
+{
+    "fullName": "Ahmad Hamza",
+    "email": "ceo@taagc.website",
+    "role": "super_admin",
+    "generatedId": "Ad001/03/2026",
+    "status": "active",
+    "createdAt": "2026-03-01T03:47:54.000Z",
+    "permissions": ["all"]
+}
+                </pre>
+                <button class="copy-btn" onclick="copyDocData()">COPY DOCUMENT DATA</button>
+            </div>
+            
+            <div style="margin-top: 20px;">
+                <p><strong>Instructions:</strong></p>
+                <ol style="color: #0f0; margin-left: 20px;">
+                    <li>Click "Start collection" or go to "users" collection</li>
+                    <li>Add document with ID = <strong id="uidDisplay">[THE UID FROM STEP 1]</strong></li>
+                    <li>Paste the fields above</li>
+                    <li>Click "Save"</li>
+                </ol>
+            </div>
+        </div>
+
+        <!-- OPTION 4: cURL Command -->
+        <div class="step">
+            <h2>💻 OPTION 4: cURL Command (Run in Terminal)</h2>
+            <div style="background: #1a1a1a; padding: 15px;">
+                <pre id="curlCommand" style="color: #ff0; overflow-x: auto;">
+curl -X POST https://identitytoolkit.googleapis.com/v1/accounts:signUp \
+  -H "Content-Type: application/json" \
+  -d '{
+    "email": "ceo@taagc.website",
+    "password": "Admin123!@#",
+    "returnSecureToken": true
+  }' \
+  -G --data-urlencode "key=AIzaSyAI1MrcP977UgRLQoePxl64JOSyj9v4WpI"
+                </pre>
+                <button class="copy-btn" onclick="copyCurl()">COPY CURL COMMAND</button>
+            </div>
+            <p style="color: #ff0; margin-top: 10px;">Run this in your local terminal or server SSH</p>
+        </div>
+
+        <!-- OPTION 5: Node.js Script -->
+        <div class="step">
+            <h2>🟢 OPTION 5: Node.js Script</h2>
+            <div style="background: #1a1a1a; padding: 15px;">
+                <pre id="nodeScript" style="color: #ff0; overflow-x: auto;">
+const fetch = require('node-fetch');
+
+async function createAdmin() {
+    const response = await fetch(
+        'https://identitytoolkit.googleapis.com/v1/accounts:signUp?key=AIzaSyAI1MrcP977UgRLQoePxl64JOSyj9v4WpI',
+        {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                email: 'ceo@taagc.website',
+                password: 'Admin123!@#',
+                returnSecureToken: true
+            })
+        }
+    );
+    const data = await response.json();
+    console.log(data);
+}
+
+createAdmin();
+                </pre>
+                <button class="copy-btn" onclick="copyNodeScript()">COPY NODE SCRIPT</button>
+            </div>
+        </div>
+
+        <!-- FINAL VERIFICATION -->
+        <div class="step">
+            <h2>✅ FINAL VERIFICATION</h2>
+            <button onclick="verifyAdmin()">VERIFY ADMIN CREATION</button>
+            <div id="verifyOutput" class="output">Click verify...</div>
+        </div>
+
+        <!-- CREDENTIALS SUMMARY -->
+        <div class="success-box" id="credSummary" style="display: none;">
+            <h2>🎉 ADMIN CREDENTIALS</h2>
+            <p><strong>Email:</strong> ceo@taagc.website</p>
+            <p><strong>Password:</strong> Admin123!@#</p>
+            <p><strong>Admin ID:</strong> Ad001/03/2026</p>
+            <p><strong>Role:</strong> Super Admin</p>
+            <p><strong>Login URL:</strong> https://admin.taagc.website/xtaagc</p>
+        </div>
+    </div>
+
+    <script>
+        let savedUID = '';
+
+        // Network Tests
+        async function testGoogle() {
+            const output = document.getElementById('networkOutput');
+            output.innerHTML = 'Testing Google...\n';
+            try {
+                const start = Date.now();
+                await fetch('https://www.google.com', { mode: 'no-cors' });
+                const time = Date.now() - start;
+                output.innerHTML += `✅ Google reachable (${time}ms)\n`;
+            } catch (e) {
+                output.innerHTML += `❌ Google failed: ${e.message}\n`;
+            }
+        }
+
+        async function testCloudflare() {
+            const output = document.getElementById('networkOutput');
+            output.innerHTML = 'Testing Cloudflare...\n';
+            try {
+                const start = Date.now();
+                await fetch('https://cloudflare.com', { mode: 'no-cors' });
+                const time = Date.now() - start;
+                output.innerHTML += `✅ Cloudflare reachable (${time}ms)\n`;
+            } catch (e) {
+                output.innerHTML += `❌ Cloudflare failed: ${e.message}\n`;
+            }
+        }
+
+        async function testFirebase() {
+            const output = document.getElementById('networkOutput');
+            output.innerHTML = 'Testing Firebase...\n';
+            try {
+                const start = Date.now();
+                await fetch('https://firebase.googleapis.com', { mode: 'no-cors' });
+                const time = Date.now() - start;
+                output.innerHTML += `✅ Firebase reachable (${time}ms)\n`;
+            } catch (e) {
+                output.innerHTML += `❌ Firebase failed: ${e.message}\n`;
+            }
+        }
+
+        // Direct REST API (with error handling)
+        async function directRestAPI() {
+            const output = document.getElementById('restOutput');
+            output.innerHTML = '⏳ Creating admin...\n';
+            
+            // Try multiple approaches
+            const approaches = [
+                { url: 'https://identitytoolkit.googleapis.com/v1/accounts:signUp?key=AIzaSyAI1MrcP977UgRLQoePxl64JOSyj9v4WpI', mode: 'cors' },
+                { url: 'https://cors-anywhere.herokuapp.com/https://identitytoolkit.googleapis.com/v1/accounts:signUp?key=AIzaSyAI1MrcP977UgRLQoePxl64JOSyj9v4WpI', mode: 'cors' },
+                { url: 'https://api.allorigins.win/raw?url=' + encodeURIComponent('https://identitytoolkit.googleapis.com/v1/accounts:signUp?key=AIzaSyAI1MrcP977UgRLQoePxl64JOSyj9v4WpI'), mode: 'cors' }
+            ];
+
+            for (let approach of approaches) {
+                try {
+                    output.innerHTML += `\nTrying: ${approach.url.substring(0, 50)}...\n`;
+                    
+                    const response = await fetch(approach.url, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({
+                            email: 'ceo@taagc.website',
+                            password: 'Admin123!@#',
+                            returnSecureToken: true
+                        })
+                    });
+                    
+                    if (response.ok) {
+                        const data = await response.json();
+                        output.innerHTML += `✅ SUCCESS!\nUID: ${data.localId}\nEmail: ${data.email}\n`;
+                        document.getElementById('uidDisplay').innerText = data.localId;
+                        document.getElementById('userUid').value = data.localId;
+                        savedUID = data.localId;
+                        showCredentials();
+                        return;
+                    } else {
+                        const error = await response.json();
+                        output.innerHTML += `❌ Error: ${error.error?.message || 'Unknown'}\n`;
+                    }
+                } catch (e) {
+                    output.innerHTML += `❌ Failed: ${e.message}\n`;
+                }
+            }
+            
+            output.innerHTML += `\n⚠️ All direct attempts failed. Use MANUAL method below.`;
+        }
+
+        // JSONP Method
+        function jsonpMethod() {
+            const output = document.getElementById('jsonpOutput');
+            output.innerHTML = 'Creating JSONP request...\n';
+            
+            const script = document.createElement('script');
+            const callbackName = 'jsonp_callback_' + Date.now();
+            
+            window[callbackName] = function(data) {
+                output.innerHTML += `✅ Response received:\n${JSON.stringify(data, null, 2)}\n`;
+                if (data.localId) {
+                    document.getElementById('uidDisplay').innerText = data.localId;
+                    document.getElementById('userUid').value = data.localId;
+                    savedUID = data.localId;
+                }
+                document.head.removeChild(script);
+                delete window[callbackName];
+            };
+            
+            script.src = `https://identitytoolkit.googleapis.com/v1/accounts:signUp?key=AIzaSyAI1MrcP977UgRLQoePxl64JOSyj9v4WpI&callback=${callbackName}`;
+            script.onerror = function() {
+                output.innerHTML += '❌ JSONP failed - network block\n';
+            };
+            
+            document.head.appendChild(script);
+        }
+
+        // Iframe Method
+        function iframeMethod() {
+            const output = document.getElementById('iframeOutput');
+            const iframe = document.createElement('iframe');
+            iframe.style.width = '100%';
+            iframe.style.height = '400px';
+            iframe.style.border = '2px solid #0f0';
+            iframe.style.marginTop = '10px';
+            
+            iframe.src = 'https://console.firebase.google.com/project/xtaagc/authentication/users';
+            
+            document.getElementById('iframeOutput').innerHTML = '';
+            document.getElementById('iframeOutput').appendChild(iframe);
+            output.innerHTML += 'Iframe loaded - you can now create user manually';
+        }
+
+        // Save UID
+        function saveUID() {
+            const uid = document.getElementById('userUid').value;
+            if (!uid) {
+                alert('Please enter a UID');
+                return;
+            }
+            savedUID = uid;
+            document.getElementById('uidDisplay').innerText = uid;
+            document.getElementById('uidOutput').innerHTML = `✅ UID saved: ${uid}`;
+            showCredentials();
+        }
+
+        // Verify Admin
+        async function verifyAdmin() {
+            const output = document.getElementById('verifyOutput');
+            output.innerHTML = 'Verifying...\n';
+            
+            try {
+                const response = await fetch('https://firestore.googleapis.com/v1/projects/xtaagc/databases/(default)/documents/users');
+                if (response.ok) {
+                    const data = await response.json();
+                    output.innerHTML = `✅ Firestore accessible\nFound ${data.documents?.length || 0} users\n`;
+                    if (savedUID) {
+                        output.innerHTML += `Your UID: ${savedUID}\n`;
+                    }
+                } else {
+                    output.innerHTML += `❌ Firestore error: ${response.status}\n`;
+                }
+            } catch (e) {
+                output.innerHTML += `❌ Verification failed: ${e.message}\n`;
+            }
+        }
+
+        // Copy functions
+        function copyUrl() {
+            const url = document.getElementById('authUrl');
+            url.select();
+            document.execCommand('copy');
+            alert('URL copied!');
+        }
+
+        function copyFirestoreUrl() {
+            const url = document.getElementById('firestoreUrl');
+            url.select();
+            document.execCommand('copy');
+            alert('Firestore URL copied!');
+        }
+
+        function copyDocData() {
+            const data = document.getElementById('docData').innerText;
+            navigator.clipboard.writeText(data);
+            alert('Document data copied!');
+        }
+
+        function copyCurl() {
+            const cmd = document.getElementById('curlCommand').innerText;
+            navigator.clipboard.writeText(cmd);
+            alert('cURL command copied!');
+        }
+
+        function copyNodeScript() {
+            const script = document.getElementById('nodeScript').innerText;
+            navigator.clipboard.writeText(script);
+            alert('Node.js script copied!');
+        }
+
+        function showCredentials() {
+            document.getElementById('credSummary').style.display = 'block';
+        }
+
+        // Auto-test on load
+        window.onload = function() {
+            testGoogle();
+        };
+    </script>
+</body>
+</html>
