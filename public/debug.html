@@ -1,0 +1,1349 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Firebase Debug - TAAGC Admin</title>
+    
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
+    
+    <!-- Fonts & Icons -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Inter', sans-serif;
+        }
+
+        body {
+            background: #0f172a;
+            color: #e2e8f0;
+            padding: 30px;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        h1 {
+            font-size: 32px;
+            margin-bottom: 10px;
+            color: #c19a6b;
+        }
+
+        .subtitle {
+            color: #94a3b8;
+            margin-bottom: 30px;
+        }
+
+        /* Stats Grid */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .stat-card {
+            background: #1e293b;
+            padding: 20px;
+            border-radius: 12px;
+            border: 1px solid #334155;
+        }
+
+        .stat-label {
+            color: #94a3b8;
+            font-size: 12px;
+            margin-bottom: 5px;
+        }
+
+        .stat-value {
+            font-size: 24px;
+            font-weight: 700;
+            color: #c19a6b;
+        }
+
+        .stat-value.small {
+            font-size: 14px;
+            font-family: monospace;
+        }
+
+        /* Test Sections */
+        .test-section {
+            background: #1e293b;
+            border-radius: 16px;
+            padding: 25px;
+            margin-bottom: 30px;
+            border: 1px solid #334155;
+        }
+
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .section-header h2 {
+            font-size: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .section-header h2 i {
+            color: #c19a6b;
+        }
+
+        .section-status {
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        .status-success {
+            background: rgba(16, 185, 129, 0.1);
+            border: 1px solid #10b981;
+            color: #10b981;
+        }
+
+        .status-error {
+            background: rgba(229, 62, 62, 0.1);
+            border: 1px solid #e53e3e;
+            color: #e53e3e;
+        }
+
+        .status-warning {
+            background: rgba(245, 158, 11, 0.1);
+            border: 1px solid #f59e0b;
+            color: #f59e0b;
+        }
+
+        .status-pending {
+            background: rgba(59, 130, 246, 0.1);
+            border: 1px solid #3b82f6;
+            color: #3b82f6;
+        }
+
+        /* Test Grid */
+        .test-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .test-card {
+            background: #0f172a;
+            border-radius: 12px;
+            padding: 20px;
+            border: 1px solid #334155;
+        }
+
+        .test-card h3 {
+            font-size: 16px;
+            margin-bottom: 15px;
+            color: #c19a6b;
+        }
+
+        .test-result {
+            background: #1a2632;
+            padding: 12px;
+            border-radius: 8px;
+            font-family: monospace;
+            font-size: 12px;
+            margin: 10px 0;
+            max-height: 200px;
+            overflow-y: auto;
+            white-space: pre-wrap;
+        }
+
+        .test-result.success {
+            border-left: 4px solid #10b981;
+        }
+
+        .test-result.error {
+            border-left: 4px solid #e53e3e;
+        }
+
+        .test-result.warning {
+            border-left: 4px solid #f59e0b;
+        }
+
+        .btn {
+            padding: 10px 16px;
+            border: none;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.3s;
+            font-size: 13px;
+            margin-right: 10px;
+            margin-bottom: 10px;
+        }
+
+        .btn-primary {
+            background: #c19a6b;
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: #b38b5f;
+            transform: translateY(-2px);
+        }
+
+        .btn-success {
+            background: #10b981;
+            color: white;
+        }
+
+        .btn-success:hover {
+            background: #059669;
+            transform: translateY(-2px);
+        }
+
+        .btn-danger {
+            background: #e53e3e;
+            color: white;
+        }
+
+        .btn-danger:hover {
+            background: #c53030;
+            transform: translateY(-2px);
+        }
+
+        .btn-warning {
+            background: #f59e0b;
+            color: white;
+        }
+
+        .btn-warning:hover {
+            background: #d97706;
+            transform: translateY(-2px);
+        }
+
+        .btn-info {
+            background: #3b82f6;
+            color: white;
+        }
+
+        .btn-info:hover {
+            background: #2563eb;
+            transform: translateY(-2px);
+        }
+
+        .btn-secondary {
+            background: #334155;
+            color: white;
+        }
+
+        .btn-secondary:hover {
+            background: #475569;
+        }
+
+        .btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .config-box {
+            background: #0f172a;
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 20px;
+            border: 1px solid #334155;
+        }
+
+        .config-item {
+            display: flex;
+            align-items: center;
+            padding: 10px 0;
+            border-bottom: 1px solid #334155;
+        }
+
+        .config-item:last-child {
+            border-bottom: none;
+        }
+
+        .config-label {
+            width: 150px;
+            color: #94a3b8;
+        }
+
+        .config-value {
+            flex: 1;
+            font-family: monospace;
+            color: #c19a6b;
+            word-break: break-all;
+        }
+
+        .config-value.error {
+            color: #e53e3e;
+        }
+
+        .config-value.success {
+            color: #10b981;
+        }
+
+        .network-log {
+            background: #0f172a;
+            border-radius: 8px;
+            padding: 15px;
+            font-family: monospace;
+            font-size: 12px;
+            max-height: 300px;
+            overflow-y: auto;
+            margin-top: 15px;
+        }
+
+        .log-entry {
+            padding: 5px 0;
+            border-bottom: 1px solid #334155;
+            color: #94a3b8;
+        }
+
+        .log-entry.success {
+            color: #10b981;
+        }
+
+        .log-entry.error {
+            color: #e53e3e;
+        }
+
+        .log-entry.warning {
+            color: #f59e0b;
+        }
+
+        .log-time {
+            color: #64748b;
+            margin-right: 10px;
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 4px;
+            background: #334155;
+            border-radius: 2px;
+            overflow: hidden;
+            margin: 10px 0;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: #c19a6b;
+            transition: width 0.3s;
+        }
+
+        .toast {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            padding: 16px 24px;
+            background: #1e293b;
+            border-left: 4px solid #c19a6b;
+            border-radius: 8px;
+            color: white;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+            animation: slideIn 0.3s;
+            z-index: 9999;
+            min-width: 300px;
+        }
+
+        @keyframes slideIn {
+            from {
+                transform: translateX(100%);
+                opacity: 0;
+            }
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+
+        .toast.success { border-left-color: #10b981; }
+        .toast.error { border-left-color: #e53e3e; }
+        .toast.warning { border-left-color: #f59e0b; }
+
+        .network-indicator {
+            display: inline-block;
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            margin-right: 5px;
+        }
+
+        .network-online {
+            background: #10b981;
+            box-shadow: 0 0 10px #10b981;
+        }
+
+        .network-offline {
+            background: #e53e3e;
+        }
+
+        .network-checking {
+            background: #f59e0b;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1><i class="fas fa-bug"></i> Firebase Debug Console</h1>
+        <p class="subtitle">Complete backend testing with network diagnostics</p>
+
+        <!-- Network Status -->
+        <div class="test-section">
+            <div class="section-header">
+                <h2><i class="fas fa-network-wired"></i> Network Status</h2>
+                <span class="section-status status-pending" id="networkStatus">Checking...</span>
+            </div>
+            
+            <div class="config-box">
+                <div class="config-item">
+                    <span class="config-label">Internet Connection:</span>
+                    <span class="config-value" id="internetStatus">Checking...</span>
+                </div>
+                <div class="config-item">
+                    <span class="config-label">Firebase Auth:</span>
+                    <span class="config-value" id="authStatus">Checking...</span>
+                </div>
+                <div class="config-item">
+                    <span class="config-label">Firestore:</span>
+                    <span class="config-value" id="firestoreStatus">Checking...</span>
+                </div>
+                <div class="config-item">
+                    <span class="config-label">Latency:</span>
+                    <span class="config-value" id="latency">-- ms</span>
+                </div>
+            </div>
+
+            <div class="test-grid">
+                <button class="btn btn-info" onclick="testPing()">
+                    <i class="fas fa-network-wired"></i> Test Ping
+                </button>
+                <button class="btn btn-info" onclick="testDNS()">
+                    <i class="fas fa-globe"></i> Test DNS
+                </button>
+                <button class="btn btn-info" onclick="testFirebaseEndpoints()">
+                    <i class="fas fa-database"></i> Test Firebase Endpoints
+                </button>
+            </div>
+
+            <div class="network-log" id="networkLog">
+                <div class="log-entry">Ready to test network connections...</div>
+            </div>
+        </div>
+
+        <!-- Firebase Configuration -->
+        <div class="test-section">
+            <div class="section-header">
+                <h2><i class="fas fa-cog"></i> Firebase Configuration</h2>
+                <button class="btn btn-secondary" onclick="refreshConfig()">
+                    <i class="fas fa-sync-alt"></i> Refresh
+                </button>
+            </div>
+
+            <div class="config-box">
+                <div class="config-item">
+                    <span class="config-label">Project ID:</span>
+                    <span class="config-value" id="configProjectId">xtaagc</span>
+                </div>
+                <div class="config-item">
+                    <span class="config-label">Auth Domain:</span>
+                    <span class="config-value" id="configAuthDomain">xtaagc.firebaseapp.com</span>
+                </div>
+                <div class="config-item">
+                    <span class="config-label">API Key:</span>
+                    <span class="config-value" id="configApiKey">AIzaSyAI1MrcP977UgRLQoePxl64JOSyj9v4WpI</span>
+                </div>
+                <div class="config-item">
+                    <span class="config-label">Storage Bucket:</span>
+                    <span class="config-value" id="configStorageBucket">xtaagc.appspot.com</span>
+                </div>
+            </div>
+
+            <button class="btn btn-warning" onclick="testConfig()">
+                <i class="fas fa-vial"></i> Test Configuration
+            </button>
+        </div>
+
+        <!-- Authentication Tests -->
+        <div class="test-section">
+            <div class="section-header">
+                <h2><i class="fas fa-lock"></i> Authentication Tests</h2>
+                <span class="section-status status-pending" id="authSectionStatus">Not Tested</span>
+            </div>
+
+            <div class="test-grid">
+                <div class="test-card">
+                    <h3><i class="fas fa-user"></i> Current User</h3>
+                    <div id="currentUser" class="test-result">Not logged in</div>
+                    <button class="btn btn-primary" onclick="checkCurrentUser()">
+                        <i class="fas fa-sync-alt"></i> Check User
+                    </button>
+                </div>
+
+                <div class="test-card">
+                    <h3><i class="fas fa-key"></i> Anonymous Login</h3>
+                    <div id="anonResult" class="test-result">Not tested</div>
+                    <button class="btn btn-primary" onclick="testAnonymousLogin()">
+                        <i class="fas fa-user-secret"></i> Test Anonymous
+                    </button>
+                </div>
+
+                <div class="test-card">
+                    <h3><i class="fas fa-envelope"></i> Email/Password</h3>
+                    <div id="emailAuthResult" class="test-result">Not tested</div>
+                    <button class="btn btn-primary" onclick="testEmailAuth()">
+                        <i class="fas fa-paper-plane"></i> Test Email Auth
+                    </button>
+                </div>
+
+                <div class="test-card">
+                    <h3><i class="fas fa-clock"></i> Session Persistence</h3>
+                    <div id="persistenceResult" class="test-result">Not tested</div>
+                    <button class="btn btn-primary" onclick="testPersistence()">
+                        <i class="fas fa-history"></i> Test Persistence
+                    </button>
+                </div>
+            </div>
+
+            <button class="btn btn-danger" onclick="testSignOut()">
+                <i class="fas fa-sign-out-alt"></i> Sign Out (Test)
+            </button>
+        </div>
+
+        <!-- Firestore Tests -->
+        <div class="test-section">
+            <div class="section-header">
+                <h2><i class="fas fa-database"></i> Firestore Tests</h2>
+                <span class="section-status status-pending" id="firestoreSectionStatus">Not Tested</span>
+            </div>
+
+            <div class="test-grid">
+                <div class="test-card">
+                    <h3><i class="fas fa-plus-circle"></i> Write Test</h3>
+                    <div id="writeResult" class="test-result">Not tested</div>
+                    <button class="btn btn-success" onclick="testFirestoreWrite()">
+                        <i class="fas fa-pen"></i> Test Write
+                    </button>
+                </div>
+
+                <div class="test-card">
+                    <h3><i class="fas fa-search"></i> Read Test</h3>
+                    <div id="readResult" class="test-result">Not tested</div>
+                    <button class="btn btn-info" onclick="testFirestoreRead()">
+                        <i class="fas fa-eye"></i> Test Read
+                    </button>
+                </div>
+
+                <div class="test-card">
+                    <h3><i class="fas fa-list"></i> Query Users</h3>
+                    <div id="queryResult" class="test-result">Not tested</div>
+                    <button class="btn btn-primary" onclick="testQueryUsers()">
+                        <i class="fas fa-users"></i> Query Users
+                    </button>
+                </div>
+
+                <div class="test-card">
+                    <h3><i class="fas fa-chart-line"></i> Collection Stats</h3>
+                    <div id="collectionStats" class="test-result">Not tested</div>
+                    <button class="btn btn-secondary" onclick="getCollectionStats()">
+                        <i class="fas fa-calculator"></i> Get Stats
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Super Admin Creation Tests -->
+        <div class="test-section">
+            <div class="section-header">
+                <h2><i class="fas fa-crown"></i> Super Admin Creation Debug</h2>
+                <span class="section-status status-pending" id="adminSectionStatus">Not Tested</span>
+            </div>
+
+            <div class="config-box">
+                <div class="config-item">
+                    <span class="config-label">Existing Admins:</span>
+                    <span class="config-value" id="existingAdminCount">Checking...</span>
+                </div>
+                <div class="config-item">
+                    <span class="config-label">Admin IDs:</span>
+                    <span class="config-value" id="adminIds">-</span>
+                </div>
+                <div class="config-item">
+                    <span class="config-label">Last Created:</span>
+                    <span class="config-value" id="lastAdminCreated">-</span>
+                </div>
+            </div>
+
+            <div class="test-grid">
+                <div class="test-card">
+                    <h3><i class="fas fa-check-circle"></i> Check Admin Exists</h3>
+                    <div id="checkAdminResult" class="test-result">Not tested</div>
+                    <button class="btn btn-primary" onclick="checkAdminExists()">
+                        <i class="fas fa-search"></i> Check Admins
+                    </button>
+                </div>
+
+                <div class="test-card">
+                    <h3><i class="fas fa-trash-alt"></i> Cleanup Test Data</h3>
+                    <div id="cleanupResult" class="test-result">Not tested</div>
+                    <button class="btn btn-warning" onclick="cleanupTestData()">
+                        <i class="fas fa-broom"></i> Cleanup
+                    </button>
+                </div>
+            </div>
+
+            <!-- Manual Admin Creation Form -->
+            <div class="config-box">
+                <h3 style="margin-bottom: 15px;">Manual Admin Creation Test</h3>
+                
+                <div class="test-grid" style="grid-template-columns: 1fr 1fr;">
+                    <div>
+                        <label style="display: block; margin-bottom: 5px;">Full Name</label>
+                        <input type="text" id="testFullName" value="Test Admin" class="config-value" style="width:100%; padding:8px;">
+                    </div>
+                    <div>
+                        <label style="display: block; margin-bottom: 5px;">Email</label>
+                        <input type="email" id="testEmail" value="test@taagc.com" class="config-value" style="width:100%; padding:8px;">
+                    </div>
+                    <div>
+                        <label style="display: block; margin-bottom: 5px;">Password</label>
+                        <input type="text" id="testPassword" value="Test123!@#" class="config-value" style="width:100%; padding:8px;">
+                    </div>
+                    <div>
+                        <label style="display: block; margin-bottom: 5px;">Phone</label>
+                        <input type="text" id="testPhone" value="+1234567890" class="config-value" style="width:100%; padding:8px;">
+                    </div>
+                </div>
+
+                <div style="margin-top: 20px; display: flex; gap: 10px;">
+                    <button class="btn btn-success" onclick="testCreateAdmin()">
+                        <i class="fas fa-user-plus"></i> Test Create Admin
+                    </button>
+                    <button class="btn btn-danger" onclick="testCreateAdminWithDebug()">
+                        <i class="fas fa-bug"></i> Create with Debug
+                    </button>
+                </div>
+            </div>
+
+            <div id="adminCreationLog" class="network-log" style="max-height: 400px;">
+                <div class="log-entry">Ready to test admin creation...</div>
+            </div>
+        </div>
+
+        <!-- Permission Tests -->
+        <div class="test-section">
+            <div class="section-header">
+                <h2><i class="fas fa-shield-alt"></i> Security Rules Tests</h2>
+                <span class="section-status status-pending" id="rulesSectionStatus">Not Tested</span>
+            </div>
+
+            <div class="test-grid">
+                <div class="test-card">
+                    <h3>Read Rules</h3>
+                    <div id="readRulesResult" class="test-result">Not tested</div>
+                    <button class="btn btn-primary" onclick="testReadRules()">
+                        <i class="fas fa-book-open"></i> Test Read Rules
+                    </button>
+                </div>
+
+                <div class="test-card">
+                    <h3>Write Rules</h3>
+                    <div id="writeRulesResult" class="test-result">Not tested</div>
+                    <button class="btn btn-primary" onclick="testWriteRules()">
+                        <i class="fas fa-pen-fancy"></i> Test Write Rules
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Detailed Logs -->
+        <div class="test-section">
+            <div class="section-header">
+                <h2><i class="fas fa-history"></i> Debug Log</h2>
+                <div>
+                    <button class="btn btn-secondary" onclick="clearLog()">
+                        <i class="fas fa-trash"></i> Clear
+                    </button>
+                    <button class="btn btn-info" onclick="downloadLog()">
+                        <i class="fas fa-download"></i> Download
+                    </button>
+                </div>
+            </div>
+
+            <div class="network-log" id="debugLog" style="max-height: 500px;">
+                <div class="log-entry">Debug session started at: <span id="sessionTime"></span></div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // ============================================
+        // FIREBASE CONFIGURATION
+        // ============================================
+        const firebaseConfig = {
+            apiKey: "AIzaSyAI1MrcP977UgRLQoePxl64JOSyj9v4WpI",
+            authDomain: "xtaagc.firebaseapp.com",
+            projectId: "xtaagc",
+            storageBucket: "xtaagc.appspot.com",
+            messagingSenderId: "256073982437",
+            appId: "1:256073982437:web:8da63bb7acc86c0ca98f0c"
+        };
+
+        // Initialize Firebase with retry
+        let app = null;
+        let auth = null;
+        let db = null;
+
+        function initializeFirebase() {
+            addLog('Initializing Firebase...', 'info');
+            
+            if (!firebase.apps.length) {
+                try {
+                    app = firebase.initializeApp(firebaseConfig);
+                    auth = firebase.auth();
+                    db = firebase.firestore();
+                    
+                    // Enable offline persistence
+                    db.enablePersistence()
+                        .then(() => addLog('Firestore persistence enabled', 'success'))
+                        .catch(err => addLog('Persistence error: ' + err.message, 'warning'));
+                    
+                    addLog('Firebase initialized successfully', 'success');
+                    return true;
+                } catch (error) {
+                    addLog('Firebase init error: ' + error.message, 'error');
+                    return false;
+                }
+            } else {
+                app = firebase.app();
+                auth = firebase.auth();
+                db = firebase.firestore();
+                addLog('Firebase already initialized', 'info');
+                return true;
+            }
+        }
+
+        // Initialize on load
+        initializeFirebase();
+
+        // ============================================
+        // UTILITY FUNCTIONS
+        // ============================================
+        function addLog(message, type = 'info') {
+            const log = document.getElementById('debugLog');
+            const time = new Date().toLocaleTimeString();
+            const entry = document.createElement('div');
+            entry.className = `log-entry ${type}`;
+            entry.innerHTML = `<span class="log-time">[${time}]</span> ${message}`;
+            log.appendChild(entry);
+            log.scrollTop = log.scrollHeight;
+
+            // Also add to network log if it's network related
+            if (message.includes('network') || message.includes('connection') || message.includes('ping')) {
+                const networkLog = document.getElementById('networkLog');
+                const netEntry = document.createElement('div');
+                netEntry.className = `log-entry ${type}`;
+                netEntry.innerHTML = `<span class="log-time">[${time}]</span> ${message}`;
+                networkLog.appendChild(netEntry);
+                networkLog.scrollTop = networkLog.scrollHeight;
+            }
+        }
+
+        function showToast(message, type = 'info') {
+            const toast = document.createElement('div');
+            toast.className = `toast ${type}`;
+            toast.innerHTML = `
+                <div style="display: flex; align-items: center; gap: 10px;">
+                    <i class="fas fa-${type === 'success' ? 'check-circle' : type === 'error' ? 'exclamation-circle' : 'info-circle'}"></i>
+                    <span>${message}</span>
+                </div>
+            `;
+            document.body.appendChild(toast);
+            setTimeout(() => toast.remove(), 3000);
+        }
+
+        function updateElement(id, value, status = 'normal') {
+            const el = document.getElementById(id);
+            if (el) {
+                el.textContent = value;
+                if (status === 'success') {
+                    el.className = 'config-value success';
+                } else if (status === 'error') {
+                    el.className = 'config-value error';
+                } else {
+                    el.className = 'config-value';
+                }
+            }
+        }
+
+        // ============================================
+        // NETWORK TESTS
+        // ============================================
+        async function testPing() {
+            addLog('Testing network ping...', 'info');
+            const start = Date.now();
+            
+            try {
+                await fetch('https://www.google.com/favicon.ico', { 
+                    mode: 'no-cors',
+                    cache: 'no-cache'
+                });
+                const latency = Date.now() - start;
+                updateElement('latency', latency + ' ms', 'success');
+                addLog(`Ping successful: ${latency}ms`, 'success');
+                showToast(`Ping: ${latency}ms`, 'success');
+            } catch (error) {
+                addLog('Ping failed: ' + error.message, 'error');
+                showToast('Ping failed', 'error');
+            }
+        }
+
+        async function testDNS() {
+            addLog('Testing DNS resolution...', 'info');
+            
+            const endpoints = [
+                'google.com',
+                'firebase.googleapis.com',
+                'firestore.googleapis.com',
+                'identitytoolkit.googleapis.com'
+            ];
+
+            for (const endpoint of endpoints) {
+                try {
+                    const start = Date.now();
+                    await fetch(`https://${endpoint}`, { mode: 'no-cors' });
+                    const time = Date.now() - start;
+                    addLog(`DNS OK - ${endpoint}: ${time}ms`, 'success');
+                } catch (error) {
+                    addLog(`DNS Error - ${endpoint}: ${error.message}`, 'error');
+                }
+            }
+        }
+
+        async function testFirebaseEndpoints() {
+            addLog('Testing Firebase endpoints...', 'info');
+            
+            const endpoints = [
+                'https://identitytoolkit.googleapis.com/v1/accounts:signUp?key=' + firebaseConfig.apiKey,
+                'https://firestore.googleapis.com/v1/projects/' + firebaseConfig.projectId + '/databases/(default)/documents',
+                'https://securetoken.googleapis.com/v1/token?key=' + firebaseConfig.apiKey
+            ];
+
+            for (const endpoint of endpoints) {
+                try {
+                    const res = await fetch(endpoint, { method: 'HEAD' });
+                    addLog(`Endpoint OK (${res.status}): ${endpoint.substring(0, 50)}...`, 'success');
+                } catch (error) {
+                    addLog(`Endpoint Error: ${error.message}`, 'error');
+                }
+            }
+        }
+
+        // ============================================
+        // CONFIGURATION TESTS
+        // ============================================
+        function refreshConfig() {
+            updateElement('configProjectId', firebaseConfig.projectId);
+            updateElement('configAuthDomain', firebaseConfig.authDomain);
+            updateElement('configApiKey', firebaseConfig.apiKey.substring(0, 10) + '...');
+            updateElement('configStorageBucket', firebaseConfig.storageBucket);
+            addLog('Configuration refreshed', 'info');
+        }
+
+        async function testConfig() {
+            addLog('Testing Firebase configuration...', 'info');
+            
+            if (!firebaseConfig.apiKey.startsWith('AIza')) {
+                addLog('API Key format invalid', 'error');
+            } else {
+                addLog('API Key format OK', 'success');
+            }
+
+            if (!firebaseConfig.projectId) {
+                addLog('Project ID missing', 'error');
+            } else {
+                addLog('Project ID OK: ' + firebaseConfig.projectId, 'success');
+            }
+
+            // Test auth endpoint
+            try {
+                const res = await fetch(`https://identitytoolkit.googleapis.com/v1/accounts:signUp?key=${firebaseConfig.apiKey}`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ returnSecureToken: true })
+                });
+                
+                if (res.status === 400) {
+                    addLog('Auth endpoint reachable (got expected 400)', 'success');
+                } else {
+                    addLog('Auth endpoint responded with: ' + res.status, 'warning');
+                }
+            } catch (error) {
+                addLog('Auth endpoint unreachable: ' + error.message, 'error');
+            }
+        }
+
+        // ============================================
+        // AUTHENTICATION TESTS
+        // ============================================
+        async function checkCurrentUser() {
+            const user = auth.currentUser;
+            const result = document.getElementById('currentUser');
+            
+            if (user) {
+                result.innerHTML = `
+                    UID: ${user.uid}\n
+                    Email: ${user.email || 'none'}\n
+                    Email Verified: ${user.emailVerified}\n
+                    Anonymous: ${user.isAnonymous}
+                `;
+                result.className = 'test-result success';
+                addLog('Current user: ' + user.email || 'anonymous', 'info');
+            } else {
+                result.textContent = 'No user logged in';
+                result.className = 'test-result warning';
+                addLog('No user logged in', 'warning');
+            }
+        }
+
+        async function testAnonymousLogin() {
+            const result = document.getElementById('anonResult');
+            addLog('Testing anonymous login...', 'info');
+            
+            try {
+                const userCred = await auth.signInAnonymously();
+                result.innerHTML = `Success! UID: ${userCred.user.uid}`;
+                result.className = 'test-result success';
+                addLog('Anonymous login successful', 'success');
+                showToast('Anonymous login successful', 'success');
+            } catch (error) {
+                result.textContent = 'Error: ' + error.message;
+                result.className = 'test-result error';
+                addLog('Anonymous login failed: ' + error.message, 'error');
+            }
+        }
+
+        async function testEmailAuth() {
+            const result = document.getElementById('emailAuthResult');
+            const email = 'test' + Date.now() + '@taagc.com';
+            const password = 'Test123!@#';
+            
+            addLog(`Testing email auth with ${email}...`, 'info');
+            
+            try {
+                const userCred = await auth.createUserWithEmailAndPassword(email, password);
+                result.innerHTML = `Created: ${userCred.user.email}`;
+                result.className = 'test-result success';
+                addLog('Email auth test successful', 'success');
+                
+                // Clean up
+                await userCred.user.delete();
+                addLog('Test user cleaned up', 'info');
+            } catch (error) {
+                result.textContent = 'Error: ' + error.message;
+                result.className = 'test-result error';
+                addLog('Email auth failed: ' + error.message, 'error');
+            }
+        }
+
+        async function testPersistence() {
+            const result = document.getElementById('persistenceResult');
+            addLog('Testing session persistence...', 'info');
+            
+            try {
+                await auth.setPersistence(firebase.auth.Auth.Persistence.LOCAL);
+                result.innerHTML = 'Persistence set to LOCAL';
+                result.className = 'test-result success';
+                addLog('Persistence test successful', 'success');
+            } catch (error) {
+                result.textContent = 'Error: ' + error.message;
+                result.className = 'test-result error';
+                addLog('Persistence failed: ' + error.message, 'error');
+            }
+        }
+
+        async function testSignOut() {
+            addLog('Signing out...', 'info');
+            try {
+                await auth.signOut();
+                addLog('Sign out successful', 'success');
+                showToast('Signed out', 'success');
+                checkCurrentUser();
+            } catch (error) {
+                addLog('Sign out failed: ' + error.message, 'error');
+            }
+        }
+
+        // ============================================
+        // FIRESTORE TESTS
+        // ============================================
+        async function testFirestoreWrite() {
+            const result = document.getElementById('writeResult');
+            const testId = 'test_' + Date.now();
+            addLog(`Testing Firestore write to test/${testId}...`, 'info');
+            
+            try {
+                await db.collection('test').doc(testId).set({
+                    timestamp: firebase.firestore.FieldValue.serverTimestamp(),
+                    message: 'test write',
+                    random: Math.random()
+                });
+                
+                result.innerHTML = `Success! Written to test/${testId}`;
+                result.className = 'test-result success';
+                addLog('Firestore write successful', 'success');
+            } catch (error) {
+                result.textContent = 'Error: ' + error.message;
+                result.className = 'test-result error';
+                addLog('Firestore write failed: ' + error.message, 'error');
+                
+                // Check for common errors
+                if (error.code === 'permission-denied') {
+                    addLog('Permission denied - check Firestore rules', 'error');
+                } else if (error.code === 'unavailable') {
+                    addLog('Service unavailable - network issue', 'error');
+                }
+            }
+        }
+
+        async function testFirestoreRead() {
+            const result = document.getElementById('readResult');
+            addLog('Testing Firestore read...', 'info');
+            
+            try {
+                const snapshot = await db.collection('test').limit(1).get();
+                result.innerHTML = `Success! Found ${snapshot.size} documents`;
+                result.className = 'test-result success';
+                addLog('Firestore read successful', 'success');
+            } catch (error) {
+                result.textContent = 'Error: ' + error.message;
+                result.className = 'test-result error';
+                addLog('Firestore read failed: ' + error.message, 'error');
+            }
+        }
+
+        async function testQueryUsers() {
+            const result = document.getElementById('queryResult');
+            addLog('Querying users collection...', 'info');
+            
+            try {
+                const snapshot = await db.collection('users').limit(5).get();
+                
+                if (snapshot.empty) {
+                    result.innerHTML = 'No users found';
+                    result.className = 'test-result warning';
+                } else {
+                    let html = `Found ${snapshot.size} users:\n`;
+                    snapshot.forEach(doc => {
+                        const data = doc.data();
+                        html += `- ${data.email || 'no email'} (${data.role || 'no role'})\n`;
+                    });
+                    result.innerHTML = html;
+                    result.className = 'test-result success';
+                }
+                addLog(`Query returned ${snapshot.size} users`, 'success');
+            } catch (error) {
+                result.textContent = 'Error: ' + error.message;
+                result.className = 'test-result error';
+                addLog('Query failed: ' + error.message, 'error');
+            }
+        }
+
+        async function getCollectionStats() {
+            const result = document.getElementById('collectionStats');
+            addLog('Getting collection statistics...', 'info');
+            
+            try {
+                const collections = ['users', 'test', 'audit_logs', 'settings'];
+                let stats = '';
+                
+                for (const col of collections) {
+                    try {
+                        const snapshot = await db.collection(col).limit(1).get();
+                        stats += `${col}: ${snapshot.size ? 'accessible' : 'empty'}\n`;
+                    } catch (e) {
+                        stats += `${col}: error (${e.message.substring(0, 20)}...)\n`;
+                    }
+                }
+                
+                result.innerHTML = stats;
+                result.className = 'test-result info';
+                addLog('Collection stats retrieved', 'info');
+            } catch (error) {
+                result.textContent = 'Error: ' + error.message;
+                result.className = 'test-result error';
+            }
+        }
+
+        // ============================================
+        // SUPER ADMIN TESTS
+        // ============================================
+        async function checkAdminExists() {
+            const result = document.getElementById('checkAdminResult');
+            const countEl = document.getElementById('existingAdminCount');
+            const idsEl = document.getElementById('adminIds');
+            
+            addLog('Checking for existing super admins...', 'info');
+            
+            try {
+                const snapshot = await db.collection('users')
+                    .where('role', '==', 'super_admin')
+                    .get();
+                
+                countEl.innerHTML = snapshot.size;
+                countEl.className = snapshot.size > 0 ? 'config-value success' : 'config-value warning';
+                
+                if (snapshot.size > 0) {
+                    let ids = '';
+                    snapshot.forEach(doc => {
+                        const data = doc.data();
+                        ids += `${data.generatedId || 'unknown'} `;
+                    });
+                    idsEl.innerHTML = ids;
+                    result.innerHTML = `Found ${snapshot.size} super admin(s)`;
+                    result.className = 'test-result success';
+                    addLog(`Found ${snapshot.size} super admin(s)`, 'success');
+                } else {
+                    idsEl.innerHTML = 'none';
+                    result.innerHTML = 'No super admin found - setup required';
+                    result.className = 'test-result warning';
+                    addLog('No super admin found', 'warning');
+                }
+            } catch (error) {
+                countEl.innerHTML = 'error';
+                result.textContent = 'Error: ' + error.message;
+                result.className = 'test-result error';
+                addLog('Admin check failed: ' + error.message, 'error');
+            }
+        }
+
+        async function testCreateAdmin() {
+            const log = document.getElementById('adminCreationLog');
+            const fullName = document.getElementById('testFullName').value;
+            const email = document.getElementById('testEmail').value;
+            const password = document.getElementById('testPassword').value;
+            const phone = document.getElementById('testPhone').value;
+            
+            addLog('=== TEST ADMIN CREATION START ===', 'info');
+            addLog(`Name: ${fullName}, Email: ${email}`, 'info');
+            
+            try {
+                // Step 1: Check if admin already exists
+                addLog('Step 1: Checking for existing admins...', 'info');
+                const adminCheck = await db.collection('users')
+                    .where('role', '==', 'super_admin')
+                    .get();
+                
+                if (!adminCheck.empty) {
+                    addLog('⚠️ Super admin already exists!', 'warning');
+                }
+                
+                // Step 2: Generate admin ID
+                const adminId = generateTestAdminId();
+                addLog(`Step 2: Generated Admin ID: ${adminId}`, 'success');
+                
+                // Step 3: Create auth user
+                addLog('Step 3: Creating Firebase Auth user...', 'info');
+                const userCred = await auth.createUserWithEmailAndPassword(email, password);
+                addLog(`✅ Auth user created: ${userCred.user.uid}`, 'success');
+                
+                // Step 4: Create Firestore profile
+                addLog('Step 4: Creating Firestore profile...', 'info');
+                await db.collection('users').doc(userCred.user.uid).set({
+                    uid: userCred.user.uid,
+                    fullName: fullName,
+                    email: email,
+                    phone: phone,
+                    role: 'super_admin',
+                    generatedId: adminId,
+                    status: 'active',
+                    createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+                    permissions: ['all'],
+                    test: true
+                });
+                addLog('✅ Firestore profile created', 'success');
+                
+                // Step 5: Verify
+                addLog('Step 5: Verifying creation...', 'info');
+                const verifyDoc = await db.collection('users').doc(userCred.user.uid).get();
+                if (verifyDoc.exists) {
+                    addLog('✅ Verification successful', 'success');
+                }
+                
+                addLog('=== TEST ADMIN CREATION COMPLETE ===', 'success');
+                showToast('Test admin created successfully', 'success');
+                
+            } catch (error) {
+                addLog('❌ ERROR: ' + error.message, 'error');
+                addLog('Error Code: ' + error.code, 'error');
+                
+                if (error.code === 'auth/email-already-in-use') {
+                    addLog('Email already in use - try a different email', 'warning');
+                } else if (error.code === 'permission-denied') {
+                    addLog('Permission denied - check Firestore rules', 'error');
+                } else if (error.code === 'unavailable') {
+                    addLog('Service unavailable - network issue', 'error');
+                }
+            }
+        }
+
+        async function testCreateAdminWithDebug() {
+            addLog('=== DEBUG ADMIN CREATION WITH DETAILED LOGS ===', 'info');
+            
+            const steps = [
+                'Checking Firebase connection...',
+                'Verifying authentication...',
+                'Checking permissions...',
+                'Creating user...',
+                'Creating profile...',
+                'Verifying...'
+            ];
+            
+            for (const step of steps) {
+                addLog(`⏳ ${step}`, 'info');
+                await new Promise(resolve => setTimeout(resolve, 500));
+            }
+            
+            await testCreateAdmin();
+        }
+
+        async function cleanupTestData() {
+            const result = document.getElementById('cleanupResult');
+            addLog('Cleaning up test data...', 'info');
+            
+            try {
+                // Delete test documents
+                const testDocs = await db.collection('test').get();
+                let count = 0;
+                
+                for (const doc of testDocs.docs) {
+                    await doc.ref.delete();
+                    count++;
+                }
+                
+                result.innerHTML = `Cleaned up ${count} test documents`;
+                result.className = 'test-result success';
+                addLog(`Cleaned up ${count} test documents`, 'success');
+                
+            } catch (error) {
+                result.textContent = 'Error: ' + error.message;
+                result.className = 'test-result error';
+                addLog('Cleanup failed: ' + error.message, 'error');
+            }
+        }
+
+        // ============================================
+        // SECURITY RULES TESTS
+        // ============================================
+        async function testReadRules() {
+            const result = document.getElementById('readRulesResult');
+            addLog('Testing security read rules...', 'info');
+            
+            try {
+                const testDoc = await db.collection('test').doc('read_test').get();
+                result.innerHTML = 'Read allowed (as expected)';
+                result.className = 'test-result success';
+            } catch (error) {
+                if (error.code === 'permission-denied') {
+                    result.innerHTML = 'Read blocked (as expected)';
+                    result.className = 'test-result success';
+                } else {
+                    result.innerHTML = 'Error: ' + error.message;
+                    result.className = 'test-result error';
+                }
+            }
+        }
+
+        async function testWriteRules() {
+            const result = document.getElementById('writeRulesResult');
+            addLog('Testing security write rules...', 'info');
+            
+            try {
+                await db.collection('test').doc('write_test').set({
+                    test: true,
+                    timestamp: Date.now()
+                });
+                result.innerHTML = 'Write allowed - check if expected';
+                result.className = 'test-result warning';
+            } catch (error) {
+                if (error.code === 'permission-denied') {
+                    result.innerHTML = 'Write blocked (as expected for unauthenticated)';
+                    result.className = 'test-result success';
+                } else {
+                    result.innerHTML = 'Error: ' + error.message;
+                    result.className = 'test-result error';
+                }
+            }
+        }
+
+        // ============================================
+        // UTILITY FUNCTIONS
+        // ============================================
+        function generateTestAdminId() {
+            const now = new Date();
+            const month = String(now.getMonth() + 1).padStart(2, '0');
+            const year = now.getFullYear();
+            const random = Math.floor(Math.random() * 900 + 100);
+            return `Ad${random}/${month}/${year}`;
+        }
+
+        function clearLog() {
+            document.getElementById('debugLog').innerHTML = '';
+            addLog('Log cleared', 'info');
+        }
+
+        function downloadLog() {
+            const log = document.getElementById('debugLog').innerText;
+            const blob = new Blob([log], { type: 'text/plain' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `firebase-debug-${new Date().toISOString()}.txt`;
+            a.click();
+            URL.revokeObjectURL(url);
+        }
+
+        // ============================================
+        // INITIALIZATION
+        // ============================================
+        window.addEventListener('load', () => {
+            document.getElementById('sessionTime').textContent = new Date().toLocaleString();
+            addLog('Debug page loaded', 'info');
+            refreshConfig();
+            checkAdminExists();
+            
+            // Auto-run basic tests
+            setTimeout(() => {
+                testPing();
+                testFirestoreEndpoints();
+            }, 1000);
+        });
+
+        async function testFirestoreEndpoints() {
+            addLog('Testing Firestore endpoints...', 'info');
+            try {
+                const res = await fetch(`https://firestore.googleapis.com/v1/projects/${firebaseConfig.projectId}/databases/(default)/documents`);
+                addLog('Firestore API reachable', 'success');
+            } catch (error) {
+                addLog('Firestore API error: ' + error.message, 'error');
+            }
+        }
+    </script>
+</body>
+</html>
