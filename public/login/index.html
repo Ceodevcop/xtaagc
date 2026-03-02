@@ -1,0 +1,939 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login - TAAGC Global</title>
+    
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
+    
+    <!-- Fonts & Icons -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Inter', sans-serif;
+        }
+
+        :root {
+            --primary: #0a2540;
+            --primary-dark: #1a3a4f;
+            --primary-light: #2a4a6a;
+            --accent: #c19a6b;
+            --accent-dark: #b38b5f;
+            --accent-light: #e5b884;
+            --success: #10b981;
+            --warning: #f59e0b;
+            --danger: #e53e3e;
+            --info: #3b82f6;
+            --dark: #1e293b;
+            --medium: #334155;
+            --light: #64748b;
+            --lighter: #94a3b8;
+            --bg: #f8fafc;
+            --white: #ffffff;
+            --shadow-sm: 0 2px 4px rgba(0,0,0,0.05);
+            --shadow-md: 0 4px 6px rgba(0,0,0,0.1);
+            --shadow-lg: 0 10px 15px rgba(0,0,0,0.1);
+            --shadow-xl: 0 20px 25px rgba(0,0,0,0.15);
+        }
+
+        body {
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .login-container {
+            max-width: 450px;
+            width: 100%;
+            animation: fadeIn 0.5s ease-out;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .login-card {
+            background: var(--white);
+            border-radius: 24px;
+            padding: 40px 30px;
+            box-shadow: var(--shadow-xl);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .login-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, var(--accent), var(--primary));
+        }
+
+        /* Logo */
+        .logo {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .logo-icon {
+            width: 80px;
+            height: 80px;
+            background: linear-gradient(135deg, var(--primary), var(--primary-light));
+            border-radius: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 15px;
+            color: var(--white);
+            font-size: 32px;
+            font-weight: 800;
+        }
+
+        .logo h1 {
+            color: var(--primary);
+            font-size: 28px;
+            font-weight: 700;
+            margin-bottom: 5px;
+        }
+
+        .logo h1 span {
+            color: var(--accent);
+        }
+
+        .logo p {
+            color: var(--light);
+            font-size: 14px;
+        }
+
+        /* Alert Messages */
+        .alert {
+            padding: 15px;
+            border-radius: 12px;
+            margin-bottom: 25px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-size: 14px;
+            animation: slideIn 0.3s;
+            display: none;
+        }
+
+        @keyframes slideIn {
+            from {
+                transform: translateX(-20px);
+                opacity: 0;
+            }
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+
+        .alert-error {
+            background: rgba(229, 62, 62, 0.1);
+            border: 1px solid var(--danger);
+            color: var(--danger);
+        }
+
+        .alert-success {
+            background: rgba(16, 185, 129, 0.1);
+            border: 1px solid var(--success);
+            color: var(--success);
+        }
+
+        .alert-warning {
+            background: rgba(245, 158, 11, 0.1);
+            border: 1px solid var(--warning);
+            color: var(--warning);
+        }
+
+        .alert-info {
+            background: rgba(59, 130, 246, 0.1);
+            border: 1px solid var(--info);
+            color: var(--info);
+        }
+
+        /* Form Groups */
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            color: var(--dark);
+            font-weight: 600;
+            font-size: 14px;
+        }
+
+        .form-group label i {
+            color: var(--accent);
+            margin-right: 8px;
+            width: 20px;
+        }
+
+        .input-group {
+            position: relative;
+        }
+
+        .input-group i {
+            position: absolute;
+            left: 16px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--light);
+            font-size: 16px;
+            transition: color 0.3s;
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 16px 20px 16px 50px;
+            border: 2px solid #e2e8f0;
+            border-radius: 14px;
+            font-size: 15px;
+            transition: all 0.3s;
+            background: var(--white);
+        }
+
+        .form-control:focus {
+            border-color: var(--accent);
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(193, 154, 107, 0.1);
+        }
+
+        .form-control.error {
+            border-color: var(--danger);
+        }
+
+        /* Password Field */
+        .password-field {
+            position: relative;
+        }
+
+        .toggle-password {
+            position: absolute;
+            right: 16px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--light);
+            cursor: pointer;
+            transition: color 0.3s;
+            z-index: 10;
+            font-size: 18px;
+        }
+
+        .toggle-password:hover {
+            color: var(--accent);
+        }
+
+        /* Form Options */
+        .form-options {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 25px;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+
+        .checkbox {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            cursor: pointer;
+            color: var(--light);
+            font-size: 14px;
+        }
+
+        .checkbox input {
+            width: 18px;
+            height: 18px;
+            cursor: pointer;
+            accent-color: var(--accent);
+        }
+
+        .forgot-link {
+            color: var(--accent);
+            text-decoration: none;
+            font-size: 14px;
+            font-weight: 600;
+            transition: color 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .forgot-link:hover {
+            color: var(--primary);
+        }
+
+        /* Login Button */
+        .btn-login {
+            width: 100%;
+            padding: 16px;
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+            color: var(--white);
+            border: none;
+            border-radius: 14px;
+            font-size: 16px;
+            font-weight: 700;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            transition: all 0.3s;
+            margin-bottom: 20px;
+        }
+
+        .btn-login:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-lg);
+        }
+
+        .btn-login:disabled {
+            opacity: 0.7;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .btn-login i {
+            font-size: 18px;
+        }
+
+        /* Divider */
+        .divider {
+            display: flex;
+            align-items: center;
+            text-align: center;
+            margin: 20px 0;
+            color: var(--light);
+            font-size: 14px;
+        }
+
+        .divider::before,
+        .divider::after {
+            content: '';
+            flex: 1;
+            border-bottom: 1px solid #e2e8f0;
+        }
+
+        .divider::before {
+            margin-right: 15px;
+        }
+
+        .divider::after {
+            margin-left: 15px;
+        }
+
+        /* Social Login */
+        .social-login {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            margin-bottom: 25px;
+        }
+
+        .social-btn {
+            padding: 12px;
+            border: 2px solid #e2e8f0;
+            border-radius: 12px;
+            background: var(--white);
+            color: var(--dark);
+            font-weight: 600;
+            font-size: 14px;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        .social-btn:hover {
+            border-color: var(--accent);
+            transform: translateY(-2px);
+        }
+
+        .social-btn.google:hover {
+            background: #ea4335;
+            color: white;
+            border-color: #ea4335;
+        }
+
+        .social-btn.linkedin:hover {
+            background: #0077b5;
+            color: white;
+            border-color: #0077b5;
+        }
+
+        /* Register Link */
+        .register-link {
+            text-align: center;
+            margin-top: 20px;
+            padding-top: 20px;
+            border-top: 1px solid #e2e8f0;
+        }
+
+        .register-link p {
+            color: var(--light);
+            font-size: 14px;
+            margin-bottom: 10px;
+        }
+
+        .register-link a {
+            color: var(--accent);
+            text-decoration: none;
+            font-weight: 700;
+            font-size: 16px;
+            transition: color 0.3s;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .register-link a:hover {
+            color: var(--primary);
+            gap: 12px;
+        }
+
+        /* Loading Spinner */
+        .spinner {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid rgba(255,255,255,0.3);
+            border-radius: 50%;
+            border-top-color: var(--white);
+            animation: spin 1s ease-in-out infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        /* Role Selector (for demo/registration) */
+        .role-selector {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+            justify-content: center;
+        }
+
+        .role-btn {
+            padding: 10px 20px;
+            border: 2px solid #e2e8f0;
+            border-radius: 30px;
+            background: var(--white);
+            color: var(--light);
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            flex: 1;
+        }
+
+        .role-btn.active {
+            background: var(--primary);
+            color: var(--white);
+            border-color: var(--primary);
+        }
+
+        .role-btn.investor.active {
+            background: var(--success);
+            border-color: var(--success);
+        }
+
+        .role-btn.client.active {
+            background: var(--info);
+            border-color: var(--info);
+        }
+
+        /* Footer */
+        .login-footer {
+            text-align: center;
+            margin-top: 20px;
+            color: rgba(255,255,255,0.7);
+            font-size: 13px;
+        }
+
+        .login-footer a {
+            color: var(--accent);
+            text-decoration: none;
+        }
+
+        .login-footer a:hover {
+            text-decoration: underline;
+        }
+
+        /* Quick Access */
+        .quick-access {
+            margin-top: 20px;
+            padding: 15px;
+            background: var(--bg);
+            border-radius: 12px;
+            border: 1px dashed var(--accent);
+        }
+
+        .quick-access p {
+            color: var(--light);
+            font-size: 12px;
+            margin-bottom: 10px;
+            text-align: center;
+        }
+
+        .quick-buttons {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+        }
+
+        .quick-btn {
+            padding: 8px 16px;
+            background: var(--white);
+            border: 1px solid #e2e8f0;
+            border-radius: 20px;
+            font-size: 12px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .quick-btn:hover {
+            background: var(--accent);
+            color: var(--white);
+        }
+
+        /* Responsive */
+        @media (max-width: 480px) {
+            .login-card {
+                padding: 30px 20px;
+            }
+            
+            .social-login {
+                grid-template-columns: 1fr;
+            }
+            
+            .form-options {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+            
+            .role-selector {
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="login-container">
+        <div class="login-card">
+            <!-- Logo -->
+            <div class="logo">
+                <div class="logo-icon">
+                    <i class="fas fa-chart-line"></i>
+                </div>
+                <h1><span>TAAGC</span> GLOBAL</h1>
+                <p>Sign in to your account</p>
+            </div>
+
+            <!-- Alert Message -->
+            <div id="loginAlert" class="alert"></div>
+
+            <!-- Role Selector (for demo) -->
+            <div class="role-selector">
+                <button class="role-btn active" onclick="setRole('investor')">
+                    <i class="fas fa-chart-line"></i> Investor
+                </button>
+                <button class="role-btn" onclick="setRole('client')">
+                    <i class="fas fa-user"></i> Client
+                </button>
+                <button class="role-btn" onclick="setRole('admin')">
+                    <i class="fas fa-crown"></i> Admin
+                </button>
+            </div>
+
+            <!-- Login Form -->
+            <form id="loginForm">
+                <div class="form-group">
+                    <label><i class="fas fa-envelope"></i> Email Address</label>
+                    <div class="input-group">
+                        <i class="fas fa-envelope"></i>
+                        <input type="email" class="form-control" id="email" 
+                               placeholder="Enter your email" required autofocus>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label><i class="fas fa-lock"></i> Password</label>
+                    <div class="password-field">
+                        <div class="input-group">
+                            <i class="fas fa-key"></i>
+                            <input type="password" class="form-control" id="password" 
+                                   placeholder="Enter your password" required>
+                        </div>
+                        <i class="fas fa-eye toggle-password" id="togglePassword" 
+                           onclick="togglePassword()"></i>
+                    </div>
+                </div>
+
+                <div class="form-options">
+                    <label class="checkbox">
+                        <input type="checkbox" id="rememberMe">
+                        <span>Remember me</span>
+                    </label>
+                    <a href="#" class="forgot-link" onclick="handleForgotPassword(event)">
+                        <i class="fas fa-question-circle"></i> Forgot Password?
+                    </a>
+                </div>
+
+                <button type="submit" class="btn-login" id="loginBtn">
+                    <i class="fas fa-sign-in-alt"></i> Sign In
+                </button>
+            </form>
+
+            <!-- Divider -->
+            <div class="divider">Or continue with</div>
+
+            <!-- Social Login -->
+            <div class="social-login">
+                <button class="social-btn google" onclick="socialLogin('google')">
+                    <i class="fab fa-google"></i> Google
+                </button>
+                <button class="social-btn linkedin" onclick="socialLogin('linkedin')">
+                    <i class="fab fa-linkedin"></i> LinkedIn
+                </button>
+            </div>
+
+            <!-- Quick Access (for demo) -->
+            <div class="quick-access">
+                <p><i class="fas fa-flask"></i> Demo Accounts (Quick Access)</p>
+                <div class="quick-buttons">
+                    <button class="quick-btn" onclick="fillDemo('investor')">Investor</button>
+                    <button class="quick-btn" onclick="fillDemo('client')">Client</button>
+                    <button class="quick-btn" onclick="fillDemo('admin')">Admin</button>
+                </div>
+            </div>
+
+            <!-- Register Link -->
+            <div class="register-link">
+                <p>Don't have an account?</p>
+                <a href="/register">
+                    <i class="fas fa-user-plus"></i> Create Account
+                </a>
+            </div>
+        </div>
+
+        <!-- Footer -->
+        <div class="login-footer">
+            <p>&copy; 2026 TAAGC Global. <a href="/privacy">Privacy</a> | <a href="/terms">Terms</a></p>
+        </div>
+    </div>
+
+    <script>
+        // ============================================
+        // FIREBASE CONFIGURATION
+        // ============================================
+        const firebaseConfig = {
+            apiKey: "AIzaSyAI1MrcP977UgRLQoePxl64JOSyj9v4WpI",
+            authDomain: "xtaagc.firebaseapp.com",
+            projectId: "xtaagc",
+            storageBucket: "xtaagc.appspot.com",
+            messagingSenderId: "256073982437",
+            appId: "1:256073982437:web:8da63bb7acc86c0ca98f0c"
+        };
+
+        // Initialize Firebase
+        if (!firebase.apps.length) {
+            firebase.initializeApp(firebaseConfig);
+        }
+        
+        const auth = firebase.auth();
+        const db = firebase.firestore();
+
+        // ============================================
+        // GLOBAL VARIABLES
+        // ============================================
+        let currentRole = 'investor';
+        let loginAttempts = 0;
+        const MAX_ATTEMPTS = 5;
+
+        // ============================================
+        // TOGGLE PASSWORD VISIBILITY
+        // ============================================
+        window.togglePassword = function() {
+            const passwordInput = document.getElementById('password');
+            const toggleIcon = document.getElementById('togglePassword');
+            
+            if (passwordInput.type === 'password') {
+                passwordInput.type = 'text';
+                toggleIcon.classList.remove('fa-eye');
+                toggleIcon.classList.add('fa-eye-slash');
+            } else {
+                passwordInput.type = 'password';
+                toggleIcon.classList.remove('fa-eye-slash');
+                toggleIcon.classList.add('fa-eye');
+            }
+        };
+
+        // ============================================
+        // SET ROLE
+        // ============================================
+        window.setRole = function(role) {
+            currentRole = role;
+            
+            document.querySelectorAll('.role-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            
+            event.target.classList.add('active');
+            
+            // Update placeholder based on role
+            const emailInput = document.getElementById('email');
+            if (role === 'investor') {
+                emailInput.placeholder = 'investor@example.com';
+            } else if (role === 'client') {
+                emailInput.placeholder = 'client@example.com';
+            } else {
+                emailInput.placeholder = 'admin@taagc.com';
+            }
+        };
+
+        /*
+      // ============================================
+        // FILL DEMO ACCOUNT
+        // ============================================
+        window.fillDemo = function(role) {
+            const emailInput = document.getElementById('email');
+            const passwordInput = document.getElementById('password');
+            
+            if (role === 'investor') {
+                emailInput.value = 'investor@taagc.com';
+                passwordInput.value = 'Investor123!@#';
+                setRole('investor');
+            } else if (role === 'client') {
+                emailInput.value = 'client@taagc.';
+                passwordInput.value = 'Client123!@#';
+                setRole('client');
+            } else {
+                emailInput.value = 'admin@taagc.com';
+                passwordInput.value = 'Admin123!@#';
+                setRole('admin');
+            }
+            
+            showAlert('Demo credentials filled!', 'success');
+        };
+*/
+        // ============================================
+        // SHOW ALERT
+        // ============================================
+        function showAlert(message, type) {
+            const alert = document.getElementById('loginAlert');
+            alert.className = `alert alert-${type}`;
+            alert.innerHTML = `<i class="fas fa-${type === 'success' ? 'check-circle' : type === 'error' ? 'exclamation-circle' : 'info-circle'}"></i> ${message}`;
+            alert.style.display = 'flex';
+            
+            setTimeout(() => {
+                alert.style.display = 'none';
+            }, 5000);
+        }
+
+        // ============================================
+        // HANDLE FORGOT PASSWORD
+        // ============================================
+        window.handleForgotPassword = async function(e) {
+            e.preventDefault();
+            
+            const email = document.getElementById('email').value;
+            
+            if (!email) {
+                showAlert('Please enter your email address first', 'warning');
+                return;
+            }
+
+            try {
+                await auth.sendPasswordResetEmail(email);
+                showAlert('Password reset email sent! Check your inbox.', 'success');
+            } catch (error) {
+                if (error.code === 'auth/user-not-found') {
+                    showAlert('No account found with this email.', 'error');
+                } else {
+                    showAlert('Error sending reset email. Please try again.', 'error');
+                }
+            }
+        };
+
+        // ============================================
+        // SOCIAL LOGIN
+        // ============================================
+        window.socialLogin = function(provider) {
+            showAlert(`${provider} login coming soon!`, 'info');
+        };
+
+        // ============================================
+        // LOGIN FORM HANDLER
+        // ============================================
+        document.getElementById('loginForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const email = document.getElementById('email').value.trim();
+            const password = document.getElementById('password').value;
+            const rememberMe = document.getElementById('rememberMe').checked;
+            const loginBtn = document.getElementById('loginBtn');
+
+            try {
+                // Show loading state
+                loginBtn.innerHTML = '<span class="spinner"></span> Signing in...';
+                loginBtn.disabled = true;
+
+                // Set persistence based on remember me
+                await auth.setPersistence(
+                    rememberMe ? 
+                    firebase.auth.Auth.Persistence.LOCAL : 
+                    firebase.auth.Auth.Persistence.SESSION
+                );
+
+                // Attempt login
+                const userCred = await auth.signInWithEmailAndPassword(email, password);
+                const user = userCred.user;
+
+                // Get user data from Firestore
+                const userDoc = await db.collection('users').doc(user.uid).get();
+
+                if (!userDoc.exists) {
+                    // Create basic profile if not exists
+                    await db.collection('users').doc(user.uid).set({
+                        email: email,
+                        role: currentRole,
+                        status: 'active',
+                        createdAt: firebase.firestore.FieldValue.serverTimestamp()
+                    });
+                }
+
+                // Reset login attempts on success
+                loginAttempts = 0;
+
+                // Show success message
+                showAlert('Login successful! Redirecting...', 'success');
+
+                // Redirect based on role
+                setTimeout(() => {
+                    if (currentRole === 'admin' || email.includes('admin')) {
+                        window.location.href = '/admin/xtaagc';
+                    } else if (currentRole === 'investor' || email.includes('investor')) {
+                        window.location.href = '/profile/investor.html';
+                    } else {
+                        window.location.href = '/profile/client.html';
+                    }
+                }, 1500);
+
+            } catch (error) {
+                console.error('Login error:', error);
+                
+                loginAttempts++;
+                
+                let errorMessage = 'Login failed. Please try again.';
+                
+                switch (error.code) {
+                    case 'auth/user-not-found':
+                        errorMessage = 'No account found with this email. Please register.';
+                        break;
+                    case 'auth/wrong-password':
+                        errorMessage = `Incorrect password. Attempts remaining: ${MAX_ATTEMPTS - loginAttempts}`;
+                        break;
+                    case 'auth/too-many-requests':
+                        errorMessage = 'Too many failed attempts. Account temporarily locked.';
+                        break;
+                    case 'auth/network-request-failed':
+                        errorMessage = 'Network error. Please check your connection.';
+                        break;
+                    case 'auth/invalid-email':
+                        errorMessage = 'Invalid email format.';
+                        break;
+                    case 'auth/user-disabled':
+                        errorMessage = 'This account has been disabled.';
+                        break;
+                }
+                
+                showAlert(errorMessage, 'error');
+                
+                loginBtn.innerHTML = '<i class="fas fa-sign-in-alt"></i> Sign In';
+                loginBtn.disabled = false;
+            }
+        });
+
+        // ============================================
+        // CHECK AUTH STATE ON LOAD
+        // ============================================
+        auth.onAuthStateChanged(async (user) => {
+            if (user) {
+                try {
+                    const userDoc = await db.collection('users').doc(user.uid).get();
+                    
+                    if (userDoc.exists) {
+                        const userData = userDoc.data();
+                        
+                        // Redirect based on role
+                        if (userData.role === 'admin') {
+                            window.location.href = '/admin/xtaagc';
+                        } else if (userData.role === 'investor') {
+                            window.location.href = '/profile/investor';
+                        } else {
+                            window.location.href = '/profile/client';
+                        }
+                    }
+                } catch (error) {
+                    console.error('Auto-login error:', error);
+                }
+            }
+        });
+
+        // ============================================
+        // ENTER KEY SUBMISSION
+        // ============================================
+        document.getElementById('password').addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+                document.getElementById('loginForm').dispatchEvent(new Event('submit'));
+            }
+        });
+
+        // ============================================
+        // CLEAR ALERT ON INPUT
+        // ============================================
+        document.getElementById('email').addEventListener('input', () => {
+            document.getElementById('loginAlert').style.display = 'none';
+        });
+        
+        document.getElementById('password').addEventListener('input', () => {
+            document.getElementById('loginAlert').style.display = 'none';
+        });
+
+        // ============================================
+        // PREVENT FORM RESUBMISSION
+        // ============================================
+        if (window.history.replaceState) {
+            window.history.replaceState(null, null, window.location.href);
+        }
+    </script>
+</body>
+</html>
