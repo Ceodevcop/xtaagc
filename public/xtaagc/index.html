@@ -1,0 +1,598 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fix Admin Login - Complete Solution</title>
+    
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
+    
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
+        }
+
+        body {
+            background: linear-gradient(135deg, #0a2540, #1a3a4f);
+            min-height: 100vh;
+            padding: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .container {
+            max-width: 600px;
+            width: 100%;
+        }
+
+        .card {
+            background: white;
+            border-radius: 24px;
+            padding: 40px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.2);
+            margin-bottom: 20px;
+        }
+
+        h1 {
+            color: #0a2540;
+            margin-bottom: 10px;
+            font-size: 28px;
+        }
+
+        h1 span {
+            color: #c19a6b;
+        }
+
+        .subtitle {
+            color: #64748b;
+            margin-bottom: 30px;
+        }
+
+        .error-box {
+            background: #fee2e2;
+            border: 2px solid #e53e3e;
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 30px;
+            color: #e53e3e;
+        }
+
+        .step {
+            background: #f8fafc;
+            border-radius: 16px;
+            padding: 25px;
+            margin-bottom: 20px;
+            border-left: 4px solid #c19a6b;
+        }
+
+        .step h3 {
+            color: #0a2540;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .step-number {
+            width: 30px;
+            height: 30px;
+            background: #c19a6b;
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+        }
+
+        .code-block {
+            background: #1e293b;
+            color: #e2e8f0;
+            padding: 20px;
+            border-radius: 12px;
+            font-family: monospace;
+            white-space: pre-wrap;
+            margin: 15px 0;
+        }
+
+        button {
+            background: #c19a6b;
+            color: white;
+            border: none;
+            padding: 14px 24px;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            margin: 5px;
+            transition: all 0.3s;
+            font-size: 14px;
+        }
+
+        button:hover {
+            background: #b38b5f;
+            transform: translateY(-2px);
+        }
+
+        button.primary {
+            background: #0a2540;
+        }
+
+        button.primary:hover {
+            background: #1a3a4f;
+        }
+
+        button.success {
+            background: #10b981;
+        }
+
+        button.success:hover {
+            background: #059669;
+        }
+
+        button.danger {
+            background: #e53e3e;
+        }
+
+        button.danger:hover {
+            background: #c53030;
+        }
+
+        .input-group {
+            margin: 20px 0;
+        }
+
+        input {
+            width: 100%;
+            padding: 14px 16px;
+            border: 2px solid #e2e8f0;
+            border-radius: 8px;
+            font-size: 16px;
+            margin: 10px 0;
+        }
+
+        input:focus {
+            border-color: #c19a6b;
+            outline: none;
+        }
+
+        .output {
+            background: #1e293b;
+            color: #e2e8f0;
+            padding: 20px;
+            border-radius: 12px;
+            font-family: monospace;
+            margin: 20px 0;
+            max-height: 300px;
+            overflow-y: auto;
+        }
+
+        .output-line {
+            padding: 5px 0;
+            border-bottom: 1px solid #334155;
+        }
+
+        .output-line.success { color: #10b981; }
+        .output-line.error { color: #e53e3e; }
+        .output-line.warning { color: #f59e0b; }
+
+        .badge {
+            display: inline-block;
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+            margin: 5px;
+        }
+
+        .badge.success {
+            background: #10b98120;
+            color: #10b981;
+            border: 1px solid #10b981;
+        }
+
+        .badge.error {
+            background: #e53e3e20;
+            color: #e53e3e;
+            border: 1px solid #e53e3e;
+        }
+
+        .badge.warning {
+            background: #f59e0b20;
+            color: #f59e0b;
+            border: 1px solid #f59e0b;
+        }
+
+        .flex {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="card">
+            <h1>🔓 <span>FIX ADMIN LOGIN</span></h1>
+            <p class="subtitle">Complete solution for "invalid login credentials" error</p>
+
+            <div class="error-box">
+                <strong>❌ ERROR:</strong> INVALID_LOGIN_CREDENTIALS - Wrong email/password or user doesn't exist
+            </div>
+
+            <!-- Step 1: Open Firestore Rules -->
+            <div class="step">
+                <h3><span class="step-number">1</span> Open Firestore Rules</h3>
+                <p style="color:#64748b; margin-bottom:15px;">First, we need full access to check user data</p>
+                <button onclick="openFirestoreRules()">
+                    <i class="fas fa-external-link-alt"></i> Open Firebase Rules Console
+                </button>
+                <button onclick="copyRules()">
+                    <i class="fas fa-copy"></i> Copy Open Rules
+                </button>
+                <div class="code-block" id="rulesCode">
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    match /{document=**} {
+      allow read, write: if true;
+    }
+  }
+}
+                </div>
+            </div>
+
+            <!-- Step 2: Check All Users -->
+            <div class="step">
+                <h3><span class="step-number">2</span> Check Existing Users</h3>
+                <p style="color:#64748b; margin-bottom:15px;">See all users in Firestore database</p>
+                <button class="primary" onclick="checkAllUsers()">
+                    <i class="fas fa-users"></i> Load All Users
+                </button>
+                <button class="success" onclick="checkAuthUsers()">
+                    <i class="fas fa-key"></i> Check Auth Users (Requires Admin SDK)
+                </button>
+                <div id="usersOutput" class="output">
+                    Click a button to see users...
+                </div>
+            </div>
+
+            <!-- Step 3: Create/Reset Admin -->
+            <div class="step">
+                <h3><span class="step-number">3</span> Create Emergency Admin</h3>
+                <p style="color:#64748b; margin-bottom:15px;">Create a new super admin account</p>
+                
+                <div class="input-group">
+                    <label style="font-weight:600; color:#0a2540;">Email</label>
+                    <input type="email" id="adminEmail" value="ceo@taagc.website">
+                </div>
+                
+                <div class="input-group">
+                    <label style="font-weight:600; color:#0a2540;">Password</label>
+                    <input type="text" id="adminPassword" value="Admin123!@#">
+                </div>
+                
+                <div class="flex">
+                    <button class="success" onclick="createEmergencyAdmin()">
+                        <i class="fas fa-user-plus"></i> Create Admin
+                    </button>
+                    <button class="primary" onclick="generateSecurePassword()">
+                        <i class="fas fa-sync-alt"></i> Generate Password
+                    </button>
+                </div>
+            </div>
+
+            <!-- Step 4: Direct Login Test -->
+            <div class="step">
+                <h3><span class="step-number">4</span> Test Login Directly</h3>
+                <p style="color:#64748b; margin-bottom:15px;">Test credentials directly with Firebase</p>
+                
+                <div class="input-group">
+                    <label style="font-weight:600; color:#0a2540;">Email</label>
+                    <input type="email" id="testEmail" value="ceo@taagc.website">
+                </div>
+                
+                <div class="input-group">
+                    <label style="font-weight:600; color:#0a2540;">Password</label>
+                    <input type="text" id="testPassword" value="Admin123!@#">
+                </div>
+                
+                <button class="primary" onclick="testLogin()">
+                    <i class="fas fa-sign-in-alt"></i> Test Login
+                </button>
+            </div>
+
+            <!-- Step 5: Reset Password -->
+            <div class="step">
+                <h3><span class="step-number">5</span> Reset Password</h3>
+                <p style="color:#64748b; margin-bottom:15px;">Send password reset email</p>
+                
+                <div class="input-group">
+                    <label style="font-weight:600; color:#0a2540;">Email</label>
+                    <input type="email" id="resetEmail" value="ceo@taagc.website">
+                </div>
+                
+                <button class="warning" onclick="sendPasswordReset()">
+                    <i class="fas fa-key"></i> Send Reset Email
+                </button>
+            </div>
+
+            <!-- Live Console -->
+            <div class="output" id="console" style="margin-top:30px; max-height:200px;">
+                <div class="output-line">[System] Ready to fix login issues...</div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Firebase Configuration
+        const firebaseConfig = {
+            apiKey: "AIzaSyAI1MrcP977UgRLQoePxl64JOSyj9v4WpI",
+            authDomain: "xtaagc.firebaseapp.com",
+            projectId: "xtaagc",
+            storageBucket: "xtaagc.appspot.com",
+            messagingSenderId: "256073982437",
+            appId: "1:256073982437:web:8da63bb7acc86c0ca98f0c"
+        };
+
+        // Initialize Firebase
+        if (!firebase.apps.length) {
+            firebase.initializeApp(firebaseConfig);
+        }
+        
+        const auth = firebase.auth();
+        const db = firebase.firestore();
+
+        // ============================================
+        // LOGGING
+        // ============================================
+        function log(message, type = 'info') {
+            const console = document.getElementById('console');
+            const line = document.createElement('div');
+            line.className = `output-line ${type}`;
+            line.textContent = `[${new Date().toLocaleTimeString()}] ${message}`;
+            console.appendChild(line);
+            console.scrollTop = console.scrollHeight;
+        }
+
+        // ============================================
+        // RULES FUNCTIONS
+        // ============================================
+        function openFirestoreRules() {
+            window.open('https://console.firebase.google.com/project/xtaagc/firestore/rules', '_blank');
+            log('Opening Firebase Rules console...', 'info');
+        }
+
+        function copyRules() {
+            const rules = document.getElementById('rulesCode').textContent;
+            navigator.clipboard.writeText(rules);
+            log('✅ Rules copied to clipboard!', 'success');
+        }
+
+        // ============================================
+        // CHECK ALL USERS (FIRESTORE)
+        // ============================================
+        async function checkAllUsers() {
+            const output = document.getElementById('usersOutput');
+            output.innerHTML = '';
+            log('Loading users from Firestore...', 'info');
+            
+            try {
+                const snapshot = await db.collection('users').get();
+                
+                if (snapshot.empty) {
+                    output.innerHTML = '<div class="output-line warning">❌ No users found in Firestore!</div>';
+                    log('No users found in Firestore', 'warning');
+                    return;
+                }
+
+                let html = `<div class="output-line success">✅ Found ${snapshot.size} users:</div>`;
+                
+                snapshot.forEach(doc => {
+                    const data = doc.data();
+                    html += `
+                        <div class="output-line">
+                            📧 ${data.email || 'No email'} | 
+                            Role: ${data.role || 'No role'} | 
+                            Status: ${data.status || 'Unknown'} |
+                            ID: ${data.generatedId || 'No ID'}
+                        </div>
+                    `;
+                });
+                
+                output.innerHTML = html;
+                log(`✅ Loaded ${snapshot.size} users from Firestore`, 'success');
+                
+            } catch (error) {
+                output.innerHTML = `<div class="output-line error">❌ Error: ${error.message}</div>`;
+                log(`❌ Firestore error: ${error.message}`, 'error');
+                log('⚠️ You need to update Firestore rules first!', 'warning');
+            }
+        }
+
+        // ============================================
+        // CHECK AUTH USERS (Requires Admin SDK)
+        // ============================================
+        function checkAuthUsers() {
+            const output = document.getElementById('usersOutput');
+            output.innerHTML = `
+                <div class="output-line warning">⚠️ Cannot list Auth users directly</div>
+                <div class="output-line">This requires Firebase Admin SDK.</div>
+                <div class="output-line">Use Firebase Console instead:</div>
+                <div class="output-line">https://console.firebase.google.com/project/xtaagc/authentication/users</div>
+            `;
+            log('Opening Firebase Auth console...', 'info');
+            window.open('https://console.firebase.google.com/project/xtaagc/authentication/users', '_blank');
+        }
+
+        // ============================================
+        // CREATE EMERGENCY ADMIN
+        // ============================================
+        async function createEmergencyAdmin() {
+            const email = document.getElementById('adminEmail').value;
+            const password = document.getElementById('adminPassword').value;
+            
+            log(`Attempting to create admin: ${email}`, 'info');
+            
+            try {
+                // Create in Firebase Auth
+                const userCred = await auth.createUserWithEmailAndPassword(email, password);
+                const uid = userCred.user.uid;
+                
+                log(`✅ Auth user created with UID: ${uid}`, 'success');
+                
+                // Generate Admin ID
+                const now = new Date();
+                const month = String(now.getMonth() + 1).padStart(2, '0');
+                const year = now.getFullYear();
+                const random = Math.floor(Math.random() * 900 + 100);
+                const adminId = `Ad${random}/${month}/${year}`;
+                
+                // Create in Firestore
+                await db.collection('users').doc(uid).set({
+                    uid: uid,
+                    email: email,
+                    fullName: 'Emergency Admin',
+                    role: 'super_admin',
+                    status: 'active',
+                    generatedId: adminId,
+                    createdAt: firebase.firestore.FieldValue.serverTimestamp()
+                });
+                
+                log(`✅ Firestore profile created with ID: ${adminId}`, 'success');
+                log(`🎉 SUPER ADMIN CREATED!`, 'success');
+                log(`Email: ${email}`, 'success');
+                log(`Password: ${password}`, 'warning');
+                
+                // Update output
+                document.getElementById('usersOutput').innerHTML = `
+                    <div class="output-line success">✅ ADMIN CREATED SUCCESSFULLY!</div>
+                    <div class="output-line">📧 Email: ${email}</div>
+                    <div class="output-line">🔑 Password: ${password}</div>
+                    <div class="output-line">🆔 Admin ID: ${adminId}</div>
+                    <div class="output-line">📋 UID: ${uid}</div>
+                `;
+                
+            } catch (error) {
+                log(`❌ Error: ${error.message}`, 'error');
+                
+                if (error.code === 'auth/email-already-in-use') {
+                    document.getElementById('usersOutput').innerHTML = `
+                        <div class="output-line error">❌ Email already exists!</div>
+                        <div class="output-line">Try resetting password instead.</div>
+                    `;
+                }
+            }
+        }
+
+        // ============================================
+        // GENERATE SECURE PASSWORD
+        // ============================================
+        function generateSecurePassword() {
+            const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@#$%';
+            let password = '';
+            for (let i = 0; i < 14; i++) {
+                password += chars.charAt(Math.floor(Math.random() * chars.length));
+            }
+            document.getElementById('adminPassword').value = password;
+            document.getElementById('testPassword').value = password;
+            log('✅ Secure password generated', 'success');
+        }
+
+        // ============================================
+        // TEST LOGIN DIRECTLY
+        // ============================================
+        async function testLogin() {
+            const email = document.getElementById('testEmail').value;
+            const password = document.getElementById('testPassword').value;
+            
+            log(`Testing login for: ${email}`, 'info');
+            
+            try {
+                const userCred = await auth.signInWithEmailAndPassword(email, password);
+                const user = userCred.user;
+                
+                log(`✅ LOGIN SUCCESSFUL!`, 'success');
+                log(`User ID: ${user.uid}`, 'success');
+                log(`Email: ${user.email}`, 'success');
+                
+                // Check Firestore
+                const userDoc = await db.collection('users').doc(user.uid).get();
+                
+                if (userDoc.exists) {
+                    const data = userDoc.data();
+                    log(`✅ Firestore profile found`, 'success');
+                    log(`Role: ${data.role || 'Not set'}`, 'info');
+                    
+                    if (data.role === 'super_admin' || data.role === 'admin') {
+                        log(`🎉 You have admin access!`, 'success');
+                        document.getElementById('usersOutput').innerHTML = `
+                            <div class="output-line success">✅ LOGIN SUCCESSFUL - ADMIN ACCESS GRANTED!</div>
+                            <div class="output-line">Role: ${data.role}</div>
+                            <div class="output-line">Status: ${data.status}</div>
+                            <div class="output-line">ID: ${data.generatedId}</div>
+                        `;
+                    } else {
+                        log(`⚠️ Warning: Your role is "${data.role}" - need admin access`, 'warning');
+                    }
+                } else {
+                    log(`⚠️ No Firestore profile found`, 'warning');
+                }
+                
+            } catch (error) {
+                log(`❌ Login failed: ${error.message}`, 'error');
+                
+                document.getElementById('usersOutput').innerHTML = `
+                    <div class="output-line error">❌ LOGIN FAILED</div>
+                    <div class="output-line">Error: ${error.message}</div>
+                    <div class="output-line warning">Try creating a new admin account</div>
+                `;
+            }
+        }
+
+        // ============================================
+        // SEND PASSWORD RESET
+        // ============================================
+        async function sendPasswordReset() {
+            const email = document.getElementById('resetEmail').value;
+            
+            log(`Sending password reset to: ${email}`, 'info');
+            
+            try {
+                await auth.sendPasswordResetEmail(email);
+                log(`✅ Password reset email sent!`, 'success');
+                log(`Check inbox for: ${email}`, 'info');
+                
+                document.getElementById('usersOutput').innerHTML = `
+                    <div class="output-line success">✅ Password reset email sent!</div>
+                    <div class="output-line">📧 Check ${email}</div>
+                `;
+                
+            } catch (error) {
+                log(`❌ Error: ${error.message}`, 'error');
+                
+                if (error.code === 'auth/user-not-found') {
+                    document.getElementById('usersOutput').innerHTML = `
+                        <div class="output-line error">❌ No user found with this email</div>
+                        <div class="output-line warning">Create a new admin account instead</div>
+                    `;
+                }
+            }
+        }
+
+        // ============================================
+        // INIT
+        // ============================================
+        window.onload = function() {
+            log('Fix Login tool ready', 'info');
+            log('Follow the steps above to fix admin access', 'info');
+        };
+    </script>
+</body>
+</html>
