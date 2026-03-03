@@ -746,7 +746,7 @@
                 if (userData.role !== 'super_admin') {
                     alert('Only Super Admins can access God Mode');
                     await auth.signOut();
-                    window.location.href = 'xtaagc/admin';
+                    window.location.href = '/admin';
                     return;
                 }
 
@@ -1366,7 +1366,7 @@
         // ============================================
         document.getElementById('logoutBtn').addEventListener('click', async () => {
             await auth.signOut();
-            window.location.href = 'xtaagc/admin';
+            window.location.href = '/admin';
         });
     </script>
 </body>
