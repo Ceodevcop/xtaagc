@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>GOD MODE - Super Admin Control</title>
+    <title>Super Admin Control</title>
     
     <!-- Firebase SDK -->
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
@@ -2535,7 +2535,7 @@
                                     </div>
                                     <div class="form-group">
                                         <label>Max Wallets Per User</label>
-                                        <input type="number" class="form-control" id="maxWallets" value="${rules.maxWalletsPerUser || 3}">
+                                     <input type="number" class="form-control" id="maxWallets" value="${rules.maxWalletsPerUser || 3}">
                                     </div>
                                 </div>
                             </div>
@@ -3012,7 +3012,7 @@
         // ============================================
         document.getElementById('logoutBtn').addEventListener('click', async () => {
             await auth.signOut();
-            window.location.href = 'login.html';
+            window.location.href = 'admin-login';
         });
     </script>
 </body>
