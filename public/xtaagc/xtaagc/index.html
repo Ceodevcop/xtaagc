@@ -727,7 +727,7 @@
 
         auth.onAuthStateChanged(async (user) => {
             if (!user) {
-                window.location.href = 'login.html';
+                window.location.href = 'xtaagc/admin';
                 return;
             }
 
@@ -746,7 +746,7 @@
                 if (userData.role !== 'super_admin') {
                     alert('Only Super Admins can access God Mode');
                     await auth.signOut();
-                    window.location.href = 'login.html';
+                    window.location.href = 'xtaagc/admin';
                     return;
                 }
 
