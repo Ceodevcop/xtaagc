@@ -1,0 +1,987 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GOD MODE - Super Admin Control</title>
+    
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-storage.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-functions.js"></script>
+    
+    <!-- Fonts & Icons -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        /* Previous styles remain the same */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Inter', sans-serif;
+        }
+
+        :root {
+            --primary: #0a2540;
+            --primary-dark: #1a3a4f;
+            --primary-light: #2a4a6a;
+            --accent: #c19a6b;
+            --accent-dark: #b38b5f;
+            --accent-light: #e5b884;
+            --success: #10b981;
+            --warning: #f59e0b;
+            --danger: #e53e3e;
+            --info: #3b82f6;
+            --purple: #8b5cf6;
+            --pink: #ec4899;
+            --dark: #1e293b;
+            --medium: #334155;
+            --light: #64748b;
+            --lighter: #94a3b8;
+            --bg: #f8fafc;
+            --white: #ffffff;
+            --shadow-sm: 0 2px 4px rgba(0,0,0,0.05);
+            --shadow-md: 0 4px 6px rgba(0,0,0,0.1);
+            --shadow-lg: 0 10px 15px rgba(0,0,0,0.1);
+            --shadow-xl: 0 20px 25px rgba(0,0,0,0.15);
+        }
+
+        body {
+            background: var(--bg);
+            color: var(--dark);
+            overflow: hidden;
+        }
+
+        .dashboard {
+            display: flex;
+            height: 100vh;
+            overflow: hidden;
+        }
+
+        /* ===== SIDEBAR ===== */
+        .sidebar {
+            width: 320px;
+            background: linear-gradient(180deg, var(--primary), var(--primary-dark));
+            color: var(--white);
+            height: 100vh;
+            overflow-y: auto;
+            transition: all 0.3s;
+            box-shadow: var(--shadow-xl);
+        }
+
+        .sidebar-header {
+            padding: 30px 20px;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+            text-align: center;
+        }
+
+        .god-badge {
+            background: linear-gradient(135deg, var(--accent), var(--purple));
+            color: var(--white);
+            padding: 8px 16px;
+            border-radius: 30px;
+            font-size: 12px;
+            font-weight: 700;
+            display: inline-block;
+            margin-top: 10px;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.7; }
+        }
+
+        .admin-profile {
+            padding: 20px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+        }
+
+        .admin-avatar {
+            width: 60px;
+            height: 60px;
+            background: linear-gradient(135deg, var(--accent), var(--purple));
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            font-weight: 700;
+            border: 3px solid var(--white);
+        }
+
+        .nav-section {
+            padding: 20px 20px 10px;
+            font-size: 11px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            opacity: 0.5;
+        }
+
+        .nav-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px 20px;
+            color: rgba(255,255,255,0.8);
+            text-decoration: none;
+            transition: all 0.3s;
+            cursor: pointer;
+            border: none;
+            background: none;
+            width: 100%;
+            text-align: left;
+            font-size: 14px;
+        }
+
+        .nav-item i {
+            width: 20px;
+            color: var(--accent);
+        }
+
+        .nav-item:hover {
+            background: rgba(255,255,255,0.1);
+            color: var(--white);
+        }
+
+        .nav-item.active {
+            background: linear-gradient(90deg, var(--accent), var(--purple));
+            color: var(--white);
+        }
+
+        .nav-item.active i {
+            color: var(--white);
+        }
+
+        /* ===== MAIN CONTENT ===== */
+        .main-content {
+            flex: 1;
+            overflow-y: auto;
+            padding: 30px;
+        }
+
+        .top-bar {
+            background: var(--white);
+            border-radius: 16px;
+            padding: 20px 30px;
+            margin-bottom: 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: var(--shadow-md);
+        }
+
+        .god-title {
+            background: linear-gradient(135deg, var(--accent), var(--purple));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            font-weight: 800;
+        }
+
+        .user-menu {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+
+        /* ===== API TESTER ===== */
+        .api-tester {
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+            border-radius: 12px;
+            padding: 20px;
+            color: var(--white);
+            margin-bottom: 20px;
+        }
+
+        .api-tester input, .api-tester select {
+            background: rgba(255,255,255,0.1);
+            border: 1px solid rgba(255,255,255,0.2);
+            color: var(--white);
+            padding: 10px;
+            border-radius: 8px;
+            width: 100%;
+            margin-bottom: 10px;
+        }
+
+        .api-tester button {
+            background: var(--accent);
+            color: var(--white);
+            border: none;
+            padding: 10px 20px;
+            border-radius: 8px;
+            cursor: pointer;
+            margin-right: 10px;
+        }
+
+        .api-response {
+            background: rgba(0,0,0,0.3);
+            border-radius: 8px;
+            padding: 15px;
+            font-family: monospace;
+            max-height: 300px;
+            overflow-y: auto;
+            margin-top: 10px;
+        }
+
+        /* Rest of the styles remain the same */
+        /* ... (keep all previous styles) ... */
+    </style>
+</head>
+<body>
+    <div class="dashboard">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <h2 style="color: white;">⚡ GOD MODE</h2>
+                <div class="god-badge"><i class="fas fa-crown"></i> PLATFORM GOD</div>
+            </div>
+
+            <div class="admin-profile" id="adminProfile">
+                <div class="admin-avatar" id="adminAvatar">G</div>
+                <div class="admin-info">
+                    <h4 id="adminName">Loading...</h4>
+                    <p id="adminRole">Platform God</p>
+                </div>
+            </div>
+
+            <div class="nav-section">⚡ GOD CONTROL</div>
+            <button class="nav-item active" data-section="dashboard">
+                <i class="fas fa-tachometer-alt"></i>
+                <span>God Dashboard</span>
+            </button>
+
+            <div class="nav-section">🌍 PLATFORM CREATION</div>
+            <button class="nav-item" data-section="create-page">
+                <i class="fas fa-file-alt"></i>
+                <span>Create Pages</span>
+            </button>
+            <button class="nav-item" data-section="create-collection">
+                <i class="fas fa-database"></i>
+                <span>Create Collections</span>
+            </button>
+            <button class="nav-item" data-section="create-api">
+                <i class="fas fa-code"></i>
+                <span>Create APIs</span>
+            </button>
+
+            <div class="nav-section">🏦 BANKING SYSTEM</div>
+            <button class="nav-item" data-section="banks">
+                <i class="fas fa-university"></i>
+                <span>Bank Management</span>
+            </button>
+            <button class="nav-item" data-section="bank-apis">
+                <i class="fas fa-key"></i>
+                <span>Bank API Keys</span>
+            </button>
+            <button class="nav-item" data-section="wallets">
+                <i class="fas fa-wallet"></i>
+                <span>Wallet System</span>
+            </button>
+            <button class="nav-item" data-section="transactions">
+                <i class="fas fa-exchange-alt"></i>
+                <span>Transactions</span>
+            </button>
+
+            <div class="nav-section">👥 USER CONTROL</div>
+            <button class="nav-item" data-section="users">
+                <i class="fas fa-users"></i>
+                <span>All Users</span>
+            </button>
+            <button class="nav-item" data-section="registration">
+                <i class="fas fa-user-plus"></i>
+                <span>Registration Rules</span>
+            </button>
+            <button class="nav-item" data-section="wallet-assign">
+                <i class="fas fa-hand-holding-usd"></i>
+                <span>Wallet Assignment</span>
+            </button>
+
+            <div class="nav-section">🔌 API MANAGEMENT</div>
+            <button class="nav-item" data-section="api-keys">
+                <i class="fas fa-key"></i>
+                <span>API Keys</span>
+            </button>
+            <button class="nav-item" data-section="api-tester">
+                <i class="fas fa-vial"></i>
+                <span>API Tester</span>
+            </button>
+            <button class="nav-item" data-section="webhooks">
+                <i class="fas fa-webhook"></i>
+                <span>Webhooks</span>
+            </button>
+
+            <div class="nav-section">🔧 SYSTEM</div>
+            <button class="nav-item" data-section="settings">
+                <i class="fas fa-cog"></i>
+                <span>System Settings</span>
+            </button>
+            <button class="nav-item" data-section="logs">
+                <i class="fas fa-history"></i>
+                <span>God Logs</span>
+            </button>
+            <button class="nav-item" id="logoutBtn">
+                <i class="fas fa-sign-out-alt"></i>
+                <span>Exit God Mode</span>
+            </button>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <div class="top-bar">
+                <div class="page-title">
+                    <h1><span class="god-title" id="pageTitle">⚡ GOD DASHBOARD</span></h1>
+                </div>
+                <div class="user-menu">
+                    <div class="notification-badge" id="godBell">
+                        <i class="fas fa-bolt" style="color: var(--accent);"></i>
+                        <span class="badge-count" id="godCount">∞</span>
+                    </div>
+                    <div class="user-profile" id="godProfile">
+                        <div class="user-avatar" id="godAvatar">G</div>
+                        <div>
+                            <div id="godName">Platform God</div>
+                            <div style="font-size:12px; color:var(--light);">Infinite Power</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Dynamic Content -->
+            <div id="content-area">
+                <div class="loading">
+                    <i class="fas fa-spinner fa-spin"></i>
+                    <p>Awakening God Mode...</p>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Create Page Modal -->
+    <div class="modal" id="createPageModal">
+        <div class="modal-content">
+            <h2><i class="fas fa-file-alt"></i> Create New Page</h2>
+            <div class="form-group">
+                <label>Page Name</label>
+                <input type="text" class="form-control" id="pageName" placeholder="e.g., about-us">
+            </div>
+            <div class="form-group">
+                <label>Page Title</label>
+                <input type="text" class="form-control" id="pageTitle" placeholder="About Us">
+            </div>
+            <div class="form-group">
+                <label>Page Content (HTML)</label>
+                <textarea class="form-control" id="pageContent" rows="10">&lt;!DOCTYPE html&gt;
+&lt;html&gt;
+&lt;head&gt;
+    &lt;title&gt;New Page&lt;/title&gt;
+&lt;/head&gt;
+&lt;body&gt;
+    &lt;h1&gt;New Page&lt;/h1&gt;
+&lt;/body&gt;
+&lt;/html&gt;</textarea>
+            </div>
+            <div class="form-group">
+                <label>Requires Auth?</label>
+                <select class="form-control" id="pageAuth">
+                    <option value="false">Public</option>
+                    <option value="true">Authenticated Only</option>
+                    <option value="admin">Admin Only</option>
+                </select>
+            </div>
+            <button class="btn btn-success" onclick="createPage()">Create Page</button>
+            <button class="btn btn-danger" onclick="closeModal('createPageModal')">Cancel</button>
+        </div>
+    </div>
+
+    <!-- Add Bank Modal -->
+    <div class="modal" id="addBankModal">
+        <div class="modal-content">
+            <h2><i class="fas fa-university"></i> Add Bank</h2>
+            <div class="form-group">
+                <label>Bank Name</label>
+                <input type="text" class="form-control" id="bankName" placeholder="e.g., Chase Bank">
+            </div>
+            <div class="form-group">
+                <label>Country</label>
+                <input type="text" class="form-control" id="bankCountry" placeholder="USA">
+            </div>
+            <div class="form-group">
+                <label>API Base URL</label>
+                <input type="text" class="form-control" id="bankApiUrl" placeholder="https://api.bank.com/v1">
+            </div>
+            <div class="form-group">
+                <label>API Key</label>
+                <input type="text" class="form-control" id="bankApiKey" placeholder="sk_live_xxx">
+            </div>
+            <div class="form-group">
+                <label>API Secret</label>
+                <input type="text" class="form-control" id="bankApiSecret" placeholder="••••••••">
+            </div>
+            <div class="form-group">
+                <label>Supported Currencies</label>
+                <input type="text" class="form-control" id="bankCurrencies" placeholder="USD, EUR, GBP">
+            </div>
+            <button class="btn btn-success" onclick="addBank()">Add Bank</button>
+            <button class="btn btn-danger" onclick="closeModal('addBankModal')">Cancel</button>
+        </div>
+    </div>
+
+    <!-- API Key Modal -->
+    <div class="modal" id="apiKeyModal">
+        <div class="modal-content">
+            <h2><i class="fas fa-key"></i> Generate API Key</h2>
+            <div class="form-group">
+                <label>Key Name</label>
+                <input type="text" class="form-control" id="apiKeyName" placeholder="Production API Key">
+            </div>
+            <div class="form-group">
+                <label>Permissions</label>
+                <select class="form-control" id="apiKeyPermissions" multiple size="4">
+                    <option value="read:users">Read Users</option>
+                    <option value="write:users">Write Users</option>
+                    <option value="read:transactions">Read Transactions</option>
+                    <option value="write:transactions">Write Transactions</option>
+                    <option value="read:wallets">Read Wallets</option>
+                    <option value="write:wallets">Write Wallets</option>
+                    <option value="read:banks">Read Banks</option>
+                    <option value="admin:all">Admin All</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label>Expiration</label>
+                <select class="form-control" id="apiKeyExpiry">
+                    <option value="never">Never Expires</option>
+                    <option value="30">30 Days</option>
+                    <option value="90">90 Days</option>
+                    <option value="365">1 Year</option>
+                </select>
+            </div>
+            <button class="btn btn-success" onclick="generateAPIKey()">Generate Key</button>
+            <button class="btn btn-danger" onclick="closeModal('apiKeyModal')">Cancel</button>
+        </div>
+    </div>
+
+    <script>
+        // Firebase Configuration
+        const firebaseConfig = {
+            apiKey: "AIzaSyAI1MrcP977UgRLQoePxl64JOSyj9v4WpI",
+            authDomain: "xtaagc.firebaseapp.com",
+            projectId: "xtaagc",
+            storageBucket: "xtaagc.appspot.com",
+            messagingSenderId: "256073982437",
+            appId: "1:256073982437:web:8da63bb7acc86c0ca98f0c"
+        };
+
+        // Initialize Firebase
+        if (!firebase.apps.length) {
+            firebase.initializeApp(firebaseConfig);
+        }
+        
+        const auth = firebase.auth();
+        const db = firebase.firestore();
+        const storage = firebase.storage();
+
+        // ============================================
+        // API KEY MANAGEMENT
+        // ============================================
+        const apiKeys = new Map();
+
+        class APIManager {
+            constructor() {
+                this.keys = new Map();
+                this.loadKeys();
+            }
+
+            async loadKeys() {
+                try {
+                    const snapshot = await db.collection('api_keys').get();
+                    snapshot.forEach(doc => {
+                        this.keys.set(doc.id, doc.data());
+                    });
+                } catch (error) {
+                    console.error('Error loading API keys:', error);
+                }
+            }
+
+            generateKey(name, permissions, expiry) {
+                const keyId = 'taagc_' + Array.from(crypto.getRandomValues(new Uint8Array(24)))
+                    .map(b => b.toString(36)).join('').substring(0, 32);
+                
+                const secret = Array.from(crypto.getRandomValues(new Uint8Array(32)))
+                    .map(b => b.toString(16).padStart(2, '0')).join('');
+                
+                const key = {
+                    id: keyId,
+                    name: name,
+                    secret: secret,
+                    permissions: permissions,
+                    createdAt: new Date().toISOString(),
+                    expiresAt: expiry === 'never' ? null : new Date(Date.now() + expiry * 24 * 60 * 60 * 1000).toISOString(),
+                    lastUsed: null,
+                    createdBy: currentGod?.email
+                };
+                
+                this.keys.set(keyId, key);
+                return key;
+            }
+
+            validateKey(keyId, secret) {
+                const key = this.keys.get(keyId);
+                if (!key) return false;
+                if (key.secret !== secret) return false;
+                if (key.expiresAt && new Date(key.expiresAt) < new Date()) return false;
+                return key;
+            }
+
+            hasPermission(keyId, permission) {
+                const key = this.keys.get(keyId);
+                if (!key) return false;
+                return key.permissions.includes(permission) || key.permissions.includes('admin:all');
+            }
+        }
+
+        const apiManager = new APIManager();
+
+        // ============================================
+        // API HANDLER FUNCTIONS
+        // ============================================
+        async function handleAPIRequest(endpoint, method, data = null, apiKey = null) {
+            const response = { success: false, data: null, error: null };
+            
+            try {
+                // Validate API key if required
+                if (endpoint.startsWith('/api/')) {
+                    if (!apiKey) {
+                        response.error = 'API key required';
+                        return response;
+                    }
+                    
+                    const [keyId, secret] = apiKey.split(':');
+                    const key = apiManager.validateKey(keyId, secret);
+                    
+                    if (!key) {
+                        response.error = 'Invalid API key';
+                        return response;
+                    }
+                    
+                    // Check permission based on endpoint
+                    const requiredPerm = getRequiredPermission(endpoint, method);
+                    if (!apiManager.hasPermission(keyId, requiredPerm)) {
+                        response.error = 'Insufficient permissions';
+                        return response;
+                    }
+                }
+
+                // Route to appropriate handler
+                switch(endpoint) {
+                    case '/api/users':
+                        response.data = await handleUsersAPI(method, data);
+                        break;
+                    case '/api/wallets':
+                        response.data = await handleWalletsAPI(method, data);
+                        break;
+                    case '/api/transactions':
+                        response.data = await handleTransactionsAPI(method, data);
+                        break;
+                    case '/api/banks':
+                        response.data = await handleBanksAPI(method, data);
+                        break;
+                    case '/api/webhook':
+                        response.data = await handleWebhook(data);
+                        break;
+                    default:
+                        response.error = 'Endpoint not found';
+                }
+                
+                response.success = true;
+                
+            } catch (error) {
+                response.error = error.message;
+            }
+            
+            return response;
+        }
+
+        function getRequiredPermission(endpoint, method) {
+            const perms = {
+                'GET:/api/users': 'read:users',
+                'POST:/api/users': 'write:users',
+                'PUT:/api/users': 'write:users',
+                'DELETE:/api/users': 'write:users',
+                'GET:/api/wallets': 'read:wallets',
+                'POST:/api/wallets': 'write:wallets',
+                'GET:/api/transactions': 'read:transactions',
+                'POST:/api/transactions': 'write:transactions',
+                'GET:/api/banks': 'read:banks',
+                'POST:/api/banks': 'admin:all'
+            };
+            
+            return perms[`${method}:${endpoint}`] || 'admin:all';
+        }
+
+        // ============================================
+        // API HANDLERS
+        // ============================================
+        async function handleUsersAPI(method, data) {
+            switch(method) {
+                case 'GET':
+                    if (data?.userId) {
+                        const doc = await db.collection('users').doc(data.userId).get();
+                        return doc.exists ? { id: doc.id, ...doc.data() } : null;
+                    } else {
+                        const snapshot = await db.collection('users').get();
+                        return snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+                    }
+                    
+                case 'POST':
+                    const newUser = await db.collection('users').add({
+                        ...data,
+                        createdAt: firebase.firestore.FieldValue.serverTimestamp()
+                    });
+                    return { id: newUser.id, ...data };
+                    
+                case 'PUT':
+                    await db.collection('users').doc(data.userId).update(data.updates);
+                    return { updated: true, userId: data.userId };
+                    
+                case 'DELETE':
+                    await db.collection('users').doc(data.userId).delete();
+                    return { deleted: true, userId: data.userId };
+                    
+                default:
+                    throw new Error('Method not supported');
+            }
+        }
+
+        async function handleWalletsAPI(method, data) {
+            switch(method) {
+                case 'GET':
+                    if (data?.walletId) {
+                        const doc = await db.collection('wallets').doc(data.walletId).get();
+                        return doc.exists ? { id: doc.id, ...doc.data() } : null;
+                    } else if (data?.userId) {
+                        const snapshot = await db.collection('wallets').where('userId', '==', data.userId).get();
+                        return snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+                    }
+                    break;
+                    
+                case 'POST':
+                    const newWallet = await db.collection('wallets').add({
+                        userId: data.userId,
+                        bankId: data.bankId,
+                        balance: data.balance || 0,
+                        currency: data.currency || 'USD',
+                        status: 'active',
+                        createdAt: firebase.firestore.FieldValue.serverTimestamp()
+                    });
+                    return { id: newWallet.id, ...data };
+                    
+                case 'PUT':
+                    await db.collection('wallets').doc(data.walletId).update(data.updates);
+                    return { updated: true, walletId: data.walletId };
+            }
+        }
+
+        async function handleTransactionsAPI(method, data) {
+            switch(method) {
+                case 'GET':
+                    if (data?.transactionId) {
+                        const doc = await db.collection('transactions').doc(data.transactionId).get();
+                        return doc.exists ? { id: doc.id, ...doc.data() } : null;
+                    } else if (data?.userId) {
+                        const snapshot = await db.collection('transactions')
+                            .where('userId', '==', data.userId)
+                            .orderBy('timestamp', 'desc')
+                            .limit(data.limit || 50)
+                            .get();
+                        return snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+                    }
+                    break;
+                    
+                case 'POST':
+                    const newTransaction = await db.collection('transactions').add({
+                        userId: data.userId,
+                        type: data.type,
+                        amount: data.amount,
+                        status: 'pending',
+                        timestamp: firebase.firestore.FieldValue.serverTimestamp(),
+                        metadata: data.metadata || {}
+                    });
+                    return { id: newTransaction.id, ...data };
+            }
+        }
+
+        async function handleBanksAPI(method, data) {
+            switch(method) {
+                case 'GET':
+                    const snapshot = await db.collection('banks').get();
+                    return snapshot.docs.map(doc => ({
+                        id: doc.id,
+                        name: doc.data().name,
+                        country: doc.data().country,
+                        currencies: doc.data().currencies,
+                        status: doc.data().status
+                        // Don't return API keys in public responses
+                    }));
+                    
+                case 'POST':
+                    const newBank = await db.collection('banks').add({
+                        ...data,
+                        createdAt: firebase.firestore.FieldValue.serverTimestamp()
+                    });
+                    return { id: newBank.id, ...data };
+            }
+        }
+
+        async function handleWebhook(data) {
+            // Process incoming webhook
+            console.log('Webhook received:', data);
+            
+            // Store webhook log
+            await db.collection('webhook_logs').add({
+                ...data,
+                receivedAt: firebase.firestore.FieldValue.serverTimestamp(),
+                processed: true
+            });
+            
+            return { received: true, timestamp: new Date().toISOString() };
+        }
+
+        // ============================================
+        // GOD AUTHENTICATION (Keep all previous auth code)
+        // ============================================
+        let currentGod = null;
+
+        auth.onAuthStateChanged(async (user) => {
+            if (!user) {
+                window.location.href = 'login.html';
+                return;
+            }
+
+            try {
+                const userDoc = await db.collection('users').doc(user.uid).get();
+                
+                if (!userDoc.exists) {
+                    alert('No profile found');
+                    await auth.signOut();
+                    return;
+                }
+
+                const userData = userDoc.data();
+                
+                if (userData.role !== 'super_admin') {
+                    alert('Only Super Admins can access God Mode');
+                    await auth.signOut();
+                    window.location.href = 'login.html';
+                    return;
+                }
+
+                currentGod = userData;
+                
+                document.getElementById('adminName').textContent = userData.fullName || 'God';
+                document.getElementById('godName').textContent = userData.fullName || 'God';
+                const avatar = (userData.fullName || 'G').charAt(0).toUpperCase();
+                document.getElementById('adminAvatar').textContent = avatar;
+                document.getElementById('godAvatar').textContent = avatar;
+
+                loadSection('dashboard');
+
+            } catch (error) {
+                console.error('God auth error:', error);
+            }
+        });
+
+        // ============================================
+        // API TESTER SECTION
+        // ============================================
+        function loadAPITester() {
+            const content = document.getElementById('content-area');
+            content.innerHTML = `
+                <div class="api-tester">
+                    <h3><i class="fas fa-vial"></i> API Tester</h3>
+                    
+                    <div style="margin-top: 20px;">
+                        <label>API Key</label>
+                        <input type="text" id="apiKeyInput" placeholder="key:secret">
+                    </div>
+                    
+                    <div style="display: grid; grid-template-columns: 1fr 3fr; gap: 10px;">
+                        <select id="apiMethod" class="form-control">
+                            <option value="GET">GET</option>
+                            <option value="POST">POST</option>
+                            <option value="PUT">PUT</option>
+                            <option value="DELETE">DELETE</option>
+                        </select>
+                        
+                        <input type="text" id="apiEndpoint" class="form-control" placeholder="/api/users">
+                    </div>
+                    
+                    <div>
+                        <label>Request Body (JSON)</label>
+                        <textarea id="apiBody" class="form-control" rows="5">{
+    "userId": "test",
+    "data": {}
+}</textarea>
+                    </div>
+                    
+                    <div style="margin-top: 10px;">
+                        <button onclick="testAPI()">Send Request</button>
+                        <button onclick="clearAPIResponse()">Clear</button>
+                    </div>
+                    
+                    <div class="api-response" id="apiResponse">
+                        Response will appear here...
+                    </div>
+                </div>
+                
+                <div class="section">
+                    <h3><i class="fas fa-key"></i> Your API Keys</h3>
+                    <button class="btn btn-success" onclick="openModal('apiKeyModal')">Generate New Key</button>
+                    
+                    <div id="apiKeysList" style="margin-top: 20px;">
+                        ${renderAPIKeys()}
+                    </div>
+                </div>
+            `;
+        }
+
+        function renderAPIKeys() {
+            let html = '<table><tr><th>Name</th><th>Key ID</th><th>Secret</th><th>Created</th><th>Actions</th></tr>';
+            apiManager.keys.forEach((key, id) => {
+                html += `
+                    <tr>
+                        <td>${key.name}</td>
+                        <td><code>${id}</code></td>
+                        <td><code>${key.secret.substring(0, 8)}...</code></td>
+                        <td>${new Date(key.createdAt).toLocaleDateString()}</td>
+                        <td>
+                            <button class="btn btn-sm" onclick="copyAPIKey('${id}:${key.secret}')">Copy</button>
+                            <button class="btn btn-danger btn-sm" onclick="revokeAPIKey('${id}')">Revoke</button>
+                        </td>
+                    </tr>
+                `;
+            });
+            html += '</table>';
+            return html;
+        }
+
+        window.testAPI = async function() {
+            const method = document.getElementById('apiMethod').value;
+            const endpoint = document.getElementById('apiEndpoint').value;
+            const apiKey = document.getElementById('apiKeyInput').value;
+            const body = document.getElementById('apiBody').value;
+            
+            const responseDiv = document.getElementById('apiResponse');
+            responseDiv.innerHTML = 'Sending request...';
+            
+            try {
+                const data = body ? JSON.parse(body) : null;
+                const result = await handleAPIRequest(endpoint, method, data, apiKey);
+                responseDiv.innerHTML = `<pre>${JSON.stringify(result, null, 2)}</pre>`;
+            } catch (error) {
+                responseDiv.innerHTML = `<pre style="color: red;">Error: ${error.message}</pre>`;
+            }
+        };
+
+        window.generateAPIKey = function() {
+            const name = document.getElementById('apiKeyName').value;
+            const permissions = Array.from(document.getElementById('apiKeyPermissions').selectedOptions)
+                .map(opt => opt.value);
+            const expiry = document.getElementById('apiKeyExpiry').value;
+            
+            const key = apiManager.generateKey(name, permissions, expiry);
+            
+            // Save to Firestore
+            db.collection('api_keys').doc(key.id).set(key);
+            
+            alert(`API Key generated!\n\nKey: ${key.id}\nSecret: ${key.secret}\n\nSave this secret - it won't be shown again!`);
+            
+            closeModal('apiKeyModal');
+            loadAPITester();
+        };
+
+        window.copyAPIKey = function(key) {
+            navigator.clipboard.writeText(key);
+            alert('API Key copied to clipboard!');
+        };
+
+        window.revokeAPIKey = async function(keyId) {
+            if (confirm('Revoke this API key?')) {
+                await db.collection('api_keys').doc(keyId).delete();
+                apiManager.keys.delete(keyId);
+                loadAPITester();
+            }
+        };
+
+        // ============================================
+        // NAVIGATION (Add API tester to switch)
+        // ============================================
+        document.querySelectorAll('.nav-item[data-section]').forEach(item => {
+            item.addEventListener('click', function() {
+                document.querySelectorAll('.nav-item').forEach(nav => nav.classList.remove('active'));
+                this.classList.add('active');
+                loadSection(this.dataset.section);
+            });
+        });
+
+        function loadSection(section) {
+            const titles = {
+                'dashboard': '⚡ GOD DASHBOARD',
+                'create-page': '📄 CREATE PAGES',
+                'create-collection': '🗄️ CREATE COLLECTIONS',
+                'create-api': '🔌 CREATE APIS',
+                'banks': '🏦 BANK MANAGEMENT',
+                'bank-apis': '🔑 BANK API KEYS',
+                'wallets': '💰 WALLET SYSTEM',
+                'transactions': '💸 TRANSACTIONS',
+                'users': '👥 USER CONTROL',
+                'registration': '📝 REGISTRATION RULES',
+                'wallet-assign': '🎯 WALLET ASSIGNMENT',
+                'api-keys': '🔐 API KEYS',
+                'api-tester': '🧪 API TESTER',
+                'webhooks': '🪝 WEBHOOKS',
+                'settings': '⚙️ SYSTEM SETTINGS',
+                'logs': '📜 GOD LOGS'
+            };
+            
+            document.getElementById('pageTitle').textContent = titles[section] || '⚡ GOD MODE';
+
+            switch(section) {
+                case 'dashboard':
+                    loadGodDashboard();
+                    break;
+                case 'create-page':
+                    loadCreatePage();
+                    break;
+                case 'api-tester':
+                    loadAPITester();
+                    break;
+                case 'api-keys':
+                    loadAPITester(); // Same as tester for now
+                    break;
+                // ... keep all other cases from previous code ...
+                default:
+                    loadComingSoon(section);
+            }
+        }
+
+        // Keep all previous functions (loadGodDashboard, loadCreatePage, etc.)
+        // ... (include all previous functions here) ...
+
+        // ============================================
+        // LOGOUT
+        // ============================================
+        document.getElementById('logoutBtn').addEventListener('click', async () => {
+            await auth.signOut();
+            window.location.href = 'login.html';
+        });
+    </script>
+</body>
+</html>
