@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>GOD MODE - Super Admin Control</title>
+    <title>Admin Control</title>
     
     <!-- Firebase SDK -->
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
@@ -761,7 +761,7 @@
 
         auth.onAuthStateChanged(async (user) => {
             if (!user) {
-                window.location.href = 'login.html';
+                window.location.href = 'admin-login';
                 return;
             }
 
@@ -779,7 +779,7 @@
                 if (userData.role !== 'super_admin') {
                     alert('Only Super Admins can access God Mode');
                     await auth.signOut();
-                    window.location.href = 'login.html';
+                    window.location.href = 'admin-login';
                     return;
                 }
 
@@ -980,7 +980,7 @@
         // ============================================
         document.getElementById('logoutBtn').addEventListener('click', async () => {
             await auth.signOut();
-            window.location.href = 'admin';
+            window.location.href = 'admin-login';
         });
     </script>
 </body>
