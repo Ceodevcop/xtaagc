@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Investor Hub - TAAGC Global</title>
+    
+    <!-- Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Central CSS -->
+    <link rel="stylesheet" href="/assets/css/investors.css">
+    <link rel="stylesheet" href="/assets/css/investors-responsive.css">
+    
+    <style>
+        .investor-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 30px;
+            margin: 40px 0;
+        }
+        
+        .investor-card {
+            background: white;
+            border-radius: 16px;
+            padding: 30px;
+            text-align: center;
+            box-shadow: var(--shadow-md);
+            border: 1px solid var(--border);
+            transition: all 0.3s;
+            text-decoration: none;
+            color: inherit;
+            display: block;
+        }
+        
+        .investor-card:hover {
+            transform: translateY(-10px);
+            box-shadow: var(--shadow-xl);
+            border-color: var(--accent);
+        }
+        
+        .investor-icon {
+            width: 80px;
+            height: 80px;
+            background: linear-gradient(135deg, var(--primary), var(--primary-light));
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 20px;
+            color: white;
+            font-size: 32px;
+        }
+        
+        .investor-card h3 {
+            color: var(--primary);
+            margin-bottom: 10px;
+        }
+        
+        .investor-card p {
+            color: var(--light);
+            font-size: 14px;
+            line-height: 1.6;
+        }
+        
+        .investor-stats {
+            display: flex;
+            justify-content: center;
+            gap: 30px;
+            margin-top: 60px;
+            padding-top: 40px;
+            border-top: 1px solid var(--border);
+        }
+        
+        @media (max-width: 768px) {
+            .investor-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .investor-stats {
+                flex-direction: column;
+                gap: 20px;
+                text-align: center;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Navbar -->
+    <nav class="navbar">
+        <div class="container">
+            <div class="navbar-content">
+                <a href="/" class="navbar-brand">
+                    <div class="logo-icon">TA</div>
+                    <div class="brand-text"><span>TAAGC</span> GLOBAL</div>
+                </a>
+                
+                <div class="nav-menu">
+                    <ul class="nav-links">
+                        <li><a href="/" class="nav-link">Home</a></li>
+                        <li><a href="/investors/" class="nav-link active">Investors</a></li>
+                        <li><a href="/investors/opportunities" class="nav-link">Opportunities</a></li>
+                        <li><a href="/investors/portfolio" class="nav-link">Portfolio</a></li>
+                        <li><a href="/contact" class="nav-link">Contact</a></li>
+                    </ul>
+                    
+                    <div class="nav-buttons">
+                        <a href="/login" class="btn-outline">Login</a>
+                        <a href="/register" class="btn-primary">Get Started</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Page Header -->
+    <div class="page-header" style="background: linear-gradient(135deg, #0a2540, #1a3a4f); color: white; padding: 60px 0; text-align: center;">
+        <div class="container">
+            <h1 style="color: white;">Investor <span style="color: #c19a6b;">Hub</span></h1>
+            <p style="color: rgba(255,255,255,0.9);">Your gateway to premium investment opportunities</p>
+        </div>
+    </div>
+
+    <!-- Investor Cards -->
+    <div class="container" style="padding: 60px 0;">
+        <div class="investor-grid">
+            <a href="/investors/opportunities" class="investor-card">
+                <div class="investor-icon"><i class="fas fa-chart-line"></i></div>
+                <h3>Investment Opportunities</h3>
+                <p>Browse curated investment opportunities with projected returns of 15-25% annually. Find the perfect investment that matches your goals.</p>
+                <div style="margin-top: 20px; color: var(--accent); font-weight: 600;">
+                    Explore Opportunities <i class="fas fa-arrow-right"></i>
+                </div>
+            </a>
+
+            <a href="/investors/how-to-invest" class="investor-card">
+                <div class="investor-icon"><i class="fas fa-question-circle"></i></div>
+                <h3>How to Invest</h3>
+                <p>Learn the simple 5-step process to start your investment journey. From account creation to portfolio tracking, we guide you every step.</p>
+                <div style="margin-top: 20px; color: var(--accent); font-weight: 600;">
+                    View Guide <i class="fas fa-arrow-right"></i>
+                </div>
+            </a>
+
+            <a href="/investors/education" class="investor-card">
+                <div class="investor-icon"><i class="fas fa-graduation-cap"></i></div>
+                <h3>Investor Education</h3>
+                <p>Access comprehensive educational resources, articles, and guides to become a smarter investor. Learn about market trends and strategies.</p>
+                <div style="margin-top: 20px; color: var(--accent); font-weight: 600;">
+                    Start Learning <i class="fas fa-arrow-right"></i>
+                </div>
+            </a>
+
+            <a href="/investors/portfolio" class="investor-card">
+                <div class="investor-icon"><i class="fas fa-chart-pie"></i></div>
+                <h3>Portfolio Tracker</h3>
+                <p>Monitor your investments in real-time with our advanced portfolio tracker. Track performance, returns, and make data-driven decisions.</p>
+                <div style="margin-top: 20px; color: var(--accent); font-weight: 600;">
+                    Track Portfolio <i class="fas fa-arrow-right"></i>
+                </div>
+            </a>
+
+            <a href="/investors/calculator" class="investor-card">
+                <div class="investor-icon"><i class="fas fa-calculator"></i></div>
+                <h3>Investment Calculator</h3>
+                <p>Calculate your potential returns with our advanced ROI calculator. Plan your investments and see how your money can grow over time.</p>
+                <div style="margin-top: 20px; color: var(--accent); font-weight: 600;">
+                    Calculate Now <i class="fas fa-arrow-right"></i>
+                </div>
+            </a>
+
+            <a href="/investors/faq" class="investor-card">
+                <div class="investor-icon"><i class="fas fa-question"></i></div>
+                <h3>Investor FAQ</h3>
+                <p>Find answers to commonly asked questions about investing with TAAGC Global. Everything you need to know in one place.</p>
+                <div style="margin-top: 20px; color: var(--accent); font-weight: 600;">
+                    View FAQ <i class="fas fa-arrow-right"></i>
+                </div>
+            </a>
+        </div>
+
+        <!-- Stats -->
+        <div class="investor-stats">
+            <div>
+                <div style="font-size: 36px; font-weight: 700; color: var(--primary);">$2.5B+</div>
+                <div style="color: var(--light);">Assets Under Management</div>
+            </div>
+            <div>
+                <div style="font-size: 36px; font-weight: 700; color: var(--primary);">50,000+</div>
+                <div style="color: var(--light);">Active Investors</div>
+            </div>
+            <div>
+                <div style="font-size: 36px; font-weight: 700; color: var(--primary);">25+</div>
+                <div style="color: var(--light);">Countries</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="footer" style="background: #0a2540; color: white; padding: 60px 0 20px;">
+        <div class="container">
+            <div class="footer-grid">
+                <div class="footer-col">
+                    <h4>Investors</h4>
+                    <ul>
+                        <li><a href="/investors/opportunities">Opportunities</a></li>
+                        <li><a href="/investors/how-to-invest">How to Invest</a></li>
+                        <li><a href="/investors/education">Education</a></li>
+                        <li><a href="/investors/portfolio">Portfolio</a></li>
+                        <li><a href="/investors/calculator">Calculator</a></li>
+                    </ul>
+                </div>
+                <div class="footer-col">
+                    <h4>Company</h4>
+                    <ul>
+                        <li><a href="/about">About Us</a></li>
+                        <li><a href="/leadership">Leadership</a></li>
+                        <li><a href="/careers">Careers</a></li>
+                        <li><a href="/contact">Contact</a></li>
+                    </ul>
+                </div>
+                <div class="footer-col">
+                    <h4>Legal</h4>
+                    <ul>
+                        <li><a href="/privacy">Privacy Policy</a></li>
+                        <li><a href="/terms">Terms of Service</a></li>
+                        <li><a href="/risk-disclosure">Risk Disclosure</a></li>
+                    </ul>
+                </div>
+                <div class="footer-col">
+                    <h4>Connect</h4>
+                    <ul>
+                        <li><a href="#"><i class="fab fa-linkedin"></i> LinkedIn</a></li>
+                        <li><a href="#"><i class="fab fa-twitter"></i> Twitter</a></li>
+                        <li><a href="#"><i class="fab fa-telegram"></i> Telegram</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2026 TAAGC Global. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="/assets/js/investors.js"></script>
+</body>
+</html>
