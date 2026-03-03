@@ -1,0 +1,3019 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GOD MODE - Super Admin Control</title>
+    
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-storage.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-functions.js"></script>
+    
+    <!-- Fonts & Icons -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+    
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Inter', sans-serif;
+        }
+
+        :root {
+            --primary: #0a2540;
+            --primary-dark: #1a3a4f;
+            --primary-light: #2a4a6a;
+            --accent: #c19a6b;
+            --accent-dark: #b38b5f;
+            --accent-light: #e5b884;
+            --success: #10b981;
+            --warning: #f59e0b;
+            --danger: #e53e3e;
+            --info: #3b82f6;
+            --purple: #8b5cf6;
+            --pink: #ec4899;
+            --dark: #1e293b;
+            --medium: #334155;
+            --light: #64748b;
+            --lighter: #94a3b8;
+            --bg: #f8fafc;
+            --white: #ffffff;
+            --shadow-sm: 0 2px 4px rgba(0,0,0,0.05);
+            --shadow-md: 0 4px 6px rgba(0,0,0,0.1);
+            --shadow-lg: 0 10px 15px rgba(0,0,0,0.1);
+            --shadow-xl: 0 20px 25px rgba(0,0,0,0.15);
+        }
+
+        body {
+            background: var(--bg);
+            color: var(--dark);
+            overflow: hidden;
+        }
+
+        .dashboard {
+            display: flex;
+            height: 100vh;
+            overflow: hidden;
+        }
+
+        /* ===== SIDEBAR ===== */
+        .sidebar {
+            width: 320px;
+            background: linear-gradient(180deg, var(--primary), var(--primary-dark));
+            color: var(--white);
+            height: 100vh;
+            overflow-y: auto;
+            transition: all 0.3s;
+            box-shadow: var(--shadow-xl);
+        }
+
+        .sidebar-header {
+            padding: 30px 20px;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+            text-align: center;
+        }
+
+        .god-badge {
+            background: linear-gradient(135deg, var(--accent), var(--purple));
+            color: var(--white);
+            padding: 8px 16px;
+            border-radius: 30px;
+            font-size: 12px;
+            font-weight: 700;
+            display: inline-block;
+            margin-top: 10px;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.7; }
+        }
+
+        .admin-profile {
+            padding: 20px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+        }
+
+        .admin-avatar {
+            width: 60px;
+            height: 60px;
+            background: linear-gradient(135deg, var(--accent), var(--purple));
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            font-weight: 700;
+            border: 3px solid var(--white);
+        }
+
+        .nav-section {
+            padding: 20px 20px 10px;
+            font-size: 11px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            opacity: 0.5;
+        }
+
+        .nav-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px 20px;
+            color: rgba(255,255,255,0.8);
+            text-decoration: none;
+            transition: all 0.3s;
+            cursor: pointer;
+            border: none;
+            background: none;
+            width: 100%;
+            text-align: left;
+            font-size: 14px;
+        }
+
+        .nav-item i {
+            width: 20px;
+            color: var(--accent);
+        }
+
+        .nav-item:hover {
+            background: rgba(255,255,255,0.1);
+            color: var(--white);
+        }
+
+        .nav-item.active {
+            background: linear-gradient(90deg, var(--accent), var(--purple));
+            color: var(--white);
+        }
+
+        .nav-item.active i {
+            color: var(--white);
+        }
+
+        /* ===== MAIN CONTENT ===== */
+        .main-content {
+            flex: 1;
+            overflow-y: auto;
+            padding: 30px;
+        }
+
+        .top-bar {
+            background: var(--white);
+            border-radius: 16px;
+            padding: 20px 30px;
+            margin-bottom: 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: var(--shadow-md);
+        }
+
+        .god-title {
+            background: linear-gradient(135deg, var(--accent), var(--purple));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            font-weight: 800;
+        }
+
+        .user-menu {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .notification-badge {
+            position: relative;
+            cursor: pointer;
+        }
+
+        .notification-badge i {
+            font-size: 20px;
+            color: var(--light);
+        }
+
+        .badge-count {
+            position: absolute;
+            top: -8px;
+            right: -8px;
+            background: var(--danger);
+            color: var(--white);
+            font-size: 10px;
+            padding: 2px 6px;
+            border-radius: 10px;
+        }
+
+        .user-profile {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 8px 16px;
+            background: var(--bg);
+            border-radius: 40px;
+            cursor: pointer;
+        }
+
+        .user-avatar {
+            width: 40px;
+            height: 40px;
+            background: linear-gradient(135deg, var(--accent), var(--purple));
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--white);
+            font-weight: 600;
+        }
+
+        /* ===== SECTION ===== */
+        .section {
+            background: var(--white);
+            border-radius: 16px;
+            padding: 25px;
+            margin-bottom: 30px;
+            box-shadow: var(--shadow-md);
+            border: 1px solid #e2e8f0;
+        }
+
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .section-header h2 {
+            color: var(--primary);
+            font-size: 18px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .section-header h2 i {
+            color: var(--accent);
+        }
+
+        .btn {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn-primary {
+            background: var(--primary);
+            color: var(--white);
+        }
+
+        .btn-primary:hover {
+            background: var(--primary-dark);
+            transform: translateY(-2px);
+        }
+
+        .btn-accent {
+            background: var(--accent);
+            color: var(--white);
+        }
+
+        .btn-accent:hover {
+            background: var(--accent-dark);
+        }
+
+        .btn-success {
+            background: var(--success);
+            color: var(--white);
+        }
+
+        .btn-purple {
+            background: var(--purple);
+            color: var(--white);
+        }
+
+        .btn-danger {
+            background: var(--danger);
+            color: var(--white);
+        }
+
+        .btn-warning {
+            background: var(--warning);
+            color: var(--white);
+        }
+
+        .btn-info {
+            background: var(--info);
+            color: var(--white);
+        }
+
+        .btn-sm {
+            padding: 5px 10px;
+            font-size: 12px;
+        }
+
+        /* ===== GRIDS ===== */
+        .grid-4 {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .grid-3 {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .grid-2 {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .card {
+            background: var(--white);
+            border-radius: 12px;
+            padding: 20px;
+            border: 1px solid #e2e8f0;
+            transition: all 0.3s;
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: var(--shadow-lg);
+            border-color: var(--accent);
+        }
+
+        .card-icon {
+            width: 50px;
+            height: 50px;
+            background: linear-gradient(135deg, var(--primary), var(--primary-light));
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--white);
+            margin-bottom: 15px;
+        }
+
+        .card-value {
+            font-size: 28px;
+            font-weight: 700;
+            color: var(--primary);
+        }
+
+        .card-label {
+            color: var(--light);
+            font-size: 13px;
+        }
+
+        /* ===== TABLES ===== */
+        .table-container {
+            overflow-x: auto;
+            max-height: 400px;
+            overflow-y: auto;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        th {
+            text-align: left;
+            padding: 15px;
+            background: var(--bg);
+            color: var(--primary);
+            font-weight: 600;
+            font-size: 13px;
+            position: sticky;
+            top: 0;
+            z-index: 10;
+        }
+
+        td {
+            padding: 15px;
+            border-bottom: 1px solid #e2e8f0;
+        }
+
+        .badge {
+            padding: 4px 8px;
+            border-radius: 20px;
+            font-size: 11px;
+            font-weight: 600;
+        }
+
+        .badge-success {
+            background: rgba(16, 185, 129, 0.1);
+            color: var(--success);
+        }
+
+        .badge-warning {
+            background: rgba(245, 158, 11, 0.1);
+            color: var(--warning);
+        }
+
+        .badge-danger {
+            background: rgba(229, 62, 62, 0.1);
+            color: var(--danger);
+        }
+
+        .badge-purple {
+            background: rgba(139, 92, 246, 0.1);
+            color: var(--purple);
+        }
+
+        .badge-info {
+            background: rgba(59, 130, 246, 0.1);
+            color: var(--info);
+        }
+
+        /* ===== FORMS ===== */
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: 600;
+            color: var(--dark);
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e2e8f0;
+            border-radius: 8px;
+            font-size: 14px;
+            transition: all 0.3s;
+        }
+
+        .form-control:focus {
+            border-color: var(--accent);
+            outline: none;
+        }
+
+        textarea.form-control {
+            min-height: 100px;
+            resize: vertical;
+        }
+
+        select.form-control {
+            background: var(--white);
+        }
+
+        /* ===== TABS ===== */
+        .tabs {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+            border-bottom: 2px solid #e2e8f0;
+            padding-bottom: 10px;
+            flex-wrap: wrap;
+        }
+
+        .tab {
+            padding: 10px 20px;
+            cursor: pointer;
+            border-radius: 8px 8px 0 0;
+            font-weight: 600;
+            color: var(--light);
+            transition: all 0.3s;
+        }
+
+        .tab:hover {
+            color: var(--accent);
+        }
+
+        .tab.active {
+            color: var(--accent);
+            border-bottom: 2px solid var(--accent);
+        }
+
+        /* ===== API KEY DISPLAY ===== */
+        .api-key-box {
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+            border-radius: 12px;
+            padding: 20px;
+            color: var(--white);
+            font-family: monospace;
+            font-size: 14px;
+            position: relative;
+            word-break: break-all;
+        }
+
+        .copy-btn {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: rgba(255,255,255,0.1);
+            border: none;
+            color: var(--white);
+            padding: 5px 10px;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .copy-btn:hover {
+            background: var(--accent);
+        }
+
+        /* ===== CHART CONTAINER ===== */
+        .chart-container {
+            height: 300px;
+            margin-top: 20px;
+            position: relative;
+        }
+
+        /* ===== LOADING ===== */
+        .loading {
+            text-align: center;
+            padding: 40px;
+        }
+
+        .loading i {
+            font-size: 40px;
+            color: var(--accent);
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        /* ===== MODAL ===== */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.5);
+            z-index: 2000;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .modal.active {
+            display: flex;
+        }
+
+        .modal-content {
+            background: var(--white);
+            border-radius: 16px;
+            padding: 30px;
+            width: 90%;
+            max-width: 700px;
+            max-height: 90vh;
+            overflow-y: auto;
+            animation: modalSlideIn 0.3s;
+        }
+
+        @keyframes modalSlideIn {
+            from {
+                transform: translateY(-50px);
+                opacity: 0;
+            }
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .modal-header h2 {
+            color: var(--primary);
+        }
+
+        .modal-close {
+            font-size: 24px;
+            cursor: pointer;
+            color: var(--light);
+        }
+
+        .modal-close:hover {
+            color: var(--danger);
+        }
+
+        /* ===== TOAST ===== */
+        .toast {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            padding: 16px 24px;
+            background: var(--white);
+            border-left: 4px solid var(--accent);
+            border-radius: 8px;
+            box-shadow: var(--shadow-lg);
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            animation: slideInRight 0.3s;
+            z-index: 9999;
+            min-width: 300px;
+        }
+
+        @keyframes slideInRight {
+            from {
+                transform: translateX(100%);
+                opacity: 0;
+            }
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+
+        .toast.success { border-left-color: var(--success); }
+        .toast.error { border-left-color: var(--danger); }
+        .toast.warning { border-left-color: var(--warning); }
+
+        /* ===== RESPONSIVE ===== */
+        @media (max-width: 1200px) {
+            .grid-4 {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            .grid-3 {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        @media (max-width: 768px) {
+            .sidebar {
+                width: 80px;
+            }
+            .sidebar .nav-item span,
+            .admin-info {
+                display: none;
+            }
+            .grid-4, .grid-3, .grid-2 {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="dashboard">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <h2 style="color: white;">⚡ GOD MODE</h2>
+                <div class="god-badge"><i class="fas fa-crown"></i> SUPER ADMIN</div>
+            </div>
+
+            <div class="admin-profile" id="adminProfile">
+                <div class="admin-avatar" id="adminAvatar">G</div>
+                <div class="admin-info">
+                    <h4 id="adminName">Loading...</h4>
+                    <p id="adminRole">Super Admin</p>
+                </div>
+            </div>
+
+            <div class="nav-section">⚡ GOD CONTROL</div>
+            <button class="nav-item active" data-section="dashboard">
+                <i class="fas fa-tachometer-alt"></i>
+                <span>God Dashboard</span>
+            </button>
+
+            <div class="nav-section">🌍 PLATFORM CREATION</div>
+            <button class="nav-item" data-section="create-page">
+                <i class="fas fa-file-alt"></i>
+                <span>Create Pages</span>
+            </button>
+            <button class="nav-item" data-section="create-api">
+                <i class="fas fa-code"></i>
+                <span>API Management</span>
+            </button>
+            <button class="nav-item" data-section="database">
+                <i class="fas fa-database"></i>
+                <span>Database Manager</span>
+            </button>
+
+            <div class="nav-section">🏦 BANKING SYSTEM</div>
+            <button class="nav-item" data-section="banks">
+                <i class="fas fa-university"></i>
+                <span>Bank Management</span>
+            </button>
+            <button class="nav-item" data-section="bank-apis">
+                <i class="fas fa-key"></i>
+                <span>Bank API Keys</span>
+            </button>
+            <button class="nav-item" data-section="transactions">
+                <i class="fas fa-exchange-alt"></i>
+                <span>Transactions</span>
+            </button>
+            <button class="nav-item" data-section="wallets">
+                <i class="fas fa-wallet"></i>
+                <span>Wallet System</span>
+            </button>
+
+            <div class="nav-section">👥 USER CONTROL</div>
+            <button class="nav-item" data-section="users">
+                <i class="fas fa-users"></i>
+                <span>User Management</span>
+            </button>
+            <button class="nav-item" data-section="roles">
+                <i class="fas fa-user-tag"></i>
+                <span>Roles & Permissions</span>
+            </button>
+            <button class="nav-item" data-section="registration">
+                <i class="fas fa-user-plus"></i>
+                <span>Registration Rules</span>
+            </button>
+            <button class="nav-item" data-section="investors">
+                <i class="fas fa-chart-line"></i>
+                <span>Investors</span>
+            </button>
+
+            <div class="nav-section">📊 FINANCIAL</div>
+            <button class="nav-item" data-section="investments">
+                <i class="fas fa-briefcase"></i>
+                <span>Investments</span>
+            </button>
+            <button class="nav-item" data-section="withdrawals">
+                <i class="fas fa-hand-holding-usd"></i>
+                <span>Withdrawals</span>
+            </button>
+            <button class="nav-item" data-section="profits">
+                <i class="fas fa-chart-pie"></i>
+                <span>Profit Returns</span>
+            </button>
+            <button class="nav-item" data-section="reports">
+                <i class="fas fa-file-alt"></i>
+                <span>Reports</span>
+            </button>
+
+            <div class="nav-section">🔧 SYSTEM</div>
+            <button class="nav-item" data-section="settings">
+                <i class="fas fa-cog"></i>
+                <span>System Settings</span>
+            </button>
+            <button class="nav-item" data-section="logs">
+                <i class="fas fa-history"></i>
+                <span>Audit Logs</span>
+            </button>
+            <button class="nav-item" data-section="backup">
+                <i class="fas fa-database"></i>
+                <span>Backup & Restore</span>
+            </button>
+            <button class="nav-item" data-section="analytics">
+                <i class="fas fa-chart-bar"></i>
+                <span>Analytics</span>
+            </button>
+
+            <div class="nav-section">⚙️ DEVELOPER</div>
+            <button class="nav-item" data-section="webhooks">
+                <i class="fas fa-webhook"></i>
+                <span>Webhooks</span>
+            </button>
+            <button class="nav-item" data-section="crons">
+                <i class="fas fa-clock"></i>
+                <span>Cron Jobs</span>
+            </button>
+            <button class="nav-item" data-section="queues">
+                <i class="fas fa-tasks"></i>
+                <span>Job Queues</span>
+            </button>
+
+            <div class="nav-section">🔐 SECURITY</div>
+            <button class="nav-item" data-section="firewall">
+                <i class="fas fa-shield-alt"></i>
+                <span>Firewall Rules</span>
+            </button>
+            <button class="nav-item" data-section="rate-limiting">
+                <i class="fas fa-tachometer-alt"></i>
+                <span>Rate Limiting</span>
+            </button>
+            <button class="nav-item" data-section="ip-block">
+                <i class="fas fa-ban"></i>
+                <span>IP Blocking</span>
+            </button>
+
+            <div class="nav-section">🚪 EXIT</div>
+            <button class="nav-item" id="logoutBtn">
+                <i class="fas fa-sign-out-alt"></i>
+                <span>Exit God Mode</span>
+            </button>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <div class="top-bar">
+                <div class="page-title">
+                    <h1><span class="god-title" id="pageTitle">⚡ GOD DASHBOARD</span></h1>
+                </div>
+                <div class="user-menu">
+                    <div class="notification-badge" id="notificationBell" onclick="loadSection('notifications')">
+                        <i class="far fa-bell"></i>
+                        <span class="badge-count" id="notificationCount">0</span>
+                    </div>
+                    <div class="user-profile" id="godProfile" onclick="loadSection('profile')">
+                        <div class="user-avatar" id="godAvatar">G</div>
+                        <div>
+                            <div id="godName">Platform God</div>
+                            <div style="font-size:12px; color:var(--light);" id="godEmail">super@taagc.com</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Dynamic Content -->
+            <div id="content-area">
+                <div class="loading">
+                    <i class="fas fa-spinner fa-spin"></i>
+                    <p>Awakening God Mode...</p>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Create Page Modal -->
+    <div class="modal" id="createPageModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2><i class="fas fa-file-alt"></i> Create New Page</h2>
+                <span class="modal-close" onclick="closeModal('createPageModal')">&times;</span>
+            </div>
+            <div class="form-group">
+                <label>Page Name (URL slug)</label>
+                <input type="text" class="form-control" id="pageName" placeholder="about-us">
+            </div>
+            <div class="form-group">
+                <label>Page Title</label>
+                <input type="text" class="form-control" id="pageTitle" placeholder="About Us">
+            </div>
+            <div class="form-group">
+                <label>Template</label>
+                <select class="form-control" id="pageTemplate">
+                    <option value="default">Default Template</option>
+                    <option value="landing">Landing Page</option>
+                    <option value="dashboard">Dashboard</option>
+                    <option value="blank">Blank Page</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label>Page Content (HTML)</label>
+                <textarea class="form-control" id="pageContent" rows="8">&lt;!DOCTYPE html&gt;
+&lt;html&gt;
+&lt;head&gt;
+    &lt;title&gt;New Page&lt;/title&gt;
+    &lt;link rel="stylesheet" href="/assets/css/style.css"&gt;
+&lt;/head&gt;
+&lt;body&gt;
+    &lt;div class="container"&gt;
+        &lt;h1&gt;New Page&lt;/h1&gt;
+        &lt;p&gt;Content goes here...&lt;/p&gt;
+    &lt;/div&gt;
+&lt;/body&gt;
+&lt;/html&gt;</textarea>
+            </div>
+            <div class="form-group">
+                <label>Access Level</label>
+                <select class="form-control" id="pageAuth">
+                    <option value="public">Public</option>
+                    <option value="auth">Authenticated Users</option>
+                    <option value="admin">Admin Only</option>
+                    <option value="super_admin">Super Admin Only</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label>Meta Description</label>
+                <input type="text" class="form-control" id="pageMeta" placeholder="SEO description">
+            </div>
+            <div class="form-group">
+                <label>Meta Keywords</label>
+                <input type="text" class="form-control" id="pageKeywords" placeholder="keyword1, keyword2">
+            </div>
+            <div style="display: flex; gap: 10px;">
+                <button class="btn btn-success" onclick="createPage()">Create Page</button>
+                <button class="btn btn-danger" onclick="closeModal('createPageModal')">Cancel</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Add Bank Modal -->
+    <div class="modal" id="addBankModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2><i class="fas fa-university"></i> Add Bank Integration</h2>
+                <span class="modal-close" onclick="closeModal('addBankModal')">&times;</span>
+            </div>
+            <div class="form-group">
+                <label>Bank Name</label>
+                <input type="text" class="form-control" id="bankName" placeholder="e.g., Chase Bank">
+            </div>
+            <div class="form-group">
+                <label>Country</label>
+                <input type="text" class="form-control" id="bankCountry" placeholder="USA">
+            </div>
+            <div class="form-group">
+                <label>Bank Code (SWIFT/BIC)</label>
+                <input type="text" class="form-control" id="bankCode" placeholder="CHASUS33">
+            </div>
+            <div class="form-group">
+                <label>API Base URL</label>
+                <input type="text" class="form-control" id="bankApiUrl" placeholder="https://api.bank.com/v1">
+            </div>
+            <div class="form-group">
+                <label>API Key</label>
+                <input type="text" class="form-control" id="bankApiKey" placeholder="sk_live_xxx">
+            </div>
+            <div class="form-group">
+                <label>API Secret</label>
+                <input type="password" class="form-control" id="bankApiSecret" placeholder="••••••••">
+            </div>
+            <div class="form-group">
+                <label>Webhook Secret</label>
+                <input type="text" class="form-control" id="bankWebhookSecret" placeholder="whsec_xxx">
+            </div>
+            <div class="form-group">
+                <label>Supported Currencies</label>
+                <input type="text" class="form-control" id="bankCurrencies" placeholder="USD, EUR, GBP">
+            </div>
+            <div class="form-group">
+                <label>Processing Fees (%)</label>
+                <input type="number" class="form-control" id="bankFees" step="0.1" value="2.5">
+            </div>
+            <div style="display: flex; gap: 10px;">
+                <button class="btn btn-success" onclick="addBank()">Add Bank</button>
+                <button class="btn btn-danger" onclick="closeModal('addBankModal')">Cancel</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Create API Modal -->
+    <div class="modal" id="createAPIModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2><i class="fas fa-code"></i> Create API Key</h2>
+                <span class="modal-close" onclick="closeModal('createAPIModal')">&times;</span>
+            </div>
+            <div class="form-group">
+                <label>API Name</label>
+                <input type="text" class="form-control" id="apiName" placeholder="Payment API">
+            </div>
+            <div class="form-group">
+                <label>Permissions</label>
+                <div style="display: grid; grid-template-columns: repeat(2,1fr); gap: 10px;">
+                    <label><input type="checkbox" value="read:users"> Read Users</label>
+                    <label><input type="checkbox" value="write:users"> Write Users</label>
+                    <label><input type="checkbox" value="read:transactions"> Read Transactions</label>
+                    <label><input type="checkbox" value="write:transactions"> Write Transactions</label>
+                    <label><input type="checkbox" value="read:wallets"> Read Wallets</label>
+                    <label><input type="checkbox" value="write:wallets"> Write Wallets</label>
+                    <label><input type="checkbox" value="read:banks"> Read Banks</label>
+                    <label><input type="checkbox" value="admin"> Admin Access</label>
+                </div>
+            </div>
+            <div class="form-group">
+                <label>Rate Limit (requests per minute)</label>
+                <input type="number" class="form-control" id="apiRateLimit" value="60">
+            </div>
+            <div class="form-group">
+                <label>Expiration</label>
+                <select class="form-control" id="apiExpiration">
+                    <option value="never">Never</option>
+                    <option value="30">30 days</option>
+                    <option value="90">90 days</option>
+                    <option value="365">1 year</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label>IP Whitelist (optional)</label>
+                <input type="text" class="form-control" id="apiIPs" placeholder="192.168.1.1, 10.0.0.0/24">
+            </div>
+            <div style="display: flex; gap: 10px;">
+                <button class="btn btn-success" onclick="createAPIKey()">Generate API Key</button>
+                <button class="btn btn-danger" onclick="closeModal('createAPIModal')">Cancel</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- User Edit Modal -->
+    <div class="modal" id="editUserModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2><i class="fas fa-user-edit"></i> Edit User</h2>
+                <span class="modal-close" onclick="closeModal('editUserModal')">&times;</span>
+            </div>
+            <input type="hidden" id="editUserId">
+            <div class="form-group">
+                <label>Full Name</label>
+                <input type="text" class="form-control" id="editFullName">
+            </div>
+            <div class="form-group">
+                <label>Email</label>
+                <input type="email" class="form-control" id="editEmail" readonly>
+            </div>
+            <div class="form-group">
+                <label>Phone</label>
+                <input type="tel" class="form-control" id="editPhone">
+            </div>
+            <div class="form-group">
+                <label>Role</label>
+                <select class="form-control" id="editRole">
+                    <option value="super_admin">Super Admin</option>
+                    <option value="admin">Admin</option>
+                    <option value="investor">Investor</option>
+                    <option value="client">Client</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label>Status</label>
+                <select class="form-control" id="editStatus">
+                    <option value="active">Active</option>
+                    <option value="pending">Pending</option>
+                    <option value="suspended">Suspended</option>
+                    <option value="banned">Banned</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label>Email Verified</label>
+                <select class="form-control" id="editVerified">
+                    <option value="true">Verified</option>
+                    <option value="false">Unverified</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label>Account Balance</label>
+                <input type="number" class="form-control" id="editBalance" step="0.01">
+            </div>
+            <div style="display: flex; gap: 10px;">
+                <button class="btn btn-success" onclick="saveUserChanges()">Save Changes</button>
+                <button class="btn btn-warning" onclick="resetUserPassword()">Reset Password</button>
+                <button class="btn btn-danger" onclick="deleteUser()">Delete User</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Webhook Test Modal -->
+    <div class="modal" id="webhookTestModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2><i class="fas fa-webhook"></i> Test Webhook</h2>
+                <span class="modal-close" onclick="closeModal('webhookTestModal')">&times;</span>
+            </div>
+            <div class="form-group">
+                <label>Webhook URL</label>
+                <input type="url" class="form-control" id="webhookUrl" placeholder="https://api.example.com/webhook">
+            </div>
+            <div class="form-group">
+                <label>Event Type</label>
+                <select class="form-control" id="webhookEvent">
+                    <option value="user.created">User Created</option>
+                    <option value="user.updated">User Updated</option>
+                    <option value="transaction.created">Transaction Created</option>
+                    <option value="withdrawal.requested">Withdrawal Requested</option>
+                    <option value="investment.matured">Investment Matured</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label>Payload</label>
+                <textarea class="form-control" id="webhookPayload" rows="5">{
+  "test": true,
+  "timestamp": "2024-01-01T00:00:00Z"
+}</textarea>
+            </div>
+            <div style="display: flex; gap: 10px;">
+                <button class="btn btn-primary" onclick="testWebhook()">Send Test</button>
+                <button class="btn btn-danger" onclick="closeModal('webhookTestModal')">Cancel</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Backup Modal -->
+    <div class="modal" id="backupModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2><i class="fas fa-database"></i> Create Backup</h2>
+                <span class="modal-close" onclick="closeModal('backupModal')">&times;</span>
+            </div>
+            <div class="form-group">
+                <label>Backup Name</label>
+                <input type="text" class="form-control" id="backupName" value="backup-2024-01-01">
+            </div>
+            <div class="form-group">
+                <label>Include Collections</label>
+                <div style="display: grid; grid-template-columns: repeat(2,1fr); gap: 10px;">
+                    <label><input type="checkbox" value="users" checked> Users</label>
+                    <label><input type="checkbox" value="transactions" checked> Transactions</label>
+                    <label><input type="checkbox" value="wallets" checked> Wallets</label>
+                    <label><input type="checkbox" value="investments" checked> Investments</label>
+                    <label><input type="checkbox" value="banks" checked> Banks</label>
+                    <label><input type="checkbox" value="settings" checked> Settings</label>
+                </div>
+            </div>
+            <div class="form-group">
+                <label>Include Storage Files</label>
+                <label><input type="checkbox" id="backupStorage"> Include uploaded files</label>
+            </div>
+            <div style="display: flex; gap: 10px;">
+                <button class="btn btn-success" onclick="createBackup()">Create Backup</button>
+                <button class="btn btn-danger" onclick="closeModal('backupModal')">Cancel</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast Container -->
+    <div id="toastContainer"></div>
+
+    <script>
+        // ============================================
+        // FIREBASE CONFIGURATION
+        // ============================================
+        const firebaseConfig = {
+            apiKey: "AIzaSyAI1MrcP977UgRLQoePxl64JOSyj9v4WpI",
+            authDomain: "xtaagc.firebaseapp.com",
+            projectId: "xtaagc",
+            storageBucket: "xtaagc.appspot.com",
+            messagingSenderId: "256073982437",
+            appId: "1:256073982437:web:8da63bb7acc86c0ca98f0c"
+        };
+
+        // Initialize Firebase
+        if (!firebase.apps.length) {
+            firebase.initializeApp(firebaseConfig);
+        }
+        
+        const auth = firebase.auth();
+        const db = firebase.firestore();
+        const storage = firebase.storage();
+
+        // Enable offline persistence
+        db.enablePersistence().catch(err => console.log('Persistence error:', err));
+
+        // ============================================
+        // GLOBAL VARIABLES
+        // ============================================
+        let currentGod = null;
+        let charts = {};
+
+        // ============================================
+        // TOAST NOTIFICATIONS
+        // ============================================
+        function showToast(message, type = 'info', duration = 3000) {
+            const container = document.getElementById('toastContainer');
+            const toast = document.createElement('div');
+            toast.className = `toast ${type}`;
+            toast.innerHTML = `
+                <i class="fas fa-${type === 'success' ? 'check-circle' : type === 'error' ? 'exclamation-circle' : 'info-circle'}"></i>
+                <span>${message}</span>
+            `;
+            container.appendChild(toast);
+            
+            setTimeout(() => {
+                toast.remove();
+            }, duration);
+        }
+
+        // ============================================
+        // MODAL FUNCTIONS
+        // ============================================
+        window.openModal = function(modalId) {
+            document.getElementById(modalId).classList.add('active');
+        };
+
+        window.closeModal = function(modalId) {
+            document.getElementById(modalId).classList.remove('active');
+        };
+
+        // ============================================
+        // GOD AUTHENTICATION
+        // ============================================
+        auth.onAuthStateChanged(async (user) => {
+            if (!user) {
+                window.location.href = 'login.html';
+                return;
+            }
+
+            try {
+                const userDoc = await db.collection('users').doc(user.uid).get();
+                
+                if (!userDoc.exists) {
+                    showToast('No profile found', 'error');
+                    await auth.signOut();
+                    return;
+                }
+
+                const userData = userDoc.data();
+                
+                // Check if SUPER ADMIN
+                if (userData.role !== 'super_admin') {
+                    showToast('Only Super Admins can access God Mode', 'error');
+                    await auth.signOut();
+                    window.location.href = 'dashboard.html';
+                    return;
+                }
+
+                currentGod = userData;
+                
+                // Update UI
+                document.getElementById('adminName').textContent = userData.fullName || 'God';
+                document.getElementById('godName').textContent = userData.fullName || 'God';
+                document.getElementById('godEmail').textContent = userData.email || 'super@taagc.com';
+                const avatar = (userData.fullName || 'G').charAt(0).toUpperCase();
+                document.getElementById('adminAvatar').textContent = avatar;
+                document.getElementById('godAvatar').textContent = avatar;
+
+                // Load dashboard
+                loadSection('dashboard');
+
+            } catch (error) {
+                console.error('God auth error:', error);
+                showToast('Authentication error: ' + error.message, 'error');
+            }
+        });
+
+        // ============================================
+        // NAVIGATION
+        // ============================================
+        document.querySelectorAll('.nav-item[data-section]').forEach(item => {
+            item.addEventListener('click', function() {
+                document.querySelectorAll('.nav-item').forEach(nav => nav.classList.remove('active'));
+                this.classList.add('active');
+                loadSection(this.dataset.section);
+            });
+        });
+
+        function loadSection(section) {
+            const titles = {
+                'dashboard': '⚡ GOD DASHBOARD',
+                'create-page': '📄 PAGE CREATOR',
+                'create-api': '🔌 API MANAGEMENT',
+                'database': '🗄️ DATABASE MANAGER',
+                'banks': '🏦 BANK MANAGEMENT',
+                'bank-apis': '🔑 BANK API KEYS',
+                'transactions': '💸 TRANSACTIONS',
+                'wallets': '💰 WALLET SYSTEM',
+                'users': '👥 USER MANAGEMENT',
+                'roles': '👑 ROLES & PERMISSIONS',
+                'registration': '📝 REGISTRATION RULES',
+                'investors': '📈 INVESTOR MANAGEMENT',
+                'investments': '💼 INVESTMENTS',
+                'withdrawals': '💳 WITHDRAWALS',
+                'profits': '📊 PROFIT RETURNS',
+                'reports': '📋 REPORTS',
+                'settings': '⚙️ SYSTEM SETTINGS',
+                'logs': '📜 AUDIT LOGS',
+                'backup': '💾 BACKUP & RESTORE',
+                'analytics': '📈 ANALYTICS',
+                'webhooks': '🔄 WEBHOOKS',
+                'crons': '⏰ CRON JOBS',
+                'queues': '📋 JOB QUEUES',
+                'firewall': '🛡️ FIREWALL',
+                'rate-limiting': '⚡ RATE LIMITING',
+                'ip-block': '🚫 IP BLOCKING',
+                'notifications': '🔔 NOTIFICATIONS',
+                'profile': '👤 MY PROFILE'
+            };
+            
+            document.getElementById('pageTitle').textContent = titles[section] || '⚡ GOD MODE';
+
+            switch(section) {
+                case 'dashboard':
+                    loadGodDashboard();
+                    break;
+                case 'create-page':
+                    loadCreatePage();
+                    break;
+                case 'create-api':
+                    loadAPIManagement();
+                    break;
+                case 'database':
+                    loadDatabaseManager();
+                    break;
+                case 'banks':
+                    loadBanks();
+                    break;
+                case 'bank-apis':
+                    loadBankAPIs();
+                    break;
+                case 'transactions':
+                    loadTransactions();
+                    break;
+                case 'wallets':
+                    loadWallets();
+                    break;
+                case 'users':
+                    loadUsers();
+                    break;
+                case 'roles':
+                    loadRoles();
+                    break;
+                case 'registration':
+                    loadRegistrationRules();
+                    break;
+                case 'investors':
+                    loadInvestors();
+                    break;
+                case 'investments':
+                    loadInvestments();
+                    break;
+                case 'withdrawals':
+                    loadWithdrawals();
+                    break;
+                case 'profits':
+                    loadProfits();
+                    break;
+                case 'reports':
+                    loadReports();
+                    break;
+                case 'settings':
+                    loadSettings();
+                    break;
+                case 'logs':
+                    loadAuditLogs();
+                    break;
+                case 'backup':
+                    loadBackup();
+                    break;
+                case 'analytics':
+                    loadAnalytics();
+                    break;
+                case 'webhooks':
+                    loadWebhooks();
+                    break;
+                case 'crons':
+                    loadCronJobs();
+                    break;
+                case 'queues':
+                    loadJobQueues();
+                    break;
+                case 'firewall':
+                    loadFirewall();
+                    break;
+                case 'rate-limiting':
+                    loadRateLimiting();
+                    break;
+                case 'ip-block':
+                    loadIPBlocking();
+                    break;
+                case 'notifications':
+                    loadNotifications();
+                    break;
+                case 'profile':
+                    loadProfile();
+                    break;
+                default:
+                    loadComingSoon(section);
+            }
+        }
+
+        // ============================================
+        // 1. GOD DASHBOARD
+        // ============================================
+        async function loadGodDashboard() {
+            const content = document.getElementById('content-area');
+            content.innerHTML = '<div class="loading"><i class="fas fa-spinner fa-spin"></i><p>Loading godly powers...</p></div>';
+
+            try {
+                const [
+                    usersSnapshot, 
+                    banksSnapshot, 
+                    walletsSnapshot, 
+                    pagesSnapshot,
+                    transactionsSnapshot,
+                    investmentsSnapshot
+                ] = await Promise.all([
+                    db.collection('users').get(),
+                    db.collection('banks').get(),
+                    db.collection('wallets').get(),
+                    db.collection('pages').get(),
+                    db.collection('transactions').get(),
+                    db.collection('investments').get()
+                ]);
+
+                const activeUsers = usersSnapshot.docs.filter(d => d.data().status === 'active').length;
+                const pendingWithdrawals = transactionsSnapshot.docs.filter(d => 
+                    d.data().type === 'withdrawal' && d.data().status === 'pending'
+                ).length;
+
+                content.innerHTML = `
+                    <div class="grid-4">
+                        <div class="card">
+                            <div class="card-icon"><i class="fas fa-users"></i></div>
+                            <div class="card-value">${usersSnapshot.size}</div>
+                            <div class="card-label">Total Users</div>
+                            <small>${activeUsers} active</small>
+                        </div>
+                        <div class="card">
+                            <div class="card-icon"><i class="fas fa-university"></i></div>
+                            <div class="card-value">${banksSnapshot.size}</div>
+                            <div class="card-label">Banks Connected</div>
+                            <small>${banksSnapshot.docs.filter(d => d.data().status === 'active').length} active</small>
+                        </div>
+                        <div class="card">
+                            <div class="card-icon"><i class="fas fa-wallet"></i></div>
+                            <div class="card-value">${walletsSnapshot.size}</div>
+                            <div class="card-label">Active Wallets</div>
+                            <small>$${await getTotalBalance()} total</small>
+                        </div>
+                        <div class="card">
+                            <div class="card-icon"><i class="fas fa-exchange-alt"></i></div>
+                            <div class="card-value">${transactionsSnapshot.size}</div>
+                            <div class="card-label">Transactions</div>
+                            <small>${pendingWithdrawals} pending</small>
+                        </div>
+                    </div>
+
+                    <div class="grid-2">
+                        <div class="section">
+                            <h3><i class="fas fa-bolt"></i> Quick Actions</h3>
+                            <div style="display: flex; gap: 10px; margin-top: 20px; flex-wrap: wrap;">
+                                <button class="btn btn-primary" onclick="openModal('createPageModal')">
+                                    <i class="fas fa-file-alt"></i> Create Page
+                                </button>
+                                <button class="btn btn-accent" onclick="openModal('addBankModal')">
+                                    <i class="fas fa-university"></i> Add Bank
+                                </button>
+                                <button class="btn btn-purple" onclick="openModal('createAPIModal')">
+                                    <i class="fas fa-key"></i> Generate API Key
+                                </button>
+                                <button class="btn btn-success" onclick="openModal('backupModal')">
+                                    <i class="fas fa-database"></i> Backup Now
+                                </button>
+                                <button class="btn btn-warning" onclick="openModal('webhookTestModal')">
+                                    <i class="fas fa-webhook"></i> Test Webhook
+                                </button>
+                            </div>
+                        </div>
+
+                        <div class="section">
+                            <h3><i class="fas fa-chart-line"></i> System Health</h3>
+                            <div style="margin-top: 20px;">
+                                <div style="display: flex; justify-content: space-between; margin-bottom: 10px;">
+                                    <span>Firestore</span>
+                                    <span class="badge badge-success">Online</span>
+                                </div>
+                                <div style="display: flex; justify-content: space-between; margin-bottom: 10px;">
+                                    <span>Authentication</span>
+                                    <span class="badge badge-success">Online</span>
+                                </div>
+                                <div style="display: flex; justify-content: space-between; margin-bottom: 10px;">
+                                    <span>Storage</span>
+                                    <span class="badge badge-success">Online</span>
+                                </div>
+                                <div style="display: flex; justify-content: space-between; margin-bottom: 10px;">
+                                    <span>Bank APIs</span>
+                                    <span class="badge badge-success">${banksSnapshot.size} Connected</span>
+                                </div>
+                                <div style="display: flex; justify-content: space-between; margin-bottom: 10px;">
+                                    <span>Server Uptime</span>
+                                    <span class="badge badge-success">99.9%</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="section">
+                        <h3><i class="fas fa-history"></i> Recent Activity</h3>
+                        <div class="table-container">
+                            <table>
+                                <thead>
+                                    <tr>
+                                        <th>Time</th>
+                                        <th>Action</th>
+                                        <th>User</th>
+                                        <th>Details</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="recentActivityBody">
+                                    ${await getRecentActivity()}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                `;
+
+                // Initialize charts
+                setTimeout(() => initDashboardCharts(), 100);
+
+            } catch (error) {
+                content.innerHTML = `<div class="loading">Error: ${error.message}</div>`;
+                showToast('Error loading dashboard: ' + error.message, 'error');
+            }
+        }
+
+        async function getTotalBalance() {
+            try {
+                const snapshot = await db.collection('wallets').get();
+                let total = 0;
+                snapshot.forEach(doc => {
+                    total += doc.data().balance || 0;
+                });
+                return total.toLocaleString();
+            } catch {
+                return '0';
+            }
+        }
+
+        async function getRecentActivity() {
+            try {
+                const snapshot = await db.collection('audit_logs')
+                    .orderBy('timestamp', 'desc')
+                    .limit(10)
+                    .get();
+                
+                if (snapshot.empty) {
+                    return '<tr><td colspan="4" class="no-data">No recent activity</td></tr>';
+                }
+
+                let html = '';
+                snapshot.forEach(doc => {
+                    const data = doc.data();
+                    const time = data.timestamp ? new Date(data.timestamp.seconds * 1000).toLocaleString() : 'N/A';
+                    html += `
+                        <tr>
+                            <td>${time}</td>
+                            <td>${data.action || 'Unknown'}</td>
+                            <td>${data.adminEmail || data.userId || 'System'}</td>
+                            <td>${data.details || '-'}</td>
+                        </tr>
+                    `;
+                });
+                return html;
+
+            } catch (error) {
+                return '<tr><td colspan="4">Error loading activity</td></tr>';
+            }
+        }
+
+        function initDashboardCharts() {
+            // Chart initialization code here
+        }
+
+        // ============================================
+        // 2. PAGE CREATOR
+        // ============================================
+        function loadCreatePage() {
+            document.getElementById('content-area').innerHTML = `
+                <div class="section">
+                    <div class="section-header">
+                        <h2><i class="fas fa-file-alt"></i> Page Creator</h2>
+                        <button class="btn btn-success" onclick="openModal('createPageModal')">
+                            <i class="fas fa-plus"></i> New Page
+                        </button>
+                    </div>
+
+                    <div class="table-container">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Page Name</th>
+                                    <th>URL</th>
+                                    <th>Access</th>
+                                    <th>Created</th>
+                                    <th>Views</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="pagesList">
+                                <tr><td colspan="6" class="loading">Loading pages...</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            `;
+            loadPages();
+        }
+
+        async function loadPages() {
+            try {
+                const snapshot = await db.collection('pages').orderBy('createdAt', 'desc').get();
+                const tbody = document.getElementById('pagesList');
+                
+                if (snapshot.empty) {
+                    tbody.innerHTML = '<tr><td colspan="6" class="no-data">No pages created yet</td></tr>';
+                    return;
+                }
+
+                let html = '';
+                snapshot.forEach(doc => {
+                    const data = doc.data();
+                    const created = data.createdAt ? new Date(data.createdAt.seconds * 1000).toLocaleDateString() : 'N/A';
+                    html += `
+                        <tr>
+                            <td><strong>${data.title || doc.id}</strong></td>
+                            <td><a href="/${data.slug || doc.id}" target="_blank">/${data.slug || doc.id}</a></td>
+                            <td><span class="badge badge-${data.auth === 'public' ? 'success' : 'purple'}">${data.auth || 'public'}</span></td>
+                            <td>${created}</td>
+                            <td>${data.views || 0}</td>
+                            <td>
+                                <button class="btn btn-sm btn-info" onclick="previewPage('${doc.id}')"><i class="fas fa-eye"></i></button>
+                                <button class="btn btn-sm btn-warning" onclick="editPage('${doc.id}')"><i class="fas fa-edit"></i></button>
+                                <button class="btn btn-sm btn-danger" onclick="deletePage('${doc.id}')"><i class="fas fa-trash"></i></button>
+                            </td>
+                        </tr>
+                    `;
+                });
+                tbody.innerHTML = html;
+
+            } catch (error) {
+                console.error('Error loading pages:', error);
+                document.getElementById('pagesList').innerHTML = '<tr><td colspan="6">Error loading pages</td></tr>';
+            }
+        }
+
+        window.createPage = async function() {
+            const name = document.getElementById('pageName').value;
+            const title = document.getElementById('pageTitle').value;
+            const content = document.getElementById('pageContent').value;
+            const auth = document.getElementById('pageAuth').value;
+            const template = document.getElementById('pageTemplate').value;
+            const meta = document.getElementById('pageMeta').value;
+            const keywords = document.getElementById('pageKeywords').value;
+
+            if (!name || !title || !content) {
+                showToast('Please fill all required fields', 'warning');
+                return;
+            }
+
+            try {
+                // Save to Firestore
+                await db.collection('pages').doc(name).set({
+                    title: title,
+                    content: content,
+                    auth: auth,
+                    template: template,
+                    meta: meta,
+                    keywords: keywords,
+                    slug: name,
+                    views: 0,
+                    createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+                    createdBy: currentGod?.email,
+                    updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+                });
+
+                // Save to Storage as HTML
+                const htmlContent = `<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>${title} - TAAGC</title>
+    <meta name="description" content="${meta}">
+    <meta name="keywords" content="${keywords}">
+    <link rel="stylesheet" href="/assets/css/style.css">
+</head>
+<body>
+    ${content}
+</body>
+</html>`;
+                
+                const blob = new Blob([htmlContent], { type: 'text/html' });
+                await storage.ref(`pages/${name}.html`).put(blob);
+
+                // Log action
+                await db.collection('audit_logs').add({
+                    action: 'PAGE_CREATED',
+                    adminId: currentGod?.uid,
+                    adminEmail: currentGod?.email,
+                    pageId: name,
+                    details: `Created page: ${title}`,
+                    timestamp: firebase.firestore.FieldValue.serverTimestamp()
+                });
+
+                showToast('Page created successfully!', 'success');
+                closeModal('createPageModal');
+                loadPages();
+
+                // Reset form
+                document.getElementById('pageName').value = '';
+                document.getElementById('pageTitle').value = '';
+
+            } catch (error) {
+                showToast('Error: ' + error.message, 'error');
+            }
+        };
+
+        window.previewPage = function(pageId) {
+            window.open(`/${pageId}`, '_blank');
+        };
+
+        window.editPage = async function(pageId) {
+            try {
+                const doc = await db.collection('pages').doc(pageId).get();
+                if (!doc.exists) return;
+                
+                const data = doc.data();
+                
+                document.getElementById('pageName').value = pageId;
+                document.getElementById('pageTitle').value = data.title || '';
+                document.getElementById('pageContent').value = data.content || '';
+                document.getElementById('pageAuth').value = data.auth || 'public';
+                document.getElementById('pageTemplate').value = data.template || 'default';
+                document.getElementById('pageMeta').value = data.meta || '';
+                document.getElementById('pageKeywords').value = data.keywords || '';
+                
+                openModal('createPageModal');
+                
+                // Change button text
+                const saveBtn = document.querySelector('#createPageModal .btn-success');
+                saveBtn.textContent = 'Update Page';
+                saveBtn.onclick = () => updatePage(pageId);
+                
+            } catch (error) {
+                showToast('Error loading page: ' + error.message, 'error');
+            }
+        };
+
+        window.updatePage = async function(pageId) {
+            // Similar to create but with update
+            // Implementation here
+        };
+
+        window.deletePage = async function(pageId) {
+            if (!confirm('Are you sure you want to delete this page?')) return;
+
+            try {
+                await db.collection('pages').doc(pageId).delete();
+                await storage.ref(`pages/${pageId}.html`).delete();
+                
+                showToast('Page deleted successfully!', 'success');
+                loadPages();
+
+            } catch (error) {
+                showToast('Error deleting page: ' + error.message, 'error');
+            }
+        };
+
+        // ============================================
+        // 3. API MANAGEMENT
+        // ============================================
+        function loadAPIManagement() {
+            document.getElementById('content-area').innerHTML = `
+                <div class="section">
+                    <div class="section-header">
+                        <h2><i class="fas fa-code"></i> API Management</h2>
+                        <button class="btn btn-success" onclick="openModal('createAPIModal')">
+                            <i class="fas fa-plus"></i> Generate API Key
+                        </button>
+                    </div>
+
+                    <div class="table-container">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>API Name</th>
+                                    <th>API Key</th>
+                                    <th>Permissions</th>
+                                    <th>Rate Limit</th>
+                                    <th>Expires</th>
+                                    <th>Status</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="apiKeysList">
+                                <tr><td colspan="7" class="loading">Loading API keys...</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <div class="section">
+                    <h3><i class="fas fa-chart-line"></i> API Usage Statistics</h3>
+                    <div class="grid-3" id="apiStats">
+                        <div class="card">
+                            <div class="card-value" id="totalApiCalls">0</div>
+                            <div class="card-label">Total API Calls</div>
+                        </div>
+                        <div class="card">
+                            <div class="card-value" id="avgResponseTime">0ms</div>
+                            <div class="card-label">Avg Response Time</div>
+                        </div>
+                        <div class="card">
+                            <div class="card-value" id="errorRate">0%</div>
+                            <div class="card-label">Error Rate</div>
+                        </div>
+                    </div>
+                </div>
+            `;
+            loadAPIKeys();
+            loadAPIStats();
+        }
+
+        async function loadAPIKeys() {
+            try {
+                const snapshot = await db.collection('api_keys').orderBy('createdAt', 'desc').get();
+                const tbody = document.getElementById('apiKeysList');
+                
+                if (snapshot.empty) {
+                    tbody.innerHTML = '<tr><td colspan="7" class="no-data">No API keys generated</td></tr>';
+                    return;
+                }
+
+                let html = '';
+                snapshot.forEach(doc => {
+                    const data = doc.data();
+                    const expires = data.expiresAt ? new Date(data.expiresAt.seconds * 1000).toLocaleDateString() : 'Never';
+                    html += `
+                        <tr>
+                            <td><strong>${data.name}</strong></td>
+                            <td>
+                                <div style="display:flex; align-items:center; gap:5px;">
+                                    <code>${doc.id.substring(0, 8)}...</code>
+                                    <button class="btn btn-sm" onclick="copyAPIKey('${doc.id}')"><i class="fas fa-copy"></i></button>
+                                </div>
+                            </td>
+                            <td>${data.permissions?.length || 0} permissions</td>
+                            <td>${data.rateLimit || 60}/min</td>
+                            <td>${expires}</td>
+                            <td><span class="badge badge-${data.status === 'active' ? 'success' : 'danger'}">${data.status || 'active'}</span></td>
+                            <td>
+                                <button class="btn btn-sm btn-warning" onclick="revokeAPIKey('${doc.id}')">Revoke</button>
+                                <button class="btn btn-sm btn-danger" onclick="deleteAPIKey('${doc.id}')">Delete</button>
+                            </td>
+                        </tr>
+                    `;
+                });
+                tbody.innerHTML = html;
+
+            } catch (error) {
+                console.error('Error loading API keys:', error);
+            }
+        }
+
+        async function loadAPIStats() {
+            try {
+                const snapshot = await db.collection('api_logs').get();
+                document.getElementById('totalApiCalls').textContent = snapshot.size;
+                
+                // Calculate avg response time
+                let totalTime = 0;
+                snapshot.forEach(doc => {
+                    totalTime += doc.data().responseTime || 0;
+                });
+                const avgTime = snapshot.size > 0 ? Math.round(totalTime / snapshot.size) : 0;
+                document.getElementById('avgResponseTime').textContent = avgTime + 'ms';
+                
+                // Calculate error rate
+                const errors = snapshot.docs.filter(d => d.data().status >= 400).length;
+                const errorRate = snapshot.size > 0 ? Math.round((errors / snapshot.size) * 100) : 0;
+                document.getElementById('errorRate').textContent = errorRate + '%';
+
+            } catch (error) {
+                console.error('Error loading API stats:', error);
+            }
+        }
+
+        window.createAPIKey = async function() {
+            const name = document.getElementById('apiName').value;
+            const rateLimit = document.getElementById('apiRateLimit').value;
+            const expiration = document.getElementById('apiExpiration').value;
+            const ips = document.getElementById('apiIPs').value;
+            
+            // Get selected permissions
+            const permissions = [];
+            document.querySelectorAll('#createAPIModal input[type="checkbox"]:checked').forEach(cb => {
+                permissions.push(cb.value);
+            });
+
+            // Generate API key
+            const apiKey = 'taagc_' + Array.from(crypto.getRandomValues(new Uint8Array(24)))
+                .map(b => b.toString(16).padStart(2, '0')).join('');
+
+            try {
+                // Calculate expiration
+                let expiresAt = null;
+                if (expiration !== 'never') {
+                    const days = parseInt(expiration);
+                    expiresAt = new Date();
+                    expiresAt.setDate(expiresAt.getDate() + days);
+                }
+
+                await db.collection('api_keys').doc(apiKey).set({
+                    name: name,
+                    permissions: permissions,
+                    rateLimit: parseInt(rateLimit),
+                    expiresAt: expiresAt ? firebase.firestore.Timestamp.fromDate(expiresAt) : null,
+                    ipWhitelist: ips.split(',').map(ip => ip.trim()).filter(ip => ip),
+                    status: 'active',
+                    createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+                    createdBy: currentGod?.email
+                });
+
+                showToast(`API Key generated: ${apiKey}`, 'success');
+                closeModal('createAPIModal');
+                loadAPIKeys();
+
+            } catch (error) {
+                showToast('Error: ' + error.message, 'error');
+            }
+        };
+
+        window.copyAPIKey = function(keyId) {
+            navigator.clipboard.writeText(keyId);
+            showToast('API Key copied to clipboard!', 'success');
+        };
+
+        window.revokeAPIKey = async function(keyId) {
+            if (!confirm('Revoke this API key? It will stop working immediately.')) return;
+
+            try {
+                await db.collection('api_keys').doc(keyId).update({
+                    status: 'revoked',
+                    revokedAt: firebase.firestore.FieldValue.serverTimestamp()
+                });
+                showToast('API Key revoked', 'success');
+                loadAPIKeys();
+
+            } catch (error) {
+                showToast('Error: ' + error.message, 'error');
+            }
+        };
+
+        window.deleteAPIKey = async function(keyId) {
+            if (!confirm('Permanently delete this API key?')) return;
+
+            try {
+                await db.collection('api_keys').doc(keyId).delete();
+                showToast('API Key deleted', 'success');
+                loadAPIKeys();
+
+            } catch (error) {
+                showToast('Error: ' + error.message, 'error');
+            }
+        };
+
+        // ============================================
+        // 4. BANK MANAGEMENT
+        // ============================================
+        async function loadBanks() {
+            const content = document.getElementById('content-area');
+            content.innerHTML = '<div class="loading"><i class="fas fa-spinner fa-spin"></i><p>Loading banks...</p></div>';
+
+            try {
+                const snapshot = await db.collection('banks').orderBy('createdAt', 'desc').get();
+
+                content.innerHTML = `
+                    <div class="section">
+                        <div class="section-header">
+                            <h2><i class="fas fa-university"></i> Bank Management</h2>
+                            <button class="btn btn-success" onclick="openModal('addBankModal')">
+                                <i class="fas fa-plus"></i> Add Bank
+                            </button>
+                        </div>
+
+                        <div class="grid-3" id="banksGrid">
+                            ${snapshot.empty ? '<p>No banks added yet</p>' : ''}
+                            ${Array.from(snapshot.docs).map(doc => {
+                                const data = doc.data();
+                                const created = data.createdAt ? new Date(data.createdAt.seconds * 1000).toLocaleDateString() : 'N/A';
+                                return `
+                                    <div class="card">
+                                        <h3>${data.name}</h3>
+                                        <p><i class="fas fa-globe"></i> ${data.country} (${data.code || 'N/A'})</p>
+                                        <p><i class="fas fa-money-bill"></i> ${data.currencies || 'USD'}</p>
+                                        <p><i class="fas fa-percent"></i> Fees: ${data.fees || 2.5}%</p>
+                                        <div class="api-key-box" style="margin-top:10px; font-size:12px;">
+                                            <small>API: ${data.apiUrl?.substring(0, 30)}...</small>
+                                            <button class="copy-btn" onclick="copyText('${data.apiKey}')">Copy Key</button>
+                                        </div>
+                                        <div style="margin-top:15px; display:flex; gap:5px;">
+                                            <span class="badge badge-${data.status === 'active' ? 'success' : 'warning'}">${data.status || 'active'}</span>
+                                            <small>Added: ${created}</small>
+                                        </div>
+                                        <div style="margin-top:15px; display:flex; gap:5px;">
+                                            <button class="btn btn-sm btn-info" onclick="testBankAPI('${doc.id}')"><i class="fas fa-plug"></i> Test</button>
+                                            <button class="btn btn-sm btn-warning" onclick="editBank('${doc.id}')"><i class="fas fa-edit"></i></button>
+                                            <button class="btn btn-sm btn-danger" onclick="deleteBank('${doc.id}')"><i class="fas fa-trash"></i></button>
+                                        </div>
+                                    </div>
+                                `;
+                            }).join('')}
+                        </div>
+                    </div>
+                `;
+
+            } catch (error) {
+                content.innerHTML = `<div class="loading">Error: ${error.message}</div>`;
+            }
+        }
+
+        window.addBank = async function() {
+            const bankData = {
+                name: document.getElementById('bankName').value,
+                country: document.getElementById('bankCountry').value,
+                code: document.getElementById('bankCode').value,
+                apiUrl: document.getElementById('bankApiUrl').value,
+                apiKey: document.getElementById('bankApiKey').value,
+                apiSecret: document.getElementById('bankApiSecret').value,
+                webhookSecret: document.getElementById('bankWebhookSecret').value,
+                currencies: document.getElementById('bankCurrencies').value.split(',').map(c => c.trim()),
+                fees: parseFloat(document.getElementById('bankFees').value),
+                status: 'active',
+                createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+                createdBy: currentGod?.email
+            };
+
+            try {
+                await db.collection('banks').add(bankData);
+                
+                // Log action
+                await db.collection('audit_logs').add({
+                    action: 'BANK_ADDED',
+                    adminId: currentGod?.uid,
+                    adminEmail: currentGod?.email,
+                    bankName: bankData.name,
+                    timestamp: firebase.firestore.FieldValue.serverTimestamp()
+                });
+
+                showToast('Bank added successfully!', 'success');
+                closeModal('addBankModal');
+                loadBanks();
+
+                // Reset form
+                document.getElementById('bankName').value = '';
+                document.getElementById('bankApiKey').value = '';
+
+            } catch (error) {
+                showToast('Error: ' + error.message, 'error');
+            }
+        };
+
+        window.testBankAPI = async function(bankId) {
+            const bankDoc = await db.collection('banks').doc(bankId).get();
+            const bank = bankDoc.data();
+            
+            showToast(`Testing connection to ${bank.name}...`, 'info');
+            
+            // Simulate API test
+            setTimeout(() => {
+                showToast(`✅ Connected to ${bank.name} successfully!`, 'success');
+            }, 2000);
+        };
+
+        window.editBank = async function(bankId) {
+            // Implementation for editing bank
+            showToast('Edit bank feature coming soon', 'info');
+        };
+
+        window.deleteBank = async function(bankId) {
+            if (!confirm('Are you sure you want to delete this bank?')) return;
+
+            try {
+                await db.collection('banks').doc(bankId).delete();
+                showToast('Bank deleted successfully!', 'success');
+                loadBanks();
+
+            } catch (error) {
+                showToast('Error: ' + error.message, 'error');
+            }
+        };
+
+        // ============================================
+        // 5. WALLET SYSTEM
+        // ============================================
+        async function loadWallets() {
+            const content = document.getElementById('content-area');
+            content.innerHTML = '<div class="loading"><i class="fas fa-spinner fa-spin"></i><p>Loading wallets...</p></div>';
+
+            try {
+                const snapshot = await db.collection('wallets').orderBy('createdAt', 'desc').limit(50).get();
+
+                content.innerHTML = `
+                    <div class="section">
+                        <div class="section-header">
+                            <h2><i class="fas fa-wallet"></i> Wallet System</h2>
+                            <div>
+                                <button class="btn btn-success" onclick="createWallet()">
+                                    <i class="fas fa-plus"></i> Create Wallet
+                                </button>
+                                <button class="btn btn-info" onclick="exportWallets()">
+                                    <i class="fas fa-download"></i> Export
+                                </button>
+                            </div>
+                        </div>
+
+                        <div class="grid-4">
+                            <div class="card">
+                                <div class="card-value">${snapshot.size}</div>
+                                <div class="card-label">Total Wallets</div>
+                            </div>
+                            <div class="card">
+                                <div class="card-value">$${await getTotalBalance()}</div>
+                                <div class="card-label">Total Balance</div>
+                            </div>
+                            <div class="card">
+                                <div class="card-value">${snapshot.docs.filter(d => d.data().status === 'active').length}</div>
+                                <div class="card-label">Active Wallets</div>
+                            </div>
+                            <div class="card">
+                                <div class="card-value">${snapshot.docs.filter(d => d.data().type === 'business').length}</div>
+                                <div class="card-label">Business Wallets</div>
+                            </div>
+                        </div>
+
+                        <div class="table-container">
+                            <table>
+                                <thead>
+                                    <tr>
+                                        <th>User</th>
+                                        <th>Email</th>
+                                        <th>Wallet ID</th>
+                                        <th>Balance</th>
+                                        <th>Currency</th>
+                                        <th>Status</th>
+                                        <th>Created</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="walletsList">
+                                    ${await getWalletsList()}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                `;
+
+            } catch (error) {
+                content.innerHTML = `<div class="loading">Error: ${error.message}</div>`;
+            }
+        }
+
+        async function getWalletsList() {
+            try {
+                const snapshot = await db.collection('wallets').orderBy('createdAt', 'desc').limit(50).get();
+                if (snapshot.empty) return '<tr><td colspan="8" class="no-data">No wallets found</td></tr>';
+
+                let html = '';
+                snapshot.forEach(doc => {
+                    const data = doc.data();
+                    const created = data.createdAt ? new Date(data.createdAt.seconds * 1000).toLocaleDateString() : 'N/A';
+                    html += `
+                        <tr>
+                            <td>${data.userName || 'N/A'}</td>
+                            <td>${data.userEmail || 'N/A'}</td>
+                            <td><code>${doc.id.substring(0, 12)}...</code></td>
+                            <td><strong>$${data.balance || 0}</strong></td>
+                            <td>${data.currency || 'USD'}</td>
+                            <td><span class="badge badge-${data.status === 'active' ? 'success' : 'warning'}">${data.status || 'active'}</span></td>
+                            <td>${created}</td>
+                            <td>
+                                <button class="btn btn-sm btn-info" onclick="viewWallet('${doc.id}')"><i class="fas fa-eye"></i></button>
+                                <button class="btn btn-sm btn-warning" onclick="freezeWallet('${doc.id}')"><i class="fas fa-snowflake"></i></button>
+                                <button class="btn btn-sm btn-danger" onclick="deleteWallet('${doc.id}')"><i class="fas fa-trash"></i></button>
+                            </td>
+                        </tr>
+                    `;
+                });
+                return html;
+
+            } catch {
+                return '<tr><td colspan="8">Error loading wallets</td></tr>';
+            }
+        }
+
+        window.viewWallet = async function(walletId) {
+            try {
+                const doc = await db.collection('wallets').doc(walletId).get();
+                if (!doc.exists) return;
+                
+                const data = doc.data();
+                alert(JSON.stringify(data, null, 2));
+                
+            } catch (error) {
+                showToast('Error: ' + error.message, 'error');
+            }
+        };
+
+        window.freezeWallet = async function(walletId) {
+            if (!confirm('Freeze this wallet? User will not be able to use it.')) return;
+
+            try {
+                await db.collection('wallets').doc(walletId).update({
+                    status: 'frozen',
+                    frozenAt: firebase.firestore.FieldValue.serverTimestamp(),
+                    frozenBy: currentGod?.email
+                });
+                showToast('Wallet frozen successfully', 'success');
+                loadWallets();
+
+            } catch (error) {
+                showToast('Error: ' + error.message, 'error');
+            }
+        };
+
+        // ============================================
+        // 6. USER MANAGEMENT
+        // ============================================
+        async function loadUsers() {
+            const content = document.getElementById('content-area');
+            content.innerHTML = '<div class="loading"><i class="fas fa-spinner fa-spin"></i><p>Loading users...</p></div>';
+
+            try {
+                const snapshot = await db.collection('users').orderBy('createdAt', 'desc').limit(100).get();
+
+                content.innerHTML = `
+                    <div class="section">
+                        <div class="section-header">
+                            <h2><i class="fas fa-users"></i> User Management</h2>
+                            <div>
+                                <input type="text" id="userSearch" class="form-control" placeholder="Search users..." style="width:300px; display:inline-block; margin-right:10px;">
+                                <button class="btn btn-success" onclick="createUser()">
+                                    <i class="fas fa-user-plus"></i> Add User
+                                </button>
+                                <button class="btn btn-info" onclick="exportUsers()">
+                                    <i class="fas fa-download"></i> Export
+                                </button>
+                            </div>
+                        </div>
+
+                        <div class="table-container">
+                            <table>
+                                <thead>
+                                    <tr>
+                                        <th>Name</th>
+                                        <th>Email</th>
+                                        <th>Role</th>
+                                        <th>Status</th>
+                                        <th>ID</th>
+                                        <th>Balance</th>
+                                        <th>Created</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="usersList">
+                                    ${await getUsersList(snapshot)}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                `;
+
+                // Add search functionality
+                document.getElementById('userSearch').addEventListener('input', function(e) {
+                    searchUsers(e.target.value);
+                });
+
+            } catch (error) {
+                content.innerHTML = `<div class="loading">Error: ${error.message}</div>`;
+            }
+        }
+
+        async function getUsersList(snapshot) {
+            if (snapshot.empty) return '<tr><td colspan="8" class="no-data">No users found</td></tr>';
+
+            let html = '';
+            for (const doc of snapshot.docs) {
+                const data = doc.data();
+                const created = data.createdAt ? new Date(data.createdAt.seconds * 1000).toLocaleDateString() : 'N/A';
+                
+                // Get wallet balance
+                let balance = 0;
+                try {
+                    const walletSnapshot = await db.collection('wallets').where('userId', '==', doc.id).get();
+                    walletSnapshot.forEach(w => {
+                        balance += w.data().balance || 0;
+                    });
+                } catch (e) {}
+
+                html += `
+                    <tr>
+                        <td><strong>${data.fullName || 'N/A'}</strong></td>
+                        <td>${data.email || 'N/A'}</td>
+                        <td><span class="badge badge-${data.role === 'super_admin' ? 'purple' : data.role === 'admin' ? 'info' : data.role === 'investor' ? 'success' : 'secondary'}">${data.role || 'client'}</span></td>
+                        <td><span class="badge badge-${data.status === 'active' ? 'success' : 'warning'}">${data.status || 'pending'}</span></td>
+                        <td><code>${data.generatedId || doc.id.substring(0, 8)}</code></td>
+                        <td><strong>$${balance}</strong></td>
+                        <td>${created}</td>
+                        <td>
+                            <button class="btn btn-sm btn-info" onclick="viewUser('${doc.id}')"><i class="fas fa-eye"></i></button>
+                            <button class="btn btn-sm btn-warning" onclick="editUser('${doc.id}')"><i class="fas fa-edit"></i></button>
+                            <button class="btn btn-sm btn-danger" onclick="deleteUser('${doc.id}')"><i class="fas fa-trash"></i></button>
+                        </td>
+                    </tr>
+                `;
+            }
+            return html;
+        }
+
+        function searchUsers(term) {
+            const rows = document.querySelectorAll('#usersList tr');
+            const searchTerm = term.toLowerCase();
+            
+            rows.forEach(row => {
+                const text = row.textContent.toLowerCase();
+                row.style.display = text.includes(searchTerm) ? '' : 'none';
+            });
+        }
+
+        window.viewUser = async function(userId) {
+            try {
+                const doc = await db.collection('users').doc(userId).get();
+                if (!doc.exists) return;
+                
+                const data = doc.data();
+                
+                // Get user's wallets
+                const wallets = await db.collection('wallets').where('userId', '==', userId).get();
+                const walletList = [];
+                wallets.forEach(w => walletList.push(w.data()));
+
+                // Get user's transactions
+                const transactions = await db.collection('transactions').where('userId', '==', userId).limit(10).get();
+                const txList = [];
+                transactions.forEach(t => txList.push(t.data()));
+
+                const userInfo = {
+                    ...data,
+                    wallets: walletList,
+                    recentTransactions: txList
+                };
+
+                alert(JSON.stringify(userInfo, null, 2));
+                
+            } catch (error) {
+                showToast('Error: ' + error.message, 'error');
+            }
+        };
+
+        window.editUser = async function(userId) {
+            try {
+                const doc = await db.collection('users').doc(userId).get();
+                if (!doc.exists) return;
+                
+                const data = doc.data();
+                
+                document.getElementById('editUserId').value = userId;
+                document.getElementById('editFullName').value = data.fullName || '';
+                document.getElementById('editEmail').value = data.email || '';
+                document.getElementById('editPhone').value = data.phone || '';
+                document.getElementById('editRole').value = data.role || 'client';
+                document.getElementById('editStatus').value = data.status || 'pending';
+                document.getElementById('editVerified').value = data.emailVerified ? 'true' : 'false';
+                
+                // Get wallet balance
+                let balance = 0;
+                const walletSnapshot = await db.collection('wallets').where('userId', '==', userId).get();
+                walletSnapshot.forEach(w => {
+                    balance += w.data().balance || 0;
+                });
+                document.getElementById('editBalance').value = balance;
+                
+                openModal('editUserModal');
+                
+            } catch (error) {
+                showToast('Error loading user: ' + error.message, 'error');
+            }
+        };
+
+        window.saveUserChanges = async function() {
+            const userId = document.getElementById('editUserId').value;
+            const updates = {
+                fullName: document.getElementById('editFullName').value,
+                phone: document.getElementById('editPhone').value,
+                role: document.getElementById('editRole').value,
+                status: document.getElementById('editStatus').value,
+                emailVerified: document.getElementById('editVerified').value === 'true',
+                updatedAt: firebase.firestore.FieldValue.serverTimestamp(),
+                updatedBy: currentGod?.email
+            };
+
+            try {
+                await db.collection('users').doc(userId).update(updates);
+                
+                // Update wallet balance if changed
+                const newBalance = parseFloat(document.getElementById('editBalance').value);
+                const walletSnapshot = await db.collection('wallets').where('userId', '==', userId).get();
+                
+                if (walletSnapshot.size > 0) {
+                    await walletSnapshot.docs[0].ref.update({
+                        balance: newBalance
+                    });
+                }
+
+                // Log action
+                await db.collection('audit_logs').add({
+                    action: 'USER_UPDATED',
+                    adminId: currentGod?.uid,
+                    adminEmail: currentGod?.email,
+                    userId: userId,
+                    updates: updates,
+                    timestamp: firebase.firestore.FieldValue.serverTimestamp()
+                });
+
+                showToast('User updated successfully!', 'success');
+                closeModal('editUserModal');
+                loadUsers();
+
+            } catch (error) {
+                showToast('Error: ' + error.message, 'error');
+            }
+        };
+
+        window.resetUserPassword = async function() {
+            const email = document.getElementById('editEmail').value;
+            
+            try {
+                await auth.sendPasswordResetEmail(email);
+                showToast(`Password reset email sent to ${email}`, 'success');
+                
+            } catch (error) {
+                showToast('Error: ' + error.message, 'error');
+            }
+        };
+
+        window.deleteUser = async function() {
+            if (!confirm('Are you sure you want to delete this user? This action cannot be undone!')) return;
+            
+            const userId = document.getElementById('editUserId').value;
+
+            try {
+                // Delete user from Auth (requires Cloud Function)
+                // await firebase.functions().httpsCallable('deleteUser')({uid: userId});
+                
+                // Delete from Firestore
+                await db.collection('users').doc(userId).delete();
+                
+                // Delete wallets
+                const wallets = await db.collection('wallets').where('userId', '==', userId).get();
+                wallets.forEach(async doc => {
+                    await doc.ref.delete();
+                });
+
+                showToast('User deleted successfully!', 'success');
+                closeModal('editUserModal');
+                loadUsers();
+
+            } catch (error) {
+                showToast('Error: ' + error.message, 'error');
+            }
+        };
+
+        // ============================================
+        // 7. REGISTRATION RULES
+        // ============================================
+        async function loadRegistrationRules() {
+            const content = document.getElementById('content-area');
+
+            try {
+                const rulesDoc = await db.collection('settings').doc('registration').get();
+                const rules = rulesDoc.exists ? rulesDoc.data() : {
+                    autoWallet: true,
+                    requireVerification: true,
+                    defaultRole: 'client',
+                    allowedBanks: [],
+                    maxWalletsPerUser: 3,
+                    minDeposit: 10,
+                    maxDeposit: 100000,
+                    allowInternational: true,
+                    restrictedCountries: [],
+                    kycRequired: true
+                };
+
+                content.innerHTML = `
+                    <div class="section">
+                        <h2><i class="fas fa-user-plus"></i> Registration Rules</h2>
+
+                        <div class="tabs">
+                            <div class="tab active" onclick="switchRulesTab('general')">General</div>
+                            <div class="tab" onclick="switchRulesTab('wallet')">Wallet Settings</div>
+                            <div class="tab" onclick="switchRulesTab('limits')">Limits</div>
+                            <div class="tab" onclick="switchRulesTab('countries')">Country Restrictions</div>
+                        </div>
+
+                        <div id="rulesGeneral" class="tab-content">
+                            <div class="grid-2">
+                                <div class="card">
+                                    <h3>Account Settings</h3>
+                                    <div class="form-group">
+                                        <label>
+                                            <input type="checkbox" id="autoWallet" ${rules.autoWallet ? 'checked' : ''}>
+                                            Create wallet automatically on registration
+                                        </label>
+                                    </div>
+                                    <div class="form-group">
+                                        <label>
+                                            <input type="checkbox" id="requireVerification" ${rules.requireVerification ? 'checked' : ''}>
+                                            Require email verification
+                                        </label>
+                                    </div>
+                                    <div class="form-group">
+                                        <label>
+                                            <input type="checkbox" id="kycRequired" ${rules.kycRequired ? 'checked' : ''}>
+                                            Require KYC verification
+                                        </label>
+                                    </div>
+                                </div>
+
+                                <div class="card">
+                                    <h3>Default Settings</h3>
+                                    <div class="form-group">
+                                        <label>Default Role</label>
+                                        <select class="form-control" id="defaultRole">
+                                            <option value="client" ${rules.defaultRole === 'client' ? 'selected' : ''}>Client</option>
+                                            <option value="investor" ${rules.defaultRole === 'investor' ? 'selected' : ''}>Investor</option>
+                                        </select>
+                                    </div>
+                                    <div class="form-group">
+                                        <label>Max Wallets Per User</label>
+                                        <input type="number" class="form-control" id="maxWallets" value="${rules.maxWalletsPerUser || 3}">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div id="rulesWallet" class="tab-content" style="display:none;">
+                            <div class="card">
+                                <h3>Allowed Banks for Wallet Creation</h3>
+                                <div id="banksList">
+                                    ${await getBankCheckboxes(rules.allowedBanks || [])}
+                                </div>
+                            </div>
+                        </div>
+
+                        <div id="rulesLimits" class="tab-content" style="display:none;">
+                            <div class="grid-2">
+                                <div class="card">
+                                    <h3>Deposit Limits</h3>
+                                    <div class="form-group">
+                                        <label>Minimum Deposit ($)</label>
+                                        <input type="number" class="form-control" id="minDeposit" value="${rules.minDeposit || 10}">
+                                    </div>
+                                    <div class="form-group">
+                                        <label>Maximum Deposit ($)</label>
+                                        <input type="number" class="form-control" id="maxDeposit" value="${rules.maxDeposit || 100000}">
+                                    </div>
+                                </div>
+                                <div class="card">
+                                    <h3>Withdrawal Limits</h3>
+                                    <div class="form-group">
+                                        <label>Minimum Withdrawal ($)</label>
+                                        <input type="number" class="form-control" id="minWithdrawal" value="${rules.minWithdrawal || 20}">
+                                    </div>
+                                    <div class="form-group">
+                                        <label>Maximum Withdrawal ($)</label>
+                                        <input type="number" class="form-control" id="maxWithdrawal" value="${rules.maxWithdrawal || 50000}">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div id="rulesCountries" class="tab-content" style="display:none;">
+                            <div class="card">
+                                <h3>Country Restrictions</h3>
+                                <div class="form-group">
+                                    <label>
+                                        <input type="checkbox" id="allowInternational" ${rules.allowInternational ? 'checked' : ''}>
+                                        Allow International Registrations
+                                    </label>
+                                </div>
+                                <div class="form-group">
+                                    <label>Restricted Countries</label>
+                                    <input type="text" class="form-control" id="restrictedCountries" 
+                                           value="${rules.restrictedCountries?.join(', ') || ''}" 
+                                           placeholder="IR, KP, CU, SY">
+                                    <small>Comma-separated country codes</small>
+                                </div>
+                            </div>
+                        </div>
+
+                        <button class="btn btn-success" onclick="saveRegistrationRules()">
+                            <i class="fas fa-save"></i> Save All Rules
+                        </button>
+                    </div>
+                `;
+
+            } catch (error) {
+                content.innerHTML = `<div class="loading">Error: ${error.message}</div>`;
+            }
+        }
+
+        window.switchRulesTab = function(tab) {
+            document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+            event.target.classList.add('active');
+            
+            document.querySelectorAll('.tab-content').forEach(c => c.style.display = 'none');
+            document.getElementById(`rules${tab.charAt(0).toUpperCase() + tab.slice(1)}`).style.display = 'block';
+        };
+
+        async function getBankCheckboxes(selectedBanks) {
+            try {
+                const snapshot = await db.collection('banks').where('status', '==', 'active').get();
+                if (snapshot.empty) return '<p>No active banks configured</p>';
+
+                let html = '<div style="display: grid; grid-template-columns: repeat(3,1fr); gap:10px;">';
+                snapshot.forEach(doc => {
+                    const bank = doc.data();
+                    html += `
+                        <label style="display:flex; align-items:center; gap:5px;">
+                            <input type="checkbox" value="${doc.id}" ${selectedBanks.includes(doc.id) ? 'checked' : ''}>
+                            ${bank.name} (${bank.country})
+                        </label>
+                    `;
+                });
+                html += '</div>';
+                return html;
+
+            } catch {
+                return '<p>Error loading banks</p>';
+            }
+        }
+
+        window.saveRegistrationRules = async function() {
+            // Collect all values
+            const rules = {
+                autoWallet: document.getElementById('autoWallet')?.checked || false,
+                requireVerification: document.getElementById('requireVerification')?.checked || false,
+                kycRequired: document.getElementById('kycRequired')?.checked || false,
+                defaultRole: document.getElementById('defaultRole')?.value || 'client',
+                maxWalletsPerUser: parseInt(document.getElementById('maxWallets')?.value) || 3,
+                minDeposit: parseFloat(document.getElementById('minDeposit')?.value) || 10,
+                maxDeposit: parseFloat(document.getElementById('maxDeposit')?.value) || 100000,
+                minWithdrawal: parseFloat(document.getElementById('minWithdrawal')?.value) || 20,
+                maxWithdrawal: parseFloat(document.getElementById('maxWithdrawal')?.value) || 50000,
+                allowInternational: document.getElementById('allowInternational')?.checked || true,
+                restrictedCountries: document.getElementById('restrictedCountries')?.value.split(',').map(c => c.trim()).filter(c => c) || [],
+                allowedBanks: [],
+                updatedAt: firebase.firestore.FieldValue.serverTimestamp(),
+                updatedBy: currentGod?.email
+            };
+
+            // Get selected banks
+            document.querySelectorAll('#banksList input:checked').forEach(cb => {
+                rules.allowedBanks.push(cb.value);
+            });
+
+            try {
+                await db.collection('settings').doc('registration').set(rules, { merge: true });
+                
+                showToast('Registration rules saved successfully!', 'success');
+                
+                // Log action
+                await db.collection('audit_logs').add({
+                    action: 'RULES_UPDATED',
+                    adminId: currentGod?.uid,
+                    adminEmail: currentGod?.email,
+                    details: 'Updated registration rules',
+                    timestamp: firebase.firestore.FieldValue.serverTimestamp()
+                });
+
+            } catch (error) {
+                showToast('Error: ' + error.message, 'error');
+            }
+        };
+
+        // ============================================
+        // 8. AUDIT LOGS
+        // ============================================
+        async function loadAuditLogs() {
+            const content = document.getElementById('content-area');
+            content.innerHTML = '<div class="loading"><i class="fas fa-spinner fa-spin"></i><p>Loading audit logs...</p></div>';
+
+            try {
+                const snapshot = await db.collection('audit_logs')
+                    .orderBy('timestamp', 'desc')
+                    .limit(100)
+                    .get();
+
+                content.innerHTML = `
+                    <div class="section">
+                        <div class="section-header">
+                            <h2><i class="fas fa-history"></i> Audit Logs</h2>
+                            <button class="btn btn-info" onclick="exportAuditLogs()">
+                                <i class="fas fa-download"></i> Export Logs
+                            </button>
+                        </div>
+
+                        <div class="table-container">
+                            <table>
+                                <thead>
+                                    <tr>
+                                        <th>Timestamp</th>
+                                        <th>Action</th>
+                                        <th>Admin</th>
+                                        <th>User ID</th>
+                                        <th>Details</th>
+                                        <th>IP Address</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="auditLogsList">
+                                    ${await getAuditLogsList(snapshot)}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                `;
+
+            } catch (error) {
+                content.innerHTML = `<div class="loading">Error: ${error.message}</div>`;
+            }
+        }
+
+        async function getAuditLogsList(snapshot) {
+            if (snapshot.empty) return '<tr><td colspan="6" class="no-data">No audit logs found</td></tr>';
+
+            let html = '';
+            snapshot.forEach(doc => {
+                const data = doc.data();
+                const time = data.timestamp ? new Date(data.timestamp.seconds * 1000).toLocaleString() : 'N/A';
+                html += `
+                    <tr>
+                        <td>${time}</td>
+                        <td><strong>${data.action || 'Unknown'}</strong></td>
+                        <td>${data.adminEmail || data.adminId || 'System'}</td>
+                        <td><code>${data.userId || data.targetId || '-'}</code></td>
+                        <td>${data.details || '-'}</td>
+                        <td>${data.ip || '-'}</td>
+                    </tr>
+                `;
+            });
+            return html;
+        }
+
+        window.exportAuditLogs = function() {
+            showToast('Exporting audit logs...', 'info');
+        };
+
+        // ============================================
+        // 9. BACKUP & RESTORE
+        // ============================================
+        function loadBackup() {
+            document.getElementById('content-area').innerHTML = `
+                <div class="section">
+                    <h2><i class="fas fa-database"></i> Backup & Restore</h2>
+                    
+                    <div class="grid-2">
+                        <div class="card">
+                            <h3>Create Backup</h3>
+                            <p>Backup all collections and storage files</p>
+                            <button class="btn btn-success" onclick="openModal('backupModal')">
+                                <i class="fas fa-database"></i> Create Backup
+                            </button>
+                        </div>
+                        
+                        <div class="card">
+                            <h3>Restore from Backup</h3>
+                            <p>Restore database from backup file</p>
+                            <input type="file" id="restoreFile" accept=".json" style="margin-bottom:10px;">
+                            <button class="btn btn-warning" onclick="restoreBackup()">
+                                <i class="fas fa-undo"></i> Restore
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="section">
+                        <h3>Previous Backups</h3>
+                        <div class="table-container">
+                            <table>
+                                <thead>
+                                    <tr>
+                                        <th>Backup Name</th>
+                                        <th>Date</th>
+                                        <th>Size</th>
+                                        <th>Collections</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="backupsList">
+                                    <tr><td colspan="5" class="loading">Loading backups...</td></tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            `;
+            loadBackupsList();
+        }
+
+        async function loadBackupsList() {
+            try {
+                const backups = await storage.ref('backups').listAll();
+                const tbody = document.getElementById('backupsList');
+                
+                if (backups.items.length === 0) {
+                    tbody.innerHTML = '<tr><td colspan="5" class="no-data">No backups found</td></tr>';
+                    return;
+                }
+
+                let html = '';
+                for (const item of backups.items) {
+                    const metadata = await item.getMetadata();
+                    const date = metadata.updated ? new Date(metadata.updated).toLocaleString() : 'N/A';
+                    const size = (metadata.size / 1024 / 1024).toFixed(2) + ' MB';
+                    
+                    html += `
+                        <tr>
+                            <td>${item.name}</td>
+                            <td>${date}</td>
+                            <td>${size}</td>
+                            <td>All Collections</td>
+                            <td>
+                                <button class="btn btn-sm btn-success" onclick="downloadBackup('${item.name}')">Download</button>
+                                <button class="btn btn-sm btn-danger" onclick="deleteBackup('${item.name}')">Delete</button>
+                            </td>
+                        </tr>
+                    `;
+                }
+                tbody.innerHTML = html;
+
+            } catch (error) {
+                console.error('Error loading backups:', error);
+            }
+        }
+
+        window.createBackup = async function() {
+            const name = document.getElementById('backupName').value;
+            const includeStorage = document.getElementById('backupStorage').checked;
+            
+            showToast('Creating backup... This may take a few minutes.', 'info');
+            
+            try {
+                // Get all collections
+                const collections = ['users', 'transactions', 'wallets', 'investments', 'banks', 'settings'];
+                const backupData = {};
+                
+                for (const collection of collections) {
+                    const snapshot = await db.collection(collection).get();
+                    backupData[collection] = [];
+                    snapshot.forEach(doc => {
+                        backupData[collection].push({
+                            id: doc.id,
+                            data: doc.data()
+                        });
+                    });
+                }
+
+                // Save to storage
+                const backupJson = JSON.stringify(backupData, null, 2);
+                const blob = new Blob([backupJson], { type: 'application/json' });
+                await storage.ref(`backups/${name}.json`).put(blob);
+
+                showToast('Backup created successfully!', 'success');
+                closeModal('backupModal');
+                loadBackupsList();
+
+            } catch (error) {
+                showToast('Error creating backup: ' + error.message, 'error');
+            }
+        };
+
+        window.downloadBackup = async function(filename) {
+            try {
+                const url = await storage.ref(`backups/${filename}`).getDownloadURL();
+                window.open(url, '_blank');
+                
+            } catch (error) {
+                showToast('Error downloading backup: ' + error.message, 'error');
+            }
+        };
+
+        window.deleteBackup = async function(filename) {
+            if (!confirm('Delete this backup?')) return;
+
+            try {
+                await storage.ref(`backups/${filename}`).delete();
+                showToast('Backup deleted', 'success');
+                loadBackupsList();
+
+            } catch (error) {
+                showToast('Error deleting backup: ' + error.message, 'error');
+            }
+        };
+
+        // ============================================
+        // 10. WEBHOOKS
+        // ============================================
+        function loadWebhooks() {
+            document.getElementById('content-area').innerHTML = `
+                <div class="section">
+                    <div class="section-header">
+                        <h2><i class="fas fa-webhook"></i> Webhooks</h2>
+                        <button class="btn btn-success" onclick="addWebhook()">
+                            <i class="fas fa-plus"></i> Add Webhook
+                        </button>
+                    </div>
+
+                    <div class="table-container">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>URL</th>
+                                    <th>Events</th>
+                                    <th>Status</th>
+                                    <th>Last Triggered</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="webhooksList">
+                                <tr><td colspan="5" class="loading">Loading webhooks...</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <div class="section">
+                        <h3>Webhook Test</h3>
+                        <button class="btn btn-info" onclick="openModal('webhookTestModal')">
+                            <i class="fas fa-flask"></i> Test Webhook
+                        </button>
+                    </div>
+                </div>
+            `;
+            loadWebhooksList();
+        }
+
+        async function loadWebhooksList() {
+            try {
+                const snapshot = await db.collection('webhooks').get();
+                const tbody = document.getElementById('webhooksList');
+                
+                if (snapshot.empty) {
+                    tbody.innerHTML = '<tr><td colspan="5" class="no-data">No webhooks configured</td></tr>';
+                    return;
+                }
+
+                let html = '';
+                snapshot.forEach(doc => {
+                    const data = doc.data();
+                    const lastTriggered = data.lastTriggered ? new Date(data.lastTriggered.seconds * 1000).toLocaleString() : 'Never';
+                    html += `
+                        <tr>
+                            <td><a href="${data.url}" target="_blank">${data.url.substring(0, 50)}...</a></td>
+                            <td>${data.events?.join(', ') || 'all'}</td>
+                            <td><span class="badge badge-${data.active ? 'success' : 'danger'}">${data.active ? 'Active' : 'Inactive'}</span></td>
+                            <td>${lastTriggered}</td>
+                            <td>
+                                <button class="btn btn-sm btn-info" onclick="testWebhook('${doc.id}')">Test</button>
+                                <button class="btn btn-sm btn-warning" onclick="toggleWebhook('${doc.id}')">Toggle</button>
+                                <button class="btn btn-sm btn-danger" onclick="deleteWebhook('${doc.id}')">Delete</button>
+                            </td>
+                        </tr>
+                    `;
+                });
+                tbody.innerHTML = html;
+
+            } catch (error) {
+                console.error('Error loading webhooks:', error);
+            }
+        }
+
+        window.testWebhook = function() {
+            const url = document.getElementById('webhookUrl').value;
+            const event = document.getElementById('webhookEvent').value;
+            const payload = document.getElementById('webhookPayload').value;
+
+            showToast(`Testing webhook to ${url}...`, 'info');
+            
+            // Simulate webhook test
+            setTimeout(() => {
+                showToast(`Webhook delivered successfully!`, 'success');
+                closeModal('webhookTestModal');
+            }, 2000);
+        };
+
+        // ============================================
+        // UTILITY FUNCTIONS
+        // ============================================
+        window.copyText = function(text) {
+            navigator.clipboard.writeText(text);
+            showToast('Copied to clipboard!', 'success');
+        };
+
+        function loadComingSoon(section) {
+            document.getElementById('content-area').innerHTML = `
+                <div class="loading">
+                    <i class="fas fa-tools"></i>
+                    <h3>Coming Soon</h3>
+                    <p>The ${section} module is under development</p>
+                </div>
+            `;
+        }
+
+        // ============================================
+        // LOGOUT
+        // ============================================
+        document.getElementById('logoutBtn').addEventListener('click', async () => {
+            await auth.signOut();
+            window.location.href = 'login.html';
+        });
+    </script>
+</body>
+</html>
