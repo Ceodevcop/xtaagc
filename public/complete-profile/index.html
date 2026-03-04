@@ -1,0 +1,904 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Complete Profile - TAAGC Global</title>
+    
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-storage.js"></script>
+    
+    <!-- Fonts & Icons -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Inter', sans-serif;
+        }
+
+        body {
+            background: linear-gradient(135deg, #0a2540, #1a3a4f);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .profile-container {
+            max-width: 600px;
+            width: 100%;
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+
+        .profile-card {
+            background: white;
+            border-radius: 24px;
+            padding: 40px 30px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.2);
+        }
+
+        .logo {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .logo-icon {
+            width: 80px;
+            height: 80px;
+            background: linear-gradient(135deg, #0a2540, #2a4a6a);
+            border-radius: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 15px;
+            color: white;
+            font-size: 32px;
+        }
+
+        .logo h1 {
+            color: #0a2540;
+            font-size: 28px;
+        }
+
+        .logo h1 span {
+            color: #c19a6b;
+        }
+
+        .progress-bar {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 30px;
+            position: relative;
+        }
+
+        .progress-bar::before {
+            content: '';
+            position: absolute;
+            top: 15px;
+            left: 0;
+            width: 100%;
+            height: 2px;
+            background: #e2e8f0;
+            z-index: 1;
+        }
+
+        .progress-step {
+            position: relative;
+            z-index: 2;
+            background: white;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: 2px solid #e2e8f0;
+            font-weight: 600;
+            color: #64748b;
+        }
+
+        .progress-step.active {
+            border-color: #c19a6b;
+            background: #c19a6b;
+            color: white;
+        }
+
+        .progress-step.completed {
+            border-color: #10b981;
+            background: #10b981;
+            color: white;
+        }
+
+        .step-label {
+            position: absolute;
+            top: 45px;
+            font-size: 12px;
+            color: #64748b;
+            white-space: nowrap;
+        }
+
+        .alert {
+            padding: 15px;
+            border-radius: 12px;
+            margin-bottom: 20px;
+            display: none;
+        }
+
+        .alert-error {
+            background: #fee2e2;
+            color: #dc2626;
+            border: 1px solid #fecaca;
+        }
+
+        .alert-success {
+            background: #dcfce7;
+            color: #16a34a;
+            border: 1px solid #bbf7d0;
+        }
+
+        .alert-info {
+            background: #cff4fc;
+            color: #0891b2;
+            border: 1px solid #b6effb;
+        }
+
+        .welcome-section {
+            text-align: center;
+            margin-bottom: 30px;
+            padding: 20px;
+            background: #f8fafc;
+            border-radius: 12px;
+        }
+
+        .welcome-section i {
+            font-size: 60px;
+            color: #c19a6b;
+            margin-bottom: 15px;
+        }
+
+        .welcome-section h2 {
+            color: #0a2540;
+            margin-bottom: 10px;
+        }
+
+        .welcome-section p {
+            color: #64748b;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            color: #1e293b;
+            font-weight: 600;
+            font-size: 14px;
+        }
+
+        .form-group label i {
+            color: #c19a6b;
+            margin-right: 8px;
+        }
+
+        .input-group {
+            position: relative;
+        }
+
+        .input-group i {
+            position: absolute;
+            left: 16px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #64748b;
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 14px 20px 14px 50px;
+            border: 2px solid #e2e8f0;
+            border-radius: 12px;
+            font-size: 15px;
+            transition: all 0.3s;
+        }
+
+        .form-control:focus {
+            border-color: #c19a6b;
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(193, 154, 107, 0.1);
+        }
+
+        .form-control:disabled {
+            background: #f1f5f9;
+            cursor: not-allowed;
+        }
+
+        select.form-control {
+            appearance: none;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%2364748b' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: right 16px center;
+            padding-right: 40px;
+        }
+
+        .account-types {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15px;
+            margin-top: 10px;
+        }
+
+        .account-type-card {
+            border: 2px solid #e2e8f0;
+            border-radius: 12px;
+            padding: 20px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .account-type-card:hover {
+            border-color: #c19a6b;
+            transform: translateY(-2px);
+        }
+
+        .account-type-card.selected {
+            border-color: #c19a6b;
+            background: #fef9f4;
+        }
+
+        .account-type-card i {
+            font-size: 24px;
+            color: #0a2540;
+            margin-bottom: 10px;
+        }
+
+        .account-type-card h3 {
+            font-size: 16px;
+            margin-bottom: 5px;
+        }
+
+        .account-type-card p {
+            font-size: 12px;
+            color: #64748b;
+        }
+
+        .file-upload {
+            border: 2px dashed #e2e8f0;
+            border-radius: 12px;
+            padding: 30px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .file-upload:hover {
+            border-color: #c19a6b;
+            background: #fef9f4;
+        }
+
+        .file-upload i {
+            font-size: 40px;
+            color: #c19a6b;
+            margin-bottom: 10px;
+        }
+
+        .file-upload p {
+            color: #64748b;
+        }
+
+        .file-upload small {
+            color: #94a3b8;
+            font-size: 12px;
+        }
+
+        .checkbox-group {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin: 20px 0;
+        }
+
+        .checkbox-group input[type="checkbox"] {
+            width: 18px;
+            height: 18px;
+            cursor: pointer;
+        }
+
+        .btn-group {
+            display: flex;
+            gap: 15px;
+            margin-top: 30px;
+        }
+
+        .btn-primary, .btn-secondary {
+            flex: 1;
+            padding: 16px;
+            border-radius: 12px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s;
+            border: none;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #0a2540, #1a3a4f);
+            color: white;
+        }
+
+        .btn-primary:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(10,37,64,0.2);
+        }
+
+        .btn-primary:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .btn-secondary {
+            background: #e2e8f0;
+            color: #1e293b;
+        }
+
+        .btn-secondary:hover:not(:disabled) {
+            background: #cbd5e1;
+        }
+
+        .logout-link {
+            text-align: center;
+            margin-top: 25px;
+            padding-top: 20px;
+            border-top: 1px solid #e2e8f0;
+        }
+
+        .logout-link a {
+            color: #c19a6b;
+            text-decoration: none;
+            font-weight: 600;
+        }
+
+        .logout-link a:hover {
+            text-decoration: underline;
+        }
+
+        .recaptcha-container {
+            margin: 20px 0;
+            display: flex;
+            justify-content: center;
+        }
+    </style>
+</head>
+<body>
+    <div class="profile-container">
+        <div class="profile-card">
+            <div class="logo">
+                <div class="logo-icon">
+                    <i class="fas fa-user-check"></i>
+                </div>
+                <h1><span>TAAGC</span> Complete Profile</h1>
+            </div>
+
+            <div class="progress-bar">
+                <div class="progress-step completed" id="step1-indicator">1</div>
+                <div class="progress-step active" id="step2-indicator">2</div>
+                <div class="progress-step" id="step3-indicator">3</div>
+                <span class="step-label" style="left: 0;">Sign In</span>
+                <span class="step-label" style="left: 33%;">Complete Profile</span>
+                <span class="step-label" style="left: 66%;">Dashboard</span>
+            </div>
+
+            <div id="profileAlert" class="alert"></div>
+
+            <!-- Welcome Section -->
+            <div class="welcome-section" id="welcomeSection">
+                <i class="fas fa-user-circle"></i>
+                <h2 id="welcomeName">Welcome!</h2>
+                <p id="welcomeEmail">Please complete your profile to continue</p>
+            </div>
+
+            <!-- Complete Profile Form -->
+            <form id="completeProfileForm">
+                <!-- Account Type Selection -->
+                <div class="form-group">
+                    <label><i class="fas fa-id-card"></i> Account Type *</label>
+                    <div class="account-types" id="accountTypes">
+                        <div class="account-type-card" data-type="individual">
+                            <i class="fas fa-user"></i>
+                            <h3>Individual</h3>
+                            <p>For personal trading</p>
+                        </div>
+                        <div class="account-type-card" data-type="corporate">
+                            <i class="fas fa-building"></i>
+                            <h3>Corporate</h3>
+                            <p>For businesses</p>
+                        </div>
+                        <div class="account-type-card" data-type="trader">
+                            <i class="fas fa-chart-line"></i>
+                            <h3>Professional</h3>
+                            <p>For active traders</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Personal Information -->
+                <div class="form-group">
+                    <label><i class="fas fa-user"></i> Full Name *</label>
+                    <div class="input-group">
+                        <i class="fas fa-user"></i>
+                        <input type="text" class="form-control" id="fullName" placeholder="Enter your full name" required>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label><i class="fas fa-phone"></i> Phone Number *</label>
+                    <div class="input-group">
+                        <i class="fas fa-phone"></i>
+                        <input type="tel" class="form-control" id="phone" placeholder="+1234567890" required>
+                    </div>
+                    <small style="color: #64748b;">Include country code (e.g., +1 for US)</small>
+                </div>
+
+                <!-- Address Information -->
+                <div class="form-group">
+                    <label><i class="fas fa-map-marker-alt"></i> Address *</label>
+                    <div class="input-group">
+                        <i class="fas fa-map-marker-alt"></i>
+                        <input type="text" class="form-control" id="address" placeholder="Street address" required>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label><i class="fas fa-city"></i> City *</label>
+                    <div class="input-group">
+                        <i class="fas fa-city"></i>
+                        <input type="text" class="form-control" id="city" placeholder="City" required>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label><i class="fas fa-map-pin"></i> State/Province *</label>
+                    <div class="input-group">
+                        <i class="fas fa-map-pin"></i>
+                        <input type="text" class="form-control" id="state" placeholder="State/Province" required>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label><i class="fas fa-mail-bulk"></i> Postal Code *</label>
+                    <div class="input-group">
+                        <i class="fas fa-mail-bulk"></i>
+                        <input type="text" class="form-control" id="postalCode" placeholder="Postal code" required>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label><i class="fas fa-globe"></i> Country *</label>
+                    <select class="form-control" id="country" required>
+                        <option value="">Select Country</option>
+                        <option value="US">United States</option>
+                        <option value="UK">United Kingdom</option>
+                        <option value="CA">Canada</option>
+                        <option value="AU">Australia</option>
+                        <option value="NG">Nigeria</option>
+                        <option value="ZA">South Africa</option>
+                        <option value="GH">Ghana</option>
+                        <option value="KE">Kenya</option>
+                    </select>
+                </div>
+
+                <!-- Date of Birth -->
+                <div class="form-group">
+                    <label><i class="fas fa-calendar-alt"></i> Date of Birth *</label>
+                    <div class="input-group">
+                        <i class="fas fa-calendar-alt"></i>
+                        <input type="date" class="form-control" id="dob" required>
+                    </div>
+                </div>
+
+                <!-- KYC Documents -->
+                <h3 style="margin: 30px 0 15px;">KYC Documents</h3>
+                <p style="color: #64748b; margin-bottom: 20px;">Please upload the following documents for identity verification</p>
+
+                <div class="form-group">
+                    <label><i class="fas fa-id-card"></i> ID Type *</label>
+                    <select class="form-control" id="idType" required>
+                        <option value="">Select ID Type</option>
+                        <option value="passport">International Passport</option>
+                        <option value="drivers">Driver's License</option>
+                        <option value="national">National ID Card</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label><i class="fas fa-id-number"></i> ID Number *</label>
+                    <div class="input-group">
+                        <i class="fas fa-id-card"></i>
+                        <input type="text" class="form-control" id="idNumber" placeholder="Enter ID number" required>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label><i class="fas fa-image"></i> Upload ID Front *</label>
+                    <div class="file-upload" id="idFrontUpload">
+                        <i class="fas fa-cloud-upload-alt"></i>
+                        <p>Click to upload or drag and drop</p>
+                        <small>JPG, PNG, PDF (Max 5MB)</small>
+                        <input type="file" id="idFront" accept="image/*,.pdf" style="display: none;" required>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label><i class="fas fa-image"></i> Upload ID Back *</label>
+                    <div class="file-upload" id="idBackUpload">
+                        <i class="fas fa-cloud-upload-alt"></i>
+                        <p>Click to upload or drag and drop</p>
+                        <small>JPG, PNG, PDF (Max 5MB)</small>
+                        <input type="file" id="idBack" accept="image/*,.pdf" style="display: none;" required>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label><i class="fas fa-camera"></i> Selfie with ID *</label>
+                    <div class="file-upload" id="selfieUpload">
+                        <i class="fas fa-camera"></i>
+                        <p>Upload a selfie holding your ID</p>
+                        <small>JPG, PNG (Max 5MB)</small>
+                        <input type="file" id="selfie" accept="image/*" style="display: none;" required>
+                    </div>
+                </div>
+
+                <!-- Terms and Consent -->
+                <div class="checkbox-group">
+                    <input type="checkbox" id="terms" required>
+                    <label for="terms">I agree to the <a href="/terms" target="_blank">Terms of Service</a> and <a href="/privacy" target="_blank">Privacy Policy</a></label>
+                </div>
+
+                <div class="checkbox-group">
+                    <input type="checkbox" id="kycConsent" required>
+                    <label for="kycConsent">I consent to KYC verification and confirm that the information provided is accurate</label>
+                </div>
+
+                <div class="checkbox-group">
+                    <input type="checkbox" id="newsletter">
+                    <label for="newsletter">I would like to receive newsletters and updates (optional)</label>
+                </div>
+
+                <div class="btn-group">
+                    <button type="button" class="btn-secondary" id="skipBtn" onclick="skipForNow()">Skip for Now</button>
+                    <button type="submit" class="btn-primary" id="submitBtn">Complete Profile</button>
+                </div>
+            </form>
+
+            <div class="logout-link">
+                <p>Not you? <a href="#" onclick="logout()">Sign out</a></p>
+            </div>
+        </div>
+    </div>
+
+    <!-- reCAPTCHA container for phone verification -->
+    <div id="recaptcha-container" class="recaptcha-container"></div>
+
+    <script>
+        // Your Firebase Configuration
+        const firebaseConfig = {
+            apiKey: "AIzaSyCOcCDPqRSlAMJJBEeNchTA1qO9tl9Nldw",
+            authDomain: "xtaagc.firebaseapp.com",
+            projectId: "xtaagc",
+            storageBucket: "xtaagc.firebasestorage.app",
+            messagingSenderId: "256073982437",
+            appId: "1:256073982437:android:0c54368d54e260cba98f0c"
+        };
+
+        // Initialize Firebase
+        if (!firebase.apps.length) {
+            firebase.initializeApp(firebaseConfig);
+        }
+        
+        const auth = firebase.auth();
+        const db = firebase.firestore();
+        const storage = firebase.storage();
+
+        // Use device language
+        auth.useDeviceLanguage();
+
+        // State management
+        let currentUser = null;
+        let selectedAccountType = '';
+
+        // Initialize reCAPTCHA
+        let recaptchaVerifier = null;
+
+        function initializeRecaptcha() {
+            if (!recaptchaVerifier) {
+                recaptchaVerifier = new firebase.auth.RecaptchaVerifier('recaptcha-container', {
+                    'size': 'invisible',
+                    'callback': (response) => {
+                        console.log('reCAPTCHA verified');
+                    }
+                });
+            }
+        }
+
+        // DOM Ready
+        document.addEventListener('DOMContentLoaded', function() {
+            // Check authentication state
+            auth.onAuthStateChanged(async (user) => {
+                if (user) {
+                    currentUser = user;
+                    
+                    // Check if user already has a profile
+                    const userDoc = await db.collection('users').doc(user.uid).get();
+                    
+                    if (userDoc.exists && userDoc.data().profileCompleted) {
+                        // Profile already completed, redirect to dashboard
+                        window.location.href = '/dashboard';
+                        return;
+                    }
+                    
+                    // Populate user info
+                    document.getElementById('welcomeName').textContent = `Welcome, ${user.displayName || 'User'}!`;
+                    document.getElementById('welcomeEmail').textContent = user.email;
+                    
+                    // Pre-fill form with existing data if any
+                    if (userDoc.exists) {
+                        const data = userDoc.data();
+                        document.getElementById('fullName').value = data.fullName || user.displayName || '';
+                        document.getElementById('phone').value = data.phone || '';
+                        document.getElementById('address').value = data.address || '';
+                        document.getElementById('city').value = data.city || '';
+                        document.getElementById('state').value = data.state || '';
+                        document.getElementById('postalCode').value = data.postalCode || '';
+                        document.getElementById('country').value = data.country || '';
+                        document.getElementById('dob').value = data.dob || '';
+                        
+                        if (data.accountType) {
+                            selectedAccountType = data.accountType;
+                            highlightAccountType(data.accountType);
+                        }
+                    } else {
+                        // Pre-fill name from Google if available
+                        document.getElementById('fullName').value = user.displayName || '';
+                    }
+                } else {
+                    // No user logged in, redirect to login
+                    window.location.href = '/login';
+                }
+            });
+
+            // Account type selection
+            document.querySelectorAll('.account-type-card').forEach(card => {
+                card.addEventListener('click', function() {
+                    document.querySelectorAll('.account-type-card').forEach(c => c.classList.remove('selected'));
+                    this.classList.add('selected');
+                    selectedAccountType = this.dataset.type;
+                });
+            });
+
+            // File upload handlers
+            setupFileUpload('idFrontUpload', 'idFront');
+            setupFileUpload('idBackUpload', 'idBack');
+            setupFileUpload('selfieUpload', 'selfie');
+
+            // Form submission
+            document.getElementById('completeProfileForm').addEventListener('submit', async (e) => {
+                e.preventDefault();
+                await saveProfile();
+            });
+
+            // Initialize reCAPTCHA
+            initializeRecaptcha();
+        });
+
+        // File upload setup
+        function setupFileUpload(uploadDivId, fileInputId) {
+            const uploadDiv = document.getElementById(uploadDivId);
+            const fileInput = document.getElementById(fileInputId);
+
+            uploadDiv.addEventListener('click', () => fileInput.click());
+            
+            uploadDiv.addEventListener('dragover', (e) => {
+                e.preventDefault();
+                uploadDiv.style.borderColor = '#c19a6b';
+            });
+
+            uploadDiv.addEventListener('dragleave', () => {
+                uploadDiv.style.borderColor = '#e2e8f0';
+            });
+
+            uploadDiv.addEventListener('drop', (e) => {
+                e.preventDefault();
+                uploadDiv.style.borderColor = '#e2e8f0';
+                const files = e.dataTransfer.files;
+                if (files.length) {
+                    fileInput.files = files;
+                    updateFileUploadLabel(uploadDiv, files[0].name);
+                }
+            });
+
+            fileInput.addEventListener('change', function() {
+                if (this.files.length) {
+                    updateFileUploadLabel(uploadDiv, this.files[0].name);
+                }
+            });
+        }
+
+        function updateFileUploadLabel(uploadDiv, fileName) {
+            const p = uploadDiv.querySelector('p');
+            p.innerHTML = `<i class="fas fa-check-circle" style="color: #10b981;"></i> ${fileName}`;
+        }
+
+        // Highlight selected account type
+        function highlightAccountType(type) {
+            document.querySelectorAll('.account-type-card').forEach(card => {
+                if (card.dataset.type === type) {
+                    card.classList.add('selected');
+                }
+            });
+        }
+
+        // Save profile function
+        async function saveProfile() {
+            if (!currentUser) {
+                showAlert('You must be logged in', 'error');
+                return;
+            }
+
+            // Validate required fields
+            if (!selectedAccountType) {
+                showAlert('Please select an account type', 'error');
+                return;
+            }
+
+            const fullName = document.getElementById('fullName').value;
+            const phone = document.getElementById('phone').value;
+            const address = document.getElementById('address').value;
+            const city = document.getElementById('city').value;
+            const state = document.getElementById('state').value;
+            const postalCode = document.getElementById('postalCode').value;
+            const country = document.getElementById('country').value;
+            const dob = document.getElementById('dob').value;
+            const idType = document.getElementById('idType').value;
+            const idNumber = document.getElementById('idNumber').value;
+
+            if (!fullName || !phone || !address || !city || !state || !postalCode || !country || !dob || !idType || !idNumber) {
+                showAlert('Please fill in all required fields', 'error');
+                return;
+            }
+
+            // Validate phone format
+            if (!phone.startsWith('+') || phone.length < 10) {
+                showAlert('Phone number must include country code (e.g., +1234567890)', 'error');
+                return;
+            }
+
+            // Validate terms
+            if (!document.getElementById('terms').checked || !document.getElementById('kycConsent').checked) {
+                showAlert('Please agree to terms and KYC consent', 'error');
+                return;
+            }
+
+            // Validate file uploads
+            const idFront = document.getElementById('idFront').files[0];
+            const idBack = document.getElementById('idBack').files[0];
+            const selfie = document.getElementById('selfie').files[0];
+
+            if (!idFront || !idBack || !selfie) {
+                showAlert('Please upload all required KYC documents', 'error');
+                return;
+            }
+
+            const submitBtn = document.getElementById('submitBtn');
+            submitBtn.disabled = true;
+            submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Saving...';
+
+            try {
+                // Update user profile with name
+                await currentUser.updateProfile({
+                    displayName: fullName
+                });
+
+                // Upload KYC documents
+                let idFrontUrl = '', idBackUrl = '', selfieUrl = '';
+
+                // Upload ID Front
+                const idFrontRef = storage.ref(`kyc/${currentUser.uid}/id_front`);
+                await idFrontRef.put(idFront);
+                idFrontUrl = await idFrontRef.getDownloadURL();
+
+                // Upload ID Back
+                const idBackRef = storage.ref(`kyc/${currentUser.uid}/id_back`);
+                await idBackRef.put(idBack);
+                idBackUrl = await idBackRef.getDownloadURL();
+
+                // Upload Selfie
+                const selfieRef = storage.ref(`kyc/${currentUser.uid}/selfie`);
+                await selfieRef.put(selfie);
+                selfieUrl = await selfieRef.getDownloadURL();
+
+                // Save to Firestore
+                await db.collection('users').doc(currentUser.uid).set({
+                    fullName: fullName,
+                    email: currentUser.email,
+                    phone: phone,
+                    accountType: selectedAccountType,
+                    address: address,
+                    city: city,
+                    state: state,
+                    postalCode: postalCode,
+                    country: country,
+                    dob: dob,
+                    newsletter: document.getElementById('newsletter').checked,
+                    role: 'client',
+                    status: 'active',
+                    emailVerified: currentUser.emailVerified,
+                    profileCompleted: true,
+                    kycStatus: 'pending_review',
+                    kycData: {
+                        idType: idType,
+                        idNumber: idNumber,
+                        idFrontUrl: idFrontUrl,
+                        idBackUrl: idBackUrl,
+                        selfieUrl: selfieUrl,
+                        submittedAt: firebase.firestore.FieldValue.serverTimestamp()
+                    },
+                    updatedAt: firebase.firestore.FieldValue.serverTimestamp(),
+                    createdAt: firebase.firestore.FieldValue.serverTimestamp()
+                }, { merge: true });
+
+                showAlert('Profile completed successfully! Redirecting to dashboard...', 'success');
+                
+                setTimeout(() => {
+                    window.location.href = '/dashboard';
+                }, 2000);
+
+            } catch (error) {
+                console.error('Error saving profile:', error);
+                showAlert('Error: ' + error.message, 'error');
+                submitBtn.disabled = false;
+                submitBtn.innerHTML = 'Complete Profile';
+            }
+        }
+
+        // Skip for now function
+        window.skipForNow = function() {
+            if (confirm('Are you sure you want to skip? You can complete your profile later from your dashboard.')) {
+                window.location.href = '/dashboard';
+            }
+        };
+
+        // Logout function
+        window.logout = async function() {
+            try {
+                await auth.signOut();
+                window.location.href = '/login';
+            } catch (error) {
+                console.error('Logout error:', error);
+                showAlert('Error signing out', 'error');
+            }
+        };
+
+        // Alert function
+        function showAlert(message, type) {
+            const alertDiv = document.getElementById('profileAlert');
+            alertDiv.textContent = message;
+            alertDiv.className = `alert alert-${type}`;
+            alertDiv.style.display = 'block';
+
+            setTimeout(() => {
+                alertDiv.style.display = 'none';
+            }, 5000);
+        }
+    </script>
+</body>
+</html>
