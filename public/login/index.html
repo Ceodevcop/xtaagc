@@ -319,7 +319,7 @@
             document.getElementById('googleSignInBtn').addEventListener('click', handleGoogleSignIn);
         });
 
-        async function handleLogin(e) {
+        /*async function handleLogin(e) {
             e.preventDefault();
             const btn = document.getElementById('loginBtn');
             btn.disabled = true;
@@ -373,7 +373,7 @@
                 btn.innerHTML = '<i class="fas fa-sign-in-alt"></i> Sign In';
             }
         }
-
+*/
         async function handleGoogleSignIn() {
             const provider = new firebase.auth.GoogleAuthProvider();
             try {
