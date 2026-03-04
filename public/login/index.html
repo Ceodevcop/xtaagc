@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Login - TAAGC Global</title>
+
+<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
+
+<style>
+body{
+    font-family: Arial, sans-serif;
+    background:#0a2540;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    height:100vh;
+}
+.card{
+    background:white;
+    padding:40px;
+    border-radius:10px;
+    width:400px;
+}
+input{
+    width:100%;
+    padding:12px;
+    margin:10px 0;
+}
+button{
+    width:100%;
+    padding:12px;
+    background:#0a2540;
+    color:white;
+    border:none;
+    cursor:pointer;
+}
+.alert{
+    padding:10px;
+    margin-bottom:15px;
+    display:none;
+}
+.success{background:#10b981;color:white;}
+.error{background:#e53e3e;color:white;}
+</style>
+</head>
+<body>
+
+<div class="card">
+<h2>Login</h2>
+
+<div id="alert" class="alert"></div>
+
+<form id="loginForm">
+<input type="email" id="email" placeholder="Email Address" required>
+<input type="password" id="password" placeholder="Password" required>
+<button type="submit">Login</button>
+</form>
+</div>
+
+<script>
+const firebaseConfig = {
+    apiKey: "AIzaSyAI1MrcP977UgRLQoePxl64JOSyj9v4WpI",
+    authDomain: "xtaagc.firebaseapp.com",
+    projectId: "xtaagc",
+    storageBucket: "xtaagc.appspot.com",
+    messagingSenderId: "256073982437",
+    appId: "1:256073982437:web:8da63bb7acc86c0ca98f0c"
+};
+
+if (!firebase.apps.length) {
+    firebase.initializeApp(firebaseConfig);
+}
+
+const auth = firebase.auth();
+const db = firebase.firestore();
+
+function showAlert(message,type){
+    const alert = document.getElementById("alert");
+    alert.className = "alert " + type;
+    alert.innerText = message;
+    alert.style.display = "block";
+    setTimeout(()=> alert.style.display="none",5000);
+}
+
+document.getElementById("loginForm").addEventListener("submit", async function(e){
+    e.preventDefault();
+
+    const email = document.getElementById("email").value.trim();
+    const password = document.getElementById("password").value;
+
+    try{
+
+        const userCredential = await auth.signInWithEmailAndPassword(email,password);
+        const user = userCredential.user;
+
+        if(!user.emailVerified){
+            await auth.signOut();
+            return showAlert("Please verify your email first.","error");
+        }
+
+        const doc = await db.collection("users").doc(user.uid).get();
+
+        if(!doc.exists){
+            return showAlert("User profile not found.","error");
+        }
+
+        const role = doc.data().role;
+
+        showAlert("Login successful. Redirecting...","success");
+
+        setTimeout(function(){
+            if(role === "admin"){
+                window.location.href="/admin/xtaagc";
+            }else if(role === "investor"){
+                window.location.href="/profile/investor.html";
+            }else{
+                window.location.href="/profile/client.html";
+            }
+        },1500);
+
+    }catch(error){
+
+        let message = "Login failed.";
+
+        switch(error.code){
+            case "auth/user-not-found":
+                message = "No account found.";
+                break;
+            case "auth/wrong-password":
+                message = "Incorrect password.";
+                break;
+            case "auth/too-many-requests":
+                message = "Too many attempts. Try again later.";
+                break;
+        }
+
+        showAlert(message,"error");
+    }
+});
+</script>
+
+</body>
+</html>
