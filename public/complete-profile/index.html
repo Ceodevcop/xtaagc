@@ -1,0 +1,371 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Complete Profile - TAAGC Global</title>
+    
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-storage.js"></script>
+    
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Inter', sans-serif;
+        }
+
+        body {
+            background: linear-gradient(135deg, #0a2540, #1a3a4f);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .profile-container {
+            max-width: 600px;
+            width: 100%;
+        }
+
+        .profile-card {
+            background: white;
+            border-radius: 24px;
+            padding: 40px 30px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.2);
+        }
+
+        .logo {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .logo-icon {
+            width: 80px;
+            height: 80px;
+            background: linear-gradient(135deg, #0a2540, #2a4a6a);
+            border-radius: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 15px;
+            color: white;
+            font-size: 32px;
+        }
+
+        .logo h1 {
+            color: #0a2540;
+            font-size: 28px;
+        }
+
+        .logo h1 span {
+            color: #c19a6b;
+        }
+
+        .alert {
+            padding: 15px;
+            border-radius: 12px;
+            margin-bottom: 20px;
+            display: none;
+        }
+
+        .alert-error { background: #fee2e2; color: #dc2626; }
+        .alert-success { background: #dcfce7; color: #16a34a; }
+
+        .welcome-section {
+            text-align: center;
+            margin-bottom: 30px;
+            padding: 20px;
+            background: #f8fafc;
+            border-radius: 12px;
+        }
+
+        .welcome-section i {
+            font-size: 60px;
+            color: #c19a6b;
+            margin-bottom: 15px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            color: #1e293b;
+            font-weight: 600;
+            font-size: 14px;
+        }
+
+        .form-group label i {
+            color: #c19a6b;
+            margin-right: 8px;
+        }
+
+        .input-group {
+            position: relative;
+        }
+
+        .input-group i {
+            position: absolute;
+            left: 16px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #64748b;
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 14px 20px 14px 50px;
+            border: 2px solid #e2e8f0;
+            border-radius: 12px;
+            font-size: 15px;
+        }
+
+        .form-control:focus {
+            border-color: #c19a6b;
+            outline: none;
+        }
+
+        select.form-control {
+            appearance: none;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%2364748b' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: right 16px center;
+            padding-right: 40px;
+        }
+
+        .role-badge {
+            display: inline-block;
+            padding: 8px 16px;
+            background: #fef9f4;
+            border: 2px solid #c19a6b;
+            border-radius: 30px;
+            color: #0a2540;
+            font-weight: 600;
+            margin-bottom: 20px;
+        }
+
+        .role-badge i {
+            color: #c19a6b;
+            margin-right: 8px;
+        }
+
+        .btn-primary {
+            width: 100%;
+            padding: 16px;
+            background: linear-gradient(135deg, #0a2540, #1a3a4f);
+            color: white;
+            border: none;
+            border-radius: 12px;
+            font-weight: 700;
+            cursor: pointer;
+            font-size: 16px;
+        }
+
+        .btn-primary:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(10,37,64,0.2);
+        }
+
+        .btn-primary:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .loading-spinner {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid rgba(255,255,255,.3);
+            border-radius: 50%;
+            border-top-color: #fff;
+            animation: spin 1s ease-in-out infinite;
+            margin-right: 8px;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        .logout-link {
+            text-align: center;
+            margin-top: 25px;
+        }
+
+        .logout-link a {
+            color: #c19a6b;
+            text-decoration: none;
+            font-weight: 600;
+        }
+    </style>
+</head>
+<body>
+    <div class="profile-container">
+        <div class="profile-card">
+            <div class="logo">
+                <div class="logo-icon">
+                    <i class="fas fa-user-check"></i>
+                </div>
+                <h1><span>TAAGC</span> Complete Profile</h1>
+            </div>
+
+            <div id="profileAlert" class="alert"></div>
+
+            <div class="welcome-section">
+                <i class="fas fa-user-circle"></i>
+                <h2 id="welcomeName">Welcome!</h2>
+                <p id="welcomeEmail"></p>
+                <div id="roleBadge" class="role-badge">
+                    <i class="fas fa-user"></i> Loading...
+                </div>
+            </div>
+
+            <form id="profileForm">
+                <div class="form-group">
+                    <label><i class="fas fa-phone"></i> Phone Number</label>
+                    <div class="input-group">
+                        <i class="fas fa-phone"></i>
+                        <input type="tel" class="form-control" id="phone" placeholder="+1234567890" required>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label><i class="fas fa-map-marker-alt"></i> Address</label>
+                    <div class="input-group">
+                        <i class="fas fa-map-marker-alt"></i>
+                        <input type="text" class="form-control" id="address" required>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label><i class="fas fa-city"></i> City</label>
+                    <div class="input-group">
+                        <i class="fas fa-city"></i>
+                        <input type="text" class="form-control" id="city" required>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label><i class="fas fa-globe"></i> Country</label>
+                    <select class="form-control" id="country" required>
+                        <option value="">Select Country</option>
+                        <option value="US">United States</option>
+                        <option value="UK">United Kingdom</option>
+                        <option value="NG">Nigeria</option>
+                    </select>
+                </div>
+
+                <button type="submit" class="btn-primary" id="submitBtn">
+                    Complete Profile
+                </button>
+            </form>
+
+            <div class="logout-link">
+                <p><a href="#" onclick="logout()">Sign out</a></p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const firebaseConfig = {
+            apiKey: "AIzaSyCOcCDPqRSlAMJJBEeNchTA1qO9tl9Nldw",
+            authDomain: "xtaagc.firebaseapp.com",
+            projectId: "xtaagc",
+            storageBucket: "xtaagc.firebasestorage.app",
+            messagingSenderId: "256073982437",
+            appId: "1:256073982437:android:0c54368d54e260cba98f0c"
+        };
+
+        if (!firebase.apps.length) firebase.initializeApp(firebaseConfig);
+        
+        const auth = firebase.auth();
+        const db = firebase.firestore();
+
+        let currentUser = null;
+        let userRole = 'client';
+
+        document.addEventListener('DOMContentLoaded', function() {
+            auth.onAuthStateChanged(async (user) => {
+                if (!user) {
+                    window.location.href = '/login';
+                    return;
+                }
+                
+                currentUser = user;
+                
+                const userDoc = await db.collection('users').doc(user.uid).get();
+                userRole = userDoc.data()?.role || 'client';
+                
+                document.getElementById('welcomeName').textContent = `Welcome, ${user.displayName || 'User'}!`;
+                document.getElementById('welcomeEmail').textContent = user.email;
+                
+                const badge = document.getElementById('roleBadge');
+                badge.innerHTML = userRole === 'investor' 
+                    ? '<i class="fas fa-chart-pie"></i> Investor Account'
+                    : '<i class="fas fa-user"></i> Client Account';
+            });
+
+            document.getElementById('profileForm').addEventListener('submit', saveProfile);
+        });
+
+        async function saveProfile(e) {
+            e.preventDefault();
+            
+            const btn = document.getElementById('submitBtn');
+            btn.disabled = true;
+            btn.innerHTML = '<span class="loading-spinner"></span> Saving...';
+
+            try {
+                await db.collection('users').doc(currentUser.uid).update({
+                    phone: document.getElementById('phone').value,
+                    address: document.getElementById('address').value,
+                    city: document.getElementById('city').value,
+                    country: document.getElementById('country').value,
+                    profileCompleted: true,  // CRITICAL: This flag must be set
+                    updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+                });
+
+                showAlert('Profile saved! Redirecting...', 'success');
+                
+                // Get latest role and redirect
+                const userDoc = await db.collection('users').doc(currentUser.uid).get();
+                const role = userDoc.data()?.role || 'client';
+                
+                setTimeout(() => {
+                    const redirectUrl = role === 'investor' ? '/profile/investor' : '/profile/client';
+                    console.log('Redirecting to profile:', redirectUrl);
+                    window.location.href = redirectUrl;
+                }, 1500);
+
+            } catch (error) {
+                console.error('Save error:', error);
+                showAlert('Error saving profile', 'error');
+                btn.disabled = false;
+                btn.innerHTML = 'Complete Profile';
+            }
+        }
+
+        window.logout = async function() {
+            await auth.signOut();
+            window.location.href = '/login';
+        };
+
+        function showAlert(msg, type) {
+            const alert = document.getElementById('profileAlert');
+            alert.textContent = msg;
+            alert.className = `alert alert-${type}`;
+            alert.style.display = 'block';
+            setTimeout(() => alert.style.display = 'none', 3000);
+        }
+    </script>
+</body>
+</html>
