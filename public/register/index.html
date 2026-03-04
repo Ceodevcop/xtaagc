@@ -853,7 +853,7 @@
             }
         }
 
-        async function completeRegistration(e) {
+       /* async function completeRegistration(e) {
             e.preventDefault();
             
             const submitBtn = document.getElementById('submitBtn');
@@ -893,7 +893,43 @@
                 submitBtn.innerHTML = 'Complete Registration';
             }
         }
+*/
+        async function completeRegistration(e) {
+    e.preventDefault();
+    
+    const submitBtn = document.getElementById('submitBtn');
+    submitBtn.disabled = true;
+    submitBtn.innerHTML = '<span class="loading-spinner"></span> Completing...';
 
+    try {
+        // Save role and user data directly to Firestore
+        await db.collection('users').doc(currentUser.uid).set({
+            fullName: document.getElementById('fullName').value,
+            email: currentUser.email,
+            phone: document.getElementById('phone').value,
+            role: selectedRole,
+            profileCompleted: false,
+            emailVerified: currentUser.emailVerified,
+            createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+            updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+        }, { merge: true });
+
+        console.log('✅ User data saved to Firestore with role:', selectedRole);
+        
+        showAlert('Registration complete! Redirecting...', 'success');
+        
+        // Short delay then redirect
+        setTimeout(() => {
+            window.location.href = '/complete-profile';
+        }, 1500);
+        
+    } catch (error) {
+        console.error('❌ Error saving to Firestore:', error);
+        showAlert('Error: ' + error.message, 'error');
+        submitBtn.disabled = false;
+        submitBtn.innerHTML = 'Complete Registration';
+    }
+}
         function startEmailTimer(seconds) {
             let time = seconds;
             const btn = document.getElementById('resendVerificationBtn');
