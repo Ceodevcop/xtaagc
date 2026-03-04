@@ -1,0 +1,557 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <!-- Google tag (gtag.js) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-1SDELC2KQ8"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+        gtag('config', 'G-1SDELC2KQ8');
+    </script>
+    
+    <!-- Google Tag Manager -->
+    <script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+    new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+    j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+    'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+    })(window,document,'script','dataLayer','GTM-WTWZMS8C');</script>
+    <!-- End Google Tag Manager -->
+    
+    <meta name="google-site-verification" content="X4-O-nU3FPNDQPFkN8O6g8xXc9oZHHd-GEl1Qbwt21o" />
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="TAAGC Global - Premier Investment & Trading Platform. Join 50,000+ investors worldwide. Access institutional-grade opportunities and professional trading tools.">
+    <meta name="keywords" content="investment, trading, stocks, forex, crypto, TAAGC, global investments">
+    <meta name="author" content="TAAGC Global">
+    
+    <!-- Open Graph / Social Media -->
+    <meta property="og:title" content="TAAGC Global - Investment & Trading Platform">
+    <meta property="og:description" content="Join thousands of investors worldwide. Start your investment journey today.">
+    <meta property="og:image" content="https://taagc.website/assets/images/og-image.jpg">
+    <meta property="og:url" content="https://taagc.website">
+    <meta name="twitter:card" content="summary_large_image">
+    
+    <!-- Favicon -->
+    <link rel="icon" type="image/x-icon" href="/favicon.ico">
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png">
+    
+    <title>TAAGC Global - Premier Investment & Trading Platform</title>
+    
+    <!-- Fonts & Icons -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- AOS Animation Library -->
+    <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+    
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
+    
+    <!-- Main CSS (keep all your existing CSS) -->
+    <style>
+        /* ... (all your existing CSS remains exactly the same) ... */
+        
+        /* Add this new style for the events banner */
+        .events-banner {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            padding: 60px 0;
+            margin: 40px 0;
+            position: relative;
+            overflow: hidden;
+            border-radius: 20px;
+        }
+
+        .events-banner::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -10%;
+            width: 70%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(255,255,255,0.2) 0%, transparent 70%);
+            animation: float 8s ease-in-out infinite;
+        }
+
+        .events-banner-content {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 30px;
+            position: relative;
+            z-index: 2;
+        }
+
+        .events-banner-text {
+            flex: 1;
+            min-width: 300px;
+        }
+
+        .events-banner h2 {
+            font-size: 36px;
+            margin-bottom: 15px;
+            font-weight: 800;
+        }
+
+        .events-banner p {
+            font-size: 18px;
+            opacity: 0.9;
+            margin-bottom: 20px;
+        }
+
+        .events-banner-features {
+            display: flex;
+            gap: 30px;
+            flex-wrap: wrap;
+            margin-top: 20px;
+        }
+
+        .events-banner-feature {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .events-banner-feature i {
+            font-size: 24px;
+            color: rgba(255,255,255,0.9);
+        }
+
+        .events-banner-btn {
+            background: white;
+            color: #667eea;
+            padding: 18px 40px;
+            border-radius: 50px;
+            text-decoration: none;
+            font-weight: 700;
+            transition: all 0.3s;
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.2);
+        }
+
+        .events-banner-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 15px 30px rgba(0,0,0,0.3);
+        }
+
+        .events-banner-image {
+            flex: 1;
+            min-width: 300px;
+            text-align: center;
+        }
+
+        .events-banner-image i {
+            font-size: 200px;
+            color: rgba(255,255,255,0.2);
+        }
+
+        .countdown-timer {
+            display: flex;
+            gap: 20px;
+            margin: 20px 0;
+        }
+
+        .countdown-item {
+            text-align: center;
+            background: rgba(255,255,255,0.1);
+            padding: 15px;
+            border-radius: 10px;
+            min-width: 80px;
+        }
+
+        .countdown-number {
+            font-size: 32px;
+            font-weight: 800;
+            display: block;
+        }
+
+        .countdown-label {
+            font-size: 12px;
+            opacity: 0.8;
+        }
+
+        .event-tag {
+            background: rgba(255,255,255,0.2);
+            padding: 5px 15px;
+            border-radius: 30px;
+            font-size: 14px;
+            font-weight: 600;
+            display: inline-block;
+            margin-bottom: 15px;
+        }
+
+        /* Event Cards */
+        .event-card {
+            background: white;
+            border-radius: 16px;
+            padding: 25px;
+            box-shadow: var(--shadow-md);
+            transition: all 0.3s;
+            border: 1px solid rgba(0,0,0,0.05);
+        }
+
+        .event-card:hover {
+            transform: translateY(-5px);
+            box-shadow: var(--shadow-xl);
+        }
+
+        .event-date {
+            color: var(--accent);
+            font-weight: 700;
+            font-size: 14px;
+            margin-bottom: 10px;
+        }
+
+        .event-title {
+            font-size: 20px;
+            color: var(--primary);
+            margin-bottom: 10px;
+        }
+
+        .event-location {
+            color: var(--light);
+            font-size: 14px;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .event-location i {
+            color: var(--accent);
+        }
+
+        .event-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            color: var(--accent);
+            text-decoration: none;
+            font-weight: 600;
+            transition: gap 0.3s;
+        }
+
+        .event-btn:hover {
+            gap: 10px;
+        }
+    </style>
+</head>
+<body>
+    <!-- Google Tag Manager (noscript) -->
+    <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-WTWZMS8C"
+    height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+    <!-- End Google Tag Manager (noscript) -->
+
+    <!-- Top Bar (keep as is) -->
+    <div class="top-bar">
+        <div class="container">
+            <div class="top-bar-content">
+                <div class="emergency-contact">
+                    <span><i class="fas fa-phone-alt"></i> 24/7 Support: +1 (800) 123-4567</span>
+                    <span><i class="fas fa-envelope"></i> support@taagc.com</span>
+                    <span><i class="fas fa-clock"></i> Live Chat Available</span>
+                </div>
+                <div class="market-update">
+                    <i class="fas fa-chart-line"></i> BTC $63,420 | ETH $3,512 | S&P 500 +1.2%
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Navbar (keep as is) -->
+    <nav class="navbar" id="navbar">
+        <!-- ... (keep your existing navbar code) ... -->
+    </nav>
+
+    <!-- Hero Section (keep as is) -->
+    <section class="hero">
+        <!-- ... (keep your existing hero code) ... -->
+    </section>
+
+    <!-- Stats Section (keep as is) -->
+    <div class="container">
+        <div class="stats-grid" id="statsContainer">
+            <!-- Dynamic stats from Firebase -->
+        </div>
+    </div>
+
+    <!-- Announcement Banner (keep as is) -->
+    <div class="container" id="announcementContainer">
+        <!-- Dynamic announcement -->
+    </div>
+
+    <!-- NEW: Events Banner Section - Links to /events page -->
+    <div class="container">
+        <div class="events-banner" id="eventsBanner">
+            <div class="events-banner-content">
+                <div class="events-banner-text">
+                    <span class="event-tag" id="eventTag">🎉 UPCOMING EVENT</span>
+                    <h2 id="eventTitle">Global Investment Summit 2025</h2>
+                    <p id="eventDescription">Join industry leaders and experts for our biggest event of the year. Network, learn, and discover new opportunities.</p>
+                    
+                    <div class="events-banner-features">
+                        <div class="events-banner-feature">
+                            <i class="fas fa-calendar-check"></i>
+                            <span id="eventDate">March 15-17, 2025</span>
+                        </div>
+                        <div class="events-banner-feature">
+                            <i class="fas fa-map-marker-alt"></i>
+                            <span id="eventLocation">Dubai, UAE</span>
+                        </div>
+                        <div class="events-banner-feature">
+                            <i class="fas fa-users"></i>
+                            <span id="eventAttendees">500+ Attendees</span>
+                        </div>
+                    </div>
+
+                    <div class="countdown-timer" id="countdownTimer">
+                        <div class="countdown-item">
+                            <span class="countdown-number" id="days">15</span>
+                            <span class="countdown-label">Days</span>
+                        </div>
+                        <div class="countdown-item">
+                            <span class="countdown-number" id="hours">08</span>
+                            <span class="countdown-label">Hours</span>
+                        </div>
+                        <div class="countdown-item">
+                            <span class="countdown-number" id="minutes">45</span>
+                            <span class="countdown-label">Minutes</span>
+                        </div>
+                        <div class="countdown-item">
+                            <span class="countdown-number" id="seconds">22</span>
+                            <span class="countdown-label">Seconds</span>
+                        </div>
+                    </div>
+
+                    <a href="/events" class="events-banner-btn" id="eventButton">
+                        View All Events <i class="fas fa-arrow-right"></i>
+                    </a>
+                </div>
+                <div class="events-banner-image">
+                    <i class="fas fa-calendar-alt"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Upcoming Events Grid (Optional - can show 3 events) -->
+    <div class="container">
+        <h2 class="section-title">Upcoming <span>Events</span></h2>
+        <p class="section-subtitle">Join us at these exclusive investment and trading events</p>
+        <div class="quick-access-grid" id="eventsGrid">
+            <!-- Dynamic events will be loaded here -->
+            <div class="loading-spinner">
+                <i class="fas fa-spinner fa-spin fa-3x"></i>
+            </div>
+        </div>
+    </div>
+
+    <!-- Quick Access Grid (keep as is) -->
+    <div class="container">
+        <!-- ... (keep your existing quick access grid) ... -->
+    </div>
+
+    <!-- Features Section (keep as is) -->
+    <section class="features-section">
+        <!-- ... (keep your existing features section) ... -->
+    </section>
+
+    <!-- Testimonials Section (keep as is) -->
+    <section class="testimonials-section">
+        <!-- ... (keep your existing testimonials section) ... -->
+    </section>
+
+    <!-- Investment Opportunities Section (keep as is) -->
+    <div class="container">
+        <!-- ... (keep your existing opportunities section) ... -->
+    </div>
+
+    <!-- CTA Section (keep as is) -->
+    <div class="container">
+        <!-- ... (keep your existing CTA section) ... -->
+    </div>
+
+    <!-- Newsletter Section (keep as is) -->
+    <section class="newsletter-section">
+        <!-- ... (keep your existing newsletter section) ... -->
+    </section>
+
+    <!-- Footer (keep as is) -->
+    <footer class="footer">
+        <!-- ... (keep your existing footer) ... -->
+    </footer>
+
+    <!-- Floating Help Button (keep as is) -->
+    <div class="floating-help">
+        <!-- ... (keep your existing floating help) ... -->
+    </div>
+
+    <!-- Scripts -->
+    <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+    <script>
+        // Firebase Configuration
+        const firebaseConfig = {
+            apiKey: "AIzaSyCOcCDPqRSlAMJJBEeNchTA1qO9tl9Nldw",
+            authDomain: "xtaagc.firebaseapp.com",
+            projectId: "xtaagc",
+            storageBucket: "xtaagc.firebasestorage.app",
+            messagingSenderId: "256073982437",
+            appId: "1:256073982437:android:0c54368d54e260cba98f0c"
+        };
+
+        // Initialize Firebase
+        if (!firebase.apps.length) {
+            firebase.initializeApp(firebaseConfig);
+        }
+        const db = firebase.firestore();
+
+        // Enable offline persistence
+        db.settings({ cacheSizeBytes: firebase.firestore.CACHE_SIZE_UNLIMITED });
+
+        // ===== FETCH DATA FROM FIRESTORE =====
+
+        // Fetch stats (keep your existing function)
+        async function loadStats() {
+            // ... (keep your existing loadStats function)
+        }
+
+        // Fetch announcement (keep your existing function)
+        async function loadAnnouncement() {
+            // ... (keep your existing loadAnnouncement function)
+        }
+
+        // Fetch featured event for banner
+        async function loadFeaturedEvent() {
+            try {
+                const eventsSnapshot = await db.collection('events')
+                    .where('featured', '==', true)
+                    .limit(1)
+                    .get();
+
+                if (!eventsSnapshot.empty) {
+                    const event = eventsSnapshot.docs[0].data();
+                    
+                    document.getElementById('eventTag').textContent = event.tag || '🎉 UPCOMING EVENT';
+                    document.getElementById('eventTitle').textContent = event.title || 'Global Investment Summit 2025';
+                    document.getElementById('eventDescription').textContent = event.description || 'Join industry leaders and experts for our biggest event of the year.';
+                    document.getElementById('eventDate').textContent = event.date || 'March 15-17, 2025';
+                    document.getElementById('eventLocation').textContent = event.location || 'Dubai, UAE';
+                    document.getElementById('eventAttendees').textContent = event.attendees || '500+ Attendees';
+                    
+                    // Set up countdown if event has start date
+                    if (event.startDate) {
+                        startCountdown(event.startDate);
+                    }
+                }
+            } catch (error) {
+                console.error('Error loading featured event:', error);
+            }
+        }
+
+        // Fetch all upcoming events for grid
+        async function loadEvents() {
+            const eventsGrid = document.getElementById('eventsGrid');
+            try {
+                const eventsSnapshot = await db.collection('events')
+                    .where('date', '>=', new Date())
+                    .orderBy('date')
+                    .limit(3)
+                    .get();
+
+                if (eventsSnapshot.empty) {
+                    eventsGrid.innerHTML = '<p style="text-align:center; grid-column:1/-1;">No upcoming events</p>';
+                    return;
+                }
+
+                let html = '';
+                eventsSnapshot.forEach(doc => {
+                    const event = doc.data();
+                    html += `
+                        <div class="event-card">
+                            <div class="event-date">${event.date}</div>
+                            <h3 class="event-title">${event.title}</h3>
+                            <div class="event-location">
+                                <i class="fas fa-map-marker-alt"></i> ${event.location}
+                            </div>
+                            <p style="color: var(--light); margin-bottom: 20px;">${event.shortDescription || ''}</p>
+                            <a href="/events/${doc.id}" class="event-btn">
+                                Learn More <i class="fas fa-arrow-right"></i>
+                            </a>
+                        </div>
+                    `;
+                });
+                eventsGrid.innerHTML = html;
+            } catch (error) {
+                console.error('Error loading events:', error);
+                eventsGrid.innerHTML = '<p style="text-align:center; grid-column:1/-1; color: red;">Failed to load events</p>';
+            }
+        }
+
+        // Countdown timer function
+        function startCountdown(eventDate) {
+            const targetDate = new Date(eventDate).getTime();
+            
+            function updateCountdown() {
+                const now = new Date().getTime();
+                const distance = targetDate - now;
+
+                if (distance < 0) {
+                    document.getElementById('countdownTimer').innerHTML = '<p>Event started!</p>';
+                    return;
+                }
+
+                const days = Math.floor(distance / (1000 * 60 * 60 * 24));
+                const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+                const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+                const seconds = Math.floor((distance % (1000 * 60)) / 1000);
+
+                document.getElementById('days').textContent = days.toString().padStart(2, '0');
+                document.getElementById('hours').textContent = hours.toString().padStart(2, '0');
+                document.getElementById('minutes').textContent = minutes.toString().padStart(2, '0');
+                document.getElementById('seconds').textContent = seconds.toString().padStart(2, '0');
+            }
+
+            updateCountdown();
+            setInterval(updateCountdown, 1000);
+        }
+
+        // Keep your existing testimonial and opportunity functions
+        async function loadTestimonials() {
+            // ... (keep your existing loadTestimonials function)
+        }
+
+        async function loadOpportunities() {
+            // ... (keep your existing loadOpportunities function)
+        }
+
+        // ===== INITIALIZE =====
+        window.addEventListener('DOMContentLoaded', () => {
+            // Initialize AOS
+            AOS.init({
+                duration: 1000,
+                once: true,
+                offset: 100
+            });
+
+            // Load all data
+            loadStats();
+            loadAnnouncement();
+            loadFeaturedEvent(); // New: Load featured event for banner
+            loadEvents(); // New: Load upcoming events grid
+            loadTestimonials();
+            loadOpportunities();
+
+            // Keep all your existing JavaScript functions
+            // ... (keep all your navbar, mobile menu, etc. code)
+        });
+    </script>
+
+    <!-- AMP Auto Ads -->
+    <amp-auto-ads type="adsense" data-ad-client="ca-pub-5067004110942297"></amp-auto-ads>
+</body>
+</html>
