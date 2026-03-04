@@ -1,0 +1,775 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Super Admin Setup - TAAGC Global</title>
+    
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
+    
+    <!-- Fonts & Icons -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Inter', sans-serif;
+        }
+
+        body {
+            background: linear-gradient(135deg, #0a2540, #1a3a4f);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .setup-container {
+            max-width: 500px;
+            width: 100%;
+        }
+
+        .setup-card {
+            background: white;
+            border-radius: 24px;
+            padding: 40px 30px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.2);
+            animation: fadeIn 0.5s ease-out;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .logo {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .logo-icon {
+            width: 80px;
+            height: 80px;
+            background: linear-gradient(135deg, #0a2540, #2a4a6a);
+            border-radius: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 15px;
+            color: white;
+            font-size: 32px;
+            font-weight: 800;
+        }
+
+        .logo h2 {
+            color: #0a2540;
+            font-size: 24px;
+            margin-bottom: 5px;
+        }
+
+        .logo h2 span {
+            color: #c19a6b;
+        }
+
+        .logo p {
+            color: #64748b;
+            font-size: 14px;
+        }
+
+        .alert {
+            padding: 15px;
+            border-radius: 12px;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 14px;
+            display: none;
+        }
+
+        .alert-success {
+            background: #dcfce7;
+            border: 1px solid #10b981;
+            color: #10b981;
+        }
+
+        .alert-error {
+            background: #fee2e2;
+            border: 1px solid #e53e3e;
+            color: #e53e3e;
+        }
+
+        .alert-warning {
+            background: #fff3cd;
+            border: 1px solid #f59e0b;
+            color: #856404;
+        }
+
+        .alert-info {
+            background: #cff4fc;
+            border: 1px solid #0891b2;
+            color: #0891b2;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            color: #1e293b;
+            font-weight: 600;
+            font-size: 14px;
+        }
+
+        .form-group label i {
+            color: #c19a6b;
+            margin-right: 8px;
+        }
+
+        .input-group {
+            position: relative;
+        }
+
+        .input-group i {
+            position: absolute;
+            left: 16px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #64748b;
+            font-size: 16px;
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 14px 20px 14px 50px;
+            border: 2px solid #e2e8f0;
+            border-radius: 12px;
+            font-size: 15px;
+            transition: all 0.3s;
+        }
+
+        .form-control:focus {
+            border-color: #c19a6b;
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(193,154,107,0.1);
+        }
+
+        .form-control[readonly] {
+            background: #f8fafc;
+            cursor: not-allowed;
+        }
+
+        .password-field {
+            position: relative;
+        }
+
+        .toggle-password {
+            position: absolute;
+            right: 16px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #64748b;
+            cursor: pointer;
+            font-size: 18px;
+            z-index: 2;
+        }
+
+        .toggle-password:hover {
+            color: #c19a6b;
+        }
+
+        .info-box {
+            background: #f8fafc;
+            border-radius: 12px;
+            padding: 15px;
+            margin-bottom: 20px;
+            border: 1px solid #e2e8f0;
+        }
+
+        .info-box h4 {
+            color: #0a2540;
+            margin-bottom: 10px;
+            font-size: 14px;
+        }
+
+        .info-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 8px 0;
+            border-bottom: 1px dashed #e2e8f0;
+            font-size: 13px;
+        }
+
+        .info-item:last-child {
+            border-bottom: none;
+        }
+
+        .info-label {
+            color: #64748b;
+        }
+
+        .info-value {
+            color: #0a2540;
+            font-weight: 600;
+        }
+
+        .btn-primary {
+            width: 100%;
+            padding: 16px;
+            background: linear-gradient(135deg, #0a2540, #1a3a4f);
+            color: white;
+            border: none;
+            border-radius: 12px;
+            font-size: 16px;
+            font-weight: 700;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            transition: all 0.3s;
+            margin-top: 20px;
+        }
+
+        .btn-primary:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(10,37,64,0.2);
+        }
+
+        .btn-primary:disabled {
+            opacity: 0.7;
+            cursor: not-allowed;
+        }
+
+        .btn-secondary {
+            width: 100%;
+            padding: 14px;
+            background: transparent;
+            color: #64748b;
+            border: 2px solid #e2e8f0;
+            border-radius: 12px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            transition: all 0.3s;
+            margin-top: 15px;
+            text-decoration: none;
+        }
+
+        .btn-secondary:hover {
+            border-color: #c19a6b;
+            color: #c19a6b;
+        }
+
+        .spinner {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid rgba(255,255,255,0.3);
+            border-radius: 50%;
+            border-top-color: white;
+            animation: spin 1s ease-in-out infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        .progress-steps {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 30px;
+            position: relative;
+        }
+
+        .progress-steps::before {
+            content: '';
+            position: absolute;
+            top: 15px;
+            left: 0;
+            width: 100%;
+            height: 2px;
+            background: #e2e8f0;
+            z-index: 1;
+        }
+
+        .step {
+            position: relative;
+            z-index: 2;
+            background: white;
+            width: 35px;
+            height: 35px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: 2px solid #e2e8f0;
+            font-weight: 600;
+            color: #64748b;
+        }
+
+        .step.active {
+            border-color: #c19a6b;
+            background: #c19a6b;
+            color: white;
+        }
+
+        .step.completed {
+            border-color: #10b981;
+            background: #10b981;
+            color: white;
+        }
+
+        .step-label {
+            position: absolute;
+            top: 40px;
+            font-size: 11px;
+            color: #64748b;
+            white-space: nowrap;
+        }
+
+        .login-link {
+            text-align: center;
+            margin-top: 20px;
+        }
+
+        .login-link a {
+            color: #c19a6b;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 14px;
+        }
+
+        .login-link a:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+    <div class="setup-container">
+        <div class="setup-card">
+            <div class="logo">
+                <div class="logo-icon">
+                    <i class="fas fa-crown"></i>
+                </div>
+                <h2><span>TAAGC</span> SUPER ADMIN</h2>
+                <p>Create your super admin account</p>
+            </div>
+
+            <!-- Progress Steps -->
+            <div class="progress-steps">
+                <div class="step active" id="step1">1</div>
+                <div class="step" id="step2">2</div>
+                <div class="step" id="step3">3</div>
+                <span class="step-label" style="left: -5px;">Credentials</span>
+                <span class="step-label" style="left: 40%;">Verification</span>
+                <span class="step-label" style="right: -5px;">Complete</span>
+            </div>
+
+            <div id="setupAlert" class="alert"></div>
+
+            <!-- Step 1: Account Creation -->
+            <div id="step1Content">
+                <div class="info-box">
+                    <h4><i class="fas fa-info-circle"></i> Super Admin Details</h4>
+                    <div class="info-item">
+                        <span class="info-label">Full Name:</span>
+                        <span class="info-value">Ahmad Hamza</span>
+                    </div>
+                    <div class="info-item">
+                        <span class="info-label">Email:</span>
+                        <span class="info-value">ceo@taagc.website</span>
+                    </div>
+                    <div class="info-item">
+                        <span class="info-label">Role:</span>
+                        <span class="info-value">super_admin</span>
+                    </div>
+                    <div class="info-item">
+                        <span class="info-label">Generated ID:</span>
+                        <span class="info-value">Ad001/03/2026</span>
+                    </div>
+                </div>
+
+                <form id="setupForm">
+                    <div class="form-group">
+                        <label><i class="fas fa-lock"></i> Password</label>
+                        <div class="password-field">
+                            <div class="input-group">
+                                <i class="fas fa-key"></i>
+                                <input type="password" class="form-control" id="password" placeholder="Create strong password" required>
+                            </div>
+                            <i class="fas fa-eye toggle-password" id="togglePassword" onclick="togglePassword()"></i>
+                        </div>
+                        <small style="color: #64748b;">Minimum 8 characters with 1 number and 1 special character</small>
+                    </div>
+
+                    <div class="form-group">
+                        <label><i class="fas fa-lock"></i> Confirm Password</label>
+                        <div class="input-group">
+                            <i class="fas fa-lock"></i>
+                            <input type="password" class="form-control" id="confirmPassword" placeholder="Confirm password" required>
+                        </div>
+                    </div>
+
+                    <button type="submit" class="btn-primary" id="createBtn">
+                        <i class="fas fa-user-plus"></i> Create Super Admin
+                    </button>
+                </form>
+            </div>
+
+            <!-- Step 2: Email Verification -->
+            <div id="step2Content" style="display: none;">
+                <div class="info-box">
+                    <i class="fas fa-envelope-open-text" style="font-size: 48px; color: #c19a6b; display: block; text-align: center; margin-bottom: 15px;"></i>
+                    <h4 style="text-align: center;">Verify Your Email</h4>
+                    <p style="text-align: center; color: #64748b; font-size: 14px; margin-bottom: 20px;">
+                        We've sent a verification email to <strong id="verifyEmail">ceo@taagc.website</strong>
+                    </p>
+                </div>
+
+                <button class="btn-primary" id="checkVerificationBtn">
+                    <i class="fas fa-sync-alt"></i> I've Verified My Email
+                </button>
+
+                <button class="btn-secondary" id="resendEmailBtn">
+                    <i class="fas fa-paper-plane"></i> Resend Verification Email
+                </button>
+
+                <div id="emailTimer" class="timer" style="text-align: center; margin-top: 10px; color: #64748b;"></div>
+            </div>
+
+            <!-- Step 3: Complete -->
+            <div id="step3Content" style="display: none;">
+                <div style="text-align: center; padding: 20px;">
+                    <i class="fas fa-check-circle" style="font-size: 64px; color: #10b981; margin-bottom: 20px;"></i>
+                    <h3 style="color: #0a2540; margin-bottom: 10px;">Setup Complete!</h3>
+                    <p style="color: #64748b; margin-bottom: 20px;">Your super admin account has been created successfully.</p>
+                    
+                    <div class="info-box">
+                        <div class="info-item">
+                            <span class="info-label">Full Name:</span>
+                            <span class="info-value">Ahmad Hamza</span>
+                        </div>
+                        <div class="info-item">
+                            <span class="info-label">Email:</span>
+                            <span class="info-value">ceo@taagc.website</span>
+                        </div>
+                        <div class="info-item">
+                            <span class="info-label">Role:</span>
+                            <span class="info-value">super_admin</span>
+                        </div>
+                        <div class="info-item">
+                            <span class="info-label">Generated ID:</span>
+                            <span class="info-value">Ad001/03/2026</span>
+                        </div>
+                        <div class="info-item">
+                            <span class="info-label">Status:</span>
+                            <span class="info-value" style="color: #10b981;">Active</span>
+                        </div>
+                    </div>
+
+                    <a href="/xtaagc/admin-login" class="btn-primary" style="text-decoration: none;">
+                        <i class="fas fa-sign-in-alt"></i> Go to Admin Login
+                    </a>
+                </div>
+            </div>
+
+            <div class="login-link">
+                <p>Already have an account? <a href="/xtaagc/admin-login">Login here</a></p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // ============================================
+        // FIREBASE CONFIGURATION
+        // ============================================
+        const firebaseConfig = {
+            apiKey: "AIzaSyCOcCDPqRSlAMJJBEeNchTA1qO9tl9Nldw",
+            authDomain: "xtaagc.firebaseapp.com",
+            projectId: "xtaagc",
+            storageBucket: "xtaagc.firebasestorage.app",
+            messagingSenderId: "256073982437",
+            appId: "1:256073982437:android:0c54368d54e260cba98f0c"
+        };
+
+        // Initialize Firebase
+        if (!firebase.apps.length) {
+            firebase.initializeApp(firebaseConfig);
+        }
+        
+        const auth = firebase.auth();
+        const db = firebase.firestore();
+
+        // ============================================
+        // STATE MANAGEMENT
+        // ============================================
+        let currentStep = 1;
+        let currentUser = null;
+        let emailTimer = null;
+        let timeLeft = 60;
+
+        // ============================================
+        // TOGGLE PASSWORD
+        // ============================================
+        window.togglePassword = function() {
+            const passwordInput = document.getElementById('password');
+            const toggleIcon = document.getElementById('togglePassword');
+            
+            if (passwordInput.type === 'password') {
+                passwordInput.type = 'text';
+                toggleIcon.classList.remove('fa-eye');
+                toggleIcon.classList.add('fa-eye-slash');
+            } else {
+                passwordInput.type = 'password';
+                toggleIcon.classList.remove('fa-eye-slash');
+                toggleIcon.classList.add('fa-eye');
+            }
+        };
+
+        // ============================================
+        // SHOW ALERT
+        // ============================================
+        function showAlert(message, type) {
+            const alert = document.getElementById('setupAlert');
+            alert.className = `alert alert-${type}`;
+            
+            let icon = 'info-circle';
+            if (type === 'success') icon = 'check-circle';
+            else if (type === 'error') icon = 'exclamation-circle';
+            else if (type === 'warning') icon = 'exclamation-triangle';
+            
+            alert.innerHTML = `<i class="fas fa-${icon}"></i> ${message}`;
+            alert.style.display = 'flex';
+            
+            setTimeout(() => {
+                alert.style.display = 'none';
+            }, 5000);
+        }
+
+        // ============================================
+        // UPDATE STEP
+        // ============================================
+        function updateStep(step) {
+            currentStep = step;
+            
+            // Hide all content
+            document.getElementById('step1Content').style.display = 'none';
+            document.getElementById('step2Content').style.display = 'none';
+            document.getElementById('step3Content').style.display = 'none';
+            
+            // Update step indicators
+            for (let i = 1; i <= 3; i++) {
+                const stepEl = document.getElementById(`step${i}`);
+                stepEl.classList.remove('active', 'completed');
+                
+                if (i < step) {
+                    stepEl.classList.add('completed');
+                } else if (i === step) {
+                    stepEl.classList.add('active');
+                }
+            }
+            
+            // Show current step content
+            document.getElementById(`step${step}Content`).style.display = 'block';
+        }
+
+        // ============================================
+        // START EMAIL TIMER
+        // ============================================
+        function startEmailTimer() {
+            timeLeft = 60;
+            const resendBtn = document.getElementById('resendEmailBtn');
+            const timerDisplay = document.getElementById('emailTimer');
+            
+            resendBtn.disabled = true;
+            
+            if (emailTimer) clearInterval(emailTimer);
+            
+            emailTimer = setInterval(() => {
+                timeLeft--;
+                timerDisplay.textContent = `Resend available in ${timeLeft} seconds`;
+                
+                if (timeLeft <= 0) {
+                    clearInterval(emailTimer);
+                    resendBtn.disabled = false;
+                    timerDisplay.textContent = '';
+                }
+            }, 1000);
+        }
+
+        // ============================================
+        // STEP 1: CREATE SUPER ADMIN
+        // ============================================
+        document.getElementById('setupForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const password = document.getElementById('password').value;
+            const confirmPassword = document.getElementById('confirmPassword').value;
+            const createBtn = document.getElementById('createBtn');
+            
+            // Validate password
+            if (password !== confirmPassword) {
+                showAlert('Passwords do not match', 'error');
+                return;
+            }
+            
+            if (password.length < 8) {
+                showAlert('Password must be at least 8 characters', 'error');
+                return;
+            }
+            
+            if (!/(?=.*\d)(?=.*[!@#$%^&*])/.test(password)) {
+                showAlert('Password must contain at least one number and one special character', 'error');
+                return;
+            }
+            
+            try {
+                createBtn.innerHTML = '<span class="spinner"></span> Creating Account...';
+                createBtn.disabled = true;
+                
+                // Create auth user
+                const userCred = await auth.createUserWithEmailAndPassword(
+                    'ceo@taagc.website',
+                    password
+                );
+                
+                currentUser = userCred.user;
+                
+                // Update profile with name
+                await currentUser.updateProfile({
+                    displayName: 'Ahmad Hamza'
+                });
+                
+                // Send verification email
+                await currentUser.sendEmailVerification();
+                
+                // Save to Firestore with EXACT fields specified
+                await db.collection('users').doc(currentUser.uid).set({
+                    fullName: 'Ahmad Hamza',
+                    email: 'ceo@taagc.website',
+                    role: 'super_admin',
+                    status: 'active',
+                    permissions: ['all'],
+                    generatedId: 'Ad001/03/2026',
+                    emailVerified: false,
+                    createdAt: firebase.firestore.Timestamp.fromDate(new Date('2026-03-04T19:56:26+01:00')),
+                    uid: currentUser.uid,
+                    setupCompleted: true,
+                    createdAt: firebase.firestore.FieldValue.serverTimestamp()
+                });
+                
+                showAlert('Account created! Please verify your email.', 'success');
+                
+                // Move to step 2
+                updateStep(2);
+                startEmailTimer();
+                
+            } catch (error) {
+                console.error('Setup error:', error);
+                
+                let errorMessage = 'Error creating account.';
+                if (error.code === 'auth/email-already-in-use') {
+                    errorMessage = 'Email already in use. Please login instead.';
+                }
+                
+                showAlert(errorMessage, 'error');
+                createBtn.innerHTML = '<i class="fas fa-user-plus"></i> Create Super Admin';
+                createBtn.disabled = false;
+            }
+        });
+
+        // ============================================
+        // STEP 2: CHECK EMAIL VERIFICATION
+        // ============================================
+        document.getElementById('checkVerificationBtn').addEventListener('click', async () => {
+            const checkBtn = document.getElementById('checkVerificationBtn');
+            
+            try {
+                checkBtn.innerHTML = '<span class="spinner"></span> Checking...';
+                checkBtn.disabled = true;
+                
+                // Reload user to get latest verification status
+                await currentUser.reload();
+                
+                if (currentUser.emailVerified) {
+                    // Update Firestore with emailVerified true
+                    await db.collection('users').doc(currentUser.uid).update({
+                        emailVerified: true,
+                        verifiedAt: firebase.firestore.FieldValue.serverTimestamp()
+                    });
+                    
+                    showAlert('Email verified successfully!', 'success');
+                    
+                    // Move to step 3
+                    updateStep(3);
+                } else {
+                    showAlert('Email not verified yet. Please check your inbox.', 'warning');
+                    checkBtn.innerHTML = '<i class="fas fa-sync-alt"></i> I\'ve Verified My Email';
+                    checkBtn.disabled = false;
+                }
+                
+            } catch (error) {
+                console.error('Verification check error:', error);
+                showAlert('Error checking verification', 'error');
+                checkBtn.innerHTML = '<i class="fas fa-sync-alt"></i> I\'ve Verified My Email';
+                checkBtn.disabled = false;
+            }
+        });
+
+        // ============================================
+        // RESEND VERIFICATION EMAIL
+        // ============================================
+        document.getElementById('resendEmailBtn').addEventListener('click', async () => {
+            try {
+                await currentUser.sendEmailVerification();
+                showAlert('Verification email resent!', 'success');
+                startEmailTimer();
+            } catch (error) {
+                showAlert('Error resending email', 'error');
+            }
+        });
+
+        // ============================================
+        // CHECK EXISTING SESSION
+        // ============================================
+        auth.onAuthStateChanged(async (user) => {
+            if (user) {
+                // Check if this is the super admin
+                if (user.email === 'ceo@taagc.website') {
+                    currentUser = user;
+                    
+                    // Check if email is verified
+                    if (user.emailVerified) {
+                        // Update Firestore if needed
+                        const userDoc = await db.collection('users').doc(user.uid).get();
+                        if (userDoc.exists && userDoc.data().emailVerified) {
+                            updateStep(3);
+                        } else {
+                            updateStep(2);
+                        }
+                    }
+                }
+            }
+        });
+
+        // ============================================
+        // INITIALIZE
+        // ============================================
+        updateStep(1);
+    </script>
+</body>
+</html>
