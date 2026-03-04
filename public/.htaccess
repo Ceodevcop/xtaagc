@@ -1,0 +1,203 @@
+# Enable rewrite engine
+RewriteEngine On
+RewriteBase /
+
+# Prevent directory listings
+Options -Indexes
+
+# Serve correct MIME types
+AddType text/html .html
+AddType application/javascript .js
+AddType text/css .css
+AddType application/json .json
+AddType image/png .png
+AddType image/jpg .jpg
+AddType image/jpeg .jpeg
+AddType image/gif .gif
+AddType image/svg+xml .svg
+AddType image/x-icon .ico
+AddType application/font-woff .woff
+AddType application/font-woff2 .woff2
+
+# Prevent downloading of HTML files
+<FilesMatch "\.(html|htm)$">
+    Header set Content-Type "text/html"
+    Header set X-Content-Type-Options "nosniff"
+</FilesMatch>
+
+# Cache control for static assets
+<IfModule mod_expires.c>
+    ExpiresActive On
+    
+    # HTML files - no cache (revalidate always)
+    ExpiresByType text/html "access plus 0 seconds"
+    
+    # CSS, JavaScript - cache for 1 month
+    ExpiresByType text/css "access plus 1 month"
+    ExpiresByType application/javascript "access plus 1 month"
+    
+    # Images - cache for 1 year
+    ExpiresByType image/gif "access plus 1 year"
+    ExpiresByType image/jpeg "access plus 1 year"
+    ExpiresByType image/png "access plus 1 year"
+    ExpiresByType image/svg+xml "access plus 1 year"
+    ExpiresByType image/x-icon "access plus 1 year"
+    
+    # Fonts - cache for 1 year
+    ExpiresByType application/font-woff "access plus 1 year"
+    ExpiresByType application/font-woff2 "access plus 1 year"
+</IfModule>
+
+# Compression
+<IfModule mod_deflate.c>
+    AddOutputFilterByType DEFLATE text/html text/plain text/xml text/css application/javascript application/json
+</IfModule>
+
+# ============================================
+# ROUTING RULES - Direct access to all pages
+# ============================================
+
+# Allow direct access to admin dashboard
+RewriteRule ^admin/dashboard/?$ /admin/dashboard.html [L]
+
+# Allow direct access to other admin pages (if needed)
+RewriteRule ^admin/?$ /admin/dashboard.html [L]
+RewriteRule ^admin/users/?$ /admin/dashboard.html [L]
+RewriteRule ^admin/settings/?$ /admin/settings.html [L]
+
+# Main pages - direct access
+RewriteRule ^$ /index.html [L]
+RewriteRule ^index/?$ /index.html [L]
+RewriteRule ^home/?$ /index.html [L]
+
+# Auth pages
+RewriteRule ^login/?$ /login.html [L]
+RewriteRule ^register/?$ /register.html [L]
+RewriteRule ^complete-profile/?$ /complete-profile.html [L]
+
+# Profile pages
+RewriteRule ^profile/client/?$ /profile/client.html [L]
+RewriteRule ^profile/investor/?$ /profile/investor.html [L]
+
+# Events page
+RewriteRule ^events/?$ /events.html [L]
+
+# Investment pages
+RewriteRule ^investment-opportunities/?$ /investment-opportunities.html [L]
+RewriteRule ^how-to-invest/?$ /how-to-invest.html [L]
+RewriteRule ^investor-education/?$ /investor-education.html [L]
+RewriteRule ^portfolio-tracker/?$ /portfolio-tracker.html [L]
+RewriteRule ^dividend-calculator/?$ /dividend-calculator.html [L]
+
+# Client pages
+RewriteRule ^client-services/?$ /client-services.html [L]
+RewriteRule ^account-types/?$ /account-types.html [L]
+RewriteRule ^trading-platform/?$ /trading-platform.html [L]
+RewriteRule ^market-analysis/?$ /market-analysis.html [L]
+RewriteRule ^client-faq/?$ /client-faq.html [L]
+
+# Resource pages
+RewriteRule ^market-news/?$ /market-news.html [L]
+RewriteRule ^economic-calendar/?$ /economic-calendar.html [L]
+RewriteRule ^webinars/?$ /webinars.html [L]
+RewriteRule ^research-reports/?$ /research-reports.html [L]
+RewriteRule ^glossary/?$ /glossary.html [L]
+
+# Company pages
+RewriteRule ^about/?$ /about.html [L]
+RewriteRule ^contact/?$ /contact.html [L]
+RewriteRule ^privacy-policy/?$ /privacy-policy.html [L]
+RewriteRule ^terms-of-service/?$ /terms-of-service.html [L]
+RewriteRule ^risk-disclosure/?$ /risk-disclosure.html [L]
+
+# Sitemap
+RewriteRule ^sitemap\.xml$ /sitemap.xml [L]
+
+# ============================================
+# FALLBACK RULES
+# ============================================
+
+# If the requested file or directory exists, serve it directly
+RewriteCond %{REQUEST_FILENAME} -f
+RewriteRule ^ - [L]
+
+RewriteCond %{REQUEST_FILENAME} -d
+RewriteRule ^ - [L]
+
+# For any other request, try to serve the corresponding .html file
+RewriteCond %{REQUEST_FILENAME}.html -f
+RewriteRule ^(.*)$ $1.html [L]
+
+# If no matching .html file exists, redirect to 404 page
+RewriteRule ^.*$ /404.html [L]
+
+# ============================================
+# SECURITY HEADERS
+# ============================================
+
+<IfModule mod_headers.c>
+    # Protect against XSS attacks
+    Header set X-XSS-Protection "1; mode=block"
+    
+    # Prevent MIME-type sniffing
+    Header set X-Content-Type-Options "nosniff"
+    
+    # Clickjacking protection
+    Header always append X-Frame-Options SAMEORIGIN
+    
+    # Referrer policy
+    Header set Referrer-Policy "strict-origin-when-cross-origin"
+    
+    # Content Security Policy (adjust as needed)
+    Header set Content-Security-Policy "default-src 'self' https: http: data: 'unsafe-inline' 'unsafe-eval';"
+    
+    # CORS headers for admin dashboard
+    <FilesMatch "admin/.*\.(html|js|css)$">
+        Header set Access-Control-Allow-Origin "*"
+        Header set Access-Control-Allow-Methods "GET, POST, OPTIONS"
+        Header set Access-Control-Allow-Headers "Content-Type, Authorization"
+    </FilesMatch>
+</IfModule>
+
+# ============================================
+# ERROR PAGES
+# ============================================
+
+ErrorDocument 404 /404.html
+ErrorDocument 403 /403.html
+ErrorDocument 500 /500.html
+
+# ============================================
+# PROTECT SENSITIVE FILES
+# ============================================
+
+<FilesMatch "^\.">
+    Order allow,deny
+    Deny from all
+</FilesMatch>
+
+<FilesMatch "(^#.*#|\.(bak|config|dist|fla|inc|ini|log|psd|sh|sql|swp)|~)$">
+    Order allow,deny
+    Deny from all
+</FilesMatch>
+
+# Protect .htaccess itself
+<Files ~ "^\.ht">
+    Order allow,deny
+    Deny from all
+</Files>
+
+# ============================================
+# ADMIN DIRECTORY ACCESS
+# ============================================
+
+# Allow direct access to admin directory
+<IfModule mod_autoindex.c>
+    Options -Indexes
+</IfModule>
+
+# Ensure admin files are accessible
+<FilesMatch "admin/.*\.html$">
+    Order Allow,Deny
+    Allow from all
+</FilesMatch>
