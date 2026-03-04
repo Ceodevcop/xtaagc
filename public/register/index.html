@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Register - TAAGC Global</title>
+
+<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
+
+<style>
+body{
+    font-family: Arial, sans-serif;
+    background:#0a2540;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    height:100vh;
+}
+.card{
+    background:white;
+    padding:40px;
+    border-radius:10px;
+    width:400px;
+}
+input,select{
+    width:100%;
+    padding:12px;
+    margin:10px 0;
+}
+button{
+    width:100%;
+    padding:12px;
+    background:#0a2540;
+    color:white;
+    border:none;
+    cursor:pointer;
+}
+.alert{
+    padding:10px;
+    margin-bottom:15px;
+    display:none;
+}
+.success{background:#10b981;color:white;}
+.error{background:#e53e3e;color:white;}
+</style>
+</head>
+<body>
+
+<div class="card">
+<h2>Create Account</h2>
+
+<div id="alert" class="alert"></div>
+
+<form id="registerForm">
+<input type="text" id="fullName" placeholder="Full Name" required>
+<input type="email" id="email" placeholder="Email Address" required>
+<input type="password" id="password" placeholder="Password (min 8 characters)" required>
+
+<select id="role">
+<option value="investor">Investor</option>
+<option value="client">Client</option>
+</select>
+
+<button type="submit">Register</button>
+</form>
+</div>
+
+<script>
+const firebaseConfig = {
+    apiKey: "AIzaSyAI1MrcP977UgRLQoePxl64JOSyj9v4WpI",
+    authDomain: "xtaagc.firebaseapp.com",
+    projectId: "xtaagc",
+    storageBucket: "xtaagc.appspot.com",
+    messagingSenderId: "256073982437",
+    appId: "1:256073982437:web:8da63bb7acc86c0ca98f0c"
+};
+
+if (!firebase.apps.length) {
+    firebase.initializeApp(firebaseConfig);
+}
+
+const auth = firebase.auth();
+const db = firebase.firestore();
+
+function showAlert(message,type){
+    const alert = document.getElementById("alert");
+    alert.className = "alert " + type;
+    alert.innerText = message;
+    alert.style.display = "block";
+    setTimeout(()=> alert.style.display="none",5000);
+}
+
+document.getElementById("registerForm").addEventListener("submit", async function(e){
+    e.preventDefault();
+
+    const fullName = document.getElementById("fullName").value.trim();
+    const email = document.getElementById("email").value.trim();
+    const password = document.getElementById("password").value;
+    const role = document.getElementById("role").value;
+
+    if(password.length < 8){
+        return showAlert("Password must be at least 8 characters","error");
+    }
+
+    try{
+
+        const userCredential = await auth.createUserWithEmailAndPassword(email,password);
+        const user = userCredential.user;
+
+        await user.updateProfile({
+            displayName: fullName
+        });
+
+        await user.sendEmailVerification({
+            url: "https://taagc.website/login",
+            handleCodeInApp: false
+        });
+
+        await db.collection("users").doc(user.uid).set({
+            fullName: fullName,
+            email: email,
+            role: role,
+            status: "active",
+            createdAt: firebase.firestore.FieldValue.serverTimestamp()
+        });
+
+        showAlert("Registration successful. Check your email to verify.","success");
+
+        setTimeout(function(){
+            window.location.href="/login";
+        },3000);
+
+    }catch(error){
+        showAlert(error.message,"error");
+    }
+});
+</script>
+
+</body>
+</html>
