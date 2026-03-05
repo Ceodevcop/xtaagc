@@ -28,6 +28,461 @@ db.settings({ cacheSizeBytes: firebase.firestore.CACHE_SIZE_UNLIMITED });
 // ============================================
 const API_BASE_URL = 'https://api.taagc.website/v1'; // Replace with your API URL
 const API_KEY = 'your-api-key'; // Store securely in production
+// ============================================
+// INVESTMENT MANAGEMENT
+// ============================================
+let allInvestments = [];
+
+async function loadInvestments() {
+    const tbody = document.getElementById('investmentsTableBody');
+    tbody.innerHTML = '<tr><td colspan="8" class="loading">Loading investments...</td></tr>';
+    
+    try {
+        const snapshot = await db.collection('investments').orderBy('startDate', 'desc').get();
+        allInvestments = [];
+        
+        if (snapshot.empty) {
+            tbody.innerHTML = '<tr><td colspan="8">No investments found</td></tr>';
+            updateInvestmentStats([]);
+            return;
+        }
+        
+        let totalInvested = 0;
+        let activeCount = 0;
+        let totalRoi = 0;
+        let totalReturns = 0;
+        
+        let html = '';
+        snapshot.forEach(doc => {
+            const investment = { id: doc.id, ...doc.data() };
+            allInvestments.push(investment);
+            
+            // Calculate stats
+            totalInvested += investment.amount || 0;
+            if (investment.status === 'active') activeCount++;
+            totalRoi += investment.roi || 0;
+            
+            // Get investor name
+            const investorName = investment.investorName || 'Unknown';
+            
+            const startDate = investment.startDate ? 
+                new Date(investment.startDate.toDate()).toLocaleDateString() : 'N/A';
+            
+            html += `
+                <tr>
+                    <td>${investment.title || 'N/A'}</td>
+                    <td>${investorName}</td>
+                    <td>$${(investment.amount || 0).toLocaleString()}</td>
+                    <td>${investment.roi || 0}%</td>
+                    <td>${investment.duration || 'N/A'}</td>
+                    <td><span class="badge badge-${investment.status || 'pending'}">${investment.status || 'pending'}</span></td>
+                    <td>${startDate}</td>
+                    <td>
+                        <div class="action-icons">
+                            <i class="fas fa-eye" onclick="viewInvestment('${doc.id}')"></i>
+                            <i class="fas fa-edit" onclick="editInvestment('${doc.id}')"></i>
+                            <i class="fas fa-trash" onclick="openDeleteModal('investment', '${doc.id}')"></i>
+                        </div>
+                    </td>
+                </tr>
+            `;
+        });
+        
+        tbody.innerHTML = html;
+        
+        // Update stats
+        updateInvestmentStats({
+            totalInvested,
+            activeCount,
+            avgRoi: allInvestments.length ? totalRoi / allInvestments.length : 0,
+            totalReturns: totalInvested * (1 + (totalRoi / 100 / allInvestments.length || 0))
+        });
+        
+        initDataTable('investmentsTable');
+        
+    } catch (error) {
+        console.error('Error loading investments:', error);
+        tbody.innerHTML = '<tr><td colspan="8">Error loading investments</td></tr>';
+    }
+}
+
+function updateInvestmentStats(stats) {
+    document.getElementById('totalInvested').textContent = `$${(stats.totalInvested || 0).toLocaleString()}`;
+    document.getElementById('activeInvestments').textContent = stats.activeCount || 0;
+    document.getElementById('avgRoi').textContent = `${Math.round(stats.avgRoi || 0)}%`;
+    document.getElementById('totalReturns').textContent = `$${Math.round(stats.totalReturns || 0).toLocaleString()}`;
+}
+
+function openAddInvestmentModal() {
+    // Create modal HTML
+    const modalHtml = `
+        <div class="modal" id="addInvestmentModal">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h2>Add Investment</h2>
+                    <span class="modal-close" onclick="closeModal('addInvestmentModal')">&times;</span>
+                </div>
+                <div class="modal-body">
+                    <form id="addInvestmentForm">
+                        <div class="form-group">
+                            <label>Title</label>
+                            <input type="text" class="form-control" id="invTitle" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Investor ID</label>
+                            <select class="form-control" id="invInvestorId" required>
+                                <option value="">Select Investor</option>
+                                ${allUsers.filter(u => u.role === 'investor').map(u => 
+                                    `<option value="${u.id}">${u.fullName} (${u.email})</option>`
+                                ).join('')}
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>Amount ($)</label>
+                            <input type="number" class="form-control" id="invAmount" required>
+                        </div>
+                        <div class="form-group">
+                            <label>ROI (%)</label>
+                            <input type="number" class="form-control" id="invRoi" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Duration</label>
+                            <input type="text" class="form-control" id="invDuration" placeholder="e.g., 12 months">
+                        </div>
+                        <div class="form-group">
+                            <label>Start Date</label>
+                            <input type="date" class="form-control" id="invStartDate" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Status</label>
+                            <select class="form-control" id="invStatus">
+                                <option value="active">Active</option>
+                                <option value="pending">Pending</option>
+                                <option value="completed">Completed</option>
+                            </select>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button class="btn btn-outline" onclick="closeModal('addInvestmentModal')">Cancel</button>
+                    <button class="btn btn-primary" onclick="addInvestment()">Create Investment</button>
+                </div>
+            </div>
+        </div>
+    `;
+    
+    document.body.insertAdjacentHTML('beforeend', modalHtml);
+    openModal('addInvestmentModal');
+}
+
+async function addInvestment() {
+    const title = document.getElementById('invTitle').value;
+    const investorId = document.getElementById('invInvestorId').value;
+    const amount = parseFloat(document.getElementById('invAmount').value);
+    const roi = parseFloat(document.getElementById('invRoi').value);
+    const duration = document.getElementById('invDuration').value;
+    const startDate = document.getElementById('invStartDate').value;
+    const status = document.getElementById('invStatus').value;
+
+    if (!title || !investorId || !amount || !roi || !startDate) {
+        showToast('Please fill all required fields', 'error');
+        return;
+    }
+
+    try {
+        // Get investor name
+        const investorDoc = await db.collection('users').doc(investorId).get();
+        const investorName = investorDoc.exists ? investorDoc.data().fullName : 'Unknown';
+
+        await db.collection('investments').add({
+            title,
+            investorId,
+            investorName,
+            amount,
+            roi,
+            duration,
+            startDate: firebase.firestore.Timestamp.fromDate(new Date(startDate)),
+            status,
+            createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+            createdBy: currentUser.uid
+        });
+
+        showToast('Investment created successfully', 'success');
+        closeModal('addInvestmentModal');
+        document.getElementById('addInvestmentModal').remove();
+        loadInvestments();
+        
+    } catch (error) {
+        console.error('Error creating investment:', error);
+        showToast(error.message, 'error');
+    }
+}
+
+function exportInvestments() {
+    const data = allInvestments.map(inv => ({
+        Title: inv.title,
+        Investor: inv.investorName,
+        Amount: inv.amount,
+        ROI: inv.roi + '%',
+        Duration: inv.duration,
+        Status: inv.status,
+        StartDate: inv.startDate ? new Date(inv.startDate.toDate()).toLocaleDateString() : 'N/A'
+    }));
+    
+    const csv = convertToCSV(data);
+    downloadFile('investments_export.csv', csv);
+}
+
+// ============================================
+// TRANSACTION MANAGEMENT
+// ============================================
+let allTransactions = [];
+
+async function loadTransactions() {
+    const tbody = document.getElementById('transactionsTableBody');
+    tbody.innerHTML = '<tr><td colspan="7" class="loading">Loading transactions...</td></tr>';
+    
+    try {
+        const snapshot = await db.collection('transactions').orderBy('timestamp', 'desc').limit(500).get();
+        allTransactions = [];
+        
+        if (snapshot.empty) {
+            tbody.innerHTML = '<tr><td colspan="7">No transactions found</td></tr>';
+            updateTransactionStats([]);
+            return;
+        }
+        
+        let totalVolume = 0;
+        let todayVolume = 0;
+        let pendingCount = 0;
+        let completedCount = 0;
+        const today = new Date().toDateString();
+        
+        let html = '';
+        snapshot.forEach(doc => {
+            const transaction = { id: doc.id, ...doc.data() };
+            allTransactions.push(transaction);
+            
+            const date = transaction.timestamp ? 
+                new Date(transaction.timestamp.toDate()).toLocaleString() : 'N/A';
+            
+            // Calculate stats
+            totalVolume += transaction.amount || 0;
+            if (transaction.timestamp) {
+                const txDate = new Date(transaction.timestamp.toDate()).toDateString();
+                if (txDate === today) todayVolume += transaction.amount || 0;
+            }
+            if (transaction.status === 'pending') pendingCount++;
+            if (transaction.status === 'completed') completedCount++;
+            
+            // Get user name
+            const userName = transaction.userName || transaction.userId || 'Unknown';
+            
+            html += `
+                <tr>
+                    <td>${date}</td>
+                    <td>${userName}</td>
+                    <td><span class="badge badge-${transaction.type}">${transaction.type || 'N/A'}</span></td>
+                    <td>$${(transaction.amount || 0).toLocaleString()}</td>
+                    <td><span class="badge badge-${transaction.status || 'pending'}">${transaction.status || 'pending'}</span></td>
+                    <td><code>${transaction.reference || 'N/A'}</code></td>
+                    <td>
+                        <div class="action-icons">
+                            <i class="fas fa-eye" onclick="viewTransaction('${doc.id}')"></i>
+                            <i class="fas fa-print" onclick="printReceipt('${doc.id}')"></i>
+                        </div>
+                    </td>
+                </tr>
+            `;
+        });
+        
+        tbody.innerHTML = html;
+        
+        // Update stats
+        document.getElementById('totalVolume').textContent = `$${totalVolume.toLocaleString()}`;
+        document.getElementById('todayVolume').textContent = `$${todayVolume.toLocaleString()}`;
+        document.getElementById('pendingTransactions').textContent = pendingCount;
+        document.getElementById('completedTransactions').textContent = completedCount;
+        
+        initDataTable('transactionsTable');
+        
+    } catch (error) {
+        console.error('Error loading transactions:', error);
+        tbody.innerHTML = '<tr><td colspan="7">Error loading transactions</td></tr>';
+    }
+}
+
+function exportTransactions() {
+    const data = allTransactions.map(tx => ({
+        Date: tx.timestamp ? new Date(tx.timestamp.toDate()).toLocaleString() : 'N/A',
+        User: tx.userName || tx.userId,
+        Type: tx.type,
+        Amount: tx.amount,
+        Status: tx.status,
+        Reference: tx.reference
+    }));
+    
+    const csv = convertToCSV(data);
+    downloadFile('transactions_export.csv', csv);
+}
+
+function filterTransactions() {
+    // Implement transaction filtering
+    showToast('Transaction filtering coming soon', 'info');
+}
+
+// ============================================
+// REPORTS MANAGEMENT
+// ============================================
+async function loadReports() {
+    const tbody = document.getElementById('reportsTableBody');
+    tbody.innerHTML = '<tr><td colspan="6" class="loading">Loading reports...</td></tr>';
+    
+    try {
+        const snapshot = await db.collection('reports').orderBy('generatedAt', 'desc').get();
+        
+        if (snapshot.empty) {
+            tbody.innerHTML = '<tr><td colspan="6">No reports found</td></tr>';
+            return;
+        }
+        
+        let html = '';
+        snapshot.forEach(doc => {
+            const report = doc.data();
+            const date = report.generatedAt ? 
+                new Date(report.generatedAt.toDate()).toLocaleString() : 'N/A';
+            
+            html += `
+                <tr>
+                    <td>${date}</td>
+                    <td>${report.name || 'Report'}</td>
+                    <td>${report.type || 'N/A'}</td>
+                    <td>${report.size || '0 KB'}</td>
+                    <td>${report.generatedBy || 'System'}</td>
+                    <td>
+                        <div class="action-icons">
+                            <i class="fas fa-download" onclick="downloadReport('${doc.id}')"></i>
+                            <i class="fas fa-trash" onclick="openDeleteModal('report', '${doc.id}')"></i>
+                        </div>
+                    </td>
+                </tr>
+            `;
+        });
+        
+        tbody.innerHTML = html;
+        initDataTable('reportsTable');
+        
+    } catch (error) {
+        console.error('Error loading reports:', error);
+        tbody.innerHTML = '<tr><td colspan="6">Error loading reports</td></tr>';
+    }
+}
+
+async function generateReport() {
+    const type = document.getElementById('reportType').value;
+    const startDate = document.getElementById('reportStartDate').value;
+    const endDate = document.getElementById('reportEndDate').value;
+    const format = document.getElementById('reportFormat').value;
+
+    if (!startDate || !endDate) {
+        showToast('Please select date range', 'error');
+        return;
+    }
+
+    showToast('Generating report...', 'info');
+
+    try {
+        // Get data based on type
+        let data = [];
+        let collection;
+        
+        switch(type) {
+            case 'users':
+                collection = 'users';
+                break;
+            case 'investments':
+                collection = 'investments';
+                break;
+            case 'transactions':
+                collection = 'transactions';
+                break;
+            case 'api':
+                collection = 'api_logs';
+                break;
+        }
+        
+        const snapshot = await db.collection(collection).get();
+        data = snapshot.docs.map(doc => doc.data());
+        
+        // Generate filename
+        const filename = `${type}_report_${startDate}_to_${endDate}.${format}`;
+        
+        // Convert to CSV
+        const csv = convertToCSV(data);
+        
+        // Save report record
+        await db.collection('reports').add({
+            name: filename,
+            type,
+            format,
+            startDate,
+            endDate,
+            size: `${Math.round(csv.length / 1024)} KB`,
+            generatedAt: firebase.firestore.FieldValue.serverTimestamp(),
+            generatedBy: currentUser.email
+        });
+        
+        // Download file
+        downloadFile(filename, csv);
+        
+        showToast('Report generated successfully', 'success');
+        loadReports();
+        
+    } catch (error) {
+        console.error('Error generating report:', error);
+        showToast(error.message, 'error');
+    }
+}
+
+function downloadReport(id) {
+    // Implement report download
+    showToast('Downloading report...', 'info');
+}
+
+function scheduleReport() {
+    showToast('Scheduled reports coming soon', 'info');
+}
+
+function refreshReports() {
+    loadReports();
+}
+
+// ============================================
+// UPDATE SECTION LOADING
+// ============================================
+// Add to loadSection function:
+function loadSection(section) {
+    // ... existing code ...
+    
+    switch(section) {
+        case 'users': loadUsers(); break;
+        case 'admins': loadUsersByRole('admin'); break;
+        case 'investors': loadUsersByRole('investor'); break;
+        case 'clients': loadUsersByRole('client'); break;
+        case 'api': loadApiManager(); break;
+        case 'investments': 
+            loadInvestments(); 
+            loadInvestmentStats();
+            break;
+        case 'transactions': 
+            loadTransactions(); 
+            break;
+        case 'reports': 
+            loadReports(); 
+            break;
+        default: break;
+    }
+}
 
 // ============================================
 // GLOBAL VARIABLES
