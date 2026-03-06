@@ -10,228 +10,32 @@
       "use": "@vercel/static"
     },
     {
-      "src": "profile/**/*.html",
-      "use": "@vercel/static"
-    },
-    {
-      "src": "xtaagc/**/*.html",
-      "use": "@vercel/static"
-    },
-    {
-      "src": "*.html",
-      "use": "@vercel/static"
-    },
-    {
       "src": "api/**/*.js",
       "use": "@vercel/node"
     }
   ],
   "routes": [
-    // ============================================
-    // API ROUTES (keep your existing API routes)
-    // ============================================
-    {
-      "src": "/api/auth(?:/(.*))?",
-      "dest": "/api/auth.js"
-    },
-    {
-      "src": "/api/users(?:/(.*))?",
-      "dest": "/api/users.js"
-    },
-    {
-      "src": "/api/investments(?:/(.*))?",
-      "dest": "/api/investments.js"
-    },
-    {
-      "src": "/api/transactions(?:/(.*))?",
-      "dest": "/api/transactions.js"
-    },
-    {
-      "src": "/api/events(?:/(.*))?",
-      "dest": "/api/events.js"
-    },
-    {
-      "src": "/api/reports(?:/(.*))?",
-      "dest": "/api/reports.js"
-    },
-    {
-      "src": "/api/test(?:/(.*))?",
-      "dest": "/api/test.js"
-    },
-    {
-      "src": "/api/?",
-      "dest": "/api/index.js"
-    },
+    // Public pages
+    { "src": "/", "dest": "/public/index.html" },
+    { "src": "/login", "dest": "/public/login.html" },
+    { "src": "/register", "dest": "/public/register.html" },
+    { "src": "/complete-profile", "dest": "/public/complete-profile.html" },
+    { "src": "/events", "dest": "/public/events.html" },
+    { "src": "/404", "dest": "/public/404.html" },
     
-    // ============================================
-    // PUBLIC PAGES (from public folder)
-    // ============================================
-    {
-      "src": "/",
-      "dest": "/public/index.html"
-    },
-    {
-      "src": "/index",
-      "dest": "/public/index.html"
-    },
-    {
-      "src": "/home",
-      "dest": "/public/index.html"
-    },
-    {
-      "src": "/login",
-      "dest": "/public/login.html"
-    },
-    {
-      "src": "/register",
-      "dest": "/public/register.html"
-    },
-    {
-      "src": "/complete-profile",
-      "dest": "/public/complete-profile.html"
-    },
-    {
-      "src": "/events",
-      "dest": "/public/events.html"
-    },
+    // Admin
+    { "src": "/admin/dashboard", "dest": "/admin/dashboard.html" },
+    { "src": "/admin/setup", "dest": "/admin/setup.html" },
     
-    // ============================================
-    // ADMIN PAGES
-    // ============================================
-    {
-      "src": "/admin",
-      "dest": "/admin/dashboard.html"
-    },
-    {
-      "src": "/admin/dashboard",
-      "dest": "/admin/dashboard.html"
-    },
-    {
-      "src": "/admin/setup",
-      "dest": "/admin/setup.html"
-    },
+    // API
+    { "src": "/api/(.*)", "dest": "/api/$1" },
     
-    // ============================================
-    // PROFILE PAGES
-    // ============================================
-    {
-      "src": "/profile/client",
-      "dest": "/profile/client.html"
-    },
-    {
-      "src": "/profile/investor",
-      "dest": "/profile/investor.html"
-    },
-    {
-      "src": "/profile",
-      "dest": "/profile/client.html"
-    },
+    // Static assets
+    { "src": "/css/(.*)", "dest": "/css/$1" },
+    { "src": "/js/(.*)", "dest": "/js/$1" },
+    { "src": "/assets/(.*)", "dest": "/assets/$1" },
     
-    // ============================================
-    // ADMIN LOGIN (special path)
-    // ============================================
-    {
-      "src": "/xtaagc/admin-login",
-      "dest": "/xtaagc/admin-login.html"
-    },
-    
-    // ============================================
-    // DOCUMENTATION
-    // ============================================
-    {
-      "src": "/api-docs",
-      "dest": "/api-docs.html"
-    },
-    {
-      "src": "/api-docs.html",
-      "dest": "/api-docs.html"
-    },
-    {
-      "src": "/docs",
-      "dest": "/api-docs.html"
-    },
-    
-    // ============================================
-    // STATIC ASSETS
-    // ============================================
-    {
-      "src": "/css/(.*)",
-      "dest": "/css/$1"
-    },
-    {
-      "src": "/js/(.*)",
-      "dest": "/js/$1"
-    },
-    {
-      "src": "/images/(.*)",
-      "dest": "/images/$1"
-    },
-    {
-      "src": "/assets/(.*)",
-      "dest": "/assets/$1"
-    },
-    {
-      "src": "/admin/css/(.*)",
-      "dest": "/admin/css/$1"
-    },
-    {
-      "src": "/admin/js/(.*)",
-      "dest": "/admin/js/$1"
-    },
-    {
-      "src": "/profile/css/(.*)",
-      "dest": "/profile/css/$1"
-    },
-    {
-      "src": "/profile/js/(.*)",
-      "dest": "/profile/js/$1"
-    },
-    
-    // ============================================
-    // FALLBACK - 404 PAGE
-    // ============================================
-    {
-      "src": "/(.*)",
-      "dest": "/public/404.html"
-    }
-  ],
-  "headers": [
-    {
-      "source": "/api/(.*)",
-      "headers": [
-        {
-          "key": "Access-Control-Allow-Origin",
-          "value": "*"
-        },
-        {
-          "key": "Access-Control-Allow-Methods",
-          "value": "GET, POST, PUT, DELETE, OPTIONS"
-        },
-        {
-          "key": "Access-Control-Allow-Headers",
-          "value": "Content-Type, Authorization"
-        }
-      ]
-    },
-    {
-      "source": "**/*.html",
-      "headers": [
-        {
-          "key": "Cache-Control",
-          "value": "no-cache"
-        }
-      ]
-    },
-    {
-      "source": "**/*.@(css|js|jpg|jpeg|png|gif|ico|svg|woff|woff2|ttf|eot)",
-      "headers": [
-        {
-          "key": "Cache-Control",
-          "value": "public, max-age=31536000, immutable"
-        }
-      ]
-    }
-  ],
-  "cleanUrls": true,
-  "trailingSlash": false
+    // Fallback
+    { "src": "/(.*)", "dest": "/public/404.html" }
+  ]
 }
