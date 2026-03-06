@@ -340,7 +340,10 @@ async function handleUserStats(req, res, isAdmin) {
     console.error('User stats error:', error);
     return res.status(500).json({ error: error.message });
   }
-}*/
+}
+
+
+xxxxxxxxxxcc
 // api/users.js
 import admin, { db, isAdmin, isSuperAdmin, verifyToken, logAudit, snapshotToArray } from './lib/firebase-admin.js';
 
@@ -641,4 +644,48 @@ async function handleRoles(req, res, isAdmin) {
       { id: 'client', name: 'Client', description: 'Trading access' }
     ]
   });
+}
+*/
+// api/users.js - Debug version
+import admin from './lib/firebase-admin.js';
+
+export default async function handler(req, res) {
+  // Enable CORS
+  res.setHeader('Access-Control-Allow-Origin', '*');
+  res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
+  res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
+
+  if (req.method === 'OPTIONS') {
+    return res.status(200).end();
+  }
+
+  try {
+    // Check if admin is initialized
+    const isAdminInitialized = admin.apps.length > 0;
+    
+    // Check for auth header
+    const authHeader = req.headers.authorization;
+    const hasAuth = !!authHeader?.startsWith('Bearer ');
+    
+    // Return debug info
+    return res.status(200).json({
+      success: true,
+      debug: {
+        method: req.method,
+        hasAuthHeader: hasAuth,
+        adminInitialized: isAdminInitialized,
+        projectId: process.env.FIREBASE_PROJECT_ID || 'not set',
+        nodeEnv: process.env.NODE_ENV,
+        query: req.query
+      },
+      message: "Users API is working in debug mode"
+    });
+  } catch (error) {
+    console.error('Users API error:', error);
+    return res.status(500).json({ 
+      error: 'Internal server error',
+      message: error.message,
+      stack: error.stack
+    });
+  }
 }
