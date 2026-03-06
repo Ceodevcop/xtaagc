@@ -1,36 +1,30 @@
 {
   "name": "taagc-api",
   "version": "1.0.0",
-  "description": "TAAGC Global API - Single file handlers",
+  "description": "TAAGC Global API - Complete Firebase Integration",
   "type": "module",
   "main": "api/index.js",
   "scripts": {
     "dev": "vercel dev",
     "deploy": "vercel --prod",
     "build": "vercel build",
-    "logs": "vercel logs --prod"
+    "logs": "vercel logs --prod",
+    "clean": "rm -rf node_modules package-lock.json",
+    "reinstall": "npm run clean && npm install"
   },
   "dependencies": {
     "firebase-admin": "^11.11.0",
     "google-auth-library": "^9.0.0",
     "node-fetch": "^2.7.0",
-    "cors": "^2.8.5",
-    "express": "^4.18.2"
+    "cors": "^2.8.5"
   },
   "devDependencies": {
-    "vercel": "^32.0.0",
-    "nodemon": "^3.0.1"
+    "vercel": "^32.0.0"
   },
   "engines": {
     "node": "18.x"
   },
-  "keywords": [
-    "taagc",
-    "api",
-    "firebase",
-    "vercel",
-    "serverless"
-  ],
+  "keywords": ["taagc", "api", "firebase", "vercel"],
   "author": "TAAGC Global",
   "license": "ISC"
 }
