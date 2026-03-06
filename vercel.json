@@ -2,11 +2,34 @@
   "version": 2,
   "builds": [
     {
+      "src": "public/**/*.html",
+      "use": "@vercel/static"
+    },
+    {
+      "src": "admin/**/*.html",
+      "use": "@vercel/static"
+    },
+    {
+      "src": "profile/**/*.html",
+      "use": "@vercel/static"
+    },
+    {
+      "src": "xtaagc/**/*.html",
+      "use": "@vercel/static"
+    },
+    {
+      "src": "*.html",
+      "use": "@vercel/static"
+    },
+    {
       "src": "api/**/*.js",
       "use": "@vercel/node"
     }
   ],
   "routes": [
+    // ============================================
+    // API ROUTES (keep your existing API routes)
+    // ============================================
     {
       "src": "/api/auth(?:/(.*))?",
       "dest": "/api/auth.js"
@@ -38,6 +61,138 @@
     {
       "src": "/api/?",
       "dest": "/api/index.js"
+    },
+    
+    // ============================================
+    // PUBLIC PAGES (from public folder)
+    // ============================================
+    {
+      "src": "/",
+      "dest": "/public/index.html"
+    },
+    {
+      "src": "/index",
+      "dest": "/public/index.html"
+    },
+    {
+      "src": "/home",
+      "dest": "/public/index.html"
+    },
+    {
+      "src": "/login",
+      "dest": "/public/login.html"
+    },
+    {
+      "src": "/register",
+      "dest": "/public/register.html"
+    },
+    {
+      "src": "/complete-profile",
+      "dest": "/public/complete-profile.html"
+    },
+    {
+      "src": "/events",
+      "dest": "/public/events.html"
+    },
+    
+    // ============================================
+    // ADMIN PAGES
+    // ============================================
+    {
+      "src": "/admin",
+      "dest": "/admin/dashboard.html"
+    },
+    {
+      "src": "/admin/dashboard",
+      "dest": "/admin/dashboard.html"
+    },
+    {
+      "src": "/admin/setup",
+      "dest": "/admin/setup.html"
+    },
+    
+    // ============================================
+    // PROFILE PAGES
+    // ============================================
+    {
+      "src": "/profile/client",
+      "dest": "/profile/client.html"
+    },
+    {
+      "src": "/profile/investor",
+      "dest": "/profile/investor.html"
+    },
+    {
+      "src": "/profile",
+      "dest": "/profile/client.html"
+    },
+    
+    // ============================================
+    // ADMIN LOGIN (special path)
+    // ============================================
+    {
+      "src": "/xtaagc/admin-login",
+      "dest": "/xtaagc/admin-login.html"
+    },
+    
+    // ============================================
+    // DOCUMENTATION
+    // ============================================
+    {
+      "src": "/api-docs",
+      "dest": "/api-docs.html"
+    },
+    {
+      "src": "/api-docs.html",
+      "dest": "/api-docs.html"
+    },
+    {
+      "src": "/docs",
+      "dest": "/api-docs.html"
+    },
+    
+    // ============================================
+    // STATIC ASSETS
+    // ============================================
+    {
+      "src": "/css/(.*)",
+      "dest": "/css/$1"
+    },
+    {
+      "src": "/js/(.*)",
+      "dest": "/js/$1"
+    },
+    {
+      "src": "/images/(.*)",
+      "dest": "/images/$1"
+    },
+    {
+      "src": "/assets/(.*)",
+      "dest": "/assets/$1"
+    },
+    {
+      "src": "/admin/css/(.*)",
+      "dest": "/admin/css/$1"
+    },
+    {
+      "src": "/admin/js/(.*)",
+      "dest": "/admin/js/$1"
+    },
+    {
+      "src": "/profile/css/(.*)",
+      "dest": "/profile/css/$1"
+    },
+    {
+      "src": "/profile/js/(.*)",
+      "dest": "/profile/js/$1"
+    },
+    
+    // ============================================
+    // FALLBACK - 404 PAGE
+    // ============================================
+    {
+      "src": "/(.*)",
+      "dest": "/public/404.html"
     }
   ],
   "headers": [
@@ -55,6 +210,24 @@
         {
           "key": "Access-Control-Allow-Headers",
           "value": "Content-Type, Authorization"
+        }
+      ]
+    },
+    {
+      "source": "**/*.html",
+      "headers": [
+        {
+          "key": "Cache-Control",
+          "value": "no-cache"
+        }
+      ]
+    },
+    {
+      "source": "**/*.@(css|js|jpg|jpeg|png|gif|ico|svg|woff|woff2|ttf|eot)",
+      "headers": [
+        {
+          "key": "Cache-Control",
+          "value": "public, max-age=31536000, immutable"
         }
       ]
     }
