@@ -13,6 +13,7 @@ export default function handler(req, res) {
     },
     documentation: "https://docs.taagc.website"
   });
+  
 }
 */
 // api/index.js
