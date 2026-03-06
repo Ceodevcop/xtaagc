@@ -1,4 +1,4 @@
-// api/lib/firebase-admin.js
+/*/ api/lib/firebase-admin.js
 import admin from 'firebase-admin';
 import { getApps } from 'firebase-admin/app';
 
@@ -84,3 +84,23 @@ export async function logAudit(userId, action, details = {}, ip = 'unknown') {
 }
 
 export default admin;
+*/
+// api/lib/firebase-admin.js
+import admin from 'firebase-admin';
+import { getApps } from 'firebase-admin/app';
+
+if (!getApps().length) {
+  try {
+    admin.initializeApp({
+      projectId: process.env.FIREBASE_PROJECT_ID || 'xtaagc'
+      // credential handled by ADC
+    });
+    console.log('✅ Firebase Admin initialized');
+  } catch (error) {
+    console.error('❌ Firebase Admin error:', error);
+  }
+}
+
+export default admin;
+export const auth = admin.auth();
+export const db = admin.firestore();
