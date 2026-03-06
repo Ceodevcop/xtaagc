@@ -44,6 +44,10 @@
       "dest": "/admin/setup.html"
     },
     {
+      "src": "/xtaagc/admin-login",
+      "dest": "/xtaagc/admin-login.html"
+    },
+    {
       "src": "/api/(.*)",
       "dest": "/api/$1"
     },
@@ -58,6 +62,14 @@
     {
       "src": "/assets/(.*)",
       "dest": "/assets/$1"
+    },
+    {
+      "src": "/admin/css/(.*)",
+      "dest": "/admin/css/$1"
+    },
+    {
+      "src": "/admin/js/(.*)",
+      "dest": "/admin/js/$1"
     },
     {
       "src": "/(.*)",
