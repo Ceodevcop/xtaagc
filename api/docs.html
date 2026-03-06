@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>TAAGC Global API Documentation</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        body { font-family: Arial, sans-serif; line-height: 1.6; max-width: 1000px; margin: 0 auto; padding: 20px; }
+        h1 { color: #0a2540; border-bottom: 2px solid #c19a6b; }
+        h2 { color: #1a3a4f; margin-top: 30px; }
+        code { background: #f4f4f4; padding: 2px 5px; border-radius: 3px; }
+        pre { background: #f4f4f4; padding: 15px; border-radius: 5px; overflow-x: auto; }
+        .endpoint { background: #f8fafc; padding: 20px; margin: 20px 0; border-left: 4px solid #c19a6b; }
+        .method { display: inline-block; padding: 5px 10px; border-radius: 3px; font-weight: bold; }
+        .get { background: #61affe; color: white; }
+        .post { background: #49cc90; color: white; }
+        .put { background: #fca130; color: white; }
+        .delete { background: #f93e3e; color: white; }
+    </style>
+</head>
+<body>
+    <h1>TAAGC Global API Documentation</h1>
+    <p>Base URL: <code>https://taagc.website/api</code></p>
+
+    <h2>Authentication</h2>
+    <p>All endpoints require a Bearer token in the Authorization header:</p>
+    <pre>Authorization: Bearer YOUR_FIREBASE_ID_TOKEN</pre>
+
+    <div class="endpoint">
+        <span class="method get">GET</span> <code>/</code>
+        <h3>API Information</h3>
+        <p>Returns API status and available endpoints.</p>
+    </div>
+
+    <h2>Auth Endpoints</h2>
+    <div class="endpoint">
+        <span class="method post">POST</span> <code>/auth/login</code>
+        <h3>Login</h3>
+        <p>Authenticate user with email and password.</p>
+        <pre>
+{
+  "email": "user@example.com",
+  "password": "yourpassword"
+}
+        </pre>
+    </div>
+
+    <h2>User Management</h2>
+    <div class="endpoint">
+        <span class="method get">GET</span> <code>/users</code>
+        <h3>List Users</h3>
+        <p>Returns list of all users (admin only).</p>
+    </div>
+
+    <div class="endpoint">
+        <span class="method post">POST</span> <code>/users</code>
+        <h3>Create User</h3>
+        <p>Create a new user (admin only).</p>
+    </div>
+
+    <div class="endpoint">
+        <span class="method post">POST</span> <code>/set-role</code>
+        <h3>Set User Role</h3>
+        <p>Update user role (super admin only).</p>
+        <pre>
+{
+  "uid": "user_id_here",
+  "role": "admin"
+}
+        </pre>
+    </div>
+
+    <h2>Investments</h2>
+    <div class="endpoint">
+        <span class="method get">GET</span> <code>/investments</code>
+        <h3>List Investments</h3>
+        <p>Returns all investments.</p>
+    </div>
+
+    <div class="endpoint">
+        <span class="method post">POST</span> <code>/investments</code>
+        <h3>Create Investment</h3>
+        <p>Create a new investment (admin only).</p>
+    </div>
+
+    <h2>Transactions</h2>
+    <div class="endpoint">
+        <span class="method get">GET</span> <code>/transactions</code>
+        <h3>List Transactions</h3>
+        <p>Returns transaction history.</p>
+    </div>
+
+    <h2>Events</h2>
+    <div class="endpoint">
+        <span class="method get">GET</span> <code>/events</code>
+        <h3>List Events</h3>
+        <p>Returns upcoming and past events.</p>
+    </div>
+
+    <h2>Reports</h2>
+    <div class="endpoint">
+        <span class="method get">GET</span> <code>/reports</code>
+        <h3>Generate Reports</h3>
+        <p>Generate custom reports (admin only).</p>
+    </div>
+
+    <hr>
+    <p>Need help? Contact <a href="mailto:support@taagc.website">support@taagc.website</a></p>
+</body>
+</html>
