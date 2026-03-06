@@ -1,5 +1,6 @@
-// api/auth/index.js - FIXED IMPORT PATH
+// api/auth/index.js
 import admin, { auth, db, verifyToken, logAudit } from '../lib/firebase-admin.js';
+import fetch from 'node-fetch';
 
 export default async function handler(req, res) {
   // CORS headers
@@ -54,8 +55,7 @@ export default async function handler(req, res) {
   }
 }
 
-// ===== HANDLER FUNCTIONS =====
-
+// Login Handler
 async function handleLogin(req, res) {
   if (req.method !== 'POST') {
     return res.status(405).json({ error: 'Use POST method' });
@@ -106,6 +106,7 @@ async function handleLogin(req, res) {
   }
 }
 
+// Register Handler
 async function handleRegister(req, res) {
   if (req.method !== 'POST') {
     return res.status(405).json({ error: 'Use POST method' });
@@ -158,6 +159,7 @@ async function handleRegister(req, res) {
   }
 }
 
+// Verify Email Handler
 async function handleVerify(req, res) {
   const authHeader = req.headers.authorization;
   if (!authHeader?.startsWith('Bearer ')) {
@@ -180,6 +182,7 @@ async function handleVerify(req, res) {
   }
 }
 
+// Password Reset Handler
 async function handleReset(req, res) {
   if (req.method !== 'POST') {
     return res.status(405).json({ error: 'Use POST method' });
@@ -204,6 +207,7 @@ async function handleReset(req, res) {
   }
 }
 
+// Logout Handler
 async function handleLogout(req, res) {
   if (req.method !== 'POST') {
     return res.status(405).json({ error: 'Use POST method' });
@@ -230,6 +234,7 @@ async function handleLogout(req, res) {
   }
 }
 
+// Profile Handler
 async function handleProfile(req, res) {
   const authHeader = req.headers.authorization;
   if (!authHeader?.startsWith('Bearer ')) {
@@ -278,6 +283,7 @@ async function handleProfile(req, res) {
   }
 }
 
+// Me Handler
 async function handleMe(req, res) {
   const authHeader = req.headers.authorization;
   if (!authHeader?.startsWith('Bearer ')) {
