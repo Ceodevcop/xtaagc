@@ -8,9 +8,8 @@
     "deploy": "vercel --prod"
   },
   "dependencies": {
-    "firebase-admin": "^11.11.0",
-    "cors": "^2.8.5",
-    "express": "^4.18.2"
+    "google-auth-library": "^9.0.0",
+    "node-fetch": "^2.7.0"
   },
   "devDependencies": {
     "vercel": "^32.0.0"
