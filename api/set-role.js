@@ -1,16 +1,13 @@
-// api/set-role.js - Using Application Default Credentials (No Keys Needed!)
-import { GoogleAuth } from 'google-auth-library';
-import fetch from 'node-fetch';
+// api/set-role.js
+import admin, { isSuperAdmin, verifyToken, logAudit } from './lib/firebase-admin.js';
 
 export default async function handler(req, res) {
-  // Enable CORS
   res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
   res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
 
   if (req.method === 'OPTIONS') {
-    res.status(200).end();
-    return;
+    return res.status(200).end();
   }
 
   if (req.method !== 'POST') {
@@ -18,106 +15,57 @@ export default async function handler(req, res) {
   }
 
   const authHeader = req.headers.authorization;
-  if (!authHeader || !authHeader.startsWith('Bearer ')) {
+  if (!authHeader?.startsWith('Bearer ')) {
     return res.status(401).json({ error: 'Unauthorized' });
   }
 
-  const userToken = authHeader.split('Bearer ')[1];
+  const token = authHeader.split('Bearer ')[1];
+  const tokenResult = await verifyToken(token);
+
+  if (!tokenResult.valid) {
+    return res.status(401).json({ error: 'Invalid token' });
+  }
+
+  const callerUid = tokenResult.decoded.uid;
+  const callerIsSuperAdmin = await isSuperAdmin(callerUid);
+
+  if (!callerIsSuperAdmin) {
+    return res.status(403).json({ error: 'Super admin access required' });
+  }
+
   const { uid, role } = req.body;
 
+  if (!uid || !role) {
+    return res.status(400).json({ error: 'uid and role required' });
+  }
+
+  const validRoles = ['super_admin', 'admin', 'investor', 'client'];
+  if (!validRoles.includes(role)) {
+    return res.status(400).json({ error: 'Invalid role' });
+  }
+
   try {
-    // Step 1: Verify the user's token is valid
-    const verifyResponse = await fetch(
-      `https://identitytoolkit.googleapis.com/v1/accounts:lookup?key=${process.env.FIREBASE_API_KEY}`,
-      {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ idToken: userToken })
-      }
-    );
-
-    const verifyData = await verifyResponse.json();
-    
-    if (!verifyResponse.ok || !verifyData.users || verifyData.users[0].localId !== uid) {
-      return res.status(401).json({ error: 'Invalid token' });
-    }
-
-    // Step 2: Get Google Auth token using Application Default Credentials
-    // Vercel automatically handles ADC in their environment!
-    const auth = new GoogleAuth({
-      scopes: [
-        'https://www.googleapis.com/auth/cloud-platform',
-        'https://www.googleapis.com/auth/firebase',
-        'https://www.googleapis.com/auth/datastore'
-      ]
+    // Set custom claims
+    await admin.auth().setCustomUserClaims(uid, {
+      role: role,
+      [role]: true
     });
 
-    // Get the client and access token
-    const client = await auth.getClient();
-    const tokenResponse = await client.getAccessToken();
-    const accessToken = tokenResponse.token;
-
-    // Step 3: Set custom claims using Google Identity Toolkit API
-    const claimsResponse = await fetch(
-      `https://identitytoolkit.googleapis.com/v1/projects/${process.env.FIREBASE_PROJECT_ID}/accounts:update`,
-      {
-        method: 'POST',
-        headers: {
-          'Authorization': `Bearer ${accessToken}`,
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          localId: uid,
-          customAttributes: JSON.stringify({ 
-            role: role,
-            [role]: true 
-          })
-        })
-      }
-    );
-
-    if (!claimsResponse.ok) {
-      const errorData = await claimsResponse.json();
-      throw new Error(errorData.error?.message || 'Failed to set custom claims');
-    }
-
-    // Step 4: Update Firestore
-    const firestoreResponse = await fetch(
-      `https://firestore.googleapis.com/v1/projects/${process.env.FIREBASE_PROJECT_ID}/databases/(default)/documents/users/${uid}`,
-      {
-        method: 'PATCH',
-        headers: {
-          'Authorization': `Bearer ${accessToken}`,
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          fields: {
-            role: { stringValue: role },
-            updatedAt: { timestampValue: new Date().toISOString() }
-          }
-        })
-      }
-    );
-
-    if (!firestoreResponse.ok) {
-      const errorData = await firestoreResponse.json();
-      console.error('Firestore update error:', errorData);
-      // Don't throw - claims are more important
-    }
-
-    // Step 5: Return success
-    res.status(200).json({ 
-      success: true, 
-      message: `Role set to ${role} successfully`,
-      uid: uid,
-      role: role
+    // Update Firestore
+    await admin.firestore().collection('users').doc(uid).update({
+      role: role,
+      updatedAt: admin.firestore.FieldValue.serverTimestamp(),
+      updatedBy: callerUid
     });
 
+    await logAudit(callerUid, 'role_change', { targetUid: uid, newRole: role });
+
+    return res.status(200).json({
+      success: true,
+      message: `Role set to ${role} successfully`
+    });
   } catch (error) {
-    console.error('API error:', error);
-    res.status(500).json({ 
-      error: error.message,
-      details: 'Check server logs for more information'
-    });
+    console.error('Set role error:', error);
+    return res.status(500).json({ error: error.message });
   }
 }
