@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>TAAGC Global API Documentation</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        body { font-family: 'Inter', sans-serif; line-height: 1.6; max-width: 1000px; margin: 0 auto; padding: 20px; background: #f8fafc; }
+        h1 { color: #0a2540; border-bottom: 2px solid #c19a6b; padding-bottom: 10px; }
+        h2 { color: #1a3a4f; margin-top: 30px; }
+        code { background: #e2e8f0; padding: 2px 5px; border-radius: 3px; }
+        pre { background: #1e293b; color: #e2e8f0; padding: 15px; border-radius: 5px; overflow-x: auto; }
+        .endpoint { background: white; padding: 20px; margin: 20px 0; border-left: 4px solid #c19a6b; border-radius: 0 8px 8px 0; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+        .method { display: inline-block; padding: 3px 8px; border-radius: 4px; font-size: 12px; font-weight: bold; }
+        .get { background: #61affe; color: white; }
+        .post { background: #49cc90; color: white; }
+        .put { background: #fca130; color: white; }
+        .delete { background: #f93e3e; color: white; }
+    </style>
+</head>
+<body>
+    <h1>TAAGC Global API Documentation</h1>
+    <p>Base URL: <code>https://taagc.website/api</code></p>
+
+    <h2>Authentication</h2>
+    <p>All protected endpoints require a Bearer token:</p>
+    <pre>Authorization: Bearer YOUR_FIREBASE_ID_TOKEN</pre>
+
+    <h2>Endpoints</h2>
+
+    <div class="endpoint">
+        <span class="method get">GET</span> <code>/</code>
+        <h3>API Information</h3>
+        <p>Returns API status and available endpoints.</p>
+    </div>
+
+    <div class="endpoint">
+        <span class="method post">POST</span> <code>/auth?action=login</code>
+        <h3>Login</h3>
+        <p>Authenticate user with email and password.</p>
+        <pre>{
+  "email": "user@example.com",
+  "password": "yourpassword"
+}</pre>
+    </div>
+
+    <div class="endpoint">
+        <span class="method post">POST</span> <code>/auth?action=register</code>
+        <h3>Register</h3>
+        <p>Create a new user account.</p>
+        <pre>{
+  "email": "user@example.com",
+  "password": "yourpassword",
+  "fullName": "John Doe",
+  "phone": "+1234567890",
+  "role": "client"
+}</pre>
+    </div>
+
+    <div class="endpoint">
+        <span class="method get">GET</span> <code>/auth?action=me</code>
+        <h3>Current User</h3>
+        <p>Get information about the authenticated user.</p>
+    </div>
+
+    <div class="endpoint">
+        <span class="method get">GET</span> <code>/users?action=list</code>
+        <h3>List Users</h3>
+        <p>Returns list of all users (admin only).</p>
+    </div>
+
+    <hr>
+    <p>Need help? Contact <a href="mailto:support@taagc.website">support@taagc.website</a></p>
+</body>
+</html>
