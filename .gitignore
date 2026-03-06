@@ -1,0 +1,152 @@
+# ============================================
+# Node.js
+# ============================================
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+.pnpm-debug.log*
+lerna-debug.log*
+
+# ============================================
+# Package manager
+# ============================================
+package-lock.json
+yarn.lock
+pnpm-lock.yaml
+
+# ============================================
+# Environment variables
+# ============================================
+.env
+.env.local
+.env.production
+.env.development
+.env.test
+.env.*.local
+
+# ============================================
+# Firebase
+# ============================================
+firebase-debug.log
+firebase.json
+*.service-account.json
+serviceAccountKey.json
+firebase-adminsdk-*.json
+
+# ============================================
+# Vercel
+# ============================================
+.vercel/
+*.vercel
+vercel.json.local
+.vercelignore
+
+# ============================================
+# Build outputs
+# ============================================
+dist/
+build/
+out/
+.next/
+.nuxt/
+.cache/
+.temp/
+
+# ============================================
+# IDE / Editors
+# ============================================
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+Thumbs.db
+desktop.ini
+.project
+.classpath
+.settings/
+
+# ============================================
+# Logs
+# ============================================
+logs/
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+lerna-debug.log*
+
+# ============================================
+# Runtime data
+# ============================================
+pids/
+*.pid
+*.seed
+*.pid.lock
+
+# ============================================
+# Coverage
+# ============================================
+coverage/
+.nyc_output/
+*.lcov
+
+# ============================================
+# Testing
+# ============================================
+.tmp/
+*.test.js
+*.spec.js
+__tests__/
+test-results/
+junit.xml
+
+# ============================================
+# Temporary files
+# ============================================
+tmp/
+temp/
+*.tmp
+*.temp
+*.cache
+
+# ============================================
+# OS generated files
+# ============================================
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+desktop.ini
+$RECYCLE.BIN/
+
+# ============================================
+# API Keys & Secrets
+# ============================================
+*.key
+*.pem
+*.p12
+*.pfx
+*.cert
+*.crt
+secrets/
+
+# ============================================
+# Backup files
+# ============================================
+*.bak
+*.backup
+*.swp
+*.swo
+*~
+
+# ============================================
+# Optional: Remove if you want to commit these
+# ============================================
+# .vercel/                  # Uncomment if you DON'T want to commit Vercel project config
+# package-lock.json         # Uncomment if you prefer to use yarn
