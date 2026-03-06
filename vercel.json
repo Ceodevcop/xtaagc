@@ -15,12 +15,21 @@
     }
   ],
   "routes": [
-    // 🔴 THIS IS THE KEY FIX - Root goes to public/index.html
+    // ============================================
+    // PUBLIC ROUTES - Map root to /public
+    // ============================================
     {
       "src": "/",
       "dest": "/public/index.html"
     },
-    // Other public pages
+    {
+      "src": "/index",
+      "dest": "/public/index.html"
+    },
+    {
+      "src": "/home",
+      "dest": "/public/index.html"
+    },
     {
       "src": "/login",
       "dest": "/public/login.html"
@@ -30,10 +39,17 @@
       "dest": "/public/register.html"
     },
     {
+      "src": "/complete-profile",
+      "dest": "/public/complete-profile.html"
+    },
+    {
       "src": "/events",
       "dest": "/public/events.html"
     },
-    // Admin routes
+    
+    // ============================================
+    // ADMIN ROUTES
+    // ============================================
     {
       "src": "/admin/dashboard",
       "dest": "/admin/dashboard.html"
@@ -42,12 +58,26 @@
       "src": "/admin/setup",
       "dest": "/admin/setup.html"
     },
-    // API routes
+    
+    // ============================================
+    // ADMIN LOGIN
+    // ============================================
+    {
+      "src": "/xtaagc/admin-login",
+      "dest": "/xtaagc/admin-login.html"
+    },
+    
+    // ============================================
+    // API ROUTES
+    // ============================================
     {
       "src": "/api/(.*)",
       "dest": "/api/$1"
     },
-    // Static assets
+    
+    // ============================================
+    // STATIC ASSETS
+    // ============================================
     {
       "src": "/css/(.*)",
       "dest": "/css/$1"
@@ -60,7 +90,18 @@
       "src": "/assets/(.*)",
       "dest": "/assets/$1"
     },
-    // Fallback
+    {
+      "src": "/admin/css/(.*)",
+      "dest": "/admin/css/$1"
+    },
+    {
+      "src": "/admin/js/(.*)",
+      "dest": "/admin/js/$1"
+    },
+    
+    // ============================================
+    // FALLBACK - 404 PAGE
+    // ============================================
     {
       "src": "/(.*)",
       "dest": "/public/404.html"
