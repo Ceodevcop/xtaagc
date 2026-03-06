@@ -1,0 +1,1521 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GitHub Repository Analyzer</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
+            background: #f6f8fa;
+            padding: 20px;
+            color: #24292e;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .header {
+            background: white;
+            padding: 25px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            margin-bottom: 20px;
+            border: 1px solid #e1e4e8;
+        }
+
+        .header h1 {
+            color: #24292e;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .header h1 img {
+            width: 32px;
+            height: 32px;
+        }
+
+        .header p {
+            color: #586069;
+        }
+
+        .github-form {
+            background: white;
+            padding: 25px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            margin-bottom: 20px;
+            border: 1px solid #e1e4e8;
+        }
+
+        .form-row {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 15px;
+            flex-wrap: wrap;
+        }
+
+        .form-group {
+            flex: 1;
+            min-width: 250px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #24292e;
+        }
+
+        .form-group input, .form-group select {
+            width: 100%;
+            padding: 10px 12px;
+            border: 2px solid #e1e4e8;
+            border-radius: 6px;
+            font-size: 14px;
+            transition: border-color 0.3s;
+        }
+
+        .form-group input:focus, .form-group select:focus {
+            outline: none;
+            border-color: #0366d6;
+        }
+
+        .form-group input[type="text"] {
+            font-family: monospace;
+        }
+
+        .token-info {
+            background: #f1f8ff;
+            border: 1px solid #c8e1ff;
+            border-radius: 6px;
+            padding: 15px;
+            margin-bottom: 15px;
+            color: #0366d6;
+        }
+
+        .token-info a {
+            color: #0366d6;
+            text-decoration: none;
+            font-weight: 600;
+        }
+
+        .token-info a:hover {
+            text-decoration: underline;
+        }
+
+        .button-group {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 6px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn-primary {
+            background: #2ea44f;
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: #2c974b;
+        }
+
+        .btn-secondary {
+            background: #fafbfc;
+            color: #24292e;
+            border: 1px solid #e1e4e8;
+        }
+
+        .btn-secondary:hover {
+            background: #f3f4f6;
+        }
+
+        .btn-danger {
+            background: #d73a49;
+            color: white;
+        }
+
+        .btn-danger:hover {
+            background: #cb2431;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .stat-card {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            border: 1px solid #e1e4e8;
+        }
+
+        .stat-card h3 {
+            color: #586069;
+            font-size: 14px;
+            margin-bottom: 10px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .stat-value {
+            font-size: 32px;
+            font-weight: 600;
+            color: #24292e;
+        }
+
+        .stat-sub {
+            color: #586069;
+            font-size: 12px;
+            margin-top: 5px;
+        }
+
+        .progress-bar {
+            height: 8px;
+            background: #e1e4e8;
+            border-radius: 4px;
+            overflow: hidden;
+            margin: 10px 0;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: #2ea44f;
+            transition: width 0.3s;
+        }
+
+        .tab-container {
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            border: 1px solid #e1e4e8;
+            overflow: hidden;
+        }
+
+        .tab-header {
+            display: flex;
+            border-bottom: 1px solid #e1e4e8;
+            background: #f6f8fa;
+        }
+
+        .tab-btn {
+            padding: 15px 25px;
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 600;
+            color: #586069;
+            transition: all 0.3s;
+            border-bottom: 2px solid transparent;
+        }
+
+        .tab-btn:hover {
+            color: #24292e;
+            background: #f3f4f6;
+        }
+
+        .tab-btn.active {
+            color: #0366d6;
+            border-bottom-color: #0366d6;
+            background: white;
+        }
+
+        .tab-content {
+            padding: 20px;
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        .filter-bar {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+            align-items: center;
+            padding: 15px;
+            background: #f6f8fa;
+            border-radius: 6px;
+        }
+
+        .filter-group {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .filter-group label {
+            font-weight: 600;
+            color: #24292e;
+        }
+
+        .filter-group input, .filter-group select {
+            padding: 8px 12px;
+            border: 1px solid #e1e4e8;
+            border-radius: 4px;
+        }
+
+        .tree-view {
+            font-family: 'SF Mono', 'Monaco', 'Inconsolata', 'Fira Mono', 'Droid Sans Mono', 'Courier New', monospace;
+            font-size: 13px;
+            line-height: 1.6;
+        }
+
+        .tree-item {
+            margin-left: 20px;
+            position: relative;
+        }
+
+        .tree-item::before {
+            content: '';
+            position: absolute;
+            left: -15px;
+            top: 0;
+            bottom: 0;
+            width: 1px;
+            background: #e1e4e8;
+        }
+
+        .tree-folder {
+            margin: 5px 0;
+        }
+
+        .tree-folder-header {
+            cursor: pointer;
+            padding: 5px 0;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            color: #0366d6;
+            font-weight: 600;
+        }
+
+        .tree-folder-header:hover {
+            color: #044289;
+        }
+
+        .tree-folder-header i {
+            font-style: normal;
+            transition: transform 0.3s;
+        }
+
+        .tree-folder-header.collapsed i {
+            transform: rotate(-90deg);
+        }
+
+        .tree-folder-content {
+            margin-left: 20px;
+            transition: all 0.3s;
+        }
+
+        .tree-folder-content.collapsed {
+            display: none;
+        }
+
+        .tree-file {
+            padding: 3px 0 3px 20px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            color: #24292e;
+            position: relative;
+        }
+
+        .tree-file::before {
+            content: '';
+            position: absolute;
+            left: 5px;
+            top: 50%;
+            width: 8px;
+            height: 1px;
+            background: #e1e4e8;
+        }
+
+        .file-size {
+            color: #586069;
+            font-size: 11px;
+            margin-left: auto;
+            padding: 2px 6px;
+            background: #f6f8fa;
+            border-radius: 12px;
+        }
+
+        .file-type-badge {
+            padding: 2px 6px;
+            border-radius: 12px;
+            font-size: 10px;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+
+        .type-image { background: #f0f9eb; color: #2c974b; }
+        .type-code { background: #f1f8ff; color: #0366d6; }
+        .type-doc { background: #fff5f1; color: #d73a49; }
+        .type-config { background: #f6f8fa; color: #6a737d; }
+        .type-archive { background: #ffebcc; color: #b08800; }
+
+        .table-responsive {
+            overflow-x: auto;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        th {
+            background: #f6f8fa;
+            padding: 12px;
+            text-align: left;
+            font-weight: 600;
+            color: #24292e;
+            border-bottom: 2px solid #e1e4e8;
+            cursor: pointer;
+        }
+
+        th:hover {
+            background: #e9ecef;
+        }
+
+        td {
+            padding: 10px 12px;
+            border-bottom: 1px solid #e1e4e8;
+        }
+
+        tr:hover {
+            background: #f6f8fa;
+        }
+
+        .language-bar {
+            display: flex;
+            height: 30px;
+            border-radius: 4px;
+            overflow: hidden;
+            margin: 10px 0;
+        }
+
+        .language-segment {
+            height: 100%;
+            transition: width 0.3s;
+        }
+
+        .language-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 5px 0;
+        }
+
+        .language-color {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+        }
+
+        .chart-container {
+            height: 300px;
+            margin: 20px 0;
+        }
+
+        .badge {
+            display: inline-block;
+            padding: 4px 8px;
+            border-radius: 12px;
+            font-size: 11px;
+            font-weight: 600;
+        }
+
+        .badge-success { background: #d4edda; color: #155724; }
+        .badge-warning { background: #fff3cd; color: #856404; }
+        .badge-danger { background: #f8d7da; color: #721c24; }
+        .badge-info { background: #d1ecf1; color: #0c5460; }
+
+        .loading {
+            text-align: center;
+            padding: 40px;
+            color: #586069;
+        }
+
+        .loading::after {
+            content: '';
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            margin-left: 10px;
+            border: 3px solid #f3f3f3;
+            border-top: 3px solid #0366d6;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .error-message {
+            background: #f8d7da;
+            border: 1px solid #f5c6cb;
+            color: #721c24;
+            padding: 15px;
+            border-radius: 6px;
+            margin: 10px 0;
+        }
+
+        .success-message {
+            background: #d4edda;
+            border: 1px solid #c3e6cb;
+            color: #155724;
+            padding: 15px;
+            border-radius: 6px;
+            margin: 10px 0;
+        }
+
+        .breadcrumb {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 15px;
+            padding: 10px;
+            background: #f6f8fa;
+            border-radius: 6px;
+        }
+
+        .breadcrumb a {
+            color: #0366d6;
+            text-decoration: none;
+            cursor: pointer;
+        }
+
+        .breadcrumb a:hover {
+            text-decoration: underline;
+        }
+
+        .breadcrumb .separator {
+            color: #586069;
+        }
+
+        .size-warning {
+            background: #fff3cd;
+            color: #856404;
+            padding: 10px;
+            border-radius: 4px;
+            margin: 5px 0;
+            font-size: 12px;
+        }
+
+        .duplicate-group {
+            background: #f6f8fa;
+            border-radius: 6px;
+            padding: 15px;
+            margin-bottom: 15px;
+        }
+
+        .duplicate-file {
+            display: flex;
+            align-items: center;
+            padding: 8px;
+            border-bottom: 1px solid #e1e4e8;
+        }
+
+        .duplicate-file:last-child {
+            border-bottom: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>
+                <img src="https://github.githubassets.com/images/modules/logos_page/GitHub-Mark.png" alt="GitHub">
+                GitHub Repository Analyzer
+            </h1>
+            <p>Analyze directory structures, file sizes, and repository statistics</p>
+        </div>
+
+        <div class="github-form">
+            <div class="form-row">
+                <div class="form-group">
+                    <label>Repository Owner</label>
+                    <input type="text" id="repoOwner" placeholder="e.g., octocat" value="facebook">
+                </div>
+                <div class="form-group">
+                    <label>Repository Name</label>
+                    <input type="text" id="repoName" placeholder="e.g., Hello-World" value="react">
+                </div>
+                <div class="form-group">
+                    <label>Branch/Tag</label>
+                    <input type="text" id="repoBranch" placeholder="main" value="main">
+                </div>
+            </div>
+            <div class="form-row">
+                <div class="form-group">
+                    <label>GitHub Token (optional, for higher rate limits)</label>
+                    <input type="password" id="githubToken" placeholder="ghp_xxxxxxxxxxxx">
+                </div>
+                <div class="form-group">
+                    <label>Max Depth</label>
+                    <select id="maxDepth">
+                        <option value="1">1 level</option>
+                        <option value="2" selected>2 levels</option>
+                        <option value="3">3 levels</option>
+                        <option value="5">5 levels</option>
+                        <option value="10">10 levels</option>
+                        <option value="0">Full depth</option>
+                    </select>
+                </div>
+            </div>
+            <div class="token-info">
+                <strong>🔑 Tip:</strong> For private repositories or higher API limits, add a 
+                <a href="https://github.com/settings/tokens" target="_blank">GitHub personal access token</a>
+            </div>
+            <div class="button-group">
+                <button class="btn btn-primary" onclick="analyzeRepository()">
+                    <span>📊</span> Analyze Repository
+                </button>
+                <button class="btn btn-secondary" onclick="clearResults()">
+                    <span>🗑️</span> Clear Results
+                </button>
+                <button class="btn btn-secondary" onclick="exportAnalysis()">
+                    <span>📥</span> Export Analysis
+                </button>
+                <button class="btn btn-secondary" onclick="refreshData()">
+                    <span>🔄</span> Refresh
+                </button>
+            </div>
+            <div class="progress-bar" id="progressBar">
+                <div class="progress-fill" id="progressFill" style="width: 0%"></div>
+            </div>
+        </div>
+
+        <div class="stats-grid" id="statsGrid">
+            <div class="stat-card">
+                <h3>Total Files</h3>
+                <div class="stat-value" id="totalFiles">-</div>
+                <div class="stat-sub" id="totalFilesSub"></div>
+            </div>
+            <div class="stat-card">
+                <h3>Total Folders</h3>
+                <div class="stat-value" id="totalFolders">-</div>
+            </div>
+            <div class="stat-card">
+                <h3>Repository Size</h3>
+                <div class="stat-value" id="totalSize">-</div>
+                <div class="stat-sub" id="sizeSub"></div>
+            </div>
+            <div class="stat-card">
+                <h3>File Types</h3>
+                <div class="stat-value" id="fileTypes">-</div>
+                <div class="stat-sub" id="topExtension"></div>
+            </div>
+            <div class="stat-card">
+                <h3>Large Files</h3>
+                <div class="stat-value" id="largeFiles">-</div>
+                <div class="stat-sub">> 1MB</div>
+            </div>
+            <div class="stat-card">
+                <h3>API Rate Limit</h3>
+                <div class="stat-value" id="rateLimit">-</div>
+                <div class="stat-sub" id="rateReset"></div>
+            </div>
+        </div>
+
+        <div class="tab-container">
+            <div class="tab-header">
+                <button class="tab-btn active" onclick="switchTab('directory')">📁 Directory Tree</button>
+                <button class="tab-btn" onclick="switchTab('files')">📄 File List</button>
+                <button class="tab-btn" onclick="switchTab('analysis')">📊 Analysis</button>
+                <button class="tab-btn" onclick="switchTab('duplicates')">🔄 Duplicates</button>
+                <button class="tab-btn" onclick="switchTab('insights')">💡 Insights</button>
+            </div>
+
+            <!-- Directory Tree Tab -->
+            <div class="tab-content active" id="directoryTab">
+                <div class="filter-bar">
+                    <div class="filter-group">
+                        <label>🔍 Filter:</label>
+                        <input type="text" id="treeFilter" placeholder="Filter files/folders..." onkeyup="filterTree()">
+                    </div>
+                    <div class="filter-group">
+                        <label>Show:</label>
+                        <select id="treeViewType" onchange="updateTreeView()">
+                            <option value="all">All Items</option>
+                            <option value="files">Files Only</option>
+                            <option value="folders">Folders Only</option>
+                        </select>
+                    </div>
+                    <div class="filter-group">
+                        <button class="btn btn-secondary" onclick="expandAll()">Expand All</button>
+                        <button class="btn btn-secondary" onclick="collapseAll()">Collapse All</button>
+                    </div>
+                </div>
+                <div class="breadcrumb" id="treeBreadcrumb">
+                    <a onclick="navigateTo('root')">root</a>
+                </div>
+                <div class="tree-view" id="directoryTree">
+                    <div class="loading">Enter repository details and click Analyze</div>
+                </div>
+            </div>
+
+            <!-- File List Tab -->
+            <div class="tab-content" id="filesTab">
+                <div class="filter-bar">
+                    <div class="filter-group">
+                        <label>Search:</label>
+                        <input type="text" id="fileSearch" placeholder="Search files..." onkeyup="filterFiles()">
+                    </div>
+                    <div class="filter-group">
+                        <label>File Type:</label>
+                        <select id="fileTypeFilter" onchange="filterFiles()">
+                            <option value="all">All Types</option>
+                        </select>
+                    </div>
+                    <div class="filter-group">
+                        <label>Min Size (KB):</label>
+                        <input type="number" id="minSizeFilter" onchange="filterFiles()">
+                    </div>
+                    <div class="filter-group">
+                        <button class="btn btn-secondary" onclick="sortFiles('size')">Sort by Size</button>
+                        <button class="btn btn-secondary" onclick="sortFiles('name')">Sort by Name</button>
+                    </div>
+                </div>
+                <div class="table-responsive">
+                    <table id="filesTable">
+                        <thead>
+                            <tr>
+                                <th onclick="sortFileTable(0)">File Path</th>
+                                <th onclick="sortFileTable(1)">Type</th>
+                                <th onclick="sortFileTable(2)">Size</th>
+                                <th onclick="sortFileTable(3)">Last Commit</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="filesTableBody">
+                            <tr><td colspan="5" class="loading">No data available</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Analysis Tab -->
+            <div class="tab-content" id="analysisTab">
+                <div class="stats-grid" style="grid-template-columns: repeat(2, 1fr);">
+                    <div class="stat-card">
+                        <h3>File Types Distribution</h3>
+                        <div id="fileTypeChart" class="chart-container"></div>
+                        <div id="fileTypeList"></div>
+                    </div>
+                    <div class="stat-card">
+                        <h3>Size Distribution</h3>
+                        <div id="sizeChart" class="chart-container"></div>
+                        <div id="sizeStats"></div>
+                    </div>
+                </div>
+                
+                <div class="stat-card">
+                    <h3>Top 10 Largest Files</h3>
+                    <div class="table-responsive">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>File</th>
+                                    <th>Size</th>
+                                    <th>Type</th>
+                                    <th>Path</th>
+                                </tr>
+                            </thead>
+                            <tbody id="largestFilesTable"></tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <div class="stat-card">
+                    <h3>Language Breakdown</h3>
+                    <div class="language-bar" id="languageBar"></div>
+                    <div id="languageList"></div>
+                </div>
+            </div>
+
+            <!-- Duplicates Tab -->
+            <div class="tab-content" id="duplicatesTab">
+                <div class="filter-bar">
+                    <div class="filter-group">
+                        <label>Min file size:</label>
+                        <input type="number" id="duplicateMinSize" value="1024" onchange="findDuplicates()">
+                    </div>
+                    <div class="filter-group">
+                        <button class="btn btn-primary" onclick="findDuplicates()">Find Duplicates</button>
+                    </div>
+                </div>
+                <div id="duplicateResults"></div>
+            </div>
+
+            <!-- Insights Tab -->
+            <div class="tab-content" id="insightsTab">
+                <div class="stats-grid" style="grid-template-columns: repeat(2, 1fr);">
+                    <div class="stat-card">
+                        <h3>💡 Recommendations</h3>
+                        <div id="recommendations"></div>
+                    </div>
+                    <div class="stat-card">
+                        <h3>📈 Repository Health</h3>
+                        <div id="healthMetrics"></div>
+                    </div>
+                </div>
+                
+                <div class="stat-card">
+                    <h3>📊 Directory Statistics</h3>
+                    <div id="directoryStats"></div>
+                </div>
+
+                <div class="stat-card">
+                    <h3>⏰ Recent Activity</h3>
+                    <div id="recentActivity"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let repoData = null;
+        let fileList = [];
+        let currentPath = '';
+        let accessToken = '';
+        let rateLimit = { limit: 60, remaining: 60, reset: 0 };
+
+        // Language colors for visualization
+        const languageColors = {
+            'JavaScript': '#f1e05a',
+            'Python': '#3572A5',
+            'Java': '#b07219',
+            'TypeScript': '#2b7489',
+            'HTML': '#e34c26',
+            'CSS': '#563d7c',
+            'PHP': '#4F5D95',
+            'Ruby': '#701516',
+            'C++': '#f34b7d',
+            'C': '#555555',
+            'Go': '#00ADD8',
+            'Rust': '#dea584',
+            'Swift': '#ffac45',
+            'Kotlin': '#F18E33',
+            'Dart': '#00B4AB',
+            'Shell': '#89e051',
+            'Unknown': '#cccccc'
+        };
+
+        async function makeGitHubRequest(url) {
+            const headers = {
+                'Accept': 'application/vnd.github.v3+json'
+            };
+            
+            if (accessToken) {
+                headers['Authorization'] = `token ${accessToken}`;
+            }
+
+            try {
+                const response = await fetch(url, { headers });
+                
+                // Update rate limit info
+                rateLimit.limit = parseInt(response.headers.get('X-RateLimit-Limit') || '60');
+                rateLimit.remaining = parseInt(response.headers.get('X-RateLimit-Remaining') || '0');
+                rateLimit.reset = parseInt(response.headers.get('X-RateLimit-Reset') || '0');
+                updateRateLimit();
+
+                if (!response.ok) {
+                    if (response.status === 403 && rateLimit.remaining === 0) {
+                        throw new Error('API rate limit exceeded. Add a token or try again later.');
+                    }
+                    if (response.status === 404) {
+                        throw new Error('Repository not found');
+                    }
+                    throw new Error(`GitHub API error: ${response.status}`);
+                }
+
+                return await response.json();
+            } catch (error) {
+                throw error;
+            }
+        }
+
+        async function analyzeRepository() {
+            const owner = document.getElementById('repoOwner').value.trim();
+            const repo = document.getElementById('repoName').value.trim();
+            const branch = document.getElementById('repoBranch').value.trim();
+            accessToken = document.getElementById('githubToken').value.trim();
+
+            if (!owner || !repo) {
+                showError('Please enter repository owner and name');
+                return;
+            }
+
+            showLoading();
+
+            try {
+                // Get repository info
+                const repoInfo = await makeGitHubRequest(`https://api.github.com/repos/${owner}/${repo}`);
+                
+                // Get branch info
+                let branchInfo;
+                try {
+                    branchInfo = await makeGitHubRequest(`https://api.github.com/repos/${owner}/${repo}/branches/${branch}`);
+                } catch {
+                    branchInfo = await makeGitHubRequest(`https://api.github.com/repos/${owner}/${repo}/branches/main`);
+                }
+
+                // Get the tree
+                const tree = await fetchFullTree(owner, repo, branchInfo.commit.sha);
+                
+                repoData = {
+                    info: repoInfo,
+                    branch: branchInfo,
+                    tree: tree
+                };
+
+                processTreeData();
+                updateAllTabs();
+                hideLoading();
+                showSuccess('Repository analyzed successfully!');
+
+            } catch (error) {
+                hideLoading();
+                showError(error.message);
+            }
+        }
+
+        async function fetchFullTree(owner, repo, sha) {
+            const maxDepth = parseInt(document.getElementById('maxDepth').value);
+            let tree = [];
+            let page = 1;
+            let hasMore = true;
+
+            while (hasMore) {
+                const response = await makeGitHubRequest(
+                    `https://api.github.com/repos/${owner}/${repo}/git/trees/${sha}?recursive=1&per_page=100&page=${page}`
+                );
+                
+                tree = tree.concat(response.tree);
+                
+                if (response.truncated || response.tree.length === 100) {
+                    page++;
+                } else {
+                    hasMore = false;
+                }
+
+                // Update progress
+                const progress = (page * 100) / (response.truncated ? 1000 : 100);
+                document.getElementById('progressFill').style.width = Math.min(progress, 100) + '%';
+            }
+
+            return tree;
+        }
+
+        function processTreeData() {
+            if (!repoData || !repoData.tree) return;
+
+            fileList = repoData.tree.map(item => {
+                const pathParts = item.path.split('/');
+                const fileName = pathParts.pop();
+                const extension = fileName.includes('.') ? fileName.split('.').pop().toLowerCase() : 'no-ext';
+                
+                return {
+                    ...item,
+                    name: fileName,
+                    folder: pathParts.join('/') || '/',
+                    extension: extension,
+                    size: item.size || 0,
+                    type: item.type
+                };
+            });
+
+            updateStats();
+            buildDirectoryTree();
+            updateFileList();
+            updateAnalysis();
+        }
+
+        function buildDirectoryTree() {
+            const tree = document.getElementById('directoryTree');
+            const filter = document.getElementById('treeFilter').value.toLowerCase();
+            const viewType = document.getElementById('treeViewType').value;
+            
+            if (!fileList.length) {
+                tree.innerHTML = '<div class="loading">No files found</div>';
+                return;
+            }
+
+            const root = buildTreeStructure(fileList);
+            const html = renderTreeFolder(root, '', 0, filter, viewType);
+            tree.innerHTML = html || '<div class="loading">No items match filter</div>';
+        }
+
+        function buildTreeStructure(files) {
+            const root = { name: 'root', path: '', children: {}, files: [] };
+            
+            files.forEach(file => {
+                if (file.type === 'blob') {
+                    const pathParts = file.path.split('/');
+                    let current = root;
+                    
+                    for (let i = 0; i < pathParts.length - 1; i++) {
+                        const folderName = pathParts[i];
+                        if (!current.children[folderName]) {
+                            current.children[folderName] = {
+                                name: folderName,
+                                path: pathParts.slice(0, i + 1).join('/'),
+                                children: {},
+                                files: []
+                            };
+                        }
+                        current = current.children[folderName];
+                    }
+                    
+                    current.files.push(file);
+                }
+            });
+            
+            return root;
+        }
+
+        function renderTreeFolder(folder, path, level, filter, viewType) {
+            let html = '';
+            const indent = level * 20;
+            
+            // Sort folders and files
+            const sortedFolders = Object.keys(folder.children).sort();
+            const sortedFiles = folder.files.sort((a, b) => a.name.localeCompare(b.name));
+
+            // Render folders
+            for (const folderName of sortedFolders) {
+                const childFolder = folder.children[folderName];
+                const folderPath = childFolder.path;
+                
+                if (filter && !folderName.toLowerCase().includes(filter)) {
+                    // Check if any children match filter
+                    const hasMatchingChild = checkFolderForMatch(childFolder, filter);
+                    if (!hasMatchingChild) continue;
+                }
+
+                if (viewType !== 'files') {
+                    html += `
+                        <div class="tree-folder" style="margin-left: ${indent}px">
+                            <div class="tree-folder-header" onclick="toggleFolder(this)">
+                                <i>📁</i>
+                                <span>${folderName}</span>
+                                <span class="file-size">${countFolderItems(childFolder)} items</span>
+                            </div>
+                            <div class="tree-folder-content">
+                                ${renderTreeFolder(childFolder, folderPath, level + 1, filter, viewType)}
+                            </div>
+                        </div>
+                    `;
+                }
+            }
+
+            // Render files
+            if (viewType !== 'folders') {
+                for (const file of sortedFiles) {
+                    if (filter && !file.name.toLowerCase().includes(filter)) continue;
+                    
+                    const fileType = getFileTypeClass(file.extension);
+                    const size = formatBytes(file.size);
+                    
+                    html += `
+                        <div class="tree-file" style="margin-left: ${indent}px">
+                            <span>📄</span>
+                            <span>${file.name}</span>
+                            <span class="file-type-badge type-${fileType}">${file.extension}</span>
+                            <span class="file-size">${size}</span>
+                        </div>
+                    `;
+                }
+            }
+
+            return html;
+        }
+
+        function checkFolderForMatch(folder, filter) {
+            // Check folder name
+            if (folder.name.toLowerCase().includes(filter)) return true;
+            
+            // Check files in this folder
+            for (const file of folder.files) {
+                if (file.name.toLowerCase().includes(filter)) return true;
+            }
+            
+            // Check subfolders
+            for (const subFolder of Object.values(folder.children)) {
+                if (checkFolderForMatch(subFolder, filter)) return true;
+            }
+            
+            return false;
+        }
+
+        function countFolderItems(folder) {
+            let count = folder.files.length;
+            for (const subFolder of Object.values(folder.children)) {
+                count += countFolderItems(subFolder);
+            }
+            return count;
+        }
+
+        function updateFileList() {
+            const tbody = document.getElementById('filesTableBody');
+            const filter = document.getElementById('fileSearch').value.toLowerCase();
+            const typeFilter = document.getElementById('fileTypeFilter').value;
+            const minSize = parseInt(document.getElementById('minSizeFilter').value) * 1024 || 0;
+
+            let files = fileList.filter(f => f.type === 'blob');
+            
+            // Apply filters
+            if (filter) {
+                files = files.filter(f => f.name.toLowerCase().includes(filter) || f.path.toLowerCase().includes(filter));
+            }
+            
+            if (typeFilter !== 'all') {
+                files = files.filter(f => f.extension === typeFilter);
+            }
+            
+            if (minSize > 0) {
+                files = files.filter(f => f.size >= minSize);
+            }
+
+            // Update type filter dropdown
+            updateTypeFilterDropdown();
+
+            let html = '';
+            files.forEach(file => {
+                const fileType = getFileTypeClass(file.extension);
+                html += `
+                    <tr>
+                        <td>${file.path}</td>
+                        <td><span class="file-type-badge type-${fileType}">${file.extension}</span></td>
+                        <td>${formatBytes(file.size)}</td>
+                        <td>-</td>
+                        <td>
+                            <button class="btn btn-secondary" style="padding: 4px 8px;" onclick="viewFile('${file.path}')">View</button>
+                            <button class="btn btn-secondary" style="padding: 4px 8px;" onclick="copyPath('${file.path}')">Copy</button>
+                        </td>
+                    </tr>
+                `;
+            });
+
+            tbody.innerHTML = html || '<tr><td colspan="5" class="loading">No files found</td></tr>';
+        }
+
+        function updateTypeFilterDropdown() {
+            const types = new Set(fileList.filter(f => f.type === 'blob').map(f => f.extension));
+            const select = document.getElementById('fileTypeFilter');
+            const currentValue = select.value;
+            
+            let options = '<option value="all">All Types</option>';
+            Array.from(types).sort().forEach(type => {
+                options += `<option value="${type}" ${type === currentValue ? 'selected' : ''}>.${type}</option>`;
+            });
+            
+            select.innerHTML = options;
+        }
+
+        function updateStats() {
+            const files = fileList.filter(f => f.type === 'blob');
+            const folders = new Set(fileList.filter(f => f.type === 'tree').map(f => f.path));
+            
+            const totalSize = files.reduce((sum, f) => sum + (f.size || 0), 0);
+            const largeFiles = files.filter(f => f.size > 1024 * 1024).length;
+            
+            const extensions = {};
+            files.forEach(f => {
+                extensions[f.extension] = (extensions[f.extension] || 0) + 1;
+            });
+            
+            const topExt = Object.entries(extensions).sort((a, b) => b[1] - a[1])[0] || ['-', 0];
+
+            document.getElementById('totalFiles').textContent = files.length;
+            document.getElementById('totalFilesSub').textContent = `${(files.length / 1000).toFixed(1)}k items`;
+            document.getElementById('totalFolders').textContent = folders.size;
+            document.getElementById('totalSize').textContent = formatBytes(totalSize);
+            document.getElementById('sizeSub').textContent = `${(totalSize / (1024*1024)).toFixed(2)} MB`;
+            document.getElementById('fileTypes').textContent = Object.keys(extensions).length;
+            document.getElementById('topExtension').textContent = `.${topExt[0]}`;
+            document.getElementById('largeFiles').textContent = largeFiles;
+        }
+
+        function updateRateLimit() {
+            document.getElementById('rateLimit').textContent = rateLimit.remaining + ' / ' + rateLimit.limit;
+            
+            const resetDate = new Date(rateLimit.reset * 1000);
+            const minutes = Math.floor((rateLimit.reset * 1000 - Date.now()) / 60000);
+            document.getElementById('rateReset').textContent = `Resets in ${minutes} min`;
+        }
+
+        function updateAnalysis() {
+            const files = fileList.filter(f => f.type === 'blob');
+            
+            // File type distribution
+            const extensions = {};
+            let totalSize = 0;
+            
+            files.forEach(f => {
+                extensions[f.extension] = (extensions[f.extension] || 0) + 1;
+                totalSize += f.size || 0;
+            });
+
+            // Update file type list
+            const fileTypeList = document.getElementById('fileTypeList');
+            let typeHtml = '';
+            Object.entries(extensions)
+                .sort((a, b) => b[1] - a[1])
+                .slice(0, 10)
+                .forEach(([ext, count]) => {
+                    const percentage = ((count / files.length) * 100).toFixed(1);
+                    typeHtml += `
+                        <div class="language-item">
+                            <span class="language-color" style="background: ${getExtensionColor(ext)}"></span>
+                            <span>.${ext}</span>
+                            <span>${count} files (${percentage}%)</span>
+                        </div>
+                    `;
+                });
+            fileTypeList.innerHTML = typeHtml;
+
+            // Largest files
+            const largestFiles = files
+                .filter(f => f.size > 0)
+                .sort((a, b) => (b.size || 0) - (a.size || 0))
+                .slice(0, 10);
+
+            const largestTable = document.getElementById('largestFilesTable');
+            let largestHtml = '';
+            largestFiles.forEach(f => {
+                largestHtml += `
+                    <tr>
+                        <td>${f.name}</td>
+                        <td>${formatBytes(f.size)}</td>
+                        <td><span class="file-type-badge type-${getFileTypeClass(f.extension)}">${f.extension}</span></td>
+                        <td>${f.folder}</td>
+                    </tr>
+                `;
+            });
+            largestTable.innerHTML = largestHtml;
+
+            // Language bar
+            updateLanguageBar(extensions);
+        }
+
+        function updateLanguageBar(extensions) {
+            const total = Object.values(extensions).reduce((a, b) => a + b, 0);
+            const languageBar = document.getElementById('languageBar');
+            const languageList = document.getElementById('languageList');
+            
+            let barHtml = '';
+            let listHtml = '';
+            
+            Object.entries(extensions)
+                .sort((a, b) => b[1] - a[1])
+                .slice(0, 8)
+                .forEach(([ext, count]) => {
+                    const percentage = (count / total) * 100;
+                    const color = getExtensionColor(ext);
+                    
+                    barHtml += `<div class="language-segment" style="width: ${percentage}%; background: ${color};"></div>`;
+                    
+                    listHtml += `
+                        <div class="language-item">
+                            <span class="language-color" style="background: ${color}"></span>
+                            <span>.${ext}</span>
+                            <span>${count} files (${percentage.toFixed(1)}%)</span>
+                        </div>
+                    `;
+                });
+            
+            languageBar.innerHTML = barHtml || '<div>No data</div>';
+            languageList.innerHTML = listHtml || '<div>No languages detected</div>';
+        }
+
+        function getExtensionColor(ext) {
+            const languageMap = {
+                'js': '#f1e05a',
+                'jsx': '#f1e05a',
+                'ts': '#2b7489',
+                'tsx': '#2b7489',
+                'py': '#3572A5',
+                'java': '#b07219',
+                'html': '#e34c26',
+                'css': '#563d7c',
+                'scss': '#563d7c',
+                'php': '#4F5D95',
+                'rb': '#701516',
+                'cpp': '#f34b7d',
+                'c': '#555555',
+                'go': '#00ADD8',
+                'rs': '#dea584',
+                'swift': '#ffac45',
+                'kt': '#F18E33',
+                'dart': '#00B4AB',
+                'sh': '#89e051',
+                'json': '#cccccc',
+                'md': '#ffffff',
+                'txt': '#ffffff'
+            };
+            
+            return languageMap[ext] || '#cccccc';
+        }
+
+        function findDuplicates() {
+            const minSize = parseInt(document.getElementById('duplicateMinSize').value) || 0;
+            const files = fileList.filter(f => f.type === 'blob' && f.size >= minSize);
+            
+            // Group by size and name pattern
+            const groups = {};
+            files.forEach(file => {
+                const key = `${file.size}_${file.name}`;
+                if (!groups[key]) groups[key] = [];
+                groups[key].push(file);
+            });
+
+            const duplicates = Object.values(groups).filter(g => g.length > 1);
+            
+            const results = document.getElementById('duplicateResults');
+            
+            if (duplicates.length === 0) {
+                results.innerHTML = '<div class="success-message">No duplicate files found!</div>';
+                return;
+            }
+
+            let html = `<div class="size-warning">Found ${duplicates.length} duplicate groups</div>`;
+            
+            duplicates.forEach(group => {
+                const totalSize = group[0].size * (group.length - 1);
+                html += `
+                    <div class="duplicate-group">
+                        <h4>${group[0].name} (${formatBytes(group[0].size)})</h4>
+                        <p>Found in ${group.length} locations | Wasted space: ${formatBytes(totalSize)}</p>
+                        ${group.map(f => `
+                            <div class="duplicate-file">
+                                <span>📄</span>
+                                <span>${f.path}</span>
+                                <button class="btn btn-secondary" style="margin-left: auto; padding: 2px 8px;" onclick="copyPath('${f.path}')">Copy</button>
+                            </div>
+                        `).join('')}
+                    </div>
+                `;
+            });
+            
+            results.innerHTML = html;
+        }
+
+        function getFileTypeClass(extension) {
+            const imageExts = ['jpg', 'jpeg', 'png', 'gif', 'svg', 'webp', 'ico'];
+            const codeExts = ['js', 'jsx', 'ts', 'tsx', 'py', 'java', 'cpp', 'c', 'h', 'php', 'rb', 'go', 'rs'];
+            const docExts = ['md', 'txt', 'pdf', 'doc', 'docx', 'xls', 'xlsx'];
+            const configExts = ['json', 'yml', 'yaml', 'xml', 'toml', 'ini', 'conf'];
+            const archiveExts = ['zip', 'tar', 'gz', 'rar', '7z'];
+            
+            if (imageExts.includes(extension)) return 'image';
+            if (codeExts.includes(extension)) return 'code';
+            if (docExts.includes(extension)) return 'doc';
+            if (configExts.includes(extension)) return 'config';
+            if (archiveExts.includes(extension)) return 'archive';
+            return 'code';
+        }
+
+        function formatBytes(bytes) {
+            if (bytes === 0) return '0 B';
+            const k = 1024;
+            const sizes = ['B', 'KB', 'MB', 'GB'];
+            const i = Math.floor(Math.log(bytes) / Math.log(k));
+            return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+        }
+
+        // UI Helper Functions
+        function showLoading() {
+            document.getElementById('directoryTree').innerHTML = '<div class="loading">Fetching repository data...</div>';
+        }
+
+        function hideLoading() {
+            // Loading removed by content update
+        }
+
+        function showError(message) {
+            const tree = document.getElementById('directoryTree');
+            tree.innerHTML = `<div class="error-message">❌ ${message}</div>`;
+        }
+
+        function showSuccess(message) {
+            const tree = document.getElementById('directoryTree');
+            // Could add a temporary success message
+        }
+
+        function clearResults() {
+            repoData = null;
+            fileList = [];
+            document.getElementById('directoryTree').innerHTML = '<div class="loading">Enter repository details and click Analyze</div>';
+            document.getElementById('filesTableBody').innerHTML = '<tr><td colspan="5" class="loading">No data available</td></tr>';
+            
+            // Reset stats
+            document.getElementById('totalFiles').textContent = '-';
+            document.getElementById('totalFolders').textContent = '-';
+            document.getElementById('totalSize').textContent = '-';
+            document.getElementById('fileTypes').textContent = '-';
+            document.getElementById('largeFiles').textContent = '-';
+            
+            document.getElementById('progressFill').style.width = '0%';
+        }
+
+        function refreshData() {
+            if (repoData) {
+                analyzeRepository();
+            }
+        }
+
+        function switchTab(tabName) {
+            // Update tab buttons
+            document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+            document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
+            
+            // Activate selected tab
+            event.target.classList.add('active');
+            document.getElementById(tabName + 'Tab').classList.add('active');
+            
+            // Update tab content if needed
+            if (tabName === 'duplicates') {
+                findDuplicates();
+            }
+        }
+
+        function toggleFolder(element) {
+            element.classList.toggle('collapsed');
+            const content = element.nextElementSibling;
+            content.classList.toggle('collapsed');
+        }
+
+        function expandAll() {
+            document.querySelectorAll('.tree-folder-content').forEach(el => {
+                el.classList.remove('collapsed');
+            });
+            document.querySelectorAll('.tree-folder-header').forEach(el => {
+                el.classList.remove('collapsed');
+            });
+        }
+
+        function collapseAll() {
+            document.querySelectorAll('.tree-folder-content').forEach(el => {
+                el.classList.add('collapsed');
+            });
+            document.querySelectorAll('.tree-folder-header').forEach(el => {
+                el.classList.add('collapsed');
+            });
+        }
+
+        function filterTree() {
+            buildDirectoryTree();
+        }
+
+        function updateTreeView() {
+            buildDirectoryTree();
+        }
+
+        function filterFiles() {
+            updateFileList();
+        }
+
+        function sortFiles(type) {
+            if (type === 'size') {
+                fileList.sort((a, b) => (b.size || 0) - (a.size || 0));
+            } else {
+                fileList.sort((a, b) => a.name.localeCompare(b.name));
+            }
+            updateFileList();
+        }
+
+        function sortFileTable(column) {
+            // Implement table sorting
+        }
+
+        function navigateTo(path) {
+            currentPath = path;
+            // Update breadcrumb and tree view
+        }
+
+        function viewFile(path) {
+            const file = fileList.find(f => f.path === path);
+            if (file) {
+                window.open(`https://github.com/${document.getElementById('repoOwner').value}/${document.getElementById('repoName').value}/blob/${document.getElementById('repoBranch').value}/${path}`, '_blank');
+            }
+        }
+
+        function copyPath(path) {
+            navigator.clipboard.writeText(path);
+            alert('Path copied to clipboard!');
+        }
+
+        function exportAnalysis() {
+            const data = {
+                repository: {
+                    owner: document.getElementById('repoOwner').value,
+                    name: document.getElementById('repoName').value,
+                    branch: document.getElementById('repoBranch').value
+                },
+                stats: {
+                    totalFiles: fileList.filter(f => f.type === 'blob').length,
+                    totalFolders: new Set(fileList.filter(f => f.type === 'tree').map(f => f.path)).size,
+                    totalSize: fileList.reduce((sum, f) => sum + (f.size || 0), 0)
+                },
+                files: fileList,
+                timestamp: new Date().toISOString()
+            };
+
+            const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `github-analysis-${data.repository.owner}-${data.repository.name}.json`;
+            a.click();
+            URL.revokeObjectURL(url);
+        }
+
+        function updateAllTabs() {
+            buildDirectoryTree();
+            updateFileList();
+            updateAnalysis();
+        }
+
+        // Initialize with default values if needed
+        document.addEventListener('DOMContentLoaded', function() {
+            // Set default repository
+            document.getElementById('repoOwner').value = 'facebook';
+            document.getElementById('repoName').value = 'react';
+            document.getElementById('repoBranch').value = 'main';
+        });
+    </script>
+</body>
+</html>
