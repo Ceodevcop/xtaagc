@@ -1,112 +1,28 @@
 {
   "version": 2,
-  "builds": [
-    {
-      "src": "public/**/*.html",
-      "use": "@vercel/static"
-    },
-    {
-      "src": "admin/**/*.html",
-      "use": "@vercel/static"
-    },
-    {
-      "src": "api/**/*.js",
-      "use": "@vercel/node"
-    }
-  ],
+
   "routes": [
-    // ============================================
-    // PUBLIC ROUTES - Map root to /public
-    // ============================================
-    {
-      "src": "/",
-      "dest": "/public/index.html"
-    },
-    {
-      "src": "/index",
-      "dest": "/public/index.html"
-    },
-    {
-      "src": "/home",
-      "dest": "/public/index.html"
-    },
-    {
-      "src": "/login",
-      "dest": "/public/login.html"
-    },
-    {
-      "src": "/register",
-      "dest": "/public/register.html"
-    },
-    {
-      "src": "/complete-profile",
-      "dest": "/public/complete-profile.html"
-    },
-    {
-      "src": "/events",
-      "dest": "/public/events.html"
-    },
-    
-    // ============================================
-    // ADMIN ROUTES
-    // ============================================
-    {
-      "src": "/admin/dashboard",
-      "dest": "/admin/dashboard.html"
-    },
-    {
-      "src": "/admin/setup",
-      "dest": "/admin/setup.html"
-    },
-    
-    // ============================================
-    // ADMIN LOGIN
-    // ============================================
-    {
-      "src": "/xtaagc/admin-login",
-      "dest": "/xtaagc/admin-login.html"
-    },
-    
-    // ============================================
-    // API ROUTES
-    // ============================================
-    {
-      "src": "/api/(.*)",
-      "dest": "/api/$1"
-    },
-    
-    // ============================================
-    // STATIC ASSETS
-    // ============================================
-    {
-      "src": "/css/(.*)",
-      "dest": "/css/$1"
-    },
-    {
-      "src": "/js/(.*)",
-      "dest": "/js/$1"
-    },
-    {
-      "src": "/assets/(.*)",
-      "dest": "/assets/$1"
-    },
-    {
-      "src": "/admin/css/(.*)",
-      "dest": "/admin/css/$1"
-    },
-    {
-      "src": "/admin/js/(.*)",
-      "dest": "/admin/js/$1"
-    },
-    
-    // ============================================
-    // FALLBACK - 404 PAGE
-    // ============================================
-    {
-      "src": "/(.*)",
-      "dest": "/public/404.html"
-    }
+    { "handle": "filesystem" },
+
+    { "src": "^/$", "dest": "/public/index.html" },
+    { "src": "^/index$", "dest": "/public/index.html" },
+    { "src": "^/home$", "dest": "/public/index.html" },
+
+    { "src": "^/login$", "dest": "/public/login.html" },
+    { "src": "^/register$", "dest": "/public/register.html" },
+    { "src": "^/complete-profile$", "dest": "/public/complete-profile.html" },
+    { "src": "^/events$", "dest": "/public/events.html" },
+
+    { "src": "^/admin/dashboard$", "dest": "/admin/dashboard.html" },
+    { "src": "^/admin/setup$", "dest": "/admin/setup.html" },
+
+    { "src": "^/xtaagc/admin-login$", "dest": "/xtaagc/admin-login.html" },
+
+    { "src": "^/api/(.*)", "dest": "/api/$1" },
+
+    { "src": "/(.*)", "dest": "/public/404.html" }
   ],
+
   "cleanUrls": true,
   "trailingSlash": false
 }
