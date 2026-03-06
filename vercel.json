@@ -4,12 +4,251 @@
     {
       "src": "api/**/*.js",
       "use": "@vercel/node"
+    },
+    {
+      "src": "public/**/*.html",
+      "use": "@vercel/static"
+    },
+    {
+      "src": "public/**/*.js",
+      "use": "@vercel/static"
+    },
+    {
+      "src": "public/**/*.css",
+      "use": "@vercel/static"
     }
   ],
   "routes": [
+    // ============================================
+    // API ROUTES - Single file handlers
+    // ============================================
     {
-      "src": "/api/(.*)",
-      "dest": "/api/$1"
+      "src": "/api/auth(?:/(.*))?",
+      "dest": "/api/auth.js"
+    },
+    {
+      "src": "/api/users(?:/(.*))?",
+      "dest": "/api/users.js"
+    },
+    {
+      "src": "/api/investments(?:/(.*))?",
+      "dest": "/api/investments.js"
+    },
+    {
+      "src": "/api/transactions(?:/(.*))?",
+      "dest": "/api/transactions.js"
+    },
+    {
+      "src": "/api/events(?:/(.*))?",
+      "dest": "/api/events.js"
+    },
+    {
+      "src": "/api/reports(?:/(.*))?",
+      "dest": "/api/reports.js"
+    },
+    {
+      "src": "/api/test(?:/(.*))?",
+      "dest": "/api/test.js"
+    },
+    {
+      "src": "/api/?",
+      "dest": "/api/index.js"
+    },
+    
+    // ============================================
+    // MAIN PUBLIC ROUTES
+    // ============================================
+    {
+      "src": "/",
+      "dest": "/public/index.html"
+    },
+    {
+      "src": "/index",
+      "dest": "/public/index.html"
+    },
+    {
+      "src": "/home",
+      "dest": "/public/index.html"
+    },
+    
+    // ============================================
+    // AUTH ROUTES
+    // ============================================
+    {
+      "src": "/login",
+      "dest": "/public/login.html"
+    },
+    {
+      "src": "/register",
+      "dest": "/public/register.html"
+    },
+    {
+      "src": "/complete-profile",
+      "dest": "/public/complete-profile.html"
+    },
+    
+    // ============================================
+    // ADMIN ROUTES
+    // ============================================
+    {
+      "src": "/admin",
+      "dest": "/public/admin/dashboard.html"
+    },
+    {
+      "src": "/admin/dashboard",
+      "dest": "/public/admin/dashboard.html"
+    },
+    {
+      "src": "/admin/setup",
+      "dest": "/public/admin/setup.html"
+    },
+    
+    // ============================================
+    // XTAAGC ADMIN LOGIN
+    // ============================================
+    {
+      "src": "/xtaagc/admin-login",
+      "dest": "/public/xtaagc/admin-login.html"
+    },
+    
+    // ============================================
+    // PROFILE ROUTES
+    // ============================================
+    {
+      "src": "/profile/client",
+      "dest": "/public/profile/client.html"
+    },
+    {
+      "src": "/profile/investor",
+      "dest": "/public/profile/investor.html"
+    },
+    {
+      "src": "/profile",
+      "dest": "/public/profile/client.html"
+    },
+    
+    // ============================================
+    // EVENTS PAGE
+    // ============================================
+    {
+      "src": "/events",
+      "dest": "/public/events.html"
+    },
+    
+    // ============================================
+    // STATIC ASSETS
+    // ============================================
+    {
+      "src": "/css/(.*)",
+      "dest": "/public/css/$1"
+    },
+    {
+      "src": "/js/(.*)",
+      "dest": "/public/js/$1"
+    },
+    {
+      "src": "/images/(.*)",
+      "dest": "/public/images/$1"
+    },
+    {
+      "src": "/assets/(.*)",
+      "dest": "/public/assets/$1"
+    },
+    {
+      "src": "/admin/css/(.*)",
+      "dest": "/public/admin/css/$1"
+    },
+    {
+      "src": "/admin/js/(.*)",
+      "dest": "/public/admin/js/$1"
+    },
+    {
+      "src": "/events/(.*)",
+      "dest": "/public/events/$1"
+    },
+    
+    // ============================================
+    // SITEMAP & ROBOTS
+    // ============================================
+    {
+      "src": "/sitemap.xml",
+      "dest": "/public/sitemap.xml"
+    },
+    {
+      "src": "/robots.txt",
+      "dest": "/public/robots.txt"
+    },
+    {
+      "src": "/favicon.ico",
+      "dest": "/public/favicon.ico"
+    },
+    
+    // ============================================
+    // FALLBACK - 404 PAGE
+    // ============================================
+    {
+      "src": "/(.*)",
+      "dest": "/public/404.html"
     }
-  ]
+  ],
+  "headers": [
+    {
+      "source": "/api/(.*)",
+      "headers": [
+        {
+          "key": "Access-Control-Allow-Origin",
+          "value": "*"
+        },
+        {
+          "key": "Access-Control-Allow-Methods",
+          "value": "GET, POST, PUT, DELETE, OPTIONS"
+        },
+        {
+          "key": "Access-Control-Allow-Headers",
+          "value": "Content-Type, Authorization, X-API-Key"
+        }
+      ]
+    },
+    {
+      "source": "**/*.html",
+      "headers": [
+        {
+          "key": "Content-Type",
+          "value": "text/html; charset=UTF-8"
+        },
+        {
+          "key": "Cache-Control",
+          "value": "no-cache, no-store, must-revalidate"
+        }
+      ]
+    },
+    {
+      "source": "**/*.js",
+      "headers": [
+        {
+          "key": "Content-Type",
+          "value": "application/javascript; charset=UTF-8"
+        },
+        {
+          "key": "Cache-Control",
+          "value": "public, max-age=31536000, immutable"
+        }
+      ]
+    },
+    {
+      "source": "**/*.css",
+      "headers": [
+        {
+          "key": "Content-Type",
+          "value": "text/css; charset=UTF-8"
+        },
+        {
+          "key": "Cache-Control",
+          "value": "public, max-age=31536000, immutable"
+        }
+      ]
+    }
+  ],
+  "cleanUrls": true,
+  "trailingSlash": false
 }
