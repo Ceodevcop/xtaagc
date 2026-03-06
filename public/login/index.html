@@ -1,0 +1,721 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login - TAAGC Global</title>
+    
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
+    
+    <!-- Fonts & Icons -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Global Styles -->
+    <link rel="stylesheet" href="/css/main.css">
+    <link rel="stylesheet" href="/css/auth.css">
+    
+    <style>
+        /* Additional login-specific styles */
+        .demo-credentials {
+            margin-top: 2rem;
+            padding: 1.5rem;
+            background: #f8fafc;
+            border-radius: var(--radius-lg);
+            border: 1px solid #e2e8f0;
+        }
+        
+        .demo-credentials h4 {
+            color: var(--primary);
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .credential-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0.75rem;
+            background: white;
+            border-radius: var(--radius-md);
+            margin-bottom: 0.5rem;
+            border: 1px solid #e2e8f0;
+        }
+        
+        .credential-item .role {
+            font-weight: 600;
+            color: var(--accent);
+        }
+        
+        .credential-item .email {
+            font-family: monospace;
+            color: var(--dark);
+        }
+        
+        .copy-btn {
+            background: none;
+            border: none;
+            color: var(--light);
+            cursor: pointer;
+            padding: 0.25rem 0.5rem;
+            transition: color 0.3s;
+        }
+        
+        .copy-btn:hover {
+            color: var(--accent);
+        }
+        
+        .two-factor-section {
+            margin-top: 1.5rem;
+            padding: 1.5rem;
+            background: #f8fafc;
+            border-radius: var(--radius-lg);
+            display: none;
+        }
+        
+        .two-factor-section.active {
+            display: block;
+            animation: slideInUp 0.3s ease;
+        }
+        
+        .otp-inputs {
+            display: flex;
+            gap: 0.5rem;
+            justify-content: center;
+            margin: 1.5rem 0;
+        }
+        
+        .otp-input {
+            width: 3rem;
+            height: 3.5rem;
+            text-align: center;
+            font-size: 1.5rem;
+            font-weight: 700;
+            border: 2px solid #e2e8f0;
+            border-radius: var(--radius-md);
+        }
+        
+        .otp-input:focus {
+            border-color: var(--accent);
+            outline: none;
+        }
+        
+        .resend-timer {
+            text-align: center;
+            color: var(--light);
+            font-size: 0.9rem;
+            margin: 1rem 0;
+        }
+        
+        .loading-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(255,255,255,0.9);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 9999;
+            display: none;
+        }
+        
+        .loading-overlay.active {
+            display: flex;
+        }
+        
+        .loading-content {
+            text-align: center;
+        }
+        
+        .loading-content .spinner {
+            margin-bottom: 1rem;
+        }
+        
+        @media (max-width: 480px) {
+            .otp-inputs {
+                gap: 0.25rem;
+            }
+            .otp-input {
+                width: 2.5rem;
+                height: 3rem;
+                font-size: 1.25rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Loading Overlay -->
+    <div class="loading-overlay" id="loadingOverlay">
+        <div class="loading-content">
+            <div class="spinner"></div>
+            <p id="loadingMessage">Loading...</p>
+        </div>
+    </div>
+
+    <div class="auth-container">
+        <div class="auth-card">
+            <!-- Header -->
+            <div class="auth-header">
+                <div class="auth-logo">
+                    <i class="fas fa-chart-line"></i>
+                </div>
+                <h1><span>TAAGC</span> Global</h1>
+                <p>Welcome back! Please login to your account</p>
+            </div>
+
+            <!-- Alert Message -->
+            <div id="loginAlert" class="auth-message" style="display: none;"></div>
+
+            <!-- Login Form -->
+            <form id="loginForm" class="auth-form">
+                <div class="form-group">
+                    <label><i class="fas fa-envelope"></i> Email Address</label>
+                    <input type="email" 
+                           class="form-control" 
+                           id="email" 
+                           placeholder="Enter your email"
+                           value="ceo@taagc.website"
+                           required>
+                </div>
+
+                <div class="form-group">
+                    <label><i class="fas fa-lock"></i> Password</label>
+                    <div class="password-field">
+                        <input type="password" 
+                               class="form-control" 
+                               id="password" 
+                               placeholder="Enter your password"
+                               required>
+                        <i class="fas fa-eye password-toggle" id="togglePassword" onclick="togglePassword()"></i>
+                    </div>
+                </div>
+
+                <div class="auth-options">
+                    <label class="remember-me">
+                        <input type="checkbox" id="rememberMe" checked>
+                        <span>Remember me</span>
+                    </label>
+                    <a href="#" class="forgot-link" onclick="handleForgotPassword(event)">Forgot Password?</a>
+                </div>
+
+                <button type="submit" class="auth-button" id="loginBtn">
+                    <i class="fas fa-sign-in-alt"></i>
+                    <span>Login to Dashboard</span>
+                </button>
+            </form>
+
+            <!-- Two-Factor Authentication Section -->
+            <div class="two-factor-section" id="twoFactorSection">
+                <h4 style="text-align: center; margin-bottom: 1rem;">
+                    <i class="fas fa-shield-alt" style="color: var(--accent);"></i>
+                    Two-Factor Authentication
+                </h4>
+                <p style="text-align: center; color: var(--light); margin-bottom: 1.5rem;">
+                    Enter the verification code sent to your device
+                </p>
+                
+                <div class="otp-inputs" id="otpInputs">
+                    <input type="text" class="otp-input" maxlength="1" pattern="[0-9]" inputmode="numeric">
+                    <input type="text" class="otp-input" maxlength="1" pattern="[0-9]" inputmode="numeric">
+                    <input type="text" class="otp-input" maxlength="1" pattern="[0-9]" inputmode="numeric">
+                    <input type="text" class="otp-input" maxlength="1" pattern="[0-9]" inputmode="numeric">
+                    <input type="text" class="otp-input" maxlength="1" pattern="[0-9]" inputmode="numeric">
+                    <input type="text" class="otp-input" maxlength="1" pattern="[0-9]" inputmode="numeric">
+                </div>
+                
+                <div class="resend-timer" id="timerDisplay"></div>
+                
+                <button class="auth-button" id="verify2FABtn" style="background: var(--accent);" onclick="verifyTwoFactor()">
+                    <i class="fas fa-check-circle"></i>
+                    <span>Verify Code</span>
+                </button>
+                
+                <p style="text-align: center; margin-top: 1rem;">
+                    <a href="#" onclick="cancelTwoFactor()" style="color: var(--light);">Back to Login</a>
+                </p>
+            </div>
+
+            <!-- Divider -->
+            <div class="auth-divider">
+                <span>OR</span>
+            </div>
+
+            <!-- Social Login -->
+            <div class="social-login">
+                <button class="social-btn" onclick="handleGoogleLogin()">
+                    <i class="fab fa-google"></i>
+                    <span>Google</span>
+                </button>
+                <button class="social-btn" onclick="handleGithubLogin()">
+                    <i class="fab fa-github"></i>
+                    <span>GitHub</span>
+                </button>
+            </div>
+
+            <!-- Demo Credentials (remove in production) -->
+            <div class="demo-credentials">
+                <h4><i class="fas fa-info-circle"></i> Demo Credentials</h4>
+                <div class="credential-item">
+                    <span class="role">Super Admin</span>
+                    <span class="email">ceo@taagc.website</span>
+                    <button class="copy-btn" onclick="copyEmail('ceo@taagc.website')" title="Copy email">
+                        <i class="far fa-copy"></i>
+                    </button>
+                </div>
+                <div class="credential-item">
+                    <span class="role">Admin</span>
+                    <span class="email">admin@taagc.website</span>
+                    <button class="copy-btn" onclick="copyEmail('admin@taagc.website')" title="Copy email">
+                        <i class="far fa-copy"></i>
+                    </button>
+                </div>
+                <div class="credential-item">
+                    <span class="role">Investor</span>
+                    <span class="email">investor@taagc.website</span>
+                    <button class="copy-btn" onclick="copyEmail('investor@taagc.website')" title="Copy email">
+                        <i class="far fa-copy"></i>
+                    </button>
+                </div>
+                <div class="credential-item">
+                    <span class="role">Client</span>
+                    <span class="email">client@taagc.website</span>
+                    <button class="copy-btn" onclick="copyEmail('client@taagc.website')" title="Copy email">
+                        <i class="far fa-copy"></i>
+                    </button>
+                </div>
+                <p style="font-size: 0.8rem; color: var(--light); margin-top: 0.5rem;">
+                    <i class="fas fa-lock"></i> Password: demo123 (for all accounts)
+                </p>
+            </div>
+
+            <!-- Footer -->
+            <div class="auth-footer">
+                <p>Don't have an account? <a href="/register">Create Account</a></p>
+                <p style="margin-top: 0.5rem;">
+                    <a href="/">Home</a> • 
+                    <a href="/privacy">Privacy</a> • 
+                    <a href="/terms">Terms</a>
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Global Scripts -->
+    <script src="/js/firebase-config.js"></script>
+    <script src="/js/utils.js"></script>
+    
+    <script>
+        // ============================================
+        // STATE MANAGEMENT
+        // ============================================
+        let twoFactorRequired = false;
+        let pendingUser = null;
+        let confirmationResult = null;
+        let timerInterval = null;
+
+        // ============================================
+        // TOGGLE PASSWORD VISIBILITY
+        // ============================================
+        window.togglePassword = function() {
+            const passwordInput = document.getElementById('password');
+            const toggleIcon = document.getElementById('togglePassword');
+            
+            if (passwordInput.type === 'password') {
+                passwordInput.type = 'text';
+                toggleIcon.classList.remove('fa-eye');
+                toggleIcon.classList.add('fa-eye-slash');
+            } else {
+                passwordInput.type = 'password';
+                toggleIcon.classList.remove('fa-eye-slash');
+                toggleIcon.classList.add('fa-eye');
+            }
+        };
+
+        // ============================================
+        // SHOW/HIDE LOADING
+        // ============================================
+        function showLoading(message = 'Loading...') {
+            document.getElementById('loadingMessage').textContent = message;
+            document.getElementById('loadingOverlay').classList.add('active');
+        }
+
+        function hideLoading() {
+            document.getElementById('loadingOverlay').classList.remove('active');
+        }
+
+        // ============================================
+        // SHOW ALERT
+        // ============================================
+        function showAlert(message, type) {
+            const alertDiv = document.getElementById('loginAlert');
+            alertDiv.className = `auth-message ${type}`;
+            alertDiv.innerHTML = `<i class="fas fa-${type === 'success' ? 'check-circle' : 'exclamation-circle'}"></i> ${message}`;
+            alertDiv.style.display = 'flex';
+            
+            setTimeout(() => {
+                alertDiv.style.display = 'none';
+            }, 5000);
+        }
+
+        // ============================================
+        // COPY EMAIL
+        // ============================================
+        window.copyEmail = function(email) {
+            navigator.clipboard.writeText(email).then(() => {
+                showToast('Email copied to clipboard!', 'success');
+            }).catch(() => {
+                showToast('Failed to copy email', 'error');
+            });
+        };
+
+        // ============================================
+        // CHECK URL PARAMETERS
+        // ============================================
+        function checkUrlParams() {
+            const params = new URLSearchParams(window.location.search);
+            if (params.get('registered') === 'true') {
+                showAlert('Registration successful! Please check your email to verify your account.', 'success');
+            }
+            if (params.get('verified') === 'true') {
+                showAlert('Email verified successfully! You can now login.', 'success');
+            }
+            if (params.get('reset') === 'true') {
+                showAlert('Password reset email sent. Check your inbox.', 'success');
+            }
+        }
+
+        // ============================================
+        // LOGIN FORM HANDLER
+        // ============================================
+        document.getElementById('loginForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+            const rememberMe = document.getElementById('rememberMe').checked;
+            const loginBtn = document.getElementById('loginBtn');
+
+            try {
+                // Show loading
+                loginBtn.disabled = true;
+                loginBtn.innerHTML = '<span class="spinner"></span> Logging in...';
+
+                // Call your API
+                const response = await fetch('/api/auth?action=login', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ email, password })
+                });
+
+                const data = await response.json();
+
+                if (!response.ok) {
+                    throw new Error(data.error || 'Login failed');
+                }
+
+                // Set persistence if needed
+                if (rememberMe) {
+                    await firebase.auth().setPersistence(firebase.auth.Auth.Persistence.LOCAL);
+                }
+
+                // Sign in with Firebase
+                await firebase.auth().signInWithCustomToken(data.token);
+
+                // Check if 2FA is enabled for this user
+                if (data.userData?.twoFactorEnabled) {
+                    showTwoFactor(data);
+                } else {
+                    // Redirect based on role
+                    redirectBasedOnRole(data.userData);
+                }
+
+            } catch (error) {
+                console.error('Login error:', error);
+                showAlert(error.message, 'error');
+                loginBtn.disabled = false;
+                loginBtn.innerHTML = '<i class="fas fa-sign-in-alt"></i> Login to Dashboard';
+            }
+        });
+
+        // ============================================
+        // GOOGLE LOGIN
+        // ============================================
+        window.handleGoogleLogin = async function() {
+            try {
+                showLoading('Connecting to Google...');
+                
+                const provider = new firebase.auth.GoogleAuthProvider();
+                const result = await firebase.auth().signInWithPopup(provider);
+                
+                // Check if user exists in your system
+                const response = await fetch('/api/auth?action=me', {
+                    headers: {
+                        'Authorization': `Bearer ${await result.user.getIdToken()}`
+                    }
+                });
+                
+                const userData = await response.json();
+                
+                if (userData.success) {
+                    redirectBasedOnRole(userData.user);
+                } else {
+                    // New user - redirect to complete profile
+                    window.location.href = '/complete-profile';
+                }
+                
+            } catch (error) {
+                console.error('Google login error:', error);
+                showAlert(error.message, 'error');
+                hideLoading();
+            }
+        };
+
+        // ============================================
+        // GITHUB LOGIN
+        // ============================================
+        window.handleGithubLogin = async function() {
+            try {
+                showLoading('Connecting to GitHub...');
+                
+                const provider = new firebase.auth.GithubAuthProvider();
+                const result = await firebase.auth().signInWithPopup(provider);
+                
+                // Similar logic as Google login
+                const response = await fetch('/api/auth?action=me', {
+                    headers: {
+                        'Authorization': `Bearer ${await result.user.getIdToken()}`
+                    }
+                });
+                
+                const userData = await response.json();
+                
+                if (userData.success) {
+                    redirectBasedOnRole(userData.user);
+                } else {
+                    window.location.href = '/complete-profile';
+                }
+                
+            } catch (error) {
+                console.error('GitHub login error:', error);
+                showAlert(error.message, 'error');
+                hideLoading();
+            }
+        };
+
+        // ============================================
+        // FORGOT PASSWORD
+        // ============================================
+        window.handleForgotPassword = async function(e) {
+            e.preventDefault();
+            
+            const email = document.getElementById('email').value;
+            
+            if (!email) {
+                showAlert('Please enter your email address', 'warning');
+                return;
+            }
+
+            try {
+                showLoading('Sending reset email...');
+                
+                const response = await fetch('/api/auth?action=reset', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ email })
+                });
+
+                const data = await response.json();
+
+                if (response.ok) {
+                    showAlert('Password reset email sent! Check your inbox.', 'success');
+                } else {
+                    throw new Error(data.error);
+                }
+            } catch (error) {
+                showAlert(error.message, 'error');
+            } finally {
+                hideLoading();
+            }
+        };
+
+        // ============================================
+        // TWO-FACTOR AUTHENTICATION
+        // ============================================
+        function showTwoFactor(userData) {
+            twoFactorRequired = true;
+            pendingUser = userData;
+            
+            document.getElementById('loginForm').style.display = 'none';
+            document.getElementById('twoFactorSection').classList.add('active');
+            
+            // Setup OTP inputs
+            setupOtpInputs();
+            
+            // Start timer
+            startResendTimer(60);
+        }
+
+        function setupOtpInputs() {
+            const inputs = document.querySelectorAll('.otp-input');
+            
+            inputs.forEach((input, index) => {
+                input.addEventListener('input', (e) => {
+                    if (e.target.value && index < inputs.length - 1) {
+                        inputs[index + 1].focus();
+                    }
+                });
+                
+                input.addEventListener('keydown', (e) => {
+                    if (e.key === 'Backspace' && !e.target.value && index > 0) {
+                        inputs[index - 1].focus();
+                    }
+                });
+            });
+        }
+
+        window.verifyTwoFactor = async function() {
+            const inputs = document.querySelectorAll('.otp-input');
+            const code = Array.from(inputs).map(input => input.value).join('');
+            
+            if (code.length !== 6) {
+                showAlert('Please enter the 6-digit code', 'warning');
+                return;
+            }
+
+            try {
+                showLoading('Verifying code...');
+                
+                // Call your 2FA verification endpoint
+                const response = await fetch('/api/auth?action=verify-2fa', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${await firebase.auth().currentUser?.getIdToken()}`
+                    },
+                    body: JSON.stringify({ code })
+                });
+
+                const data = await response.json();
+
+                if (response.ok) {
+                    redirectBasedOnRole(pendingUser);
+                } else {
+                    throw new Error(data.error);
+                }
+            } catch (error) {
+                showAlert(error.message, 'error');
+                hideLoading();
+            }
+        };
+
+        window.cancelTwoFactor = function() {
+            twoFactorRequired = false;
+            pendingUser = null;
+            
+            document.getElementById('loginForm').style.display = 'block';
+            document.getElementById('twoFactorSection').classList.remove('active');
+            
+            // Clear OTP inputs
+            document.querySelectorAll('.otp-input').forEach(input => input.value = '');
+            
+            // Stop timer
+            if (timerInterval) {
+                clearInterval(timerInterval);
+            }
+        };
+
+        function startResendTimer(seconds) {
+            const timerDisplay = document.getElementById('timerDisplay');
+            let timeLeft = seconds;
+            
+            timerInterval = setInterval(() => {
+                if (timeLeft <= 0) {
+                    timerDisplay.innerHTML = '<a href="#" onclick="resendCode()">Resend code</a>';
+                    clearInterval(timerInterval);
+                } else {
+                    timerDisplay.textContent = `Resend code in ${timeLeft}s`;
+                    timeLeft--;
+                }
+            }, 1000);
+        }
+
+        window.resendCode = function() {
+            // Implement resend logic
+            startResendTimer(60);
+        };
+
+        // ============================================
+        // REDIRECT BASED ON ROLE
+        // ============================================
+        function redirectBasedOnRole(userData) {
+            const role = userData.role || 'client';
+            
+            switch(role) {
+                case 'super_admin':
+                case 'admin':
+                    window.location.href = '/admin/dashboard';
+                    break;
+                case 'investor':
+                    window.location.href = '/profile/investor';
+                    break;
+                case 'client':
+                    window.location.href = '/profile/client';
+                    break;
+                default:
+                    window.location.href = '/dashboard';
+            }
+        }
+
+        // ============================================
+        // CHECK IF ALREADY LOGGED IN
+        // ============================================
+        firebase.auth().onAuthStateChanged(async (user) => {
+            if (user) {
+                try {
+                    const response = await fetch('/api/auth?action=me', {
+                        headers: {
+                            'Authorization': `Bearer ${await user.getIdToken()}`
+                        }
+                    });
+                    
+                    const data = await response.json();
+                    
+                    if (data.success) {
+                        redirectBasedOnRole(data.user);
+                    }
+                } catch (error) {
+                    console.error('Auto-login check error:', error);
+                }
+            }
+        });
+
+        // ============================================
+        // INITIALIZE
+        // ============================================
+        document.addEventListener('DOMContentLoaded', () => {
+            checkUrlParams();
+            
+            // Focus on email input
+            document.getElementById('email').focus();
+            
+            // Add enter key handler
+            document.getElementById('password').addEventListener('keypress', (e) => {
+                if (e.key === 'Enter') {
+                    document.getElementById('loginForm').dispatchEvent(new Event('submit'));
+                }
+            });
+        });
+    </script>
+</body>
+</html>
