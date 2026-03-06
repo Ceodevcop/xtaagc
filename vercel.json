@@ -1,26 +1,69 @@
 {
-  "version": 2,
+  "rewrites": [
+    {
+      "source": "/",
+      "destination": "/public/index.html"
+    },
+    {
+      "source": "/home",
+      "destination": "/public/index.html"
+    },
 
-  "routes": [
-    { "handle": "filesystem" },
+    {
+      "source": "/admin",
+      "destination": "/admin/index.html"
+    },
+    {
+      "source": "/admin/login",
+      "destination": "/admin/login/index.html"
+    },
+    {
+      "source": "/admin/setup",
+      "destination": "/admin/setup/index.html"
+    },
 
-    { "src": "^/$", "dest": "/public/index.html" },
-    { "src": "^/index$", "dest": "/public/index.html" },
-    { "src": "^/home$", "dest": "/public/index.html" },
+    {
+      "source": "/xtaagc/admin/dashboard",
+      "destination": "/xtaagc/admin/dashboard/index.html"
+    },
 
-    { "src": "^/login$", "dest": "/public/login.html" },
-    { "src": "^/register$", "dest": "/public/register.html" },
-    { "src": "^/complete-profile$", "dest": "/public/complete-profile.html" },
-    { "src": "^/events$", "dest": "/public/events.html" },
+    {
+      "source": "/api/(.*)",
+      "destination": "/api/$1"
+    }
+  ],
 
-    { "src": "^/admin/dashboard$", "dest": "/admin/dashboard.html" },
-    { "src": "^/admin/setup$", "dest": "/admin/setup.html" },
+  "redirects": [
+    {
+      "source": "/admin/index.html",
+      "destination": "/admin",
+      "permanent": true
+    },
+    {
+      "source": "/public/index.html",
+      "destination": "/",
+      "permanent": true
+    }
+  ],
 
-    { "src": "^/xtaagc/admin-login$", "dest": "/xtaagc/admin-login.html" },
-
-    { "src": "^/api/(.*)", "dest": "/api/$1" },
-
-    { "src": "/(.*)", "dest": "/public/404.html" }
+  "headers": [
+    {
+      "source": "/(.*)",
+      "headers": [
+        {
+          "key": "X-Content-Type-Options",
+          "value": "nosniff"
+        },
+        {
+          "key": "X-Frame-Options",
+          "value": "DENY"
+        },
+        {
+          "key": "X-XSS-Protection",
+          "value": "1; mode=block"
+        }
+      ]
+    }
   ],
 
   "cleanUrls": true,
