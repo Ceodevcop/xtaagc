@@ -15,10 +15,12 @@
     }
   ],
   "routes": [
+    // 🔴 THIS IS THE KEY FIX - Root goes to public/index.html
     {
       "src": "/",
       "dest": "/public/index.html"
     },
+    // Other public pages
     {
       "src": "/login",
       "dest": "/public/login.html"
@@ -28,13 +30,10 @@
       "dest": "/public/register.html"
     },
     {
-      "src": "/complete-profile",
-      "dest": "/public/complete-profile.html"
-    },
-    {
       "src": "/events",
       "dest": "/public/events.html"
     },
+    // Admin routes
     {
       "src": "/admin/dashboard",
       "dest": "/admin/dashboard.html"
@@ -43,14 +42,12 @@
       "src": "/admin/setup",
       "dest": "/admin/setup.html"
     },
-    {
-      "src": "/xtaagc/admin-login",
-      "dest": "/xtaagc/admin-login.html"
-    },
+    // API routes
     {
       "src": "/api/(.*)",
       "dest": "/api/$1"
     },
+    // Static assets
     {
       "src": "/css/(.*)",
       "dest": "/css/$1"
@@ -63,6 +60,7 @@
       "src": "/assets/(.*)",
       "dest": "/assets/$1"
     },
+    // Fallback
     {
       "src": "/(.*)",
       "dest": "/public/404.html"
