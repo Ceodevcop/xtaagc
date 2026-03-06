@@ -1,17 +1,20 @@
 {
   "name": "taagc-api",
   "version": "1.0.0",
-  "description": "TAAGC Global API",
-  "main": "index.js",
+  "type": "module",
   "scripts": {
     "dev": "vercel dev",
     "deploy": "vercel --prod"
   },
   "dependencies": {
+    "firebase-admin": "^11.11.0",
     "google-auth-library": "^9.0.0",
     "node-fetch": "^2.7.0"
   },
   "devDependencies": {
     "vercel": "^32.0.0"
+  },
+  "engines": {
+    "node": "18.x"
   }
 }
