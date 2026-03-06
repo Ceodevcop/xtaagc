@@ -1,13 +1,311 @@
 {
+  "name": "xtaagc",
   "version": 2,
+  "public": true,
+  "github": {
+    "enabled": true,
+    "silent": true
+  },
   "builds": [
-    { "src": "public/**", "use": "@vercel/static" },
-    { "src": "admin/**", "use": "@vercel/static" },
-    { "src": "api/**", "use": "@vercel/node" }
+    {
+      "src": "public/**",
+      "use": "@vercel/static"
+    },
+    {
+      "src": "api/**/*.js",
+      "use": "@vercel/node"
+    }
   ],
   "routes": [
-    { "src": "/", "dest": "/public/index.html" },
-    { "src": "/admin/(.*)", "dest": "/admin/$1" },
-    { "src": "/api/(.*)", "dest": "/api/$1" }
-  ]
+    // Clean URLs for static pages
+    {
+      "src": "^/([^./]+)/?$",
+      "dest": "/$1.html",
+      "headers": {
+        "x-route-type": "clean-url"
+      }
+    },
+    {
+      "src": "^/$",
+      "dest": "/index.html"
+    },
+    
+    // Firebase Auth endpoints
+    {
+      "src": "/api/auth/(.*)",
+      "dest": "/api/auth/$1",
+      "methods": ["GET", "POST", "PUT", "DELETE", "OPTIONS"]
+    },
+    
+    // Firebase Firestore endpoints
+    {
+      "src": "/api/firestore/(.*)",
+      "dest": "/api/firestore/$1",
+      "methods": ["GET", "POST", "PUT", "DELETE", "PATCH"]
+    },
+    
+    // Firebase Storage endpoints
+    {
+      "src": "/api/storage/(.*)",
+      "dest": "/api/storage/$1",
+      "methods": ["GET", "POST", "PUT", "DELETE"]
+    },
+    
+    // Firebase Cloud Functions proxy
+    {
+      "src": "/api/functions/(.*)",
+      "dest": "https://us-central1-xtaagc.cloudfunctions.net/$1",
+      "methods": ["GET", "POST", "PUT", "DELETE"]
+    },
+    
+    // Firebase Realtime Database proxy (if using)
+    {
+      "src": "/api/rtdb/(.*)",
+      "dest": "https://xtaagc-default-rtdb.firebaseio.com/$1",
+      "methods": ["GET", "POST", "PUT", "DELETE", "PATCH"]
+    },
+    
+    // API routes
+    {
+      "src": "/api/(.*)",
+      "dest": "/api/$1"
+    },
+    
+    // Static files
+    {
+      "src": "/(.*\\.(json|xml|txt))$",
+      "headers": {
+        "Cache-Control": "public, max-age=3600"
+      }
+    },
+    
+    // Firebase config file
+    {
+      "src": "/firebase-config.js",
+      "dest": "/firebase-config.js",
+      "headers": {
+        "Cache-Control": "public, max-age=3600",
+        "Content-Type": "application/javascript"
+      }
+    },
+    
+    // Service worker for Firebase Cloud Messaging
+    {
+      "src": "/firebase-messaging-sw.js",
+      "dest": "/firebase-messaging-sw.js",
+      "headers": {
+        "Cache-Control": "public, max-age=3600",
+        "Service-Worker-Allowed": "/"
+      }
+    },
+    
+    // Sitemap and robots
+    {
+      "src": "/sitemap.xml",
+      "dest": "/sitemap.xml"
+    },
+    {
+      "src": "/robots.txt",
+      "dest": "/robots.txt"
+    },
+    {
+      "src": "/favicon.ico",
+      "dest": "/favicon.ico"
+    }
+  ],
+  
+  "headers": [
+    // Global security headers
+    {
+      "source": "/(.*)",
+      "headers": [
+        {
+          "key": "X-Content-Type-Options",
+          "value": "nosniff"
+        },
+        {
+          "key": "X-Frame-Options",
+          "value": "DENY"
+        },
+        {
+          "key": "X-XSS-Protection",
+          "value": "1; mode=block"
+        },
+        {
+          "key": "Referrer-Policy",
+          "value": "strict-origin-when-cross-origin"
+        },
+        {
+          "key": "Permissions-Policy",
+          "value": "camera=(), microphone=(), geolocation=(), interest-cohort=()"
+        },
+        {
+          "key": "Strict-Transport-Security",
+          "value": "max-age=63072000; includeSubDomains; preload"
+        }
+      ]
+    },
+    
+    // CORS for Firebase API routes
+    {
+      "source": "/api/(.*)",
+      "headers": [
+        {
+          "key": "Access-Control-Allow-Origin",
+          "value": "*"
+        },
+        {
+          "key": "Access-Control-Allow-Methods",
+          "value": "GET, POST, PUT, DELETE, OPTIONS, PATCH"
+        },
+        {
+          "key": "Access-Control-Allow-Headers",
+          "value": "Content-Type, Authorization, Firebase-Instance-ID-Token, X-Requested-With"
+        },
+        {
+          "key": "Access-Control-Allow-Credentials",
+          "value": "true"
+        },
+        {
+          "key": "Access-Control-Max-Age",
+          "value": "86400"
+        },
+        {
+          "key": "Access-Control-Expose-Headers",
+          "value": "Content-Length, Content-Range, Firebase-Cloud-Messaging-Token"
+        }
+      ]
+    },
+    
+    // Firebase-specific CORS for storage
+    {
+      "source": "/api/storage/(.*)",
+      "headers": [
+        {
+          "key": "Access-Control-Allow-Origin",
+          "value": "https://xtaagc.firebasestorage.app"
+        },
+        {
+          "key": "Access-Control-Allow-Methods",
+          "value": "GET, POST, PUT, DELETE"
+        },
+        {
+          "key": "Access-Control-Allow-Headers",
+          "value": "Content-Type, Authorization, Firebase-Instance-ID-Token"
+        }
+      ]
+    },
+    
+    // Static assets with long cache
+    {
+      "source": "/(.*\\.(js|css|png|jpg|jpeg|gif|ico|svg|woff|woff2|ttf|eot|webp|avif))",
+      "headers": [
+        {
+          "key": "Cache-Control",
+          "value": "public, max-age=31536000, immutable"
+        }
+      ]
+    },
+    
+    // HTML files with no cache (for dynamic content)
+    {
+      "source": "/(.*\\.html)",
+      "headers": [
+        {
+          "key": "Cache-Control",
+          "value": "public, max-age=0, must-revalidate"
+        }
+      ]
+    }
+  ],
+  
+  "functions": {
+    "api/**/*.js": {
+      "memory": 1024,
+      "maxDuration": 30,
+      "runtime": "nodejs18.x"
+    },
+    "api/auth/**/*.js": {
+      "memory": 1024,
+      "maxDuration": 20,
+      "runtime": "nodejs18.x"
+    },
+    "api/firestore/**/*.js": {
+      "memory": 2048,
+      "maxDuration": 30,
+      "runtime": "nodejs18.x"
+    },
+    "api/storage/**/*.js": {
+      "memory": 2048,
+      "maxDuration": 60,
+      "runtime": "nodejs18.x"
+    }
+  },
+  
+  "env": {
+    // Firebase Configuration
+    "FIREBASE_PROJECT_ID": "xtaagc",
+    "FIREBASE_API_KEY": "AIzaSyCOcCDPqRSlAMJJBEeNchTA1qO9tl9Nldw",
+    "FIREBASE_AUTH_DOMAIN": "xtaagc.firebaseapp.com",
+    "FIREBASE_STORAGE_BUCKET": "xtaagc.firebasestorage.app",
+    "FIREBASE_MESSAGING_SENDER_ID": "256073982437",
+    "FIREBASE_APP_ID": "1:256073982437:android:0c54368d54e260cba98f0c",
+    "FIREBASE_DATABASE_URL": "https://xtaagc-default-rtdb.firebaseio.com",
+    "FIREBASE_FUNCTIONS_URL": "https://us-central1-xtaagc.cloudfunctions.net",
+    
+    // API Configuration
+    "API_BASE_URL": "https://taagc.website/api",
+    "NODE_ENV": "production",
+    
+    // Firebase Admin SDK (if using server-side)
+    "FIREBASE_CLIENT_EMAIL": "@firebase-client-email",
+    "FIREBASE_PRIVATE_KEY": "@firebase-private-key",
+    
+    // JWT for custom auth
+    "JWT_SECRET": "@jwt-secret",
+    
+    // CORS Settings
+    "CORS_ORIGIN": "https://taagc.website",
+    
+    // Rate Limiting
+    "RATE_LIMIT_WINDOW": "900000",
+    "RATE_LIMIT_MAX": "100"
+  },
+  
+  "redirects": [
+    {
+      "source": "/index",
+      "destination": "/",
+      "permanent": true
+    },
+    {
+      "source": "/home",
+      "destination": "/",
+      "permanent": true
+    },
+    {
+      "source": "/firebase",
+      "destination": "/firebase-config.js",
+      "permanent": true
+    }
+  ],
+  
+  "rewrites": [
+    {
+      "source": "/firestore/:path*",
+      "destination": "/api/firestore/:path*"
+    },
+    {
+      "source": "/auth/:path*",
+      "destination": "/api/auth/:path*"
+    },
+    {
+      "source": "/storage/:path*",
+      "destination": "/api/storage/:path*"
+    }
+  ],
+  
+  "regions": ["iad1"],
+  "cleanUrls": true,
+  "trailingSlash": false
 }
