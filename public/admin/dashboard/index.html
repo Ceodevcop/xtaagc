@@ -17,12 +17,30 @@
     
     <!-- Chart.js -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+        // In your admin dashboard JS
+const API_BASE_URL = 'https://taagc.website/api';
+
+async function setUserRole(uid, role) {
+  const token = await firebase.auth().currentUser.getIdToken();
+  const response = await fetch(`${API_BASE_URL}/set-role`, {
+    method: 'POST',
+    headers: {
+      'Authorization': `Bearer ${token}`,
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify({ uid, role })
+  });
+  return response.json();
+}
+    </script>
     
     <!-- DataTables -->
     <link rel="stylesheet" href="https://cdn.datatables.net/1.13.4/css/jquery.dataTables.min.css">
     <link rel="stylesheet" href="https://cdn.datatables.net/responsive/2.4.1/css/responsive.dataTables.min.css">
     
     <!-- Custom CSS -->
+   
     <link rel="stylesheet" href="dashboard/taagc.css">
 </head>
 <body>
