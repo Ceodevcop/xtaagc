@@ -22,7 +22,7 @@
     "vercel": "^32.0.0"
   },
   "engines": {
-    "node": "18.x"
+    "node": "24.x"
   },
   "keywords": ["taagc", "api", "firebase", "vercel"],
   "author": "TAAGC Global",
