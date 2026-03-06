@@ -64,14 +64,6 @@
       "dest": "/assets/$1"
     },
     {
-      "src": "/admin/css/(.*)",
-      "dest": "/admin/css/$1"
-    },
-    {
-      "src": "/admin/js/(.*)",
-      "dest": "/admin/js/$1"
-    },
-    {
       "src": "/(.*)",
       "dest": "/public/404.html"
     }
