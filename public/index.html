@@ -1,0 +1,322 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TAAGC Global - Investment Platform</title>
+    
+    <!-- Fonts & Icons -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Single CSS File -->
+    <link rel="stylesheet" href="/assets/css/platform.css">
+    
+    <!-- Meta Tags -->
+    <meta name="description" content="TAAGC Global - Premier investment platform for global opportunities">
+    <meta name="keywords" content="investment, trading, finance, global investments">
+    <meta property="og:title" content="TAAGC Global">
+    <meta property="og:description" content="Invest in global opportunities">
+    <meta property="og:image" content="/assets/images/og-image.jpg">
+    <meta name="twitter:card" content="summary_large_image">
+</head>
+<body>
+    <!-- Navbar -->
+    <nav class="navbar">
+        <div class="container">
+            <div class="navbar-content">
+                <a href="/" class="navbar-brand">
+                    <div class="logo-icon">TA</div>
+                    <div class="brand-text"><span>TAAGC</span> Global</div>
+                </a>
+                
+                <button class="mobile-menu-btn">
+                    <i class="fas fa-bars"></i>
+                </button>
+                
+                <div class="nav-menu">
+                    <ul class="nav-links">
+                        <li><a href="/" class="nav-link active">Home</a></li>
+                        <li><a href="/investors" class="nav-link">Investors</a></li>
+                        <li><a href="/projects" class="nav-link">Projects</a></li>
+                        <li><a href="/about" class="nav-link">About</a></li>
+                        <li><a href="/contact" class="nav-link">Contact</a></li>
+                    </ul>
+                    
+                    <div class="nav-buttons guest-only">
+                        <a href="/login" class="btn btn-outline">Login</a>
+                        <a href="/register" class="btn btn-primary">Register</a>
+                    </div>
+                    
+                    <div class="nav-buttons auth-only" style="display: none;">
+                        <a href="/dashboard" class="btn btn-outline">Dashboard</a>
+                        <button onclick="TAAGC.Auth.logout()" class="btn btn-primary">Logout</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="hero" style="background: linear-gradient(135deg, var(--primary), var(--primary-dark)); color: white; padding: 80px 0;">
+        <div class="container">
+            <div class="grid-2" style="align-items: center;">
+                <div>
+                    <h1 style="color: white; font-size: 48px; margin-bottom: 20px;">
+                        Invest in <span style="color: var(--accent);">Global Opportunities</span>
+                    </h1>
+                    <p style="color: rgba(255,255,255,0.9); font-size: 18px; margin-bottom: 30px;">
+                        Join thousands of investors worldwide. Access curated investment opportunities with high growth potential.
+                    </p>
+                    <div style="display: flex; gap: 15px;">
+                        <a href="/register" class="btn btn-accent btn-lg">Get Started</a>
+                        <a href="/projects" class="btn btn-outline-accent btn-lg">View Projects</a>
+                    </div>
+                    
+                    <div class="stats-grid" style="margin-top: 50px; grid-template-columns: repeat(3, 1fr);">
+                        <div>
+                            <div style="font-size: 36px; font-weight: 700;">$2.5B+</div>
+                            <div style="color: rgba(255,255,255,0.8);">Assets Managed</div>
+                        </div>
+                        <div>
+                            <div style="font-size: 36px; font-weight: 700;">50K+</div>
+                            <div style="color: rgba(255,255,255,0.8);">Active Investors</div>
+                        </div>
+                        <div>
+                            <div style="font-size: 36px; font-weight: 700;">25+</div>
+                            <div style="color: rgba(255,255,255,0.8);">Countries</div>
+                        </div>
+                    </div>
+                </div>
+                <div style="text-align: center;">
+                    <i class="fas fa-chart-line" style="font-size: 200px; color: rgba(255,255,255,0.1);"></i>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Features Section -->
+    <section style="padding: 80px 0;">
+        <div class="container">
+            <h2 class="section-title center">Why Choose <span>TAAGC Global</span></h2>
+            
+            <div class="grid-4" style="margin-top: 50px;">
+                <div class="card text-center">
+                    <i class="fas fa-shield-alt" style="font-size: 48px; color: var(--accent); margin-bottom: 20px;"></i>
+                    <h3>Secure & Regulated</h3>
+                    <p style="color: var(--light);">Fully licensed and regulated platform with bank-level security</p>
+                </div>
+                <div class="card text-center">
+                    <i class="fas fa-chart-line" style="font-size: 48px; color: var(--accent); margin-bottom: 20px;"></i>
+                    <h3>High Returns</h3>
+                    <p style="color: var(--light);">Average ROI of 15-25% across our curated portfolio</p>
+                </div>
+                <div class="card text-center">
+                    <i class="fas fa-globe" style="font-size: 48px; color: var(--accent); margin-bottom: 20px;"></i>
+                    <h3>Global Portfolio</h3>
+                    <p style="color: var(--light);">Diversified investments across 25+ countries</p>
+                </div>
+                <div class="card text-center">
+                    <i class="fas fa-clock" style="font-size: 48px; color: var(--accent); margin-bottom: 20px;"></i>
+                    <h3>24/7 Support</h3>
+                    <p style="color: var(--light);">Round-the-clock customer support in 10+ languages</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Featured Projects -->
+    <section style="padding: 80px 0; background: var(--bg);">
+        <div class="container">
+            <h2 class="section-title center">Featured <span>Investment Opportunities</span></h2>
+            
+            <div class="grid-3" id="featured-projects" style="margin-top: 50px;">
+                <!-- Loaded via API -->
+                <div class="loading"><i class="fas fa-spinner fa-spin"></i> Loading projects...</div>
+            </div>
+            
+            <div class="text-center" style="margin-top: 40px;">
+                <a href="/projects" class="btn btn-primary">View All Projects</a>
+            </div>
+        </div>
+    </section>
+
+    <!-- How It Works -->
+    <section style="padding: 80px 0;">
+        <div class="container">
+            <h2 class="section-title center">How It <span>Works</span></h2>
+            
+            <div class="grid-3" style="margin-top: 50px;">
+                <div class="card text-center">
+                    <div style="width: 60px; height: 60px; background: var(--accent); color: white; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 20px; font-size: 24px; font-weight: 700;">1</div>
+                    <h3>Create Account</h3>
+                    <p style="color: var(--light);">Sign up for free and verify your identity</p>
+                </div>
+                <div class="card text-center">
+                    <div style="width: 60px; height: 60px; background: var(--accent); color: white; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 20px; font-size: 24px; font-weight: 700;">2</div>
+                    <h3>Choose Investment</h3>
+                    <p style="color: var(--light);">Browse and select from curated opportunities</p>
+                </div>
+                <div class="card text-center">
+                    <div style="width: 60px; height: 60px; background: var(--accent); color: white; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 20px; font-size: 24px; font-weight: 700;">3</div>
+                    <h3>Track Returns</h3>
+                    <p style="color: var(--light);">Monitor your investments and watch them grow</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Testimonials -->
+    <section style="padding: 80px 0; background: var(--primary); color: white;">
+        <div class="container">
+            <h2 class="section-title center" style="color: white;">What Our <span style="color: var(--accent);">Investors Say</span></h2>
+            
+            <div class="grid-3" style="margin-top: 50px;">
+                <div class="card" style="background: rgba(255,255,255,0.1); border: none;">
+                    <i class="fas fa-quote-left" style="color: var(--accent); font-size: 24px; margin-bottom: 15px;"></i>
+                    <p style="color: rgba(255,255,255,0.9); margin-bottom: 20px;">"Exceptional platform with great returns. The team is very professional and supportive."</p>
+                    <div style="display: flex; align-items: center; gap: 15px;">
+                        <div style="width: 50px; height: 50px; background: var(--accent); border-radius: 50%;"></div>
+                        <div>
+                            <h4 style="color: white;">John Doe</h4>
+                            <p style="color: rgba(255,255,255,0.7);">Investor since 2023</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="card" style="background: rgba(255,255,255,0.1); border: none;">
+                    <i class="fas fa-quote-left" style="color: var(--accent); font-size: 24px; margin-bottom: 15px;"></i>
+                    <p style="color: rgba(255,255,255,0.9); margin-bottom: 20px;">"The platform is intuitive and the returns are consistent. Highly recommended!"</p>
+                    <div style="display: flex; align-items: center; gap: 15px;">
+                        <div style="width: 50px; height: 50px; background: var(--accent); border-radius: 50%;"></div>
+                        <div>
+                            <h4 style="color: white;">Jane Smith</h4>
+                            <p style="color: rgba(255,255,255,0.7);">Investor since 2024</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="card" style="background: rgba(255,255,255,0.1); border: none;">
+                    <i class="fas fa-quote-left" style="color: var(--accent); font-size: 24px; margin-bottom: 15px;"></i>
+                    <p style="color: rgba(255,255,255,0.9); margin-bottom: 20px;">"Excellent customer service and great investment opportunities. 5 stars!"</p>
+                    <div style="display: flex; align-items: center; gap: 15px;">
+                        <div style="width: 50px; height: 50px; background: var(--accent); border-radius: 50%;"></div>
+                        <div>
+                            <h4 style="color: white;">Mike Johnson</h4>
+                            <p style="color: rgba(255,255,255,0.7);">Investor since 2023</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- CTA Section -->
+    <section style="padding: 80px 0; text-align: center;">
+        <div class="container">
+            <h2 style="font-size: 36px; margin-bottom: 20px;">Ready to Start Investing?</h2>
+            <p style="color: var(--light); font-size: 18px; max-width: 600px; margin: 0 auto 30px;">
+                Join thousands of investors already growing their wealth with TAAGC Global.
+            </p>
+            <a href="/register" class="btn btn-accent btn-lg">Create Free Account</a>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-grid">
+                <div class="footer-col">
+                    <h4>TAAGC Global</h4>
+                    <ul>
+                        <li><a href="/about">About Us</a></li>
+                        <li><a href="/careers">Careers</a></li>
+                        <li><a href="/press">Press</a></li>
+                        <li><a href="/blog">Blog</a></li>
+                    </ul>
+                </div>
+                <div class="footer-col">
+                    <h4>For Investors</h4>
+                    <ul>
+                        <li><a href="/investors">How to Invest</a></li>
+                        <li><a href="/projects">Opportunities</a></li>
+                        <li><a href="/faq">FAQ</a></li>
+                        <li><a href="/resources">Resources</a></li>
+                    </ul>
+                </div>
+                <div class="footer-col">
+                    <h4>Legal</h4>
+                    <ul>
+                        <li><a href="/privacy">Privacy Policy</a></li>
+                        <li><a href="/terms">Terms of Service</a></li>
+                        <li><a href="/risk">Risk Disclosure</a></li>
+                    </ul>
+                </div>
+                <div class="footer-col">
+                    <h4>Connect</h4>
+                    <ul>
+                        <li><a href="#"><i class="fab fa-linkedin"></i> LinkedIn</a></li>
+                        <li><a href="#"><i class="fab fa-twitter"></i> Twitter</a></li>
+                        <li><a href="#"><i class="fab fa-telegram"></i> Telegram</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2026 TAAGC Global. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Toast Container -->
+    <div id="toastContainer"></div>
+
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
+    
+    <!-- Single JS File -->
+    <script src="/assets/js/platform.js"></script>
+    
+    <script>
+        // Load featured projects
+        document.addEventListener('DOMContentLoaded', async () => {
+            try {
+                const response = await fetch('/api/projects?featured=true&limit=3');
+                const data = await response.json();
+                
+                if (data.success && data.projects.length > 0) {
+                    const container = document.getElementById('featured-projects');
+                    let html = '';
+                    
+                    data.projects.forEach(project => {
+                        const percentage = (project.raisedAmount / project.targetAmount) * 100;
+                        html += `
+                            <div class="card">
+                                <div style="height: 160px; background: linear-gradient(135deg, var(--primary), var(--primary-dark)); border-radius: var(--radius-md); margin-bottom: 15px;"></div>
+                                <h3>${project.title}</h3>
+                                <p style="color: var(--light); margin: 10px 0;">${project.description.substring(0, 100)}...</p>
+                                <div style="margin: 15px 0;">
+                                    <div style="display: flex; justify-content: space-between; margin-bottom: 5px;">
+                                        <span>Raised: $${(project.raisedAmount/1000000).toFixed(1)}M</span>
+                                        <span>Target: $${(project.targetAmount/1000000).toFixed(1)}M</span>
+                                    </div>
+                                    <div class="progress">
+                                        <div class="progress-bar" style="width: ${percentage}%;"></div>
+                                    </div>
+                                </div>
+                                <div style="display: flex; gap: 10px;">
+                                    <a href="/projects/${project.id}" class="btn btn-outline btn-sm">Learn More</a>
+                                    <a href="/invest?project=${project.id}" class="btn btn-primary btn-sm">Invest Now</a>
+                                </div>
+                            </div>
+                        `;
+                    });
+                    
+                    container.innerHTML = html;
+                }
+            } catch (error) {
+                console.error('Error loading projects:', error);
+            }
+        });
+    </script>
+</body>
+</html>
