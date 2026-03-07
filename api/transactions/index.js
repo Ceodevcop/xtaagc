@@ -1,171 +1,199 @@
 // api/transactions/index.js
-import admin, { db, isAdmin, verifyToken } from '../lib/firebase-admin.js';
+const express = require('express');
+const router = express.Router();
+const { collections } = require('../../config/firebase');
+const { authenticate, authorize } = require('../../middleware/auth');
 
-export default async function handler(req, res) {
-  res.setHeader('Access-Control-Allow-Origin', '*');
-  res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
-  res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
-
-  if (req.method === 'OPTIONS') {
-    return res.status(200).end();
+// Get all transactions (admin only)
+router.get('/', authenticate, authorize(['admin', 'super_admin']), async (req, res) => {
+  try {
+    const { limit = 50, type, status } = req.query;
+    
+    let query = collections.transactions.orderBy('date', 'desc').limit(parseInt(limit));
+    
+    if (type) {
+      query = query.where('type', '==', type);
+    }
+    
+    if (status) {
+      query = query.where('status', '==', status);
+    }
+    
+    const snapshot = await query.get();
+    
+    const transactions = [];
+    snapshot.forEach(doc => {
+      transactions.push({
+        id: doc.id,
+        ...doc.data()
+      });
+    });
+    
+    res.json({
+      success: true,
+      count: transactions.length,
+      transactions
+    });
+    
+  } catch (error) {
+    res.status(500).json({ error: error.message });
   }
+});
 
-  const { action, transactionId } = req.query;
+// Get user transactions
+router.get('/user/:userId', authenticate, async (req, res) => {
+  try {
+    const { userId } = req.params;
+    
+    // Check authorization
+    if (req.user.uid !== userId && !['admin', 'super_admin'].includes(req.user.role)) {
+      return res.status(403).json({ error: 'Unauthorized' });
+    }
+    
+    const snapshot = await collections.transactions
+      .where('userId', '==', userId)
+      .orderBy('date', 'desc')
+      .limit(50)
+      .get();
+    
+    const transactions = [];
+    snapshot.forEach(doc => {
+      transactions.push({
+        id: doc.id,
+        ...doc.data()
+      });
+    });
+    
+    res.json({
+      success: true,
+      count: transactions.length,
+      transactions
+    });
+    
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
 
-  if (!action) {
-    return res.status(200).json({
-      name: "TAAGC Transactions API",
-      endpoints: {
-        list: "GET /api/transactions?action=list",
-        create: "POST /api/transactions?action=create",
-        get: "GET /api/transactions?action=get&transactionId={id}",
-        stats: "GET /api/transactions?action=stats"
+// Create transaction
+router.post('/', authenticate, async (req, res) => {
+  try {
+    const { userId, type, amount, description, metadata } = req.body;
+    
+    const transactionData = {
+      userId,
+      type,
+      amount: parseFloat(amount),
+      description,
+      metadata: metadata || {},
+      status: 'pending',
+      date: admin.firestore.FieldValue.serverTimestamp(),
+      createdAt: admin.firestore.FieldValue.serverTimestamp()
+    };
+    
+    const docRef = await collections.transactions.add(transactionData);
+    
+    res.json({
+      success: true,
+      id: docRef.id,
+      ...transactionData
+    });
+    
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
+// Get transaction by ID
+router.get('/:id', authenticate, async (req, res) => {
+  try {
+    const { id } = req.params;
+    
+    const transactionDoc = await collections.transactions.doc(id).get();
+    
+    if (!transactionDoc.exists) {
+      return res.status(404).json({ error: 'Transaction not found' });
+    }
+    
+    res.json({
+      success: true,
+      transaction: {
+        id: transactionDoc.id,
+        ...transactionDoc.data()
       }
     });
-  }
-
-  // Verify authentication
-  const authHeader = req.headers.authorization;
-  if (!authHeader?.startsWith('Bearer ')) {
-    return res.status(401).json({ error: 'Unauthorized' });
-  }
-
-  const token = authHeader.split('Bearer ')[1];
-  const tokenResult = await verifyToken(token);
-
-  if (!tokenResult.valid) {
-    return res.status(401).json({ error: 'Invalid token' });
-  }
-
-  const callerUid = tokenResult.decoded.uid;
-  const callerIsAdmin = await isAdmin(callerUid);
-
-  try {
-    switch (action) {
-      case 'list':
-        return await handleListTransactions(req, res, callerUid, callerIsAdmin);
-      case 'create':
-        return await handleCreateTransaction(req, res, callerIsAdmin, callerUid);
-      case 'get':
-        return await handleGetTransaction(req, res, transactionId);
-      case 'stats':
-        return await handleTransactionStats(req, res, callerIsAdmin);
-      default:
-        return res.status(404).json({ error: 'Action not found' });
-    }
+    
   } catch (error) {
-    console.error('Transactions API error:', error);
-    return res.status(500).json({ error: error.message });
+    res.status(500).json({ error: error.message });
   }
-}
+});
 
-async function handleListTransactions(req, res, callerUid, isAdmin) {
-  const { limit = 50, userId, type, status } = req.query;
-  
-  let query = db.collection('transactions').orderBy('timestamp', 'desc');
-  
-  // Filter by user if not admin, or if userId specified
-  if (!isAdmin) {
-    query = query.where('userId', '==', callerUid);
-  } else if (userId) {
-    query = query.where('userId', '==', userId);
-  }
-  
-  if (type) query = query.where('type', '==', type);
-  if (status) query = query.where('status', '==', status);
-  
-  const snapshot = await query.limit(parseInt(limit)).get();
-  const transactions = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-
-  return res.status(200).json({ success: true, transactions, count: transactions.length });
-}
-
-async function handleCreateTransaction(req, res, isAdmin, creatorUid) {
-  if (req.method !== 'POST') {
-    return res.status(405).json({ error: 'Use POST method' });
-  }
-
-  if (!isAdmin) {
-    return res.status(403).json({ error: 'Admin access required' });
-  }
-
-  const { userId, type, amount, description, reference } = req.body;
-
-  if (!userId || !type || !amount) {
-    return res.status(400).json({ error: 'userId, type, and amount required' });
-  }
-
-  const transaction = {
-    userId,
-    type,
-    amount: parseFloat(amount),
-    description: description || '',
-    reference: reference || `TXN-${Date.now()}`,
-    status: 'completed',
-    timestamp: admin.firestore.FieldValue.serverTimestamp(),
-    createdBy: creatorUid
-  };
-
-  const docRef = await db.collection('transactions').add(transaction);
-
-  return res.status(201).json({
-    success: true,
-    message: 'Transaction created',
-    id: docRef.id,
-    reference: transaction.reference
-  });
-}
-
-async function handleGetTransaction(req, res, transactionId) {
-  if (!transactionId) {
-    return res.status(400).json({ error: 'Transaction ID required' });
-  }
-
-  const doc = await db.collection('transactions').doc(transactionId).get();
-  
-  if (!doc.exists) {
-    return res.status(404).json({ error: 'Transaction not found' });
-  }
-
-  return res.status(200).json({ success: true, transaction: { id: doc.id, ...doc.data() } });
-}
-
-async function handleTransactionStats(req, res, isAdmin) {
-  if (!isAdmin) {
-    return res.status(403).json({ error: 'Admin access required' });
-  }
-
-  const snapshot = await db.collection('transactions').get();
-  const today = new Date();
-  today.setHours(0, 0, 0, 0);
-
-  let stats = {
-    total: 0,
-    totalVolume: 0,
-    todayVolume: 0,
-    byType: {},
-    byStatus: {}
-  };
-
-  snapshot.forEach(doc => {
-    const tx = doc.data();
-    stats.total++;
-    stats.totalVolume += tx.amount || 0;
+// Update transaction status (admin only)
+router.patch('/:id/status', authenticate, authorize(['admin', 'super_admin']), async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { status } = req.body;
     
-    // Count by type
-    stats.byType[tx.type] = (stats.byType[tx.type] || 0) + 1;
+    await collections.transactions.doc(id).update({
+      status,
+      updatedAt: admin.firestore.FieldValue.serverTimestamp()
+    });
     
-    // Count by status
-    stats.byStatus[tx.status] = (stats.byStatus[tx.status] || 0) + 1;
+    res.json({ success: true });
     
-    // Today's volume
-    if (tx.timestamp) {
-      const txDate = tx.timestamp.toDate();
-      if (txDate >= today) {
-        stats.todayVolume += tx.amount || 0;
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
+// Get transaction summary
+router.get('/summary/overview', authenticate, authorize(['admin', 'super_admin']), async (req, res) => {
+  try {
+    const snapshot = await collections.transactions.get();
+    
+    let totalVolume = 0;
+    let totalDeposits = 0;
+    let totalWithdrawals = 0;
+    let totalInvestments = 0;
+    let totalReturns = 0;
+    
+    snapshot.forEach(doc => {
+      const data = doc.data();
+      const amount = data.amount || 0;
+      
+      totalVolume += amount;
+      
+      switch(data.type) {
+        case 'deposit':
+          totalDeposits += amount;
+          break;
+        case 'withdrawal':
+          totalWithdrawals += amount;
+          break;
+        case 'investment':
+          totalInvestments += amount;
+          break;
+        case 'return':
+          totalReturns += amount;
+          break;
       }
-    }
-  });
+    });
+    
+    res.json({
+      success: true,
+      summary: {
+        totalVolume,
+        totalDeposits,
+        totalWithdrawals,
+        totalInvestments,
+        totalReturns,
+        netFlow: totalDeposits - totalWithdrawals
+      }
+    });
+    
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
 
-  return res.status(200).json({ success: true, stats });
-}
+module.exports = router;
