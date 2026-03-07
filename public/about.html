@@ -1,0 +1,529 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>About Us - TAAGC Global</title>
+    
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="/assets/css/platform.css">
+    
+    <style>
+        .mission-section {
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+            color: white;
+            padding: 80px 0;
+            text-align: center;
+        }
+        
+        .value-card {
+            text-align: center;
+            padding: 40px 30px;
+            background: white;
+            border-radius: var(--radius-xl);
+            box-shadow: var(--shadow-lg);
+            transition: var(--transition);
+            height: 100%;
+        }
+        
+        .value-card:hover {
+            transform: translateY(-10px);
+            box-shadow: var(--shadow-xl);
+        }
+        
+        .value-icon {
+            width: 80px;
+            height: 80px;
+            background: linear-gradient(135deg, var(--accent), var(--accent-dark));
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 25px;
+            color: white;
+            font-size: 32px;
+        }
+        
+        .timeline {
+            position: relative;
+            padding: 40px 0;
+        }
+        
+        .timeline::before {
+            content: '';
+            position: absolute;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 2px;
+            height: 100%;
+            background: var(--accent);
+            opacity: 0.3;
+        }
+        
+        .timeline-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 60px;
+            position: relative;
+        }
+        
+        .timeline-item:nth-child(even) {
+            flex-direction: row-reverse;
+        }
+        
+        .timeline-content {
+            width: 45%;
+            background: white;
+            padding: 30px;
+            border-radius: var(--radius-lg);
+            box-shadow: var(--shadow-md);
+            position: relative;
+        }
+        
+        .timeline-year {
+            position: absolute;
+            top: -15px;
+            left: 30px;
+            background: var(--accent);
+            color: white;
+            padding: 5px 20px;
+            border-radius: 30px;
+            font-weight: 700;
+        }
+        
+        .timeline-dot {
+            width: 20px;
+            height: 20px;
+            background: var(--accent);
+            border-radius: 50%;
+            position: absolute;
+            left: 50%;
+            transform: translateX(-50%);
+        }
+        
+        .team-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 30px;
+            margin-top: 40px;
+        }
+        
+        .team-card {
+            text-align: center;
+            background: white;
+            border-radius: var(--radius-lg);
+            overflow: hidden;
+            box-shadow: var(--shadow-md);
+            transition: var(--transition);
+        }
+        
+        .team-card:hover {
+            transform: translateY(-10px);
+            box-shadow: var(--shadow-xl);
+        }
+        
+        .team-image {
+            width: 100%;
+            height: 250px;
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 48px;
+        }
+        
+        .team-info {
+            padding: 20px;
+        }
+        
+        .team-info h4 {
+            margin-bottom: 5px;
+        }
+        
+        .team-info p {
+            color: var(--light);
+            font-size: 14px;
+        }
+        
+        .stats-banner {
+            background: linear-gradient(135deg, var(--accent), var(--accent-dark));
+            color: white;
+            padding: 60px 0;
+            margin: 60px 0;
+        }
+        
+        @media (max-width: 992px) {
+            .team-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            
+            .timeline::before {
+                left: 30px;
+            }
+            
+            .timeline-item,
+            .timeline-item:nth-child(even) {
+                flex-direction: column;
+                align-items: flex-start;
+                margin-left: 60px;
+            }
+            
+            .timeline-content {
+                width: 100%;
+            }
+            
+            .timeline-dot {
+                left: -30px;
+            }
+        }
+        
+        @media (max-width: 768px) {
+            .team-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Navbar -->
+    <nav class="navbar">
+        <div class="container">
+            <div class="navbar-content">
+                <a href="/" class="navbar-brand">
+                    <div class="logo-icon">TA</div>
+                    <div class="brand-text"><span>TAAGC</span> Global</div>
+                </a>
+                
+                <button class="mobile-menu-btn">
+                    <i class="fas fa-bars"></i>
+                </button>
+                
+                <div class="nav-menu">
+                    <ul class="nav-links">
+                        <li><a href="/" class="nav-link">Home</a></li>
+                        <li><a href="/about" class="nav-link active">About</a></li>
+                        <li><a href="/investors" class="nav-link">Investors</a></li>
+                        <li><a href="/projects" class="nav-link">Projects</a></li>
+                        <li><a href="/contact" class="nav-link">Contact</a></li>
+                    </ul>
+                    
+                    <div class="nav-buttons guest-only">
+                        <a href="/login" class="btn btn-outline">Login</a>
+                        <a href="/register" class="btn btn-primary">Register</a>
+                    </div>
+                    
+                    <div class="nav-buttons auth-only" style="display: none;">
+                        <a href="/dashboard" class="btn btn-outline">Dashboard</a>
+                        <button onclick="TAAGC.Auth.logout()" class="btn btn-primary">Logout</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="mission-section">
+        <div class="container">
+            <h1 style="color: white; font-size: 48px; margin-bottom: 20px;">About <span style="color: var(--accent);">TAAGC Global</span></h1>
+            <p style="color: rgba(255,255,255,0.9); font-size: 18px; max-width: 800px; margin: 0 auto;">
+                Empowering investors worldwide with access to premium investment opportunities and expert guidance.
+            </p>
+        </div>
+    </section>
+
+    <!-- Our Story -->
+    <div class="container" style="padding: 80px 0;">
+        <div class="grid-2" style="align-items: center;">
+            <div>
+                <h2 class="section-title">Our <span>Story</span></h2>
+                <p style="color: var(--light); line-height: 1.8; margin-bottom: 20px;">
+                    Founded in 2020, TAAGC Global emerged from a vision to democratize access to premium investment opportunities. What started as a small team of financial experts has grown into a global platform serving thousands of investors across 25+ countries.
+                </p>
+                <p style="color: var(--light); line-height: 1.8; margin-bottom: 20px;">
+                    Our mission is to connect investors with carefully vetted opportunities while providing the tools and education needed to make informed investment decisions. We believe that everyone deserves access to wealth-building opportunities, regardless of their location or background.
+                </p>
+                <p style="color: var(--light); line-height: 1.8;">
+                    Today, TAAGC Global manages over $2.5 billion in assets and continues to expand our network of partner companies and investment opportunities worldwide.
+                </p>
+            </div>
+            <div style="text-align: center;">
+                <img src="/assets/images/about/office.jpg" alt="TAAGC Office" style="max-width: 100%; border-radius: var(--radius-xl); box-shadow: var(--shadow-xl);">
+            </div>
+        </div>
+    </div>
+
+    <!-- Stats Banner -->
+    <div class="stats-banner">
+        <div class="container">
+            <div class="grid-4">
+                <div style="text-align: center;">
+                    <div style="font-size: 48px; font-weight: 800; margin-bottom: 10px;">$2.5B+</div>
+                    <div style="opacity: 0.9;">Assets Under Management</div>
+                </div>
+                <div style="text-align: center;">
+                    <div style="font-size: 48px; font-weight: 800; margin-bottom: 10px;">50K+</div>
+                    <div style="opacity: 0.9;">Active Investors</div>
+                </div>
+                <div style="text-align: center;">
+                    <div style="font-size: 48px; font-weight: 800; margin-bottom: 10px;">25+</div>
+                    <div style="opacity: 0.9;">Countries</div>
+                </div>
+                <div style="text-align: center;">
+                    <div style="font-size: 48px; font-weight: 800; margin-bottom: 10px;">100+</div>
+                    <div style="opacity: 0.9;">Partner Companies</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Our Values -->
+    <div class="container" style="padding: 80px 0;">
+        <h2 class="section-title center">Our <span>Values</span></h2>
+        
+        <div class="grid-3" style="margin-top: 50px;">
+            <div class="value-card">
+                <div class="value-icon">
+                    <i class="fas fa-shield-alt"></i>
+                </div>
+                <h3>Integrity</h3>
+                <p style="color: var(--light);">We operate with complete transparency and honesty in all our dealings.</p>
+            </div>
+            
+            <div class="value-card">
+                <div class="value-icon">
+                    <i class="fas fa-handshake"></i>
+                </div>
+                <h3>Trust</h3>
+                <p style="color: var(--light);">Building lasting relationships based on mutual respect and reliability.</p>
+            </div>
+            
+            <div class="value-card">
+                <div class="value-icon">
+                    <i class="fas fa-rocket"></i>
+                </div>
+                <h3>Innovation</h3>
+                <p style="color: var(--light);">Constantly evolving to provide cutting-edge investment solutions.</p>
+            </div>
+            
+            <div class="value-card">
+                <div class="value-icon">
+                    <i class="fas fa-users"></i>
+                </div>
+                <h3>Community</h3>
+                <p style="color: var(--light);">Fostering a global community of successful investors.</p>
+            </div>
+            
+            <div class="value-card">
+                <div class="value-icon">
+                    <i class="fas fa-chart-line"></i>
+                </div>
+                <h3>Excellence</h3>
+                <p style="color: var(--light);">Striving for the highest standards in everything we do.</p>
+            </div>
+            
+            <div class="value-card">
+                <div class="value-icon">
+                    <i class="fas fa-globe"></i>
+                </div>
+                <h3>Global Reach</h3>
+                <p style="color: var(--light);">Connecting investors with opportunities worldwide.</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Timeline -->
+    <div class="container" style="padding: 80px 0;">
+        <h2 class="section-title center">Our <span>Journey</span></h2>
+        
+        <div class="timeline">
+            <div class="timeline-item">
+                <div class="timeline-dot"></div>
+                <div class="timeline-content">
+                    <span class="timeline-year">2020</span>
+                    <h3>Company Founded</h3>
+                    <p style="color: var(--light);">TAAGC Global was established with a vision to democratize investment access.</p>
+                </div>
+            </div>
+            
+            <div class="timeline-item">
+                <div class="timeline-dot"></div>
+                <div class="timeline-content">
+                    <span class="timeline-year">2021</span>
+                    <h3>First $100M AUM</h3>
+                    <p style="color: var(--light);">Reached $100 million in assets under management within first year.</p>
+                </div>
+            </div>
+            
+            <div class="timeline-item">
+                <div class="timeline-dot"></div>
+                <div class="timeline-content">
+                    <span class="timeline-year">2022</span>
+                    <h3>Global Expansion</h3>
+                    <p style="color: var(--light);">Expanded operations to 15 countries across three continents.</p>
+                </div>
+            </div>
+            
+            <div class="timeline-item">
+                <div class="timeline-dot"></div>
+                <div class="timeline-content">
+                    <span class="timeline-year">2023</span>
+                    <h3>10,000 Investors</h3>
+                    <p style="color: var(--light);">Welcomed our 10,000th investor to the platform.</p>
+                </div>
+            </div>
+            
+            <div class="timeline-item">
+                <div class="timeline-dot"></div>
+                <div class="timeline-content">
+                    <span class="timeline-year">2024</span>
+                    <h3>$1B Milestone</h3>
+                    <p style="color: var(--light);">Surpassed $1 billion in total assets under management.</p>
+                </div>
+            </div>
+            
+            <div class="timeline-item">
+                <div class="timeline-dot"></div>
+                <div class="timeline-content">
+                    <span class="timeline-year">2025</span>
+                    <h3>50,000 Investors</h3>
+                    <p style="color: var(--light);">Reached 50,000 active investors on the platform.</p>
+                </div>
+            </div>
+            
+            <div class="timeline-item">
+                <div class="timeline-dot"></div>
+                <div class="timeline-content">
+                    <span class="timeline-year">2026</span>
+                    <h3>$2.5B AUM</h3>
+                    <p style="color: var(--light);">Achieved $2.5 billion in assets under management.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Leadership Team -->
+    <div class="container" style="padding: 80px 0;">
+        <h2 class="section-title center">Leadership <span>Team</span></h2>
+        
+        <div class="team-grid">
+            <div class="team-card">
+                <div class="team-image">
+                    <i class="fas fa-user-tie"></i>
+                </div>
+                <div class="team-info">
+                    <h4>Ahmad Hamza</h4>
+                    <p>CEO & Founder</p>
+                </div>
+            </div>
+            
+            <div class="team-card">
+                <div class="team-image">
+                    <i class="fas fa-user-tie"></i>
+                </div>
+                <div class="team-info">
+                    <h4>Sarah Johnson</h4>
+                    <p>Chief Investment Officer</p>
+                </div>
+            </div>
+            
+            <div class="team-card">
+                <div class="team-image">
+                    <i class="fas fa-user-tie"></i>
+                </div>
+                <div class="team-info">
+                    <h4>Michael Chen</h4>
+                    <p>Head of Operations</p>
+                </div>
+            </div>
+            
+            <div class="team-card">
+                <div class="team-image">
+                    <i class="fas fa-user-tie"></i>
+                </div>
+                <div class="team-info">
+                    <h4>Fatima Al-Zahra</h4>
+                    <p>Chief Technology Officer</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Partners -->
+    <div class="container" style="padding: 80px 0;">
+        <h2 class="section-title center">Our <span>Partners</span></h2>
+        
+        <div class="grid-4" style="margin-top: 40px;">
+            <div class="card text-center">
+                <i class="fas fa-building" style="font-size: 48px; color: var(--accent); margin-bottom: 15px;"></i>
+                <h4>Alpha Investments</h4>
+                <p style="color: var(--light);">Strategic Partner</p>
+            </div>
+            <div class="card text-center">
+                <i class="fas fa-building" style="font-size: 48px; color: var(--accent); margin-bottom: 15px;"></i>
+                <h4>Beta Capital</h4>
+                <p style="color: var(--light);">Investment Partner</p>
+            </div>
+            <div class="card text-center">
+                <i class="fas fa-building" style="font-size: 48px; color: var(--accent); margin-bottom: 15px;"></i>
+                <h4>Gamma Ventures</h4>
+                <p style="color: var(--light);">Technology Partner</p>
+            </div>
+            <div class="card text-center">
+                <i class="fas fa-building" style="font-size: 48px; color: var(--accent); margin-bottom: 15px;"></i>
+                <h4>Delta Finance</h4>
+                <p style="color: var(--light);">Financial Partner</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- CTA Section -->
+    <section style="background: linear-gradient(135deg, var(--accent), var(--accent-dark)); color: white; padding: 80px 0; text-align: center;">
+        <div class="container">
+            <h2 style="color: white; font-size: 36px; margin-bottom: 20px;">Join Our Growing Community</h2>
+            <p style="color: rgba(255,255,255,0.9); max-width: 600px; margin: 0 auto 30px;">
+                Become part of a global network of successful investors.
+            </p>
+            <a href="/register" class="btn btn-primary btn-lg">Get Started Today</a>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-grid">
+                <div class="footer-col">
+                    <h4>TAAGC Global</h4>
+                    <ul>
+                        <li><a href="/about">About Us</a></li>
+                        <li><a href="/careers">Careers</a></li>
+                        <li><a href="/press">Press</a></li>
+                    </ul>
+                </div>
+                <div class="footer-col">
+                    <h4>Investors</h4>
+                    <ul>
+                        <li><a href="/investors">How to Invest</a></li>
+                        <li><a href="/projects">Opportunities</a></li>
+                        <li><a href="/education">Education</a></li>
+                    </ul>
+                </div>
+                <div class="footer-col">
+                    <h4>Support</h4>
+                    <ul>
+                        <li><a href="/contact">Contact</a></li>
+                        <li><a href="/faq">FAQ</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2026 TAAGC Global. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="/assets/js/platform.js"></script>
+</body>
+</html>
