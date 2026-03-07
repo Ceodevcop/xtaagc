@@ -1,0 +1,542 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Panel - TAAGC Global</title>
+    
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="/assets/css/platform.css">
+    
+    <style>
+        .admin-stats {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+        
+        .admin-tabs {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+            border-bottom: 2px solid #e2e8f0;
+            padding-bottom: 10px;
+            flex-wrap: wrap;
+        }
+        
+        .admin-tab {
+            padding: 10px 20px;
+            cursor: pointer;
+            border-radius: var(--radius-md) var(--radius-md) 0 0;
+            font-weight: 600;
+            color: var(--light);
+            transition: var(--transition);
+        }
+        
+        .admin-tab:hover {
+            color: var(--accent);
+        }
+        
+        .admin-tab.active {
+            color: var(--accent);
+            border-bottom: 2px solid var(--accent);
+        }
+        
+        .filter-bar {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+            align-items: center;
+        }
+        
+        .filter-bar input,
+        .filter-bar select {
+            padding: 8px 12px;
+            border: 2px solid #e2e8f0;
+            border-radius: var(--radius-md);
+            min-width: 200px;
+        }
+        
+        .export-btn {
+            margin-left: auto;
+            background: var(--success);
+            color: white;
+        }
+    </style>
+</head>
+<body>
+    <div class="dashboard-layout">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <h2><span>TAAGC</span> Admin</h2>
+            </div>
+            
+            <nav class="sidebar-nav">
+                <div class="nav-section">MAIN</div>
+                <a href="#" class="nav-item active" data-view="dashboard">
+                    <i class="fas fa-tachometer-alt"></i>
+                    <span>Dashboard</span>
+                </a>
+                <a href="#" class="nav-item" data-view="users">
+                    <i class="fas fa-users"></i>
+                    <span>Users</span>
+                </a>
+                <a href="#" class="nav-item" data-view="investors">
+                    <i class="fas fa-chart-line"></i>
+                    <span>Investors</span>
+                </a>
+                <a href="#" class="nav-item" data-view="projects">
+                    <i class="fas fa-building"></i>
+                    <span>Projects</span>
+                </a>
+                <a href="#" class="nav-item" data-view="investments">
+                    <i class="fas fa-briefcase"></i>
+                    <span>Investments</span>
+                </a>
+                <a href="#" class="nav-item" data-view="transactions">
+                    <i class="fas fa-exchange-alt"></i>
+                    <span>Transactions</span>
+                </a>
+                <a href="#" class="nav-item" data-view="partners">
+                    <i class="fas fa-handshake"></i>
+                    <span>Partners</span>
+                </a>
+                <a href="#" class="nav-item" data-view="events">
+                    <i class="fas fa-calendar"></i>
+                    <span>Events</span>
+                </a>
+                
+                <div class="nav-section">SYSTEM</div>
+                <a href="#" class="nav-item" data-view="settings">
+                    <i class="fas fa-cog"></i>
+                    <span>Settings</span>
+                </a>
+                <a href="#" class="nav-item" data-view="logs">
+                    <i class="fas fa-history"></i>
+                    <span>Audit Logs</span>
+                </a>
+                <a href="#" class="nav-item" onclick="TAAGC.Auth.logout()">
+                    <i class="fas fa-sign-out-alt"></i>
+                    <span>Logout</span>
+                </a>
+            </nav>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Top Bar -->
+            <div class="top-bar">
+                <h1>Admin Dashboard</h1>
+                <div class="user-menu">
+                    <div class="user-profile">
+                        <div class="user-avatar" id="adminAvatar">A</div>
+                        <div>
+                            <div id="adminName">Loading...</div>
+                            <div style="font-size: 12px; color: var(--light);" id="adminRole">Admin</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Admin Content -->
+            <div id="adminContent">
+                <div class="loading">
+                    <i class="fas fa-spinner fa-spin"></i>
+                    <p>Loading admin panel...</p>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- User Edit Modal -->
+    <div class="modal" id="userModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Edit User</h2>
+                <span class="modal-close" onclick="closeModal('userModal')">&times;</span>
+            </div>
+            <input type="hidden" id="editUserId">
+            <div class="form-group">
+                <label>Full Name</label>
+                <input type="text" class="form-control" id="editFullName">
+            </div>
+            <div class="form-group">
+                <label>Email</label>
+                <input type="email" class="form-control" id="editEmail" readonly>
+            </div>
+            <div class="form-group">
+                <label>Phone</label>
+                <input type="tel" class="form-control" id="editPhone">
+            </div>
+            <div class="form-group">
+                <label>Role</label>
+                <select class="form-control" id="editRole">
+                    <option value="client">Client</option>
+                    <option value="investor">Investor</option>
+                    <option value="admin">Admin</option>
+                    <option value="super_admin">Super Admin</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label>Status</label>
+                <select class="form-control" id="editStatus">
+                    <option value="active">Active</option>
+                    <option value="pending">Pending</option>
+                    <option value="suspended">Suspended</option>
+                </select>
+            </div>
+            <button class="btn btn-success" onclick="saveUser()">Save Changes</button>
+        </div>
+    </div>
+
+    <div id="toastContainer"></div>
+
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
+    <script src="/assets/js/platform.js"></script>
+    
+    <script>
+        let currentUser = null;
+        let adminProfile = null;
+        let currentView = 'dashboard';
+
+        // Check authentication
+        TAAGC.auth.onAuthStateChanged(async (user) => {
+            if (!user) {
+                window.location.href = '/login';
+                return;
+            }
+            
+            currentUser = user;
+            
+            // Get user profile
+            const response = await fetch('/api/auth/me', {
+                headers: {
+                    'Authorization': `Bearer ${await user.getIdToken()}`
+                }
+            });
+            
+            const data = await response.json();
+            if (!data.success || !['admin', 'super_admin'].includes(data.user.role)) {
+                window.location.href = '/dashboard';
+                return;
+            }
+            
+            adminProfile = data.user;
+            document.getElementById('adminName').textContent = adminProfile.fullName || 'Admin';
+            document.getElementById('adminAvatar').textContent = (adminProfile.fullName || 'A').charAt(0).toUpperCase();
+            document.getElementById('adminRole').textContent = adminProfile.role;
+            
+            loadView('dashboard');
+        });
+
+        // Navigation
+        document.querySelectorAll('.nav-item[data-view]').forEach(item => {
+            item.addEventListener('click', (e) => {
+                e.preventDefault();
+                document.querySelectorAll('.nav-item').forEach(nav => nav.classList.remove('active'));
+                item.classList.add('active');
+                loadView(item.dataset.view);
+            });
+        });
+
+        async function loadView(view) {
+            currentView = view;
+            
+            switch(view) {
+                case 'dashboard':
+                    loadDashboard();
+                    break;
+                case 'users':
+                    loadUsers();
+                    break;
+                case 'investors':
+                    loadInvestors();
+                    break;
+                case 'projects':
+                    loadProjects();
+                    break;
+                case 'investments':
+                    loadInvestments();
+                    break;
+                case 'transactions':
+                    loadTransactions();
+                    break;
+                case 'partners':
+                    loadPartners();
+                    break;
+                case 'events':
+                    loadEvents();
+                    break;
+                case 'settings':
+                    loadSettings();
+                    break;
+                case 'logs':
+                    loadLogs();
+                    break;
+            }
+        }
+
+        async function loadDashboard() {
+            const content = document.getElementById('adminContent');
+            content.innerHTML = '<div class="loading"><i class="fas fa-spinner fa-spin"></i> Loading stats...</div>';
+            
+            try {
+                const response = await fetch('/api/admin/stats', {
+                    headers: {
+                        'Authorization': `Bearer ${await currentUser.getIdToken()}`
+                    }
+                });
+                
+                const data = await response.json();
+                
+                if (data.success) {
+                    content.innerHTML = `
+                        <div class="admin-stats">
+                            <div class="stat-card">
+                                <div class="stat-value">${data.stats.users}</div>
+                                <div class="stat-label">Total Users</div>
+                            </div>
+                            <div class="stat-card">
+                                <div class="stat-value">${data.stats.investors}</div>
+                                <div class="stat-label">Investors</div>
+                            </div>
+                            <div class="stat-card">
+                                <div class="stat-value">${data.stats.projects}</div>
+                                <div class="stat-label">Projects</div>
+                            </div>
+                            <div class="stat-card">
+                                <div class="stat-value">${data.stats.investments}</div>
+                                <div class="stat-label">Investments</div>
+                            </div>
+                        </div>
+                        
+                        <div class="card">
+                            <h3>Recent Activity</h3>
+                            <div id="recentActivity">Loading...</div>
+                        </div>
+                    `;
+                    
+                    loadRecentActivity();
+                }
+            } catch (error) {
+                content.innerHTML = `<div class="alert alert-danger">Error: ${error.message}</div>`;
+            }
+        }
+
+        async function loadUsers() {
+            const content = document.getElementById('adminContent');
+            content.innerHTML = `
+                <div class="filter-bar">
+                    <input type="text" id="searchUsers" placeholder="Search users..." onkeyup="filterUsers()">
+                    <select id="roleFilter" onchange="filterUsers()">
+                        <option value="">All Roles</option>
+                        <option value="client">Client</option>
+                        <option value="investor">Investor</option>
+                        <option value="admin">Admin</option>
+                        <option value="super_admin">Super Admin</option>
+                    </select>
+                    <select id="statusFilter" onchange="filterUsers()">
+                        <option value="">All Status</option>
+                        <option value="active">Active</option>
+                        <option value="pending">Pending</option>
+                        <option value="suspended">Suspended</option>
+                    </select>
+                    <button class="btn btn-success export-btn" onclick="exportData('users')">
+                        <i class="fas fa-download"></i> Export
+                    </button>
+                </div>
+                <div class="table-container" id="usersTable"></div>
+            `;
+            
+            loadUsersData();
+        }
+
+        async function loadUsersData() {
+            try {
+                const response = await fetch('/api/users', {
+                    headers: {
+                        'Authorization': `Bearer ${await currentUser.getIdToken()}`
+                    }
+                });
+                
+                const data = await response.json();
+                
+                if (data.success) {
+                    renderUsersTable(data.users);
+                }
+            } catch (error) {
+                console.error('Error loading users:', error);
+            }
+        }
+
+        function renderUsersTable(users) {
+            let html = '<table><thead><tr><th>Name</th><th>Email</th><th>Role</th><th>Status</th><th>Phone</th><th>Created</th><th>Actions</th></tr></thead><tbody>';
+            
+            users.forEach(user => {
+                const created = user.createdAt ? new Date(user.createdAt.seconds * 1000).toLocaleDateString() : 'N/A';
+                html += `
+                    <tr>
+                        <td><strong>${user.fullName || 'N/A'}</strong></td>
+                        <td>${user.email}</td>
+                        <td><span class="badge badge-${user.role}">${user.role}</span></td>
+                        <td><span class="badge badge-${user.status}">${user.status}</span></td>
+                        <td>${user.phone || 'N/A'}</td>
+                        <td>${created}</td>
+                        <td>
+                            <button class="btn btn-sm btn-outline" onclick="viewUser('${user.uid}')">
+                                <i class="fas fa-eye"></i>
+                            </button>
+                            <button class="btn btn-sm btn-outline-accent" onclick="editUser('${user.uid}')">
+                                <i class="fas fa-edit"></i>
+                            </button>
+                            <button class="btn btn-sm btn-outline-danger" onclick="deleteUser('${user.uid}')">
+                                <i class="fas fa-trash"></i>
+                            </button>
+                        </td>
+                    </tr>
+                `;
+            });
+            
+            html += '</tbody></table>';
+            document.getElementById('usersTable').innerHTML = html;
+        }
+
+        window.editUser = async function(userId) {
+            try {
+                const response = await fetch(`/api/users/${userId}`, {
+                    headers: {
+                        'Authorization': `Bearer ${await currentUser.getIdToken()}`
+                    }
+                });
+                
+                const data = await response.json();
+                
+                if (data.success) {
+                    const user = data.user;
+                    document.getElementById('editUserId').value = userId;
+                    document.getElementById('editFullName').value = user.fullName || '';
+                    document.getElementById('editEmail').value = user.email || '';
+                    document.getElementById('editPhone').value = user.phone || '';
+                    document.getElementById('editRole').value = user.role || 'client';
+                    document.getElementById('editStatus').value = user.status || 'pending';
+                    
+                    openModal('userModal');
+                }
+            } catch (error) {
+                TAAGC.Utils.showToast('Error loading user', 'error');
+            }
+        };
+
+        window.saveUser = async function() {
+            const userId = document.getElementById('editUserId').value;
+            const updates = {
+                fullName: document.getElementById('editFullName').value,
+                phone: document.getElementById('editPhone').value,
+                role: document.getElementById('editRole').value,
+                status: document.getElementById('editStatus').value
+            };
+            
+            try {
+                const response = await fetch(`/api/users/${userId}`, {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${await currentUser.getIdToken()}`
+                    },
+                    body: JSON.stringify(updates)
+                });
+                
+                const data = await response.json();
+                
+                if (data.success) {
+                    TAAGC.Utils.showToast('User updated successfully', 'success');
+                    closeModal('userModal');
+                    loadUsersData();
+                }
+            } catch (error) {
+                TAAGC.Utils.showToast('Error updating user', 'error');
+            }
+        };
+
+        window.deleteUser = async function(userId) {
+            if (!confirm('Are you sure you want to delete this user?')) return;
+            
+            try {
+                const response = await fetch(`/api/users/${userId}`, {
+                    method: 'DELETE',
+                    headers: {
+                        'Authorization': `Bearer ${await currentUser.getIdToken()}`
+                    }
+                });
+                
+                const data = await response.json();
+                
+                if (data.success) {
+                    TAAGC.Utils.showToast('User deleted successfully', 'success');
+                    loadUsersData();
+                }
+            } catch (error) {
+                TAAGC.Utils.showToast('Error deleting user', 'error');
+            }
+        };
+
+        function filterUsers() {
+            const search = document.getElementById('searchUsers').value.toLowerCase();
+            const role = document.getElementById('roleFilter').value;
+            const status = document.getElementById('statusFilter').value;
+            
+            const rows = document.querySelectorAll('#usersTable tbody tr');
+            
+            rows.forEach(row => {
+                const text = row.textContent.toLowerCase();
+                const roleMatch = !role || row.querySelector('.badge').textContent === role;
+                const statusMatch = !status || row.querySelectorAll('.badge')[1].textContent === status;
+                const searchMatch = !search || text.includes(search);
+                
+                row.style.display = roleMatch && statusMatch && searchMatch ? '' : 'none';
+            });
+        }
+
+        window.exportData = async function(collection) {
+            try {
+                const response = await fetch(`/api/admin/export/${collection}`, {
+                    headers: {
+                        'Authorization': `Bearer ${await currentUser.getIdToken()}`
+                    }
+                });
+                
+                const data = await response.json();
+                
+                if (data.success) {
+                    const blob = new Blob([JSON.stringify(data.data, null, 2)], { type: 'application/json' });
+                    const url = URL.createObjectURL(blob);
+                    const a = document.createElement('a');
+                    a.href = url;
+                    a.download = `${collection}_export.json`;
+                    a.click();
+                    URL.revokeObjectURL(url);
+                    
+                    TAAGC.Utils.showToast('Export successful', 'success');
+                }
+            } catch (error) {
+                TAAGC.Utils.showToast('Export failed', 'error');
+            }
+        };
+
+        // Modal functions
+        window.openModal = (modalId) => {
+            document.getElementById(modalId).classList.add('active');
+        };
+
+        window.closeModal = (modalId) => {
+            document.getElementById(modalId).classList.remove('active');
+        };
+    </script>
+</body>
+</html>
