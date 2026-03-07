@@ -1,0 +1,295 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard - TAAGC Global</title>
+    
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="/assets/css/platform.css">
+</head>
+<body>
+    <div class="dashboard-layout">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <h2><span>TAAGC</span> Global</h2>
+            </div>
+            
+            <nav class="sidebar-nav" id="sidebarNav"></nav>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Top Bar -->
+            <div class="top-bar">
+                <h1>Dashboard</h1>
+                <div class="user-menu">
+                    <div class="user-profile" onclick="window.location.href='/profile'">
+                        <div class="user-avatar" id="userAvatar">U</div>
+                        <div>
+                            <div id="userName">Loading...</div>
+                            <div style="font-size: 12px; color: var(--light);" id="userRole">User</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Dashboard Content -->
+            <div id="dashboardContent">
+                <div class="loading">
+                    <i class="fas fa-spinner fa-spin"></i>
+                    <p>Loading dashboard...</p>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <div id="toastContainer"></div>
+
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
+    <script src="/assets/js/platform.js"></script>
+    
+    <script>
+        let currentUser = null;
+        let userProfile = null;
+
+        // Load user data
+        TAAGC.auth.onAuthStateChanged(async (user) => {
+            if (!user) {
+                window.location.href = '/login';
+                return;
+            }
+            
+            currentUser = user;
+            
+            // Get user profile
+            const response = await fetch('/api/auth/me', {
+                headers: {
+                    'Authorization': `Bearer ${await user.getIdToken()}`
+                }
+            });
+            
+            const data = await response.json();
+            if (data.success) {
+                userProfile = data.user;
+                updateUI();
+                loadDashboardData();
+            }
+        });
+
+        function updateUI() {
+            document.getElementById('userName').textContent = userProfile.fullName || 'User';
+            document.getElementById('userAvatar').textContent = (userProfile.fullName || 'U').charAt(0).toUpperCase();
+            document.getElementById('userRole').textContent = userProfile.role || 'User';
+            
+            // Build sidebar nav
+            const nav = document.getElementById('sidebarNav');
+            const links = TAAGC.Utils.getNavLinksByRole(userProfile.role);
+            
+            let html = '';
+            links.forEach(link => {
+                html += `
+                    <a href="${link.href}" class="nav-item">
+                        <i class="fas ${link.icon}"></i>
+                        <span>${link.label}</span>
+                    </a>
+                `;
+            });
+            
+            html += `
+                <div class="nav-section">ACCOUNT</div>
+                <a href="/profile" class="nav-item">
+                    <i class="fas fa-user"></i>
+                    <span>Profile</span>
+                </a>
+                <a href="/settings" class="nav-item">
+                    <i class="fas fa-cog"></i>
+                    <span>Settings</span>
+                </a>
+                <a href="#" class="nav-item" onclick="TAAGC.Auth.logout()">
+                    <i class="fas fa-sign-out-alt"></i>
+                    <span>Logout</span>
+                </a>
+            `;
+            
+            nav.innerHTML = html;
+        }
+
+        async function loadDashboardData() {
+            try {
+                const response = await fetch('/api/dashboard/stats', {
+                    headers: {
+                        'Authorization': `Bearer ${await currentUser.getIdToken()}`
+                    }
+                });
+                
+                const data = await response.json();
+                
+                if (data.success) {
+                    renderDashboard(data.stats);
+                }
+            } catch (error) {
+                console.error('Error loading dashboard:', error);
+            }
+        }
+
+        function renderDashboard(stats) {
+            let content = '';
+            
+            if (userProfile.role === 'super_admin' || userProfile.role === 'admin') {
+                // Admin dashboard
+                content = `
+                    <div class="stats-grid">
+                        <div class="stat-card">
+                            <div class="stat-value">${stats.totalUsers || 0}</div>
+                            <div class="stat-label">Total Users</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-value">${stats.totalProjects || 0}</div>
+                            <div class="stat-label">Projects</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-value">${stats.totalInvestments || 0}</div>
+                            <div class="stat-label">Investments</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-value">${stats.totalTransactions || 0}</div>
+                            <div class="stat-label">Transactions</div>
+                        </div>
+                    </div>
+                    
+                    <div class="grid-2" style="margin-top: 30px;">
+                        <div class="card">
+                            <h3>Recent Users</h3>
+                            <div id="recentUsers">Loading...</div>
+                        </div>
+                        <div class="card">
+                            <h3>Recent Investments</h3>
+                            <div id="recentInvestments">Loading...</div>
+                        </div>
+                    </div>
+                `;
+            } else {
+                // User dashboard
+                content = `
+                    <div class="stats-grid">
+                        <div class="stat-card">
+                            <div class="stat-value">${stats.investments || 0}</div>
+                            <div class="stat-label">My Investments</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-value">${stats.transactions || 0}</div>
+                            <div class="stat-label">Transactions</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-value">$${stats.totalInvested?.toLocaleString() || 0}</div>
+                            <div class="stat-label">Total Invested</div>
+                        </div>
+                    </div>
+                    
+                    <div class="card" style="margin-top: 30px;">
+                        <h3>My Investments</h3>
+                        <div id="myInvestments">Loading...</div>
+                    </div>
+                `;
+            }
+            
+            document.getElementById('dashboardContent').innerHTML = content;
+            
+            // Load additional data
+            if (userProfile.role === 'super_admin' || userProfile.role === 'admin') {
+                loadRecentUsers();
+                loadRecentInvestments();
+            } else {
+                loadMyInvestments();
+            }
+        }
+
+        async function loadRecentUsers() {
+            try {
+                const response = await fetch('/api/users?limit=5', {
+                    headers: {
+                        'Authorization': `Bearer ${await currentUser.getIdToken()}`
+                    }
+                });
+                
+                const data = await response.json();
+                
+                if (data.success) {
+                    let html = '<table><tr><th>Name</th><th>Email</th><th>Role</th></tr>';
+                    data.users.slice(0, 5).forEach(user => {
+                        html += `<tr>
+                            <td>${user.fullName || 'N/A'}</td>
+                            <td>${user.email}</td>
+                            <td><span class="badge badge-${user.role}">${user.role}</span></td>
+                        </tr>`;
+                    });
+                    html += '</table>';
+                    document.getElementById('recentUsers').innerHTML = html;
+                }
+            } catch (error) {
+                console.error('Error loading users:', error);
+            }
+        }
+
+        async function loadRecentInvestments() {
+            try {
+                const response = await fetch('/api/investments?limit=5', {
+                    headers: {
+                        'Authorization': `Bearer ${await currentUser.getIdToken()}`
+                    }
+                });
+                
+                const data = await response.json();
+                
+                if (data.success) {
+                    let html = '<table><tr><th>Project</th><th>Amount</th><th>Status</th></tr>';
+                    data.investments.slice(0, 5).forEach(inv => {
+                        html += `<tr>
+                            <td>${inv.projectId}</td>
+                            <td>$${inv.amount.toLocaleString()}</td>
+                            <td><span class="badge badge-${inv.status}">${inv.status}</span></td>
+                        </tr>`;
+                    });
+                    html += '</table>';
+                    document.getElementById('recentInvestments').innerHTML = html;
+                }
+            } catch (error) {
+                console.error('Error loading investments:', error);
+            }
+        }
+
+        async function loadMyInvestments() {
+            try {
+                const response = await fetch(`/api/investments/user/${currentUser.uid}`, {
+                    headers: {
+                        'Authorization': `Bearer ${await currentUser.getIdToken()}`
+                    }
+                });
+                
+                const data = await response.json();
+                
+                if (data.success) {
+                    let html = '<table><tr><th>Project</th><th>Amount</th><th>Status</th><th>Date</th></tr>';
+                    data.investments.forEach(inv => {
+                        html += `<tr>
+                            <td>${inv.projectId}</td>
+                            <td>$${inv.amount.toLocaleString()}</td>
+                            <td><span class="badge badge-${inv.status}">${inv.status}</span></td>
+                            <td>${new Date(inv.date).toLocaleDateString()}</td>
+                        </tr>`;
+                    });
+                    html += '</table>';
+                    document.getElementById('myInvestments').innerHTML = html;
+                }
+            } catch (error) {
+                console.error('Error loading investments:', error);
+            }
+        }
+    </script>
+</body>
+</html>
