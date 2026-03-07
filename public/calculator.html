@@ -1,0 +1,448 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Investment Calculator - TAAGC Global</title>
+    
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="/assets/css/platform.css">
+    
+    <style>
+        .calculator-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 40px 20px;
+        }
+        
+        .result-card {
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+            color: white;
+            border-radius: var(--radius-xl);
+            padding: 30px;
+            text-align: center;
+        }
+        
+        .result-value {
+            font-size: 48px;
+            font-weight: 800;
+            margin: 20px 0;
+        }
+        
+        .comparison-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 15px;
+            border-bottom: 1px solid #e2e8f0;
+        }
+        
+        .comparison-item:last-child {
+            border-bottom: none;
+        }
+        
+        .scenario-card {
+            background: white;
+            border-radius: var(--radius-lg);
+            padding: 20px;
+            border: 2px solid transparent;
+            transition: var(--transition);
+            cursor: pointer;
+        }
+        
+        .scenario-card:hover {
+            border-color: var(--accent);
+            transform: translateY(-5px);
+        }
+        
+        .scenario-card.active {
+            border-color: var(--accent);
+            background: var(--bg);
+        }
+        
+        .saved-calculation {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px;
+            background: var(--bg);
+            border-radius: var(--radius-md);
+            margin-bottom: 10px;
+        }
+        
+        .saved-calculation:hover {
+            background: #e2e8f0;
+        }
+        
+        @media (max-width: 768px) {
+            .result-value {
+                font-size: 36px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Navbar -->
+    <nav class="navbar">
+        <div class="container">
+            <div class="navbar-content">
+                <a href="/" class="navbar-brand">
+                    <div class="logo-icon">TA</div>
+                    <div class="brand-text"><span>TAAGC</span> Global</div>
+                </a>
+                
+                <button class="mobile-menu-btn">
+                    <i class="fas fa-bars"></i>
+                </button>
+                
+                <div class="nav-menu">
+                    <ul class="nav-links">
+                        <li><a href="/" class="nav-link">Home</a></li>
+                        <li><a href="/investors" class="nav-link">Investors</a></li>
+                        <li><a href="/calculator" class="nav-link active">Calculator</a></li>
+                        <li><a href="/projects" class="nav-link">Projects</a></li>
+                        <li><a href="/contact" class="nav-link">Contact</a></li>
+                    </ul>
+                    
+                    <div class="nav-buttons guest-only">
+                        <a href="/login" class="btn btn-outline">Login</a>
+                        <a href="/register" class="btn btn-primary">Register</a>
+                    </div>
+                    
+                    <div class="nav-buttons auth-only" style="display: none;">
+                        <a href="/dashboard" class="btn btn-outline">Dashboard</a>
+                        <button onclick="TAAGC.Auth.logout()" class="btn btn-primary">Logout</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <div class="calculator-container">
+        <h1 class="section-title center">Investment <span>Calculator</span></h1>
+        
+        <div class="grid-2" style="gap: 40px;">
+            <!-- Calculator Form -->
+            <div class="card">
+                <h3 style="margin-bottom: 25px;">Calculate Returns</h3>
+                
+                <div class="form-group">
+                    <label>Initial Investment ($)</label>
+                    <input type="number" class="form-control" id="initialAmount" value="10000" min="100" step="1000">
+                </div>
+                
+                <div class="form-group">
+                    <label>Monthly Contribution ($)</label>
+                    <input type="number" class="form-control" id="monthlyAmount" value="0" min="0" step="100">
+                </div>
+                
+                <div class="form-group">
+                    <label>Annual Return (%)</label>
+                    <input type="number" class="form-control" id="returnRate" value="12" min="0.1" max="100" step="0.1">
+                </div>
+                
+                <div class="form-group">
+                    <label>Investment Period (Years)</label>
+                    <input type="number" class="form-control" id="investmentYears" value="10" min="1" max="50">
+                </div>
+                
+                <div class="form-group">
+                    <label>Compound Frequency</label>
+                    <select class="form-control" id="compoundFrequency">
+                        <option value="1">Annually</option>
+                        <option value="2">Semi-Annually</option>
+                        <option value="4">Quarterly</option>
+                        <option value="12">Monthly</option>
+                        <option value="365">Daily</option>
+                    </select>
+                </div>
+                
+                <div style="display: flex; gap: 10px;">
+                    <button class="btn btn-primary" onclick="calculateInvestment()">
+                        <i class="fas fa-calculator"></i> Calculate
+                    </button>
+                    <button class="btn btn-outline" onclick="saveCalculation()">
+                        <i class="fas fa-save"></i> Save
+                    </button>
+                </div>
+            </div>
+
+            <!-- Results -->
+            <div>
+                <div class="result-card">
+                    <h3 style="color: white;">Future Value</h3>
+                    <div class="result-value" id="futureValue">$0</div>
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
+                        <div>
+                            <div style="opacity: 0.8;">Total Invested</div>
+                            <div style="font-size: 20px; font-weight: 600;" id="totalInvested">$0</div>
+                        </div>
+                        <div>
+                            <div style="opacity: 0.8;">Total Return</div>
+                            <div style="font-size: 20px; font-weight: 600;" id="totalReturn" class="positive">$0</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Comparison Scenarios -->
+                <div style="margin-top: 30px;">
+                    <h3>Compare Scenarios</h3>
+                    <div class="grid-3" style="margin-top: 15px;">
+                        <div class="scenario-card" onclick="loadScenario('conservative')">
+                            <h4>Conservative</h4>
+                            <p style="color: var(--light);">8% return</p>
+                        </div>
+                        <div class="scenario-card active" onclick="loadScenario('moderate')">
+                            <h4>Moderate</h4>
+                            <p style="color: var(--light);">12% return</p>
+                        </div>
+                        <div class="scenario-card" onclick="loadScenario('aggressive')">
+                            <h4>Aggressive</h4>
+                            <p style="color: var(--light);">15% return</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Growth Chart -->
+                <div style="margin-top: 30px;">
+                    <h3>Growth Projection</h3>
+                    <div style="height: 200px; margin-top: 15px;">
+                        <canvas id="growthChart"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Saved Calculations -->
+        <div style="margin-top: 60px;">
+            <h3>Saved Calculations</h3>
+            <div id="savedCalculations" style="margin-top: 20px;">
+                <!-- Loaded via JavaScript -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-grid">
+                <div class="footer-col">
+                    <h4>Tools</h4>
+                    <ul>
+                        <li><a href="/calculator">Calculator</a></li>
+                        <li><a href="/comparison">Comparison</a></li>
+                    </ul>
+                </div>
+                <div class="footer-col">
+                    <h4>Resources</h4>
+                    <ul>
+                        <li><a href="/education">Education</a></li>
+                        <li><a href="/faq">FAQ</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2026 TAAGC Global. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+    <script src="/assets/js/platform.js"></script>
+    
+    <script>
+        let growthChart = null;
+        let savedCalculations = [];
+
+        document.addEventListener('DOMContentLoaded', () => {
+            calculateInvestment();
+            loadSavedCalculations();
+            
+            // Add input listeners
+            ['initialAmount', 'monthlyAmount', 'returnRate', 'investmentYears', 'compoundFrequency'].forEach(id => {
+                document.getElementById(id).addEventListener('input', calculateInvestment);
+            });
+        });
+
+        function calculateInvestment() {
+            const initial = parseFloat(document.getElementById('initialAmount').value) || 0;
+            const monthly = parseFloat(document.getElementById('monthlyAmount').value) || 0;
+            const rate = parseFloat(document.getElementById('returnRate').value) || 0;
+            const years = parseFloat(document.getElementById('investmentYears').value) || 0;
+            const compoundPerYear = parseInt(document.getElementById('compoundFrequency').value) || 1;
+            
+            // Calculate future value
+            const monthlyRate = rate / 100 / 12;
+            const months = years * 12;
+            
+            let futureValue = initial * Math.pow(1 + rate / 100 / compoundPerYear, years * compoundPerYear);
+            
+            // Add monthly contributions
+            if (monthly > 0) {
+                for (let i = 0; i < months; i++) {
+                    futureValue += monthly * Math.pow(1 + rate / 100 / 12, months - i);
+                }
+            }
+            
+            const totalInvested = initial + (monthly * months);
+            const totalReturn = futureValue - totalInvested;
+            
+            // Update display
+            document.getElementById('futureValue').textContent = `$${futureValue.toFixed(0)}`;
+            document.getElementById('totalInvested').textContent = `$${totalInvested.toFixed(0)}`;
+            document.getElementById('totalReturn').textContent = `$${totalReturn.toFixed(0)}`;
+            
+            // Update chart
+            updateGrowthChart(initial, monthly, rate, years);
+        }
+
+        function updateGrowthChart(initial, monthly, rate, years) {
+            const labels = [];
+            const data = [];
+            
+            for (let year = 0; year <= years; year++) {
+                labels.push(`Year ${year}`);
+                
+                let value = initial * Math.pow(1 + rate / 100, year);
+                
+                // Add monthly contributions
+                if (monthly > 0) {
+                    for (let m = 0; m < year * 12; m++) {
+                        value += monthly * Math.pow(1 + rate / 100 / 12, (year * 12) - m);
+                    }
+                }
+                
+                data.push(value);
+            }
+            
+            const ctx = document.getElementById('growthChart').getContext('2d');
+            
+            if (growthChart) {
+                growthChart.destroy();
+            }
+            
+            growthChart = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        label: 'Investment Growth',
+                        data: data,
+                        borderColor: '#c19a6b',
+                        backgroundColor: 'rgba(193, 154, 107, 0.1)',
+                        tension: 0.4,
+                        fill: true
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { display: false }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            ticks: {
+                                callback: (value) => '$' + value
+                            }
+                        }
+                    }
+                }
+            });
+        }
+
+        function loadScenario(scenario) {
+            document.querySelectorAll('.scenario-card').forEach(c => c.classList.remove('active'));
+            event.target.closest('.scenario-card').classList.add('active');
+            
+            const rates = {
+                'conservative': 8,
+                'moderate': 12,
+                'aggressive': 15
+            };
+            
+            document.getElementById('returnRate').value = rates[scenario];
+            calculateInvestment();
+        }
+
+        function saveCalculation() {
+            const calculation = {
+                id: Date.now(),
+                initial: document.getElementById('initialAmount').value,
+                monthly: document.getElementById('monthlyAmount').value,
+                rate: document.getElementById('returnRate').value,
+                years: document.getElementById('investmentYears').value,
+                futureValue: document.getElementById('futureValue').textContent,
+                date: new Date().toISOString()
+            };
+            
+            savedCalculations.unshift(calculation);
+            localStorage.setItem('savedCalculations', JSON.stringify(savedCalculations));
+            
+            renderSavedCalculations();
+            TAAGC.Utils.showToast('Calculation saved!', 'success');
+        }
+
+        function loadSavedCalculations() {
+            const saved = localStorage.getItem('savedCalculations');
+            if (saved) {
+                savedCalculations = JSON.parse(saved);
+                renderSavedCalculations();
+            }
+        }
+
+        function renderSavedCalculations() {
+            const container = document.getElementById('savedCalculations');
+            
+            if (savedCalculations.length === 0) {
+                container.innerHTML = '<p style="color: var(--light); text-align: center;">No saved calculations</p>';
+                return;
+            }
+            
+            let html = '';
+            savedCalculations.slice(0, 5).forEach(calc => {
+                const date = new Date(calc.date).toLocaleDateString();
+                html += `
+                    <div class="saved-calculation">
+                        <div>
+                            <strong>$${calc.initial}</strong> @ ${calc.rate}% for ${calc.years} years
+                            <br><small style="color: var(--light);">${date}</small>
+                        </div>
+                        <div>
+                            <span class="badge badge-success">${calc.futureValue}</span>
+                            <button class="btn btn-sm" onclick="loadSaved(${calc.id})">
+                                <i class="fas fa-upload"></i>
+                            </button>
+                            <button class="btn btn-sm" onclick="deleteSaved(${calc.id})">
+                                <i class="fas fa-trash"></i>
+                            </button>
+                        </div>
+                    </div>
+                `;
+            });
+            
+            container.innerHTML = html;
+        }
+
+        function loadSaved(id) {
+            const calc = savedCalculations.find(c => c.id === id);
+            if (calc) {
+                document.getElementById('initialAmount').value = calc.initial;
+                document.getElementById('monthlyAmount').value = calc.monthly;
+                document.getElementById('returnRate').value = calc.rate;
+                document.getElementById('investmentYears').value = calc.years;
+                calculateInvestment();
+            }
+        }
+
+        function deleteSaved(id) {
+            savedCalculations = savedCalculations.filter(c => c.id !== id);
+            localStorage.setItem('savedCalculations', JSON.stringify(savedCalculations));
+            renderSavedCalculations();
+            TAAGC.Utils.showToast('Calculation deleted', 'info');
+        }
+    </script>
+</body>
+</html>
