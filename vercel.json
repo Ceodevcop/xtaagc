@@ -1,25 +1,34 @@
 {
   "version": 2,
-
-  "rewrites": [
-    { "source": "/", "destination": "/public/index.html" },
-
-    { "source": "/login", "destination": "/public/login.html" },
-    { "source": "/register", "destination": "/public/register.html" },
-    { "source": "/events", "destination": "/public/events.html" },
-    { "source": "/complete-profile", "destination": "/public/complete-profile.html" },
-
-    { "source": "/profile/client", "destination": "/public/profile/client/index.html" },
-    { "source": "/profile/investors", "destination": "/public/profile/investors/index.html" },
-
-    { "source": "/staff", "destination": "/public/staff/index.html" },
-
-    { "source": "/admin/login", "destination": "/public/xtaagc/admin-login/index.html" },
-    { "source": "/admin/setup", "destination": "/public/setup-admin.html" },
-
-    { "source": "/api/(.*)", "destination": "/api/$1" }
+  "functions": {
+    "api/index.js": {
+      "maxDuration": 10,
+      "memory": 1024
+    }
+  },
+  "routes": [
+    {
+      "src": "/api/(.*)",
+      "dest": "/api/index.js"
+    }
   ],
-
-  "cleanUrls": true,
-  "trailingSlash": false
+  "headers": [
+    {
+      "source": "/api/(.*)",
+      "headers": [
+        {
+          "key": "Access-Control-Allow-Origin",
+          "value": "*"
+        },
+        {
+          "key": "Access-Control-Allow-Methods",
+          "value": "GET, POST, PUT, DELETE, PATCH, OPTIONS"
+        },
+        {
+          "key": "Access-Control-Allow-Headers",
+          "value": "Content-Type, Authorization"
+        }
+      ]
+    }
+  ]
 }
