@@ -1,39 +1,132 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
+        xmlns:xhtml="http://www.w3.org/1999/xhtml"
+        xmlns:image="http://www.google.com/schemas/sitemap-image/1.1"
+        xmlns:video="http://www.google.com/schemas/sitemap-video/1.1">
+    
+    <!-- Main Pages - Daily -->
     <url>
-        <loc>https://taagc.com/</loc>
-        <lastmod>2023-12-01</lastmod>
-        <changefreq>weekly</changefreq>
+        <loc>https://taagc.website/</loc>
+        <lastmod>2026-03-07</lastmod>
+        <changefreq>daily</changefreq>
         <priority>1.0</priority>
     </url>
+    
     <url>
-        <loc>https://taagc.website/pages/about-us.html</loc>
-        <lastmod>2023-12-01</lastmod>
+        <loc>https://taagc.website/about</loc>
+        <lastmod>2026-03-01</lastmod>
         <changefreq>monthly</changefreq>
         <priority>0.8</priority>
     </url>
+    
     <url>
-        <loc>https://taagc.website/pages/sectors.html</loc>
-        <lastmod>2023-12-01</lastmod>
-        <changefreq>monthly</changefreq>
-        <priority>0.9</priority>
-    </url>
-    <url>
-        <loc>https://taagc.website/pages/services.html</loc>
-        <lastmod>2023-12-01</lastmod>
+        <loc>https://taagc.website/contact</loc>
+        <lastmod>2026-03-01</lastmod>
         <changefreq>monthly</changefreq>
         <priority>0.8</priority>
     </url>
+    
     <url>
-        <loc>https://taagc.website/pages/contact-us.html</loc>
-        <lastmod>2023-12-01</lastmod>
-        <changefreq>monthly</changefreq>
+        <loc>https://taagc.website/faq</loc>
+        <lastmod>2026-03-01</lastmod>
+        <changefreq>weekly</changefreq>
         <priority>0.7</priority>
     </url>
+    
+    <!-- Authentication Pages - Monthly -->
     <url>
-        <loc>https://taagc.website/pages/privacy-policy.html</loc>
-        <lastmod>2023-12-01</lastmod>
+        <loc>https://taagc.website/login</loc>
+        <lastmod>2026-03-01</lastmod>
+        <changefreq>monthly</changefreq>
+        <priority>0.5</priority>
+    </url>
+    
+    <url>
+        <loc>https://taagc.website/register</loc>
+        <lastmod>2026-03-01</lastmod>
+        <changefreq>monthly</changefreq>
+        <priority>0.5</priority>
+    </url>
+    
+    <!-- Investor Pages - Daily -->
+    <url>
+        <loc>https://taagc.website/investors</loc>
+        <lastmod>2026-03-07</lastmod>
+        <changefreq>daily</changefreq>
+        <priority>0.9</priority>
+    </url>
+    
+    <url>
+        <loc>https://taagc.website/education</loc>
+        <lastmod>2026-03-05</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.8</priority>
+    </url>
+    
+    <url>
+        <loc>https://taagc.website/calculator</loc>
+        <lastmod>2026-03-07</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.7</priority>
+    </url>
+    
+    <!-- Project Pages - Daily -->
+    <url>
+        <loc>https://taagc.website/projects</loc>
+        <lastmod>2026-03-07</lastmod>
+        <changefreq>daily</changefreq>
+        <priority>0.9</priority>
+    </url>
+    
+    <!-- Legal Pages - Yearly -->
+    <url>
+        <loc>https://taagc.website/terms</loc>
+        <lastmod>2026-03-01</lastmod>
         <changefreq>yearly</changefreq>
         <priority>0.3</priority>
+    </url>
+    
+    <url>
+        <loc>https://taagc.website/privacy</loc>
+        <lastmod>2026-03-01</lastmod>
+        <changefreq>yearly</changefreq>
+        <priority>0.3</priority>
+    </url>
+    
+    <!-- Error Pages -->
+    <url>
+        <loc>https://taagc.website/404</loc>
+        <lastmod>2026-03-01</lastmod>
+        <changefreq>never</changefreq>
+        <priority>0.1</priority>
+    </url>
+    
+    <url>
+        <loc>https://taagc.website/500</loc>
+        <lastmod>2026-03-01</lastmod>
+        <changefreq>never</changefreq>
+        <priority>0.1</priority>
+    </url>
+    
+    <url>
+        <loc>https://taagc.website/maintenance</loc>
+        <lastmod>2026-03-01</lastmod>
+        <changefreq>never</changefreq>
+        <priority>0.1</priority>
+    </url>
+    
+    <url>
+        <loc>https://taagc.website/coming-soon</loc>
+        <lastmod>2026-03-01</lastmod>
+        <changefreq>never</changefreq>
+        <priority>0.1</priority>
+    </url>
+    
+    <!-- Search Page -->
+    <url>
+        <loc>https://taagc.website/search</loc>
+        <lastmod>2026-03-07</lastmod>
+        <changefreq>daily</changefreq>
+        <priority>0.6</priority>
     </url>
 </urlset>
