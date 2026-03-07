@@ -1,29 +1,25 @@
 {
   "version": 2,
 
-  "routes": [
-    { "src": "^/$", "dest": "/public/index.html" },
+  "rewrites": [
+    { "source": "/", "destination": "/public/index.html" },
 
-    { "src": "^/login$", "dest": "/public/login.html" },
-    { "src": "^/register$", "dest": "/public/register.html" },
-    { "src": "^/events$", "dest": "/public/events.html" },
-    { "src": "^/complete-profile$", "dest": "/public/complete-profile.html" },
+    { "source": "/login", "destination": "/public/login.html" },
+    { "source": "/register", "destination": "/public/register.html" },
+    { "source": "/events", "destination": "/public/events.html" },
+    { "source": "/complete-profile", "destination": "/public/complete-profile.html" },
 
-    { "src": "^/profile/client$", "dest": "/public/profile/client/index.html" },
-    { "src": "^/profile/investors$", "dest": "/public/profile/investors/index.html" },
+    { "source": "/profile/client", "destination": "/public/profile/client/index.html" },
+    { "source": "/profile/investors", "destination": "/public/profile/investors/index.html" },
 
-    { "src": "^/staff$", "dest": "/public/staff/index.html" },
+    { "source": "/staff", "destination": "/public/staff/index.html" },
 
-    { "src": "^/admin/login$", "dest": "/public/xtaagc/admin-login/index.html" },
+    { "source": "/admin/login", "destination": "/public/xtaagc/admin-login/index.html" },
+    { "source": "/admin/setup", "destination": "/public/setup-admin.html" },
 
-    { "src": "^/admin/setup$", "dest": "/public/setup-admin.html" },
+    { "source": "/api/(.*)", "destination": "/api/$1" }
+  ],
 
-    { "src": "^/api/(.*)", "dest": "/api/$1" },
-
-    { "src": "^/css/(.*)", "dest": "/css/$1" },
-    { "src": "^/js/(.*)", "dest": "/js/$1" },
-    { "src": "^/assets/(.*)", "dest": "/assets/$1" },
-
-    { "src": "/(.*)", "dest": "/public/404.html" }
-  ]
+  "cleanUrls": true,
+  "trailingSlash": false
 }
