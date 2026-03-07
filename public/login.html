@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login - TAAGC Global</title>
+    
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="/assets/css/platform.css">
+</head>
+<body>
+    <div class="auth-container">
+        <div class="auth-card">
+            <div class="auth-logo">
+                <div class="logo-icon">TA</div>
+                <h1><span>TAAGC</span> Global</h1>
+                <p>Welcome back! Please login to your account</p>
+            </div>
+
+            <div id="loginAlert" class="auth-message" style="display: none;"></div>
+
+            <form id="loginForm" class="auth-form">
+                <div class="form-group">
+                    <label><i class="fas fa-envelope"></i> Email Address</label>
+                    <input type="email" class="form-control" id="email" placeholder="Enter your email" required>
+                </div>
+
+                <div class="form-group">
+                    <label><i class="fas fa-lock"></i> Password</label>
+                    <div class="password-field">
+                        <input type="password" class="form-control" id="password" placeholder="Enter your password" required>
+                        <i class="fas fa-eye password-toggle" onclick="togglePassword()"></i>
+                    </div>
+                </div>
+
+                <div class="auth-options">
+                    <label class="remember-me">
+                        <input type="checkbox" id="rememberMe" checked>
+                        <span>Remember me</span>
+                    </label>
+                    <a href="#" class="forgot-link" onclick="handleForgotPassword(event)">Forgot Password?</a>
+                </div>
+
+                <button type="submit" class="btn btn-primary btn-block" id="loginBtn">
+                    <i class="fas fa-sign-in-alt"></i> Login
+                </button>
+            </form>
+
+            <div class="auth-divider">
+                <span>Or continue with</span>
+            </div>
+
+            <div class="social-login">
+                <button class="social-btn google" onclick="handleGoogleLogin()">
+                    <i class="fab fa-google"></i> Google
+                </button>
+                <button class="social-btn github" onclick="handleGithubLogin()">
+                    <i class="fab fa-github"></i> GitHub
+                </button>
+            </div>
+
+            <div class="auth-footer">
+                <p>Don't have an account? <a href="/register">Create Account</a></p>
+                <p><a href="/">Back to Home</a></p>
+            </div>
+        </div>
+    </div>
+
+    <div id="toastContainer"></div>
+
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
+    <script src="/assets/js/platform.js"></script>
+    
+    <script>
+        function togglePassword() {
+            const password = document.getElementById('password');
+            const icon = document.querySelector('.password-toggle');
+            if (password.type === 'password') {
+                password.type = 'text';
+                icon.classList.replace('fa-eye', 'fa-eye-slash');
+            } else {
+                password.type = 'password';
+                icon.classList.replace('fa-eye-slash', 'fa-eye');
+            }
+        }
+
+        async function handleForgotPassword(e) {
+            e.preventDefault();
+            const email = document.getElementById('email').value;
+            
+            if (!email) {
+                TAAGC.Utils.showToast('Please enter your email', 'warning');
+                return;
+            }
+            
+            try {
+                await TAAGC.Auth.resetPassword(email);
+                TAAGC.Utils.showToast('Password reset email sent!', 'success');
+            } catch (error) {
+                TAAGC.Utils.showToast(error.message, 'error');
+            }
+        }
+
+        async function handleGoogleLogin() {
+            try {
+                const result = await TAAGC.Auth.googleLogin();
+                if (result.success) {
+                    window.location.href = '/dashboard';
+                }
+            } catch (error) {
+                TAAGC.Utils.showToast(error.message, 'error');
+            }
+        }
+
+        async function handleGithubLogin() {
+            try {
+                const result = await TAAGC.Auth.githubLogin();
+                if (result.success) {
+                    window.location.href = '/dashboard';
+                }
+            } catch (error) {
+                TAAGC.Utils.showToast(error.message, 'error');
+            }
+        }
+
+        document.getElementById('loginForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+            const remember = document.getElementById('rememberMe').checked;
+            
+            const result = await TAAGC.Auth.login(email, password, remember);
+            if (result.success) {
+                window.location.href = '/dashboard';
+            }
+        });
+    </script>
+</body>
+</html>
