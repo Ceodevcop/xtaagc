@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Server Error - TAAGC Global</title>
+    
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="/assets/css/platform.css">
+    
+    <style>
+        .error-container {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            background: linear-gradient(135deg, var(--bg), white);
+        }
+        
+        .error-content {
+            text-align: center;
+            max-width: 600px;
+        }
+        
+        .error-icon {
+            font-size: 120px;
+            color: var(--danger);
+            margin-bottom: 20px;
+            animation: spin 4s linear infinite;
+        }
+        
+        @keyframes spin {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+        
+        .error-code {
+            font-size: 48px;
+            font-weight: 800;
+            color: var(--primary);
+            margin-bottom: 20px;
+        }
+        
+        .error-title {
+            font-size: 32px;
+            color: var(--dark);
+            margin-bottom: 20px;
+        }
+        
+        .error-message {
+            color: var(--light);
+            font-size: 18px;
+            margin-bottom: 30px;
+            line-height: 1.8;
+        }
+        
+        .status-indicator {
+            background: var(--bg);
+            border-radius: var(--radius-lg);
+            padding: 20px;
+            margin-bottom: 30px;
+            border: 1px solid #e2e8f0;
+        }
+        
+        .status-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 10px 0;
+            border-bottom: 1px solid #e2e8f0;
+        }
+        
+        .status-item:last-child {
+            border-bottom: none;
+        }
+        
+        .status-label {
+            color: var(--light);
+        }
+        
+        .status-value {
+            font-weight: 600;
+        }
+        
+        .status-value.up {
+            color: var(--success);
+        }
+        
+        .status-value.down {
+            color: var(--danger);
+        }
+        
+        .error-actions {
+            display: flex;
+            gap: 20px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+        
+        .retry-countdown {
+            margin-top: 30px;
+            color: var(--light);
+            font-size: 14px;
+        }
+        
+        .retry-countdown span {
+            font-weight: 700;
+            color: var(--accent);
+        }
+    </style>
+</head>
+<body>
+    <div class="error-container">
+        <div class="error-content">
+            <div class="error-icon">
+                <i class="fas fa-exclamation-triangle"></i>
+            </div>
+            <div class="error-code">500</div>
+            <h1 class="error-title">Server Error</h1>
+            <p class="error-message">
+                Something went wrong on our end. We're working to fix it.<br>
+                Please try again in a few minutes.
+            </p>
+            
+            <div class="status-indicator">
+                <div class="status-item">
+                    <span class="status-label">Server Status</span>
+                    <span class="status-value down">Error</span>
+                </div>
+                <div class="status-item">
+                    <span class="status-label">Error ID</span>
+                    <span class="status-value" id="errorId">TAAGC-500-001</span>
+                </div>
+                <div class="status-item">
+                    <span class="status-label">Timestamp</span>
+                    <span class="status-value" id="timestamp"></span>
+                </div>
+            </div>
+            
+            <div class="retry-countdown">
+                Auto-retry in <span id="countdown">60</span> seconds
+            </div>
+            
+            <div class="error-actions">
+                <button class="btn btn-primary btn-lg" onclick="retryNow()">
+                    <i class="fas fa-redo"></i> Retry Now
+                </button>
+                <a href="/contact" class="btn btn-outline btn-lg">
+                    <i class="fas fa-headset"></i> Report Problem
+                </a>
+            </div>
+            
+            <div style="margin-top: 40px;">
+                <a href="/" class="btn btn-outline">
+                    <i class="fas fa-home"></i> Back to Home
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <script src="/assets/js/platform.js"></script>
+    
+    <script>
+        // Generate error ID
+        const errorId = 'TAAGC-500-' + Math.floor(Math.random() * 1000).toString().padStart(3, '0');
+        document.getElementById('errorId').textContent = errorId;
+        
+        // Set timestamp
+        document.getElementById('timestamp').textContent = new Date().toLocaleString();
+        
+        // Countdown timer
+        let countdown = 60;
+        const countdownEl = document.getElementById('countdown');
+        
+        const timer = setInterval(() => {
+            countdown--;
+            countdownEl.textContent = countdown;
+            
+            if (countdown <= 0) {
+                clearInterval(timer);
+                retryNow();
+            }
+        }, 1000);
+        
+        function retryNow() {
+            window.location.reload();
+        }
+    </script>
+</body>
+</html>
