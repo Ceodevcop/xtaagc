@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Investment Projects - TAAGC Global</title>
+    
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="/assets/css/platform.css">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="container">
+            <div class="navbar-content">
+                <a href="/" class="navbar-brand">
+                    <div class="logo-icon">TA</div>
+                    <div class="brand-text"><span>TAAGC</span> Global</div>
+                </a>
+                
+                <button class="mobile-menu-btn">
+                    <i class="fas fa-bars"></i>
+                </button>
+                
+                <div class="nav-menu">
+                    <ul class="nav-links">
+                        <li><a href="/" class="nav-link">Home</a></li>
+                        <li><a href="/investors" class="nav-link">Investors</a></li>
+                        <li><a href="/projects" class="nav-link active">Projects</a></li>
+                        <li><a href="/about" class="nav-link">About</a></li>
+                        <li><a href="/contact" class="nav-link">Contact</a></li>
+                    </ul>
+                    
+                    <div class="nav-buttons guest-only">
+                        <a href="/login" class="btn btn-outline">Login</a>
+                        <a href="/register" class="btn btn-primary">Register</a>
+                    </div>
+                    
+                    <div class="nav-buttons auth-only" style="display: none;">
+                        <a href="/dashboard" class="btn btn-outline">Dashboard</a>
+                        <button onclick="TAAGC.Auth.logout()" class="btn btn-primary">Logout</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container" style="padding: 40px 0;">
+        <h1 style="margin-bottom: 30px;">Investment <span style="color: var(--accent);">Opportunities</span></h1>
+        
+        <div class="filter-bar" style="justify-content: space-between;">
+            <div style="display: flex; gap: 15px;">
+                <select class="form-control" id="categoryFilter">
+                    <option value="">All Categories</option>
+                    <option value="tech">Technology</option>
+                    <option value="real-estate">Real Estate</option>
+                    <option value="energy">Energy</option>
+                    <option value="healthcare">Healthcare</option>
+                </select>
+                
+                <select class="form-control" id="riskFilter">
+                    <option value="">All Risk Levels</option>
+                    <option value="low">Low Risk</option>
+                    <option value="medium">Medium Risk</option>
+                    <option value="high">High Risk</option>
+                </select>
+                
+                <select class="form-control" id="sortFilter">
+                    <option value="newest">Newest First</option>
+                    <option value="roi">Highest ROI</option>
+                    <option value="amount">Largest Target</option>
+                </select>
+            </div>
+            
+            <span id="resultsCount" style="color: var(--light);">Loading...</span>
+        </div>
+
+        <div id="projectsContainer" class="grid-3" style="margin-top: 30px;">
+            <div class="loading">
+                <i class="fas fa-spinner fa-spin"></i>
+                <p>Loading projects...</p>
+            </div>
+        </div>
+        
+        <div id="pagination" style="margin-top: 40px;"></div>
+    </div>
+
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-grid">
+                <div class="footer-col">
+                    <h4>TAAGC Global</h4>
+                    <ul>
+                        <li><a href="/about">About Us</a></li>
+                        <li><a href="/contact">Contact</a></li>
+                    </ul>
+                </div>
+                <div class="footer-col">
+                    <h4>For Investors</h4>
+                    <ul>
+                        <li><a href="/investors">How to Invest</a></li>
+                        <li><a href="/projects">Opportunities</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2026 TAAGC Global</p>
+            </div>
+        </div>
+    </footer>
+
+    <div id="toastContainer"></div>
+
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
+    <script src="/assets/js/platform.js"></script>
+    
+    <script>
+        let allProjects = [];
+        let currentPage = 1;
+        const itemsPerPage = 9;
+
+        document.addEventListener('DOMContentLoaded', async () => {
+            await loadProjects();
+            
+            document.getElementById('categoryFilter').addEventListener('change', filterProjects);
+            document.getElementById('riskFilter').addEventListener('change', filterProjects);
+            document.getElementById('sortFilter').addEventListener('change', sortProjects);
+        });
+
+        async function loadProjects() {
+            try {
+                const response = await fetch('/api/projects');
+                const data = await response.json();
+                
+                if (data.success) {
+                    allProjects = data.projects;
+                    filterProjects();
+                }
+            } catch (error) {
+                console.error('Error loading projects:', error);
+                document.getElementById('projectsContainer').innerHTML = 
+                    '<div class="alert alert-danger">Failed to load projects</div>';
+            }
+        }
+
+        function filterProjects() {
+            const category = document.getElementById('categoryFilter').value;
+            const risk = document.getElementById('riskFilter').value;
+            
+            let filtered = allProjects;
+            
+            if (category) {
+                filtered = filtered.filter(p => p.category === category);
+            }
+            
+            if (risk) {
+                filtered = filtered.filter(p => p.riskLevel === risk);
+            }
+            
+            document.getElementById('resultsCount').textContent = `Showing ${filtered.length} projects`;
+            displayProjects(filtered);
+        }
+
+        function sortProjects() {
+            const sort = document.getElementById('sortFilter').value;
+            let sorted = [...allProjects];
+            
+            switch(sort) {
+                case 'roi':
+                    sorted.sort((a, b) => b.roi - a.roi);
+                    break;
+                case 'amount':
+                    sorted.sort((a, b) => b.targetAmount - a.targetAmount);
+                    break;
+                default:
+                    sorted.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+            }
+            
+            displayProjects(sorted);
+        }
+
+        function displayProjects(projects) {
+            const container = document.getElementById('projectsContainer');
+            
+            if (projects.length === 0) {
+                container.innerHTML = '<div class="alert alert-info">No projects found</div>';
+                return;
+            }
+            
+            let html = '';
+            
+            projects.forEach(project => {
+                const percentage = (project.raisedAmount / project.targetAmount) * 100;
+                const raisedM = (project.raisedAmount / 1000000).toFixed(1);
+                const targetM = (project.targetAmount / 1000000).toFixed(1);
+                
+                html += `
+                    <div class="card">
+                        <div style="height: 160px; background: linear-gradient(135deg, var(--primary), var(--primary-dark)); border-radius: var(--radius-md); margin-bottom: 15px;"></div>
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+                            <h3 style="margin: 0;">${project.title}</h3>
+                            <span class="badge badge-${project.riskLevel}">${project.riskLevel}</span>
+                        </div>
+                        <p style="color: var(--light); font-size: 14px; margin-bottom: 15px;">${project.description.substring(0, 100)}...</p>
+                        
+                        <div style="margin-bottom: 15px;">
+                            <div style="display: flex; justify-content: space-between; margin-bottom: 5px;">
+                                <span>Raised: $${raisedM}M</span>
+                                <span>Target: $${targetM}M</span>
+                            </div>
+                            <div class="progress">
+                                <div class="progress-bar" style="width: ${percentage}%;"></div>
+                            </div>
+                        </div>
+                        
+                        <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-bottom: 15px;">
+                            <div>
+                                <small style="color: var(--light);">Min</small>
+                                <div><strong>$${project.minInvestment.toLocaleString()}</strong></div>
+                            </div>
+                            <div>
+                                <small style="color: var(--light);">ROI</small>
+                                <div><strong class="positive">${project.roi}%</strong></div>
+                            </div>
+                            <div>
+                                <small style="color: var(--light);">Duration</small>
+                                <div><strong>${project.duration}mo</strong></div>
+                            </div>
+                        </div>
+                        
+                        <a href="/project/${project.id}" class="btn btn-primary btn-block">View Details</a>
+                    </div>
+                `;
+            });
+            
+            container.innerHTML = html;
+        }
+    </script>
+</body>
+</html>
