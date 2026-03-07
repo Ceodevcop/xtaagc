@@ -146,9 +146,9 @@
   ],
   "env": {
     "NODE_ENV": "production",
-    "FIREBASE_PROJECT_ID": "@firebase-project-id",
-    "FIREBASE_CLIENT_EMAIL": "@firebase-client-email",
-    "FIREBASE_PRIVATE_KEY": "@firebase-private-key",
+    "FIREBASE_PROJECT_ID": "xtaagc",
+    "FIREBASE_CLIENT_EMAIL": "firebase-adminsdk-fbsvc@xtaagc.iam.gserviceaccount.com",
+    "FIREBASE_PRIVATE_KEY": "-----BEGIN PRIVATE KEY-----\nYOUR_PRIVATE_KEY_HERE\n-----END PRIVATE KEY-----\n",
     "CORS_ORIGIN": "https://taagc.website"
   },
   "build": {
