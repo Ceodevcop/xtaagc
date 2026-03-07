@@ -1,12 +1,12 @@
 {
-  "name": "taagc-platform",
+  "name": "taagc-api",
   "version": "2.0.0",
-  "description": "TAAGC Global Investment Platform",
+  "description": "TAAGC Unified API - All endpoints in one file",
   "main": "api/index.js",
   "scripts": {
-    "dev": "vercel dev",
-    "deploy": "vercel --prod",
-    "build": "echo 'Building...'"
+    "start": "node api/index.js",
+    "dev": "nodemon api/index.js",
+    "deploy": "vercel --prod"
   },
   "dependencies": {
     "express": "^4.18.2",
@@ -15,16 +15,13 @@
     "helmet": "^7.1.0",
     "compression": "^1.7.4",
     "express-rate-limit": "^7.1.5",
-    "dotenv": "^16.3.1",
-    "bcryptjs": "^2.4.3",
-    "jsonwebtoken": "^9.0.2",
-    "uuid": "^9.0.1",
-    "axios": "^1.6.2"
+    "dotenv": "^16.3.1"
   },
   "devDependencies": {
+    "nodemon": "^3.0.1",
     "vercel": "^32.5.0"
   },
   "engines": {
-    "node": "24.x"
+    "node": "18.x"
   }
 }
