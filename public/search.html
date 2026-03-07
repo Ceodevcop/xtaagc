@@ -1,0 +1,577 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Search Results - TAAGC Global</title>
+    
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="/assets/css/platform.css">
+    
+    <style>
+        .search-header {
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+            color: white;
+            padding: 60px 0;
+        }
+        
+        .search-box-large {
+            max-width: 600px;
+            margin: 30px auto 0;
+            position: relative;
+        }
+        
+        .search-box-large input {
+            width: 100%;
+            padding: 20px 30px;
+            border: none;
+            border-radius: 50px;
+            font-size: 18px;
+            box-shadow: var(--shadow-lg);
+        }
+        
+        .search-box-large button {
+            position: absolute;
+            right: 10px;
+            top: 50%;
+            transform: translateY(-50%);
+            padding: 12px 30px;
+            background: var(--accent);
+            color: white;
+            border: none;
+            border-radius: 40px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: var(--transition);
+        }
+        
+        .search-box-large button:hover {
+            background: var(--accent-dark);
+        }
+        
+        .search-filters {
+            background: white;
+            padding: 20px 0;
+            border-bottom: 1px solid #e2e8f0;
+            margin-bottom: 30px;
+        }
+        
+        .filter-tabs {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+        
+        .filter-tab {
+            padding: 8px 20px;
+            border: 2px solid #e2e8f0;
+            border-radius: 30px;
+            background: white;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+        
+        .filter-tab:hover,
+        .filter-tab.active {
+            background: var(--accent);
+            color: white;
+            border-color: var(--accent);
+        }
+        
+        .search-result-item {
+            background: white;
+            border-radius: var(--radius-lg);
+            padding: 25px;
+            margin-bottom: 20px;
+            border: 1px solid #e2e8f0;
+            transition: var(--transition);
+        }
+        
+        .search-result-item:hover {
+            transform: translateX(5px);
+            border-color: var(--accent);
+            box-shadow: var(--shadow-md);
+        }
+        
+        .result-category {
+            display: inline-block;
+            padding: 4px 12px;
+            background: var(--accent);
+            color: white;
+            border-radius: 20px;
+            font-size: 12px;
+            margin-bottom: 10px;
+        }
+        
+        .result-title {
+            font-size: 20px;
+            color: var(--primary);
+            margin-bottom: 10px;
+        }
+        
+        .result-title a {
+            color: var(--primary);
+            text-decoration: none;
+        }
+        
+        .result-title a:hover {
+            color: var(--accent);
+        }
+        
+        .result-excerpt {
+            color: var(--light);
+            line-height: 1.6;
+            margin-bottom: 15px;
+        }
+        
+        .result-meta {
+            display: flex;
+            gap: 20px;
+            color: var(--lighter);
+            font-size: 13px;
+        }
+        
+        .result-meta i {
+            color: var(--accent);
+            margin-right: 5px;
+        }
+        
+        .no-results {
+            text-align: center;
+            padding: 60px 20px;
+        }
+        
+        .no-results i {
+            font-size: 80px;
+            color: var(--light);
+            margin-bottom: 20px;
+            opacity: 0.5;
+        }
+        
+        .no-results h2 {
+            color: var(--primary);
+            margin-bottom: 15px;
+        }
+        
+        .no-results p {
+            color: var(--light);
+            margin-bottom: 30px;
+        }
+        
+        .search-suggestions {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+        
+        .suggestion-tag {
+            padding: 8px 16px;
+            background: var(--bg);
+            border: 1px solid #e2e8f0;
+            border-radius: 30px;
+            color: var(--dark);
+            text-decoration: none;
+            transition: var(--transition);
+        }
+        
+        .suggestion-tag:hover {
+            background: var(--accent);
+            color: white;
+            border-color: var(--accent);
+        }
+        
+        .pagination {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin-top: 40px;
+        }
+        
+        .page-item {
+            list-style: none;
+        }
+        
+        .page-link {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 40px;
+            height: 40px;
+            border: 2px solid #e2e8f0;
+            border-radius: var(--radius-md);
+            color: var(--dark);
+            text-decoration: none;
+            transition: var(--transition);
+        }
+        
+        .page-link:hover,
+        .page-link.active {
+            background: var(--accent);
+            color: white;
+            border-color: var(--accent);
+        }
+        
+        .page-link.disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+        
+        @media (max-width: 768px) {
+            .search-box-large input {
+                padding: 15px 20px;
+                font-size: 16px;
+            }
+            
+            .search-box-large button {
+                position: static;
+                width: 100%;
+                margin-top: 10px;
+                transform: none;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Navbar -->
+    <nav class="navbar">
+        <div class="container">
+            <div class="navbar-content">
+                <a href="/" class="navbar-brand">
+                    <div class="logo-icon">TA</div>
+                    <div class="brand-text"><span>TAAGC</span> Global</div>
+                </a>
+                
+                <button class="mobile-menu-btn">
+                    <i class="fas fa-bars"></i>
+                </button>
+                
+                <div class="nav-menu">
+                    <ul class="nav-links">
+                        <li><a href="/" class="nav-link">Home</a></li>
+                        <li><a href="/about" class="nav-link">About</a></li>
+                        <li><a href="/investors" class="nav-link">Investors</a></li>
+                        <li><a href="/projects" class="nav-link">Projects</a></li>
+                        <li><a href="/contact" class="nav-link">Contact</a></li>
+                    </ul>
+                    
+                    <div class="nav-buttons guest-only">
+                        <a href="/login" class="btn btn-outline">Login</a>
+                        <a href="/register" class="btn btn-primary">Register</a>
+                    </div>
+                    
+                    <div class="nav-buttons auth-only" style="display: none;">
+                        <a href="/dashboard" class="btn btn-outline">Dashboard</a>
+                        <button onclick="TAAGC.Auth.logout()" class="btn btn-primary">Logout</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Search Header -->
+    <section class="search-header">
+        <div class="container">
+            <h1 style="color: white; text-align: center;">Search <span style="color: var(--accent);">Results</span></h1>
+            
+            <div class="search-box-large">
+                <form onsubmit="performSearch(event)">
+                    <input type="text" id="searchQuery" placeholder="What are you looking for?" value="investment">
+                    <button type="submit">Search</button>
+                </form>
+            </div>
+        </div>
+    </section>
+
+    <!-- Search Filters -->
+    <div class="search-filters">
+        <div class="container">
+            <div class="filter-tabs">
+                <button class="filter-tab active" onclick="filterResults('all')">All</button>
+                <button class="filter-tab" onclick="filterResults('projects')">Projects</button>
+                <button class="filter-tab" onclick="filterResults('investors')">Investors</button>
+                <button class="filter-tab" onclick="filterResults('articles')">Articles</button>
+                <button class="filter-tab" onclick="filterResults('faq')">FAQ</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Search Results -->
+    <div class="container" style="padding: 40px 0;">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+            <p style="color: var(--light);">
+                Found <strong id="resultCount">8</strong> results for "<span id="searchTerm">investment</span>"
+            </p>
+            <select class="form-control" style="width: 150px;" onchange="sortResults(this.value)">
+                <option value="relevance">Relevance</option>
+                <option value="newest">Newest</option>
+                <option value="oldest">Oldest</option>
+            </select>
+        </div>
+
+        <div id="resultsContainer">
+            <!-- Results will be loaded via JavaScript -->
+            <div class="loading"><i class="fas fa-spinner fa-spin"></i> Searching...</div>
+        </div>
+
+        <!-- Pagination -->
+        <div class="pagination" id="pagination">
+            <!-- Pagination will be loaded via JavaScript -->
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-grid">
+                <div class="footer-col">
+                    <h4>Quick Links</h4>
+                    <ul>
+                        <li><a href="/about">About Us</a></li>
+                        <li><a href="/contact">Contact</a></li>
+                        <li><a href="/faq">FAQ</a></li>
+                    </ul>
+                </div>
+                <div class="footer-col">
+                    <h4>Legal</h4>
+                    <ul>
+                        <li><a href="/terms">Terms</a></li>
+                        <li><a href="/privacy">Privacy</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2026 TAAGC Global. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="/assets/js/platform.js"></script>
+    
+    <script>
+        // Get search query from URL
+        const urlParams = new URLSearchParams(window.location.search);
+        const query = urlParams.get('q') || 'investment';
+        document.getElementById('searchQuery').value = query;
+        document.getElementById('searchTerm').textContent = query;
+
+        // Mock search data
+        const mockResults = [
+            {
+                id: 1,
+                title: 'Tech Innovation Fund',
+                category: 'projects',
+                excerpt: 'High-growth technology investment opportunity with projected returns of 18% annually.',
+                url: '/projects/tech-fund',
+                date: '2026-03-01',
+                relevance: 95
+            },
+            {
+                id: 2,
+                title: 'How to Start Investing',
+                category: 'articles',
+                excerpt: 'A beginner\'s guide to investing in global markets and building wealth.',
+                url: '/education/start-investing',
+                date: '2026-02-28',
+                relevance: 90
+            },
+            {
+                id: 3,
+                title: 'Minimum Investment Requirements',
+                category: 'faq',
+                excerpt: 'Learn about the minimum investment amounts for different opportunities.',
+                url: '/faq#minimum',
+                date: '2026-02-25',
+                relevance: 85
+            },
+            {
+                id: 4,
+                title: 'Green Energy Initiative',
+                category: 'projects',
+                excerpt: 'Sustainable energy project with focus on solar and wind power generation.',
+                url: '/projects/green-energy',
+                date: '2026-02-20',
+                relevance: 82
+            },
+            {
+                id: 5,
+                title: 'Portfolio Diversification',
+                category: 'articles',
+                excerpt: 'Strategies for building a balanced investment portfolio across different asset classes.',
+                url: '/education/diversification',
+                date: '2026-02-15',
+                relevance: 78
+            },
+            {
+                id: 6,
+                title: 'Investment Calculator',
+                category: 'tools',
+                excerpt: 'Calculate potential returns on your investments with our interactive calculator.',
+                url: '/calculator',
+                date: '2026-02-10',
+                relevance: 75
+            },
+            {
+                id: 7,
+                title: 'Risk Management',
+                category: 'articles',
+                excerpt: 'Essential techniques for managing investment risk and protecting your capital.',
+                url: '/education/risk',
+                date: '2026-02-05',
+                relevance: 72
+            },
+            {
+                id: 8,
+                title: 'Real Estate Development Fund',
+                category: 'projects',
+                excerpt: 'Premium real estate opportunities in high-growth urban centers.',
+                url: '/projects/real-estate',
+                date: '2026-02-01',
+                relevance: 70
+            }
+        ];
+
+        let currentFilter = 'all';
+        let currentSort = 'relevance';
+        let currentPage = 1;
+        const resultsPerPage = 5;
+
+        function performSearch(e) {
+            e.preventDefault();
+            const newQuery = document.getElementById('searchQuery').value;
+            window.location.href = `/search?q=${encodeURIComponent(newQuery)}`;
+        }
+
+        function filterResults(filter) {
+            document.querySelectorAll('.filter-tab').forEach(tab => tab.classList.remove('active'));
+            event.target.classList.add('active');
+            currentFilter = filter;
+            currentPage = 1;
+            displayResults();
+        }
+
+        function sortResults(sort) {
+            currentSort = sort;
+            currentPage = 1;
+            displayResults();
+        }
+
+        function displayResults() {
+            let filtered = [...mockResults];
+            
+            if (currentFilter !== 'all') {
+                filtered = filtered.filter(r => r.category === currentFilter);
+            }
+            
+            // Filter by search query (simplified)
+            filtered = filtered.filter(r => 
+                r.title.toLowerCase().includes(query.toLowerCase()) ||
+                r.excerpt.toLowerCase().includes(query.toLowerCase())
+            );
+            
+            // Sort results
+            filtered.sort((a, b) => {
+                if (currentSort === 'newest') {
+                    return new Date(b.date) - new Date(a.date);
+                } else if (currentSort === 'oldest') {
+                    return new Date(a.date) - new Date(b.date);
+                } else {
+                    return b.relevance - a.relevance;
+                }
+            });
+            
+            document.getElementById('resultCount').textContent = filtered.length;
+            
+            if (filtered.length === 0) {
+                document.getElementById('resultsContainer').innerHTML = `
+                    <div class="no-results">
+                        <i class="fas fa-search"></i>
+                        <h2>No Results Found</h2>
+                        <p>We couldn't find any matches for "${query}". Try different keywords.</p>
+                        <div class="search-suggestions">
+                            <a href="/search?q=investment" class="suggestion-tag">investment</a>
+                            <a href="/search?q=project" class="suggestion-tag">project</a>
+                            <a href="/search?q=investor" class="suggestion-tag">investor</a>
+                            <a href="/search?q=fund" class="suggestion-tag">fund</a>
+                        </div>
+                    </div>
+                `;
+                document.getElementById('pagination').innerHTML = '';
+                return;
+            }
+            
+            // Paginate results
+            const start = (currentPage - 1) * resultsPerPage;
+            const end = start + resultsPerPage;
+            const pageResults = filtered.slice(start, end);
+            const totalPages = Math.ceil(filtered.length / resultsPerPage);
+            
+            // Render results
+            let resultsHtml = '';
+            pageResults.forEach(result => {
+                const date = new Date(result.date).toLocaleDateString('en-US', {
+                    year: 'numeric',
+                    month: 'long',
+                    day: 'numeric'
+                });
+                
+                resultsHtml += `
+                    <div class="search-result-item" data-category="${result.category}">
+                        <span class="result-category">${result.category}</span>
+                        <h3 class="result-title">
+                            <a href="${result.url}">${result.title}</a>
+                        </h3>
+                        <p class="result-excerpt">${result.excerpt}</p>
+                        <div class="result-meta">
+                            <span><i class="far fa-calendar"></i> ${date}</span>
+                            <span><i class="fas fa-chart-line"></i> Relevance: ${result.relevance}%</span>
+                        </div>
+                    </div>
+                `;
+            });
+            
+            document.getElementById('resultsContainer').innerHTML = resultsHtml;
+            
+            // Render pagination
+            let paginationHtml = '<ul class="pagination">';
+            
+            paginationHtml += `
+                <li class="page-item">
+                    <a href="#" class="page-link ${currentPage === 1 ? 'disabled' : ''}" onclick="changePage(${currentPage - 1})">
+                        <i class="fas fa-chevron-left"></i>
+                    </a>
+                </li>
+            `;
+            
+            for (let i = 1; i <= totalPages; i++) {
+                paginationHtml += `
+                    <li class="page-item">
+                        <a href="#" class="page-link ${i === currentPage ? 'active' : ''}" onclick="changePage(${i})">${i}</a>
+                    </li>
+                `;
+            }
+            
+            paginationHtml += `
+                <li class="page-item">
+                    <a href="#" class="page-link ${currentPage === totalPages ? 'disabled' : ''}" onclick="changePage(${currentPage + 1})">
+                        <i class="fas fa-chevron-right"></i>
+                    </a>
+                </li>
+            `;
+            
+            paginationHtml += '</ul>';
+            document.getElementById('pagination').innerHTML = paginationHtml;
+        }
+
+        function changePage(page) {
+            if (page < 1) return;
+            currentPage = page;
+            displayResults();
+        }
+
+        // Initial display
+        displayResults();
+    </script>
+</body>
+</html>
