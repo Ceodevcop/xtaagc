@@ -3,13 +3,80 @@
   "functions": {
     "api/index.js": {
       "maxDuration": 10,
-      "memory": 1024
+      "memory": 1024,
+      "includeFiles": "**/*.js"
     }
   },
   "routes": [
     {
       "src": "/api/(.*)",
-      "dest": "/api/index.js"
+      "dest": "/api/index.js",
+      "methods": ["GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"]
+    },
+    {
+      "src": "/(.*)",
+      "dest": "/public/$1"
+    }
+  ],
+  "rewrites": [
+    { "source": "/", "destination": "/public/index.html" },
+    { "source": "/login", "destination": "/public/login.html" },
+    { "source": "/register", "destination": "/public/register.html" },
+    { "source": "/dashboard", "destination": "/public/dashboard.html" },
+    { "source": "/admin", "destination": "/public/admin.html" },
+    { "source": "/profile", "destination": "/public/profile.html" },
+    { "source": "/settings", "destination": "/public/settings.html" },
+    { "source": "/investors", "destination": "/public/investors.html" },
+    { "source": "/education", "destination": "/public/education.html" },
+    { "source": "/portfolio", "destination": "/public/portfolio.html" },
+    { "source": "/calculator", "destination": "/public/calculator.html" },
+    { "source": "/projects", "destination": "/public/projects.html" },
+    { "source": "/contact", "destination": "/public/contact.html" },
+    { "source": "/about", "destination": "/public/about.html" },
+    { "source": "/faq", "destination": "/public/faq.html" },
+    { "source": "/terms", "destination": "/public/terms.html" },
+    { "source": "/privacy", "destination": "/public/privacy.html" },
+    { "source": "/404", "destination": "/public/404.html" },
+    { "source": "/500", "destination": "/public/500.html" },
+    { "source": "/maintenance", "destination": "/public/maintenance.html" },
+    { "source": "/coming-soon", "destination": "/public/coming-soon.html" },
+    { "source": "/search", "destination": "/public/search.html" },
+    { "source": "/api-docs", "destination": "/public/api-docs.html" },
+    { "source": "/status", "destination": "/public/status.html" },
+    { "source": "/sitemap.xml", "destination": "/public/sitemap.xml" },
+    { "source": "/robots.txt", "destination": "/public/robots.txt" },
+    { "source": "/favicon.ico", "destination": "/public/favicon.ico" }
+  ],
+  "redirects": [
+    {
+      "source": "/home",
+      "destination": "/",
+      "permanent": true
+    },
+    {
+      "source": "/signin",
+      "destination": "/login",
+      "permanent": true
+    },
+    {
+      "source": "/signup",
+      "destination": "/register",
+      "permanent": true
+    },
+    {
+      "source": "/user/:id",
+      "destination": "/profile?id=:id",
+      "permanent": false
+    },
+    {
+      "source": "/project/:id",
+      "destination": "/projects?id=:id",
+      "permanent": false
+    },
+    {
+      "source": "/investment/:id",
+      "destination": "/portfolio?id=:id",
+      "permanent": false
     }
   ],
   "headers": [
@@ -26,9 +93,73 @@
         },
         {
           "key": "Access-Control-Allow-Headers",
-          "value": "Content-Type, Authorization"
+          "value": "Content-Type, Authorization, X-API-Key, X-Requested-With"
+        },
+        {
+          "key": "Access-Control-Allow-Credentials",
+          "value": "true"
+        },
+        {
+          "key": "Access-Control-Max-Age",
+          "value": "86400"
+        }
+      ]
+    },
+    {
+      "source": "/(.*)",
+      "headers": [
+        {
+          "key": "X-Content-Type-Options",
+          "value": "nosniff"
+        },
+        {
+          "key": "X-Frame-Options",
+          "value": "DENY"
+        },
+        {
+          "key": "X-XSS-Protection",
+          "value": "1; mode=block"
+        },
+        {
+          "key": "Referrer-Policy",
+          "value": "strict-origin-when-cross-origin"
+        },
+        {
+          "key": "Permissions-Policy",
+          "value": "camera=(), microphone=(), geolocation=()"
+        },
+        {
+          "key": "Cache-Control",
+          "value": "public, max-age=3600, must-revalidate"
+        }
+      ]
+    },
+    {
+      "source": "/assets/(.*)",
+      "headers": [
+        {
+          "key": "Cache-Control",
+          "value": "public, max-age=31536000, immutable"
         }
       ]
     }
-  ]
+  ],
+  "env": {
+    "NODE_ENV": "production",
+    "FIREBASE_PROJECT_ID": "@firebase-project-id",
+    "FIREBASE_CLIENT_EMAIL": "@firebase-client-email",
+    "FIREBASE_PRIVATE_KEY": "@firebase-private-key",
+    "CORS_ORIGIN": "https://taagc.website"
+  },
+  "build": {
+    "env": {
+      "NEXT_PUBLIC_API_URL": "https://taagc.website/api"
+    }
+  },
+  "cleanUrls": true,
+  "trailingSlash": false,
+  "github": {
+    "enabled": true,
+    "silent": true
+  }
 }
