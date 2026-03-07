@@ -1,0 +1,2021 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <!-- Google tag (gtag.js) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-1SDELC2KQ8"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+        gtag('config', 'G-1SDELC2KQ8');
+    </script>
+    
+    <!-- Google Tag Manager -->
+    <script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+    new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+    j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+    'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+    })(window,document,'script','dataLayer','GTM-WTWZMS8C');</script>
+    <!-- End Google Tag Manager -->
+    
+    <meta name="google-site-verification" content="X4-O-nU3FPNDQPFkN8O6g8xXc9oZHHd-GEl1Qbwt21o" />
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="TAAGC Global Founded by Ahmad Hamza- Premier Investment & Trading Platform. Join 50,000+ investors worldwide. Access institutional-grade opportunities and professional trading tools.">
+    <meta name="keywords" content="investment, trading, stocks, forex, crypto, TAAGC, global investments, Ahmad Hamza, Muhammad Ahmad Hamza">
+    <meta name="author" content="TAAGC Global">
+    
+    <!-- Open Graph / Social Media -->
+    <meta property="og:title" content="TAAGC Global - Investment & Trading Platform">
+    <meta property="og:description" content="Join thousands of investors worldwide. Start your investment journey today.">
+    <meta property="og:image" content="https://taagc.website/assets/images/og-image.jpg">
+    <meta property="og:url" content="https://taagc.website">
+    <meta name="twitter:card" content="summary_large_image">
+    
+    <!-- Favicon -->
+    <link rel="icon" type="image/x-icon" href="/favicon.ico">
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png">
+    
+    <title>TAAGC Global - Premier Investment & Trading Platform</title>
+    
+    <!-- Fonts & Icons -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- AOS Animation Library -->
+    <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+    
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
+    
+    <style>
+        /* ===== TAAGC HOMEPAGE STYLES ===== */
+        :root {
+            --primary: #0a2540;
+            --primary-dark: #1a3a4f;
+            --primary-light: #2a4a6a;
+            --accent: #c19a6b;
+            --accent-dark: #b38b5f;
+            --accent-light: #e5b884;
+            --success: #10b981;
+            --warning: #f59e0b;
+            --error: #e53e3e;
+            --info: #3b82f6;
+            --dark: #1e293b;
+            --medium: #334155;
+            --light: #64748b;
+            --lighter: #94a3b8;
+            --bg: #f8fafc;
+            --white: #ffffff;
+            --shadow-sm: 0 2px 4px rgba(0,0,0,0.05);
+            --shadow-md: 0 4px 6px rgba(0,0,0,0.1);
+            --shadow-lg: 0 10px 15px rgba(0,0,0,0.1);
+            --shadow-xl: 0 20px 25px rgba(0,0,0,0.15);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: var(--bg);
+            color: var(--dark);
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        /* Animations */
+        @keyframes float {
+            0% { transform: translateY(0px); }
+            50% { transform: translateY(-10px); }
+            100% { transform: translateY(0px); }
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+
+        /* Cookie Consent Banner */
+        .cookie-consent {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: var(--white);
+            box-shadow: 0 -5px 20px rgba(0,0,0,0.15);
+            z-index: 9999;
+            padding: 20px 0;
+            transform: translateY(100%);
+            transition: transform 0.3s ease;
+            border-top: 3px solid var(--accent);
+        }
+
+        .cookie-consent.show {
+            transform: translateY(0);
+        }
+
+        .cookie-content {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 20px;
+        }
+
+        .cookie-text {
+            flex: 1;
+            min-width: 280px;
+        }
+
+        .cookie-text h4 {
+            color: var(--primary);
+            margin-bottom: 8px;
+            font-size: 18px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .cookie-text h4 i {
+            color: var(--accent);
+        }
+
+        .cookie-text p {
+            color: var(--light);
+            font-size: 14px;
+            line-height: 1.6;
+        }
+
+        .cookie-text a {
+            color: var(--accent);
+            text-decoration: none;
+            font-weight: 600;
+        }
+
+        .cookie-text a:hover {
+            text-decoration: underline;
+        }
+
+        .cookie-buttons {
+            display: flex;
+            gap: 12px;
+            flex-wrap: wrap;
+        }
+
+        .cookie-btn {
+            padding: 12px 24px;
+            border-radius: 40px;
+            font-weight: 600;
+            font-size: 14px;
+            cursor: pointer;
+            transition: all 0.3s;
+            border: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .cookie-btn.accept {
+            background: var(--accent);
+            color: var(--white);
+        }
+
+        .cookie-btn.accept:hover {
+            background: var(--accent-dark);
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-md);
+        }
+
+        .cookie-btn.settings {
+            background: var(--bg);
+            color: var(--primary);
+            border: 2px solid var(--primary);
+        }
+
+        .cookie-btn.settings:hover {
+            background: var(--primary);
+            color: var(--white);
+        }
+
+        .cookie-btn.reject {
+            background: transparent;
+            color: var(--light);
+            border: 2px solid #e2e8f0;
+        }
+
+        .cookie-btn.reject:hover {
+            background: #e2e8f0;
+            color: var(--dark);
+        }
+
+        /* Cookie Settings Modal */
+        .cookie-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0,0,0,0.5);
+            z-index: 10000;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .cookie-modal.active {
+            display: flex;
+        }
+
+        .cookie-modal-content {
+            background: var(--white);
+            border-radius: 20px;
+            padding: 30px;
+            max-width: 600px;
+            width: 100%;
+            max-height: 80vh;
+            overflow-y: auto;
+            box-shadow: var(--shadow-xl);
+            animation: slideInUp 0.3s ease;
+        }
+
+        @keyframes slideInUp {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .cookie-modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid #e2e8f0;
+        }
+
+        .cookie-modal-header h3 {
+            color: var(--primary);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .cookie-modal-header h3 i {
+            color: var(--accent);
+        }
+
+        .cookie-modal-close {
+            font-size: 24px;
+            cursor: pointer;
+            color: var(--light);
+            transition: all 0.3s;
+        }
+
+        .cookie-modal-close:hover {
+            color: var(--error);
+        }
+
+        .cookie-option {
+            margin-bottom: 20px;
+            padding: 15px;
+            border: 1px solid #e2e8f0;
+            border-radius: 12px;
+            transition: all 0.3s;
+        }
+
+        .cookie-option:hover {
+            border-color: var(--accent);
+            box-shadow: var(--shadow-sm);
+        }
+
+        .cookie-option-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+
+        .cookie-option-header label {
+            font-weight: 600;
+            color: var(--primary);
+            cursor: pointer;
+        }
+
+        .cookie-option input[type="checkbox"] {
+            width: 18px;
+            height: 18px;
+            cursor: pointer;
+            accent-color: var(--accent);
+        }
+
+        .cookie-option p {
+            color: var(--light);
+            font-size: 13px;
+            line-height: 1.6;
+            margin-bottom: 10px;
+        }
+
+        .cookie-option.disabled {
+            background: #f8fafc;
+            opacity: 0.8;
+        }
+
+        .cookie-option.disabled input {
+            cursor: not-allowed;
+        }
+
+        .cookie-modal-footer {
+            display: flex;
+            justify-content: flex-end;
+            gap: 15px;
+            margin-top: 25px;
+            padding-top: 15px;
+            border-top: 1px solid #e2e8f0;
+        }
+
+        /* Top Bar */
+        .top-bar {
+            background: var(--primary);
+            color: var(--white);
+            padding: 10px 0;
+            font-size: 13px;
+            border-bottom: 2px solid var(--accent);
+            position: relative;
+            z-index: 1001;
+        }
+
+        .top-bar-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+
+        .emergency-contact {
+            display: flex;
+            align-items: center;
+            gap: 25px;
+            flex-wrap: wrap;
+        }
+
+        .emergency-contact span {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .emergency-contact i {
+            color: var(--accent);
+            font-size: 14px;
+        }
+
+        .market-update {
+            background: rgba(193, 154, 107, 0.1);
+            padding: 6px 15px;
+            border-radius: 30px;
+            color: var(--accent);
+            font-weight: 600;
+            border: 1px solid rgba(193, 154, 107, 0.3);
+            animation: pulse 2s infinite;
+        }
+
+        /* Navbar */
+        .navbar {
+            background: var(--white);
+            padding: 15px 0;
+            box-shadow: var(--shadow-md);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            transition: all 0.3s;
+        }
+
+        .navbar.scrolled {
+            padding: 10px 0;
+            box-shadow: var(--shadow-lg);
+        }
+
+        .navbar-content {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 20px;
+        }
+
+        .navbar-brand {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            text-decoration: none;
+        }
+
+        .logo-icon {
+            width: 50px;
+            height: 50px;
+            background: linear-gradient(135deg, var(--primary), var(--primary-light));
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--white);
+            font-size: 26px;
+            font-weight: 800;
+            transition: transform 0.3s;
+        }
+
+        .navbar-brand:hover .logo-icon {
+            transform: rotate(5deg) scale(1.05);
+        }
+
+        .brand-text {
+            font-size: 24px;
+            font-weight: 800;
+            color: var(--primary);
+            letter-spacing: -0.5px;
+        }
+
+        .brand-text span {
+            color: var(--accent);
+        }
+
+        /* Quick Actions */
+        .quick-actions {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .action-btn {
+            padding: 12px 24px;
+            border-radius: 40px;
+            font-weight: 600;
+            font-size: 14px;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.3s;
+            border: none;
+            cursor: pointer;
+        }
+
+        .action-btn.investor {
+            background: var(--primary);
+            color: var(--white);
+            box-shadow: var(--shadow-md);
+        }
+
+        .action-btn.investor:hover {
+            background: var(--primary-dark);
+            transform: translateY(-3px);
+            box-shadow: var(--shadow-lg);
+        }
+
+        .action-btn.client {
+            background: var(--accent);
+            color: var(--white);
+            box-shadow: var(--shadow-md);
+        }
+
+        .action-btn.client:hover {
+            background: var(--accent-dark);
+            transform: translateY(-3px);
+            box-shadow: var(--shadow-lg);
+        }
+
+        .action-btn.portal {
+            background: var(--bg);
+            color: var(--primary);
+            border: 2px solid var(--primary);
+        }
+
+        .action-btn.portal:hover {
+            background: var(--primary);
+            color: var(--white);
+            transform: translateY(-3px);
+        }
+
+        /* Navigation Menu */
+        .nav-menu {
+            display: flex;
+            align-items: center;
+            gap: 30px;
+        }
+
+        .nav-links {
+            display: flex;
+            list-style: none;
+            gap: 20px;
+        }
+
+        .nav-link {
+            color: var(--dark);
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 15px;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            padding: 8px 0;
+            position: relative;
+        }
+
+        .nav-link i {
+            color: var(--accent);
+            font-size: 14px;
+        }
+
+        .nav-link:hover,
+        .nav-link.active {
+            color: var(--accent);
+        }
+
+        .nav-link.active::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 2px;
+            background: var(--accent);
+        }
+
+        /* Dropdown */
+        .dropdown {
+            position: relative;
+        }
+
+        .dropdown-content {
+            position: absolute;
+            top: 100%;
+            left: 0;
+            min-width: 280px;
+            background: var(--white);
+            border-radius: 16px;
+            padding: 15px 0;
+            box-shadow: var(--shadow-xl);
+            opacity: 0;
+            visibility: hidden;
+            transform: translateY(20px);
+            transition: all 0.3s;
+            z-index: 1000;
+            border: 1px solid rgba(0,0,0,0.05);
+        }
+
+        .dropdown:hover .dropdown-content {
+            opacity: 1;
+            visibility: visible;
+            transform: translateY(10px);
+        }
+
+        .dropdown-content a {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px 20px;
+            color: var(--dark);
+            text-decoration: none;
+            transition: all 0.3s;
+            font-size: 14px;
+        }
+
+        .dropdown-content a:hover {
+            background: var(--bg);
+            color: var(--accent);
+            padding-left: 30px;
+        }
+
+        .dropdown-content i {
+            width: 20px;
+            color: var(--accent);
+        }
+
+        /* Mobile Menu */
+        .mobile-menu-btn {
+            display: none;
+            background: transparent;
+            border: none;
+            font-size: 24px;
+            color: var(--primary);
+            cursor: pointer;
+            padding: 10px;
+        }
+
+        /* Hero Section */
+        .hero {
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+            color: var(--white);
+            padding: 100px 0;
+            margin-bottom: 60px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hero::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -10%;
+            width: 70%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(193,154,107,0.1) 0%, transparent 70%);
+            animation: float 6s ease-in-out infinite;
+        }
+
+        .hero-content {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 60px;
+            align-items: center;
+            position: relative;
+            z-index: 2;
+        }
+
+        .hero-badge {
+            display: inline-block;
+            background: rgba(193, 154, 107, 0.2);
+            padding: 8px 16px;
+            border-radius: 40px;
+            font-size: 14px;
+            font-weight: 600;
+            margin-bottom: 20px;
+            border: 1px solid rgba(193, 154, 107, 0.3);
+            backdrop-filter: blur(5px);
+        }
+
+        .hero h1 {
+            font-size: 56px;
+            line-height: 1.2;
+            margin-bottom: 20px;
+            font-weight: 800;
+            letter-spacing: -1px;
+        }
+
+        .hero h1 span {
+            color: var(--accent);
+        }
+
+        .hero p {
+            font-size: 18px;
+            color: rgba(255,255,255,0.9);
+            margin-bottom: 30px;
+            line-height: 1.8;
+        }
+
+        .hero-stats {
+            display: flex;
+            gap: 30px;
+            margin-bottom: 30px;
+        }
+
+        .hero-stat-number {
+            display: block;
+            font-size: 28px;
+            font-weight: 800;
+            color: var(--accent);
+        }
+
+        .hero-stat-label {
+            font-size: 12px;
+            opacity: 0.8;
+        }
+
+        .hero-buttons {
+            display: flex;
+            gap: 20px;
+            flex-wrap: wrap;
+        }
+
+        .hero-btn {
+            padding: 16px 32px;
+            border-radius: 50px;
+            text-decoration: none;
+            font-weight: 600;
+            transition: all 0.3s;
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 16px;
+        }
+
+        .hero-btn.primary {
+            background: var(--accent);
+            color: var(--white);
+            box-shadow: 0 10px 20px rgba(193, 154, 107, 0.3);
+        }
+
+        .hero-btn.primary:hover {
+            background: var(--accent-dark);
+            transform: translateY(-3px);
+        }
+
+        .hero-btn.secondary {
+            background: rgba(255,255,255,0.1);
+            color: var(--white);
+            border: 2px solid rgba(255,255,255,0.2);
+        }
+
+        .hero-image i {
+            font-size: 250px;
+            color: rgba(193, 154, 107, 0.15);
+        }
+
+        /* Stats Grid */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 30px;
+            margin: 40px 0;
+        }
+
+        .stat-card {
+            background: var(--white);
+            padding: 30px;
+            border-radius: 20px;
+            text-align: center;
+            box-shadow: var(--shadow-md);
+            transition: all 0.3s;
+            border: 1px solid rgba(0,0,0,0.05);
+        }
+
+        .stat-card:hover {
+            transform: translateY(-10px);
+            border-color: var(--accent);
+            box-shadow: var(--shadow-xl);
+        }
+
+        .stat-icon {
+            width: 60px;
+            height: 60px;
+            background: linear-gradient(135deg, var(--primary), var(--primary-light));
+            border-radius: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 20px;
+            color: var(--white);
+            font-size: 24px;
+        }
+
+        .stat-number {
+            font-size: 36px;
+            font-weight: 800;
+            color: var(--primary);
+            margin-bottom: 5px;
+        }
+
+        .stat-label {
+            color: var(--light);
+            font-size: 14px;
+        }
+
+        /* Announcement */
+        .announcement {
+            background: linear-gradient(135deg, var(--accent), var(--accent-dark));
+            color: var(--white);
+            padding: 30px;
+            border-radius: 20px;
+            margin: 40px 0;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 20px;
+            box-shadow: var(--shadow-lg);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .announcement-content {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .announcement i {
+            font-size: 32px;
+            color: var(--primary);
+            background: rgba(255,255,255,0.2);
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .announcement-btn {
+            background: var(--white);
+            color: var(--primary);
+            padding: 15px 30px;
+            border-radius: 50px;
+            text-decoration: none;
+            font-weight: 700;
+            transition: all 0.3s;
+            box-shadow: var(--shadow-md);
+        }
+
+        .announcement-btn:hover {
+            background: var(--primary);
+            color: var(--white);
+        }
+
+        /* Section Titles */
+        .section-title {
+            font-size: 40px;
+            color: var(--primary);
+            margin-bottom: 40px;
+            text-align: center;
+            font-weight: 800;
+            letter-spacing: -1px;
+        }
+
+        .section-title span {
+            color: var(--accent);
+        }
+
+        .section-subtitle {
+            text-align: center;
+            color: var(--light);
+            max-width: 600px;
+            margin: -20px auto 40px;
+        }
+
+        /* Quick Access Grid */
+        .quick-access-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 30px;
+            margin: 50px 0;
+        }
+
+        .access-card {
+            background: var(--white);
+            border-radius: 24px;
+            padding: 40px 30px;
+            text-align: center;
+            box-shadow: var(--shadow-md);
+            transition: all 0.3s;
+            border: 1px solid rgba(0,0,0,0.05);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .access-card:hover {
+            transform: translateY(-10px);
+            box-shadow: var(--shadow-xl);
+        }
+
+        .access-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 4px;
+            background: linear-gradient(90deg, var(--accent), var(--accent-light));
+            transform: scaleX(0);
+            transition: transform 0.3s;
+        }
+
+        .access-card:hover::before {
+            transform: scaleX(1);
+        }
+
+        .access-icon {
+            width: 80px;
+            height: 80px;
+            background: linear-gradient(135deg, var(--primary), var(--primary-light));
+            border-radius: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 25px;
+            color: var(--white);
+            font-size: 32px;
+            transition: all 0.3s;
+        }
+
+        .access-card:hover .access-icon {
+            transform: scale(1.1) rotate(5deg);
+            background: linear-gradient(135deg, var(--accent), var(--accent-dark));
+        }
+
+        .access-card h3 {
+            color: var(--primary);
+            margin-bottom: 15px;
+            font-size: 20px;
+            font-weight: 700;
+        }
+
+        .access-card p {
+            color: var(--light);
+            font-size: 14px;
+            margin-bottom: 25px;
+        }
+
+        .access-link {
+            color: var(--accent);
+            text-decoration: none;
+            font-weight: 700;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.3s;
+        }
+
+        .access-link:hover {
+            gap: 15px;
+            color: var(--primary);
+        }
+
+        /* Features Section */
+        .features-section {
+            padding: 60px 0;
+            background: var(--white);
+            margin: 40px 0;
+        }
+
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 30px;
+        }
+
+        .feature-item {
+            text-align: center;
+            padding: 30px;
+        }
+
+        .feature-icon {
+            width: 70px;
+            height: 70px;
+            background: rgba(193, 154, 107, 0.1);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 20px;
+            color: var(--accent);
+            font-size: 28px;
+            transition: all 0.3s;
+        }
+
+        .feature-item:hover .feature-icon {
+            background: var(--accent);
+            color: var(--white);
+        }
+
+        /* Testimonials */
+        .testimonials-section {
+            padding: 60px 0;
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+            color: var(--white);
+            margin: 40px 0;
+        }
+
+        .testimonials-section .section-title {
+            color: var(--white);
+        }
+
+        .testimonials-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 30px;
+        }
+
+        .testimonial-card {
+            background: rgba(255,255,255,0.1);
+            backdrop-filter: blur(10px);
+            padding: 30px;
+            border-radius: 20px;
+            border: 1px solid rgba(255,255,255,0.2);
+            transition: all 0.3s;
+        }
+
+        .testimonial-card:hover {
+            transform: translateY(-10px);
+            background: rgba(255,255,255,0.15);
+        }
+
+        .testimonial-rating {
+            color: #ffd700;
+            margin-bottom: 20px;
+        }
+
+        .testimonial-text {
+            font-size: 16px;
+            line-height: 1.8;
+            margin-bottom: 20px;
+            font-style: italic;
+        }
+
+        .testimonial-author {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .testimonial-author img {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            border: 2px solid var(--accent);
+        }
+
+        /* CTA Section */
+        .cta-section {
+            padding: 80px 0;
+            text-align: center;
+            background: linear-gradient(135deg, var(--accent), var(--accent-dark));
+            border-radius: 30px;
+            margin: 40px 0;
+        }
+
+        .cta-section h2 {
+            font-size: 40px;
+            color: var(--white);
+            margin-bottom: 20px;
+            font-weight: 800;
+        }
+
+        .cta-section p {
+            font-size: 18px;
+            color: rgba(255,255,255,0.9);
+            margin-bottom: 30px;
+        }
+
+        .cta-buttons {
+            display: flex;
+            gap: 20px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .cta-btn {
+            padding: 16px 40px;
+            border-radius: 50px;
+            text-decoration: none;
+            font-weight: 700;
+            transition: all 0.3s;
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .cta-btn.primary {
+            background: var(--white);
+            color: var(--primary);
+        }
+
+        .cta-btn.primary:hover {
+            background: var(--primary);
+            color: var(--white);
+        }
+
+        .cta-btn.secondary {
+            background: transparent;
+            color: var(--white);
+            border: 2px solid var(--white);
+        }
+
+        .cta-btn.secondary:hover {
+            background: var(--white);
+            color: var(--primary);
+        }
+
+        /* Newsletter */
+        .newsletter-section {
+            padding: 60px 0;
+        }
+
+        .newsletter-box {
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+            border-radius: 20px;
+            padding: 60px;
+            text-align: center;
+            color: var(--white);
+        }
+
+        .newsletter-box h3 {
+            font-size: 28px;
+            margin-bottom: 15px;
+        }
+
+        .newsletter-form {
+            display: flex;
+            gap: 15px;
+            max-width: 500px;
+            margin: 0 auto;
+        }
+
+        .newsletter-form input {
+            flex: 1;
+            padding: 15px 20px;
+            border: none;
+            border-radius: 50px;
+            font-size: 16px;
+        }
+
+        .newsletter-form button {
+            padding: 15px 30px;
+            background: var(--accent);
+            border: none;
+            border-radius: 50px;
+            color: var(--white);
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .newsletter-form button:hover {
+            background: var(--accent-dark);
+        }
+
+        /* Footer */
+        .footer {
+            background: var(--primary);
+            color: var(--white);
+            padding: 80px 0 20px;
+            margin-top: 60px;
+        }
+
+        .footer-grid {
+            display: grid;
+            grid-template-columns: 2fr 1fr 1fr 1.5fr;
+            gap: 50px;
+            margin-bottom: 50px;
+        }
+
+        .footer-logo {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 20px;
+        }
+
+        .footer-logo-icon {
+            width: 40px;
+            height: 40px;
+            background: var(--accent);
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+        }
+
+        .footer-logo-text {
+            font-size: 20px;
+            font-weight: 700;
+        }
+
+        .footer-logo-text span {
+            color: var(--accent);
+        }
+
+        .footer-about p {
+            color: rgba(255,255,255,0.8);
+            margin-bottom: 20px;
+        }
+
+        .footer-social {
+            display: flex;
+            gap: 15px;
+        }
+
+        .footer-social a {
+            width: 40px;
+            height: 40px;
+            background: rgba(255,255,255,0.1);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--white);
+            transition: all 0.3s;
+        }
+
+        .footer-social a:hover {
+            background: var(--accent);
+        }
+
+        .footer-col h4 {
+            color: var(--accent);
+            margin-bottom: 25px;
+        }
+
+        .footer-col ul {
+            list-style: none;
+        }
+
+        .footer-col ul li {
+            margin-bottom: 12px;
+        }
+
+        .footer-col ul li a {
+            color: rgba(255,255,255,0.8);
+            text-decoration: none;
+            transition: all 0.3s;
+        }
+
+        .footer-col ul li a:hover {
+            color: var(--accent);
+        }
+
+        .footer-bottom {
+            text-align: center;
+            padding-top: 30px;
+            border-top: 1px solid rgba(255,255,255,0.1);
+            color: rgba(255,255,255,0.6);
+        }
+
+        .footer-bottom a {
+            color: var(--accent);
+            text-decoration: none;
+            margin: 0 10px;
+        }
+
+        /* Floating Help */
+        .floating-help {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            z-index: 999;
+        }
+
+        .help-btn {
+            width: 60px;
+            height: 60px;
+            background: var(--accent);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--white);
+            font-size: 24px;
+            box-shadow: var(--shadow-lg);
+            cursor: pointer;
+            transition: all 0.3s;
+            animation: pulse 2s infinite;
+            border: none;
+        }
+
+        .help-btn:hover {
+            transform: scale(1.1);
+        }
+
+        .floating-chat {
+            position: absolute;
+            bottom: 80px;
+            right: 0;
+            width: 300px;
+            background: var(--white);
+            border-radius: 16px;
+            padding: 20px;
+            box-shadow: var(--shadow-xl);
+            display: none;
+        }
+
+        .floating-help:hover .floating-chat {
+            display: block;
+        }
+
+        /* Loading Spinner */
+        .loading-spinner {
+            text-align: center;
+            padding: 40px;
+            grid-column: 1 / -1;
+        }
+        
+        .loading-spinner i {
+            color: var(--accent);
+        }
+
+        /* Responsive */
+        @media (max-width: 1200px) {
+            .hero h1 { font-size: 44px; }
+            .features-grid { grid-template-columns: repeat(2, 1fr); }
+            .testimonials-grid { grid-template-columns: repeat(2, 1fr); }
+        }
+
+        @media (max-width: 1024px) {
+            .hero-content { grid-template-columns: 1fr; text-align: center; }
+            .hero-stats { justify-content: center; }
+            .hero-buttons { justify-content: center; }
+            .stats-grid { grid-template-columns: repeat(2, 1fr); }
+            .quick-access-grid { grid-template-columns: repeat(2, 1fr); }
+            .footer-grid { grid-template-columns: repeat(2, 1fr); }
+        }
+
+        @media (max-width: 768px) {
+            .mobile-menu-btn { display: block; }
+            .nav-menu { display: none; flex-direction: column; }
+            .nav-menu.active { display: flex; }
+            .nav-links { flex-direction: column; }
+            .dropdown-content { position: static; opacity: 1; visibility: visible; transform: none; display: none; }
+            .dropdown.active .dropdown-content { display: block; }
+            .hero h1 { font-size: 36px; }
+            .stats-grid { grid-template-columns: 1fr; }
+            .quick-access-grid { grid-template-columns: 1fr; }
+            .features-grid { grid-template-columns: 1fr; }
+            .testimonials-grid { grid-template-columns: 1fr; }
+            .footer-grid { grid-template-columns: 1fr; }
+            .newsletter-form { flex-direction: column; }
+            
+            .cookie-content {
+                flex-direction: column;
+                text-align: center;
+            }
+            
+            .cookie-buttons {
+                justify-content: center;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Google Tag Manager (noscript) -->
+    <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-WTWZMS8C"
+    height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+
+    <!-- Cookie Consent Banner -->
+    <div class="cookie-consent" id="cookieConsent">
+        <div class="container">
+            <div class="cookie-content">
+                <div class="cookie-text">
+                    <h4><i class="fas fa-cookie-bite"></i> Cookie Consent</h4>
+                    <p>We use cookies to enhance your experience, analyze site traffic, and deliver personalized content. By clicking "Accept All", you consent to our use of cookies. Read our <a href="/privacy-policy">Privacy Policy</a> and <a href="/cookie-policy">Cookie Policy</a> for more information.</p>
+                </div>
+                <div class="cookie-buttons">
+                    <button class="cookie-btn reject" onclick="handleCookieReject()">
+                        <i class="fas fa-times"></i> Reject All
+                    </button>
+                    <button class="cookie-btn settings" onclick="openCookieSettings()">
+                        <i class="fas fa-cog"></i> Settings
+                    </button>
+                    <button class="cookie-btn accept" onclick="handleCookieAccept()">
+                        <i class="fas fa-check"></i> Accept All
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Cookie Settings Modal -->
+    <div class="cookie-modal" id="cookieModal">
+        <div class="cookie-modal-content">
+            <div class="cookie-modal-header">
+                <h3><i class="fas fa-cookie-bite"></i> Cookie Settings</h3>
+                <span class="cookie-modal-close" onclick="closeCookieSettings()">&times;</span>
+            </div>
+            
+            <div class="cookie-option disabled">
+                <div class="cookie-option-header">
+                    <label>Essential Cookies</label>
+                    <input type="checkbox" checked disabled>
+                </div>
+                <p>These cookies are necessary for the website to function and cannot be switched off. They are usually only set in response to actions made by you such as setting your privacy preferences, logging in, or filling in forms.</p>
+            </div>
+
+            <div class="cookie-option">
+                <div class="cookie-option-header">
+                    <label for="analyticsCookies">Analytics Cookies</label>
+                    <input type="checkbox" id="analyticsCookies" checked>
+                </div>
+                <p>These cookies allow us to count visits and traffic sources so we can measure and improve the performance of our site. They help us know which pages are the most and least popular and see how visitors move around the site.</p>
+            </div>
+
+            <div class="cookie-option">
+                <div class="cookie-option-header">
+                    <label for="marketingCookies">Marketing Cookies</label>
+                    <input type="checkbox" id="marketingCookies">
+                </div>
+                <p>These cookies may be set through our site by our advertising partners to build a profile of your interests and show you relevant adverts on other sites.</p>
+            </div>
+
+            <div class="cookie-option">
+                <div class="cookie-option-header">
+                    <label for="functionalCookies">Functional Cookies</label>
+                    <input type="checkbox" id="functionalCookies" checked>
+                </div>
+                <p>These cookies enable the website to provide enhanced functionality and personalization. They may be set by us or by third party providers whose services we have added to our pages.</p>
+            </div>
+
+            <div class="cookie-modal-footer">
+                <button class="cookie-btn reject" onclick="saveCookieSettings()">
+                    <i class="fas fa-save"></i> Save Settings
+                </button>
+                <button class="cookie-btn accept" onclick="acceptAllCookies()">
+                    <i class="fas fa-check"></i> Accept All
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Top Bar -->
+    <div class="top-bar">
+        <div class="container">
+            <div class="top-bar-content">
+                <div class="emergency-contact">
+                    <span><i class="fas fa-phone-alt"></i> 24/7 Support: +1 (800) 123-4567</span>
+                    <span><i class="fas fa-envelope"></i> support@taagc.com</span>
+                    <span><i class="fas fa-clock"></i> Live Chat Available</span>
+                </div>
+                <div class="market-update">
+                    <i class="fas fa-chart-line"></i> BTC $63,420 | ETH $3,512 | S&P 500 +1.2%
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Navbar -->
+    <nav class="navbar" id="navbar">
+        <div class="container">
+            <div class="navbar-content">
+                <a href="/" class="navbar-brand">
+                    <div class="logo-icon">TA</div>
+                    <div class="brand-text"><span>TAAGC</span> GLOBAL</div>
+                </a>
+
+                <button class="mobile-menu-btn" id="mobileMenuBtn">
+                    <i class="fas fa-bars"></i>
+                </button>
+
+                <div class="nav-menu" id="navMenu">
+                    <ul class="nav-links">
+                        <li><a href="/" class="nav-link active">Home</a></li>
+                        <li class="dropdown">
+                            <a href="#" class="nav-link">Investors <i class="fas fa-chevron-down"></i></a>
+                            <div class="dropdown-content">
+                                <a href="#"><i class="fas fa-chart-line"></i> Opportunities</a>
+                                <a href="#"><i class="fas fa-question-circle"></i> How to Invest</a>
+                                <a href="#"><i class="fas fa-graduation-cap"></i> Education</a>
+                                <a href="#"><i class="fas fa-chart-pie"></i> Portfolio Tracker</a>
+                            </div>
+                        </li>
+                        <li class="dropdown">
+                            <a href="#" class="nav-link">Clients <i class="fas fa-chevron-down"></i></a>
+                            <div class="dropdown-content">
+                                <a href="#"><i class="fas fa-id-card"></i> Account Types</a>
+                                <a href="#"><i class="fas fa-laptop"></i> Trading Platform</a>
+                                <a href="#"><i class="fas fa-chart-bar"></i> Market Analysis</a>
+                                <a href="#"><i class="fas fa-question"></i> FAQ</a>
+                            </div>
+                        </li>
+                        <li class="dropdown">
+                            <a href="#" class="nav-link">Resources <i class="fas fa-chevron-down"></i></a>
+                            <div class="dropdown-content">
+                                <a href="#"><i class="fas fa-newspaper"></i> Market News</a>
+                                <a href="#"><i class="fas fa-calendar"></i> Economic Calendar</a>
+                                <a href="#"><i class="fas fa-video"></i> Webinars</a>
+                                <a href="#"><i class="fas fa-file-alt"></i> Research Reports</a>
+                            </div>
+                        </li>
+                        <li><a href="#" class="nav-link">About</a></li>
+                        <li><a href="#" class="nav-link">Contact</a></li>
+                    </ul>
+
+                    <div class="quick-actions">
+                        <a href="#" class="action-btn investor">
+                            <i class="fas fa-chart-line"></i> Invest
+                        </a>
+                        <a href="#" class="action-btn client">
+                            <i class="fas fa-user-plus"></i> Open Account
+                        </a>
+                        <a href="#" class="action-btn portal">
+                            <i class="fas fa-sign-in-alt"></i> Login
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Rest of your homepage content remains the same -->
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="container">
+            <div class="hero-content">
+                <div class="hero-text">
+                    <span class="hero-badge">🌟 Trusted by 50,000+ Investors</span>
+                    <h1>Invest & Trade with <span>TAAGC Global</span></h1>
+                    <p>Join thousands of investors and clients worldwide. Access institutional-grade investment opportunities and professional trading tools with just $1 minimum.</p>
+                    
+                    <div class="hero-stats">
+                        <div class="hero-stat">
+                            <span class="hero-stat-number">$2.5B+</span>
+                            <span class="hero-stat-label">AUM</span>
+                        </div>
+                        <div class="hero-stat">
+                            <span class="hero-stat-number">25+</span>
+                            <span class="hero-stat-label">Countries</span>
+                        </div>
+                        <div class="hero-stat">
+                            <span class="hero-stat-number">24/7</span>
+                            <span class="hero-stat-label">Support</span>
+                        </div>
+                    </div>
+
+                    <div class="hero-buttons">
+                        <a href="#" class="hero-btn primary">
+                            <i class="fas fa-rocket"></i> Start Investing
+                        </a>
+                        <a href="#" class="hero-btn secondary">
+                            <i class="fas fa-play"></i> Watch Demo
+                        </a>
+                    </div>
+                </div>
+                
+                <div class="hero-image">
+                    <i class="fas fa-chart-pie"></i>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Stats Section -->
+    <div class="container">
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-icon"><i class="fas fa-users"></i></div>
+                <div class="stat-number">50K+</div>
+                <div class="stat-label">Active Investors</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon"><i class="fas fa-chart-line"></i></div>
+                <div class="stat-number">$2.5B+</div>
+                <div class="stat-label">Assets Under Management</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon"><i class="fas fa-globe"></i></div>
+                <div class="stat-number">25+</div>
+                <div class="stat-label">Countries</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon"><i class="fas fa-clock"></i></div>
+                <div class="stat-number">24/7</div>
+                <div class="stat-label">Customer Support</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Announcement Banner -->
+    <div class="container">
+        <div class="announcement">
+            <div class="announcement-content">
+                <i class="fas fa-bullhorn"></i>
+                <div>
+                    <h3>🚀 New Investment Opportunities Available!</h3>
+                    <p>Q2 2025 Early Bird Bonuses - Limited time offer. Get up to 15% bonus on your first investment.</p>
+                </div>
+            </div>
+            <a href="#" class="announcement-btn">
+                Learn More <i class="fas fa-arrow-right"></i>
+            </a>
+        </div>
+    </div>
+
+    <!-- Quick Access Grid -->
+    <div class="container">
+        <h2 class="section-title">What Would You Like to <span>Do Today?</span></h2>
+        <p class="section-subtitle">Choose from our range of services tailored for investors and traders</p>
+        
+        <div class="quick-access-grid">
+            <div class="access-card">
+                <div class="access-icon"><i class="fas fa-chart-line"></i></div>
+                <h3>Investment Opportunities</h3>
+                <p>Explore our latest investment projects with projected returns of 15-25% annually.</p>
+                <a href="#" class="access-link">Browse Investments <i class="fas fa-arrow-right"></i></a>
+            </div>
+            <div class="access-card">
+                <div class="access-icon"><i class="fas fa-calculator"></i></div>
+                <h3>ROI Calculator</h3>
+                <p>Calculate your potential returns based on investment amount and duration.</p>
+                <a href="#" class="access-link">Calculate Now <i class="fas fa-arrow-right"></i></a>
+            </div>
+            <div class="access-card">
+                <div class="access-icon"><i class="fas fa-file-alt"></i></div>
+                <h3>Download Prospectus</h3>
+                <p>Get detailed information about our investment products and terms.</p>
+                <a href="#" class="access-link">Download PDF <i class="fas fa-arrow-right"></i></a>
+            </div>
+            <div class="access-card">
+                <div class="access-icon"><i class="fas fa-wallet"></i></div>
+                <h3>Open Trading Account</h3>
+                <p>Start trading with a professional account. Minimum deposit $1 only.</p>
+                <a href="#" class="access-link">Open Account <i class="fas fa-arrow-right"></i></a>
+            </div>
+            <div class="access-card">
+                <div class="access-icon"><i class="fas fa-chart-bar"></i></div>
+                <h3>Market Analysis</h3>
+                <p>Access daily market analysis, trading signals, and expert insights.</p>
+                <a href="#" class="access-link">View Analysis <i class="fas fa-arrow-right"></i></a>
+            </div>
+            <div class="access-card">
+                <div class="access-icon"><i class="fas fa-headset"></i></div>
+                <h3>Client Support</h3>
+                <p>Get help with your account, trading, or investment questions 24/7.</p>
+                <a href="#" class="access-link">Contact Support <i class="fas fa-arrow-right"></i></a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Features Section -->
+    <section class="features-section">
+        <div class="container">
+            <h2 class="section-title">Why Choose <span>TAAGC Global?</span></h2>
+            <p class="section-subtitle">Experience the difference with our institutional-grade platform</p>
+            
+            <div class="features-grid">
+                <div class="feature-item">
+                    <div class="feature-icon"><i class="fas fa-shield-alt"></i></div>
+                    <h4>Regulated & Secure</h4>
+                    <p>Fully licensed and regulated. Your funds are protected with bank-level security.</p>
+                </div>
+                <div class="feature-item">
+                    <div class="feature-icon"><i class="fas fa-rocket"></i></div>
+                    <h4>Fast Execution</h4>
+                    <p>Lightning-fast trade execution with 99.9% uptime and no slippage.</p>
+                </div>
+                <div class="feature-item">
+                    <div class="feature-icon"><i class="fas fa-chart-pie"></i></div>
+                    <h4>Diverse Portfolio</h4>
+                    <p>Access stocks, forex, crypto, real estate, and alternative investments.</p>
+                </div>
+                <div class="feature-item">
+                    <div class="feature-icon"><i class="fas fa-headset"></i></div>
+                    <h4>24/7 Support</h4>
+                    <p>Round-the-clock customer support in 10+ languages.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Testimonials Section -->
+    <section class="testimonials-section">
+        <div class="container">
+            <h2 class="section-title">What Our <span>Clients Say</span></h2>
+            
+            <div class="testimonials-grid">
+                <div class="testimonial-card">
+                    <div class="testimonial-rating">
+                        <i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i>
+                    </div>
+                    <p class="testimonial-text">"TAAGC Global has transformed my investment journey. The platform is intuitive and the returns have been consistently impressive."</p>
+                    <div class="testimonial-author">
+                        <img src="https://randomuser.me/api/portraits/men/32.jpg" alt="John Smith">
+                        <div>
+                            <h4>John Smith</h4>
+                            <p>Investor, UK</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="testimonial-card">
+                    <div class="testimonial-rating">
+                        <i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i>
+                    </div>
+                    <p class="testimonial-text">"The best trading platform I've used. Excellent customer support and the execution speed is unmatched."</p>
+                    <div class="testimonial-author">
+                        <img src="https://randomuser.me/api/portraits/women/44.jpg" alt="Sarah Chen">
+                        <div>
+                            <h4>Sarah Chen</h4>
+                            <p>Trader, Singapore</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="testimonial-card">
+                    <div class="testimonial-rating">
+                        <i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i>
+                    </div>
+                    <p class="testimonial-text">"Professional, reliable, and transparent. I've been with TAAGC for 3 years and couldn't be happier."</p>
+                    <div class="testimonial-author">
+                        <img src="https://randomuser.me/api/portraits/men/46.jpg" alt="Michael Rodriguez">
+                        <div>
+                            <h4>Michael Rodriguez</h4>
+                            <p>Investor, USA</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- CTA Section -->
+    <div class="container">
+        <div class="cta-section">
+            <h2>Ready to Start Your Investment Journey?</h2>
+            <p>Join 50,000+ investors worldwide. Get started with as little as $1.</p>
+            <div class="cta-buttons">
+                <a href="#" class="cta-btn primary">
+                    <i class="fas fa-user-plus"></i> Create Free Account
+                </a>
+                <a href="#" class="cta-btn secondary">
+                    <i class="fas fa-headset"></i> Talk to an Expert
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Newsletter Section -->
+    <section class="newsletter-section">
+        <div class="container">
+            <div class="newsletter-box">
+                <h3>Stay Updated with Market Insights</h3>
+                <p>Subscribe to our newsletter and get weekly market analysis, investment tips, and exclusive offers.</p>
+                <form class="newsletter-form" id="newsletterForm">
+                    <input type="email" placeholder="Enter your email address" required>
+                    <button type="submit">Subscribe</button>
+                </form>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-grid">
+                <div class="footer-about">
+                    <div class="footer-logo">
+                        <div class="footer-logo-icon">TA</div>
+                        <div class="footer-logo-text"><span>TAAGC</span> GLOBAL</div>
+                    </div>
+                    <p>Premier investment and trading platform serving clients in over 25 countries. Licensed and regulated.</p>
+                    <div class="footer-social">
+                        <a href="#"><i class="fab fa-linkedin-in"></i></a>
+                        <a href="#"><i class="fab fa-twitter"></i></a>
+                        <a href="#"><i class="fab fa-facebook-f"></i></a>
+                        <a href="#"><i class="fab fa-youtube"></i></a>
+                        <a href="#"><i class="fab fa-telegram"></i></a>
+                    </div>
+                </div>
+
+                <div class="footer-col">
+                    <h4>For Investors</h4>
+                    <ul>
+                        <li><a href="#">Investment Opportunities</a></li>
+                        <li><a href="#">How to Invest</a></li>
+                        <li><a href="#">Education Center</a></li>
+                        <li><a href="#">Portfolio Tracker</a></li>
+                    </ul>
+                </div>
+
+                <div class="footer-col">
+                    <h4>For Clients</h4>
+                    <ul>
+                        <li><a href="#">Account Types</a></li>
+                        <li><a href="#">Trading Platform</a></li>
+                        <li><a href="#">Market Analysis</a></li>
+                        <li><a href="#">Client FAQ</a></li>
+                    </ul>
+                </div>
+
+                <div class="footer-col">
+                    <h4>Contact Us</h4>
+                    <ul class="footer-contact">
+                        <li><i class="fas fa-phone-alt"></i> +1 (800) 123-4567</li>
+                        <li><i class="fas fa-envelope"></i> support@taagc.com</li>
+                        <li><i class="fas fa-map-marker-alt"></i> New York, NY 10001</li>
+                        <li><i class="fas fa-clock"></i> 24/7 Support</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="footer-bottom">
+                <p>&copy; 2025 TAAGC Global. All rights reserved.</p>
+                <div>
+                    <a href="/privacy-policy">Privacy Policy</a>
+                    <a href="/terms-of-service">Terms of Service</a>
+                    <a href="/cookie-policy">Cookie Policy</a>
+                    <a href="/risk-disclosure">Risk Disclosure</a>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Floating Help Button -->
+    <div class="floating-help">
+        <button class="help-btn">
+            <i class="fas fa-headset"></i>
+        </button>
+        <div class="floating-chat">
+            <div class="chat-header">
+                <h4>Chat with us</h4>
+                <span class="chat-close"><i class="fas fa-times"></i></span>
+            </div>
+            <div class="chat-message">
+                <p>👋 Hi! How can we help you today?</p>
+            </div>
+            <div class="chat-input">
+                <input type="text" placeholder="Type your message...">
+                <button><i class="fas fa-paper-plane"></i></button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+    <script>
+        // Initialize AOS
+        AOS.init({
+            duration: 1000,
+            once: true,
+            offset: 100
+        });
+
+        // Cookie Consent Functions
+        function showCookieConsent() {
+            const consent = localStorage.getItem('cookieConsent');
+            if (!consent) {
+                document.getElementById('cookieConsent').classList.add('show');
+            }
+        }
+
+        function handleCookieAccept() {
+            localStorage.setItem('cookieConsent', 'accepted');
+            localStorage.setItem('analyticsCookies', 'true');
+            localStorage.setItem('functionalCookies', 'true');
+            document.getElementById('cookieConsent').classList.remove('show');
+            
+            // Enable Google Analytics
+            gtag('consent', 'update', {
+                'ad_storage': 'granted',
+                'analytics_storage': 'granted'
+            });
+            
+            // Show success message
+            alert('Thank you for accepting cookies! Your experience will be enhanced.');
+        }
+
+        function handleCookieReject() {
+            localStorage.setItem('cookieConsent', 'rejected');
+            localStorage.setItem('analyticsCookies', 'false');
+            localStorage.setItem('marketingCookies', 'false');
+            localStorage.setItem('functionalCookies', 'false');
+            document.getElementById('cookieConsent').classList.remove('show');
+            
+            // Disable Google Analytics
+            gtag('consent', 'update', {
+                'ad_storage': 'denied',
+                'analytics_storage': 'denied'
+            });
+        }
+
+        function openCookieSettings() {
+            document.getElementById('cookieModal').classList.add('active');
+            
+            // Load saved preferences
+            document.getElementById('analyticsCookies').checked = localStorage.getItem('analyticsCookies') !== 'false';
+            document.getElementById('marketingCookies').checked = localStorage.getItem('marketingCookies') === 'true';
+            document.getElementById('functionalCookies').checked = localStorage.getItem('functionalCookies') !== 'false';
+        }
+
+        function closeCookieSettings() {
+            document.getElementById('cookieModal').classList.remove('active');
+        }
+
+        function saveCookieSettings() {
+            const analytics = document.getElementById('analyticsCookies').checked;
+            const marketing = document.getElementById('marketingCookies').checked;
+            const functional = document.getElementById('functionalCookies').checked;
+            
+            localStorage.setItem('cookieConsent', 'custom');
+            localStorage.setItem('analyticsCookies', analytics);
+            localStorage.setItem('marketingCookies', marketing);
+            localStorage.setItem('functionalCookies', functional);
+            
+            // Update Google Analytics consent
+            gtag('consent', 'update', {
+                'ad_storage': marketing ? 'granted' : 'denied',
+                'analytics_storage': analytics ? 'granted' : 'denied'
+            });
+            
+            closeCookieSettings();
+            document.getElementById('cookieConsent').classList.remove('show');
+            alert('Your cookie preferences have been saved!');
+        }
+
+        function acceptAllCookies() {
+            document.getElementById('analyticsCookies').checked = true;
+            document.getElementById('marketingCookies').checked = true;
+            document.getElementById('functionalCookies').checked = true;
+            saveCookieSettings();
+        }
+
+        // Initialize cookie consent on page load
+        document.addEventListener('DOMContentLoaded', function() {
+            showCookieConsent();
+            
+            // Set initial Google Analytics consent
+            const analyticsConsent = localStorage.getItem('analyticsCookies') !== 'false';
+            const marketingConsent = localStorage.getItem('marketingCookies') === 'true';
+            
+            gtag('consent', 'default', {
+                'ad_storage': marketingConsent ? 'granted' : 'denied',
+                'analytics_storage': analyticsConsent ? 'granted' : 'denied'
+            });
+        });
+
+        // Navbar scroll effect
+        window.addEventListener('scroll', function() {
+            const navbar = document.getElementById('navbar');
+            if (window.scrollY > 50) {
+                navbar.classList.add('scrolled');
+            } else {
+                navbar.classList.remove('scrolled');
+            }
+        });
+
+        // Mobile menu toggle
+        const mobileMenuBtn = document.getElementById('mobileMenuBtn');
+        const navMenu = document.getElementById('navMenu');
+
+        mobileMenuBtn.addEventListener('click', function() {
+            navMenu.classList.toggle('active');
+            const icon = this.querySelector('i');
+            if (navMenu.classList.contains('active')) {
+                icon.classList.remove('fa-bars');
+                icon.classList.add('fa-times');
+            } else {
+                icon.classList.remove('fa-times');
+                icon.classList.add('fa-bars');
+            }
+        });
+
+        // Dropdown toggle for mobile
+        const dropdowns = document.querySelectorAll('.dropdown');
+        dropdowns.forEach(dropdown => {
+            const link = dropdown.querySelector('.nav-link');
+            link.addEventListener('click', function(e) {
+                if (window.innerWidth <= 768) {
+                    e.preventDefault();
+                    dropdown.classList.toggle('active');
+                }
+            });
+        });
+
+        // Close mobile menu when clicking outside
+        document.addEventListener('click', function(e) {
+            if (!navMenu.contains(e.target) && !mobileMenuBtn.contains(e.target)) {
+                navMenu.classList.remove('active');
+                mobileMenuBtn.innerHTML = '<i class="fas fa-bars"></i>';
+            }
+        });
+
+        // Newsletter form
+        document.getElementById('newsletterForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const email = this.querySelector('input[type="email"]').value;
+            
+            // Check if analytics cookies are accepted before tracking
+            if (localStorage.getItem('analyticsCookies') !== 'false') {
+                gtag('event', 'newsletter_signup', {
+                    'event_category': 'engagement',
+                    'event_label': 'homepage_newsletter'
+                });
+            }
+            
+            alert('Thank you for subscribing! Please check your email for confirmation.');
+            this.reset();
+        });
+
+        // Chat functionality
+        const chatClose = document.querySelector('.chat-close');
+        chatClose.addEventListener('click', function() {
+            document.querySelector('.floating-chat').style.display = 'none';
+        });
+
+        document.querySelector('.help-btn').addEventListener('click', function() {
+            const chat = document.querySelector('.floating-chat');
+            chat.style.display = chat.style.display === 'block' ? 'none' : 'block';
+        });
+
+        // Track button clicks (only if analytics allowed)
+        document.querySelectorAll('.hero-btn.primary, .cta-btn.primary').forEach(btn => {
+            btn.addEventListener('click', function() {
+                if (localStorage.getItem('analyticsCookies') !== 'false') {
+                    gtag('event', 'cta_click', {
+                        'event_category': 'engagement',
+                        'event_label': this.textContent.trim()
+                    });
+                }
+            });
+        });
+    </script>
+</body>
+</html>
