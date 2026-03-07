@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Register - TAAGC Global</title>
+    
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="/assets/css/platform.css">
+</head>
+<body>
+    <div class="auth-container">
+        <div class="auth-card">
+            <div class="auth-logo">
+                <div class="logo-icon">TA</div>
+                <h1><span>TAAGC</span> Global</h1>
+                <p>Create your account to start investing</p>
+            </div>
+
+            <div id="registerAlert" class="auth-message" style="display: none;"></div>
+
+            <form id="registerForm" class="auth-form">
+                <div class="form-group">
+                    <label><i class="fas fa-user"></i> Full Name</label>
+                    <input type="text" class="form-control" id="fullName" placeholder="Enter your full name" required>
+                </div>
+
+                <div class="form-group">
+                    <label><i class="fas fa-envelope"></i> Email Address</label>
+                    <input type="email" class="form-control" id="email" placeholder="Enter your email" required>
+                </div>
+
+                <div class="form-group">
+                    <label><i class="fas fa-phone"></i> Phone Number</label>
+                    <input type="tel" class="form-control" id="phone" placeholder="Enter your phone number">
+                </div>
+
+                <div class="form-group">
+                    <label><i class="fas fa-lock"></i> Password</label>
+                    <div class="password-field">
+                        <input type="password" class="form-control" id="password" placeholder="Create a password" required>
+                        <i class="fas fa-eye password-toggle" onclick="togglePassword('password')"></i>
+                    </div>
+                    <small style="color: var(--light);">Minimum 6 characters</small>
+                </div>
+
+                <div class="form-group">
+                    <label><i class="fas fa-lock"></i> Confirm Password</label>
+                    <div class="password-field">
+                        <input type="password" class="form-control" id="confirmPassword" placeholder="Confirm your password" required>
+                        <i class="fas fa-eye password-toggle" onclick="togglePassword('confirmPassword')"></i>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="checkbox">
+                        <input type="checkbox" id="terms" required>
+                        <span>I agree to the <a href="/terms">Terms of Service</a> and <a href="/privacy">Privacy Policy</a></span>
+                    </label>
+                </div>
+
+                <button type="submit" class="btn btn-primary btn-block" id="registerBtn">
+                    <i class="fas fa-user-plus"></i> Create Account
+                </button>
+            </form>
+
+            <div class="auth-divider">
+                <span>Or sign up with</span>
+            </div>
+
+            <div class="social-login">
+                <button class="social-btn google" onclick="handleGoogleRegister()">
+                    <i class="fab fa-google"></i> Google
+                </button>
+                <button class="social-btn github" onclick="handleGithubRegister()">
+                    <i class="fab fa-github"></i> GitHub
+                </button>
+            </div>
+
+            <div class="auth-footer">
+                <p>Already have an account? <a href="/login">Login</a></p>
+                <p><a href="/">Back to Home</a></p>
+            </div>
+        </div>
+    </div>
+
+    <div id="toastContainer"></div>
+
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
+    <script src="/assets/js/platform.js"></script>
+    
+    <script>
+        function togglePassword(fieldId) {
+            const field = document.getElementById(fieldId);
+            const icon = field.nextElementSibling;
+            if (field.type === 'password') {
+                field.type = 'text';
+                icon.classList.replace('fa-eye', 'fa-eye-slash');
+            } else {
+                field.type = 'password';
+                icon.classList.replace('fa-eye-slash', 'fa-eye');
+            }
+        }
+
+        async function handleGoogleRegister() {
+            try {
+                const result = await TAAGC.Auth.googleLogin();
+                if (result.success) {
+                    window.location.href = '/dashboard';
+                }
+            } catch (error) {
+                TAAGC.Utils.showToast(error.message, 'error');
+            }
+        }
+
+        async function handleGithubRegister() {
+            try {
+                const result = await TAAGC.Auth.githubLogin();
+                if (result.success) {
+                    window.location.href = '/dashboard';
+                }
+            } catch (error) {
+                TAAGC.Utils.showToast(error.message, 'error');
+            }
+        }
+
+        document.getElementById('registerForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const fullName = document.getElementById('fullName').value;
+            const email = document.getElementById('email').value;
+            const phone = document.getElementById('phone').value;
+            const password = document.getElementById('password').value;
+            const confirm = document.getElementById('confirmPassword').value;
+            
+            if (password !== confirm) {
+                TAAGC.Utils.showToast('Passwords do not match', 'error');
+                return;
+            }
+            
+            if (password.length < 6) {
+                TAAGC.Utils.showToast('Password must be at least 6 characters', 'error');
+                return;
+            }
+            
+            const result = await TAAGC.Auth.register(email, password, { fullName, phone });
+            if (result.success) {
+                window.location.href = '/login?registered=true';
+            }
+        });
+    </script>
+</body>
+</html>
