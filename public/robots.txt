@@ -1,0 +1,100 @@
+# robots.txt for TAAGC Global
+# Version: 2.0.0
+# Last Updated: 2026-03-07
+
+# --------------------------------------------
+# User-agent: *
+# Allow all bots to crawl public sections
+# --------------------------------------------
+User-agent: *
+Allow: /
+Allow: /about$
+Allow: /contact$
+Allow: /faq$
+Allow: /investors$
+Allow: /education$
+Allow: /calculator$
+Allow: /projects$
+Allow: /search$
+
+# Disallow private sections
+Disallow: /login$
+Disallow: /register$
+Disallow: /dashboard$
+Disallow: /profile$
+Disallow: /settings$
+Disallow: /admin$
+Disallow: /api/
+Disallow: /assets/
+Disallow: /private/
+
+# Disallow temporary/error pages
+Disallow: /404$
+Disallow: /500$
+Disallow: /maintenance$
+Disallow: /coming-soon$
+
+# Crawl delay (be nice to servers)
+Crawl-delay: 5
+
+# --------------------------------------------
+# Googlebot specific settings
+# --------------------------------------------
+User-agent: Googlebot
+Allow: /
+Allow: /about$
+Allow: /investors$
+Allow: /projects$
+Disallow: /login$
+Disallow: /register$
+Disallow: /dashboard$
+Crawl-delay: 2
+
+# --------------------------------------------
+# Bingbot specific settings
+# --------------------------------------------
+User-agent: Bingbot
+Allow: /
+Allow: /about$
+Allow: /investors$
+Allow: /projects$
+Disallow: /login$
+Disallow: /register$
+Disallow: /dashboard$
+Crawl-delay: 2
+
+# --------------------------------------------
+# Yandex specific settings
+# --------------------------------------------
+User-agent: Yandex
+Allow: /
+Allow: /about$
+Allow: /investors$
+Allow: /projects$
+Disallow: /login$
+Disallow: /register$
+Disallow: /dashboard$
+Crawl-delay: 5
+
+# --------------------------------------------
+# Baidu specific settings
+# --------------------------------------------
+User-agent: Baiduspider
+Allow: /
+Allow: /about$
+Allow: /investors$
+Allow: /projects$
+Disallow: /login$
+Disallow: /register$
+Disallow: /dashboard$
+Crawl-delay: 10
+
+# --------------------------------------------
+# Sitemap location
+# --------------------------------------------
+Sitemap: https://taagc.website/sitemap.xml
+
+# --------------------------------------------
+# Host
+# --------------------------------------------
+Host: https://taagc.website
