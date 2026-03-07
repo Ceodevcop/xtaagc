@@ -3,148 +3,91 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Terms of Service | TAAGC Global</title>
-    <meta name="description" content="TAAGC Global Terms of Service - Read our terms and conditions for using our platform.">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <title>Terms of Service - TAAGC Global</title>
+    
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="/assets/css/platform.css">
+    
     <style>
-        *{margin:0;padding:0;box-sizing:border-box;}
-        body{
-            font-family:'Inter',sans-serif;
-            background:#f8fafc;
-            color:#1e293b;
-            line-height:1.6;
+        .legal-content {
+            max-width: 900px;
+            margin: 0 auto;
+            background: white;
+            border-radius: var(--radius-xl);
+            padding: 60px;
+            box-shadow: var(--shadow-lg);
         }
-        .navbar{
-            background:white;
-            padding:16px 0;
-            box-shadow:0 4px 20px rgba(0,0,0,0.08);
+        
+        .legal-content h2 {
+            color: var(--primary);
+            margin: 40px 0 20px;
         }
-        .container{
-            max-width:1200px;
-            margin:0 auto;
-            padding:0 20px;
+        
+        .legal-content h2:first-of-type {
+            margin-top: 0;
         }
-        .navbar-content{
-            display:flex;
-            justify-content:space-between;
-            align-items:center;
+        
+        .legal-content h3 {
+            color: var(--accent);
+            margin: 30px 0 15px;
         }
-        .navbar-brand{
-            display:flex;
-            align-items:center;
-            gap:12px;
-            text-decoration:none;
+        
+        .legal-content p {
+            color: var(--light);
+            line-height: 1.8;
+            margin-bottom: 15px;
         }
-        .navbar-logo{
-            width:48px;
-            height:48px;
-            background:linear-gradient(135deg,#0a2540,#3a5a78);
-            border-radius:12px;
-            display:flex;
-            align-items:center;
-            justify-content:center;
-            color:white;
-            font-size:24px;
-            font-weight:700;
+        
+        .legal-content ul, .legal-content ol {
+            color: var(--light);
+            line-height: 1.8;
+            margin-bottom: 20px;
+            padding-left: 20px;
         }
-        .navbar-brand-text{
-            font-size:24px;
-            font-weight:700;
-            color:#0a2540;
+        
+        .legal-content li {
+            margin-bottom: 10px;
         }
-        .navbar-brand-text span{color:#c19a6b;}
-        .nav-link{
-            color:#4a5568;
-            text-decoration:none;
-            font-weight:600;
-            margin-left:24px;
+        
+        .legal-content .highlight {
+            background: var(--bg);
+            padding: 20px;
+            border-radius: var(--radius-lg);
+            border-left: 4px solid var(--accent);
+            margin: 20px 0;
         }
-        .page-header{
-            background:linear-gradient(135deg,#0a2540,#1a3a4f);
-            color:white;
-            padding:60px 0;
-            text-align:center;
+        
+        .legal-content table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
         }
-        .page-header h1{
-            font-size:48px;
-            margin-bottom:10px;
+        
+        .legal-content th {
+            background: var(--primary);
+            color: white;
+            padding: 12px;
         }
-        .page-header h1 span{color:#c19a6b;}
-        .page-header p{
-            font-size:18px;
-            color:rgba(255,255,255,0.9);
+        
+        .legal-content td {
+            padding: 12px;
+            border: 1px solid #e2e8f0;
         }
-        .content-section{
-            padding:60px 0;
-            background:white;
+        
+        .legal-content .last-updated {
+            color: var(--lighter);
+            font-size: 14px;
+            text-align: right;
+            margin-top: 40px;
+            padding-top: 20px;
+            border-top: 1px solid #e2e8f0;
         }
-        .content-card{
-            max-width:900px;
-            margin:0 auto;
-            background:white;
-            border-radius:24px;
-            padding:40px;
-            box-shadow:0 10px 30px rgba(0,0,0,0.05);
-        }
-        h2{
-            color:#0a2540;
-            margin:30px 0 15px;
-            font-size:28px;
-        }
-        h3{
-            color:#0a2540;
-            margin:25px 0 10px;
-            font-size:22px;
-        }
-        p{
-            margin-bottom:15px;
-            color:#4a5568;
-        }
-        ul, ol{
-            margin:15px 0 15px 30px;
-            color:#4a5568;
-        }
-        li{
-            margin-bottom:8px;
-        }
-        .last-updated{
-            background:#f8fafc;
-            padding:15px;
-            border-radius:8px;
-            margin-bottom:30px;
-            font-style:italic;
-            color:#64748b;
-        }
-        .footer{
-            background:#0a2540;
-            color:white;
-            padding:40px 0 20px;
-        }
-        .footer-content{
-            display:flex;
-            justify-content:space-between;
-            align-items:center;
-            flex-wrap:wrap;
-            gap:20px;
-        }
-        .footer-links a{
-            color:white;
-            text-decoration:none;
-            margin-left:20px;
-            opacity:0.8;
-        }
-        .footer-links a:hover{opacity:1;}
-        .copyright{
-            text-align:center;
-            margin-top:30px;
-            padding-top:20px;
-            border-top:1px solid rgba(255,255,255,0.1);
-            opacity:0.7;
-        }
-        @media (max-width:768px){
-            .navbar-content{flex-direction:column;gap:15px;}
-            .footer-content{flex-direction:column;text-align:center;}
+        
+        @media (max-width: 768px) {
+            .legal-content {
+                padding: 30px 20px;
+            }
         }
     </style>
 </head>
@@ -154,111 +97,196 @@
         <div class="container">
             <div class="navbar-content">
                 <a href="/" class="navbar-brand">
-                    <div class="navbar-logo">A</div>
-                    <div class="navbar-brand-text"><span>TAAGC</span> GLOBAL</div>
+                    <div class="logo-icon">TA</div>
+                    <div class="brand-text"><span>TAAGC</span> Global</div>
                 </a>
-                <div>
-                    <a href="/" class="nav-link">Home</a>
-                    <a href="/about.html" class="nav-link">About</a>
-                    <a href="/staff.html" class="nav-link">Team</a>
-                    <a href="/register.html" class="nav-link">Login</a>
+                
+                <button class="mobile-menu-btn">
+                    <i class="fas fa-bars"></i>
+                </button>
+                
+                <div class="nav-menu">
+                    <ul class="nav-links">
+                        <li><a href="/" class="nav-link">Home</a></li>
+                        <li><a href="/about" class="nav-link">About</a></li>
+                        <li><a href="/investors" class="nav-link">Investors</a></li>
+                        <li><a href="/legal" class="nav-link">Legal</a></li>
+                        <li><a href="/contact" class="nav-link">Contact</a></li>
+                    </ul>
+                    
+                    <div class="nav-buttons guest-only">
+                        <a href="/login" class="btn btn-outline">Login</a>
+                        <a href="/register" class="btn btn-primary">Register</a>
+                    </div>
+                    
+                    <div class="nav-buttons auth-only" style="display: none;">
+                        <a href="/dashboard" class="btn btn-outline">Dashboard</a>
+                        <button onclick="TAAGC.Auth.logout()" class="btn btn-primary">Logout</button>
+                    </div>
                 </div>
             </div>
         </div>
     </nav>
 
     <!-- Header -->
-    <div class="page-header">
-        <div class="container">
-            <h1>Terms of <span>Service</span></h1>
-            <p>Please read these terms carefully before using our platform</p>
+    <section style="background: linear-gradient(135deg, var(--primary), var(--primary-dark)); color: white; padding: 60px 0;">
+        <div class="container" style="text-align: center;">
+            <h1 style="color: white; font-size: 48px; margin-bottom: 20px;">Terms of <span style="color: var(--accent);">Service</span></h1>
+            <p style="color: rgba(255,255,255,0.9); max-width: 600px; margin: 0 auto;">
+                Please read these terms carefully before using our platform
+            </p>
         </div>
-    </div>
+    </section>
 
     <!-- Content -->
-    <div class="content-section">
-        <div class="container">
-            <div class="content-card">
-                <div class="last-updated">
-                    <i class="fas fa-clock"></i> Last Updated: February 15, 2026 | Effective: February 15, 2026
-                </div>
+    <div class="container" style="padding: 60px 0;">
+        <div class="legal-content">
+            <p class="last-updated">Last Updated: March 7, 2026</p>
 
-                <h2>1. Agreement to Terms</h2>
-                <p>By accessing or using the TAAGC Global website and services, you agree to be bound by these Terms of Service. If you do not agree to all the terms and conditions, you may not access the website or use our services.</p>
+            <h2>1. Acceptance of Terms</h2>
+            <p>By accessing or using the TAAGC Global platform, you agree to be bound by these Terms of Service and all applicable laws and regulations. If you do not agree with any part of these terms, you may not use our services.</p>
 
-                <h2>2. Eligibility</h2>
-                <p>By using our services, you represent and warrant that:</p>
-                <ul>
-                    <li>You are at least 18 years of age</li>
-                    <li>You have the legal capacity to enter into a binding contract</li>
-                    <li>You are not located in a country that is subject to a U.S. government embargo</li>
-                    <li>You will not use our services for any illegal purpose</li>
-                </ul>
+            <div class="highlight">
+                <strong>Important:</strong> These terms constitute a legally binding agreement between you and TAAGC Global. Please read them carefully.
+            </div>
 
-                <h2>3. Account Registration</h2>
-                <p>To access certain features, you must register for an account. You agree to:</p>
-                <ul>
-                    <li>Provide accurate, current, and complete information</li>
-                    <li>Maintain and update your information</li>
-                    <li>Keep your password secure and confidential</li>
-                    <li>Notify us immediately of any unauthorized access</li>
-                    <li>Accept responsibility for all activities under your account</li>
-                </ul>
+            <h2>2. Definitions</h2>
+            <p>Throughout these Terms, the following definitions apply:</p>
+            <ul>
+                <li><strong>"Platform"</strong> means the TAAGC Global website, mobile applications, and all related services.</li>
+                <li><strong>"User"</strong> means any individual or entity that registers for or uses the Platform.</li>
+                <li><strong>"Investment"</strong> means any financial contribution made by a User through the Platform.</li>
+                <li><strong>"Partner"</strong> means third-party companies offering investment opportunities through the Platform.</li>
+                <li><strong>"Content"</strong> means all information, data, text, images, and materials on the Platform.</li>
+            </ul>
 
-                <h2>4. Account Types</h2>
-                <h3>4.1 Individual Accounts</h3>
-                <p>Individual accounts are for personal use by shoppers, investors, and professionals. You must be 18 or older to register.</p>
-                
-                <h3>4.2 Company Accounts</h3>
-                <p>Company accounts require valid business registration and verification. By registering as a company, you represent that you are authorized to bind the company to these terms.</p>
+            <h2>3. Eligibility</h2>
+            <p>To use our Platform, you must:</p>
+            <ul>
+                <li>Be at least 18 years of age</li>
+                <li>Have the legal capacity to enter into binding contracts</li>
+                <li>Not be located in a jurisdiction where our services are prohibited</li>
+                <li>Provide accurate and complete registration information</li>
+                <li>Maintain the security of your account credentials</li>
+            </ul>
 
-                <h2>5. User Obligations</h2>
-                <p>You agree not to:</p>
-                <ul>
-                    <li>Violate any applicable laws or regulations</li>
-                    <li>Infringe on intellectual property rights</li>
-                    <li>Transmit harmful code or malware</li>
-                    <li>Attempt to gain unauthorized access</li>
-                    <li>Impersonate any person or entity</li>
-                    <li>Use the platform for fraudulent purposes</li>
-                    <li>Interfere with the proper functioning of the platform</li>
-                </ul>
+            <h2>4. Account Registration</h2>
+            <p>When creating an account, you agree to:</p>
+            <ul>
+                <li>Provide accurate, current, and complete information</li>
+                <li>Maintain and update your information as needed</li>
+                <li>Keep your password confidential</li>
+                <li>Notify us immediately of any unauthorized access</li>
+                <li>Accept responsibility for all activities under your account</li>
+            </ul>
 
-                <h2>6. Fees and Payments</h2>
-                <p>Certain services may require payment of fees. You agree to pay all fees associated with your account. Fees are non-refundable except as required by law or as expressly stated.</p>
+            <h2>5. Investment Terms</h2>
+            <h3>5.1 Investment Process</h3>
+            <p>When you make an investment through our Platform:</p>
+            <ul>
+                <li>You authorize us to process the transaction</li>
+                <li>Funds will be held in escrow until the investment is finalized</li>
+                <li>You will receive confirmation of your investment</li>
+                <li>Investment terms are specified in each opportunity</li>
+            </ul>
 
-                <h2>7. Intellectual Property</h2>
-                <p>The TAAGC platform, including all content, features, and functionality, is owned by Triple A AHAL Global Concept and protected by international copyright, trademark, and other intellectual property laws.</p>
+            <h3>5.2 Risks</h3>
+            <p>All investments carry inherent risks. By investing, you acknowledge that:</p>
+            <ul>
+                <li>Past performance does not guarantee future results</li>
+                <li>Investment values may fluctuate</li>
+                <li>You may lose some or all of your invested capital</li>
+                <li>Returns are not guaranteed</li>
+                <li>You should consult with financial advisors before investing</li>
+            </ul>
 
-                <h2>8. Third-Party Links</h2>
-                <p>Our platform may contain links to third-party websites. We are not responsible for the content or practices of these websites.</p>
+            <h3>5.3 Fees</h3>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Fee Type</th>
+                        <th>Amount</th>
+                        <th>Description</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>Platform Fee</td>
+                        <td>1-2%</td>
+                        <td>Applied to successful investments</td>
+                    </tr>
+                    <tr>
+                        <td>Withdrawal Fee</td>
+                        <td>$0</td>
+                        <td>No fee for withdrawals</td>
+                    </tr>
+                    <tr>
+                        <td>Currency Conversion</td>
+                        <td>0.5%</td>
+                        <td>Applied when converting currencies</td>
+                    </tr>
+                </tbody>
+            </table>
 
-                <h2>9. Termination</h2>
-                <p>We may terminate or suspend your account immediately, without prior notice, for conduct that we believe violates these Terms or is harmful to other users, us, or third parties.</p>
+            <h2>6. User Obligations</h2>
+            <p>You agree not to:</p>
+            <ul>
+                <li>Use the Platform for any illegal purpose</li>
+                <li>Impersonate any person or entity</li>
+                <li>Interfere with the proper functioning of the Platform</li>
+                <li>Attempt to gain unauthorized access to any part of the Platform</li>
+                <li>Use automated means to access the Platform</li>
+                <li>Provide false or misleading information</li>
+                <li>Engage in money laundering or terrorist financing</li>
+                <li>Violate any applicable laws or regulations</li>
+            </ul>
 
-                <h2>10. Limitation of Liability</h2>
-                <p>To the maximum extent permitted by law, TAAGC shall not be liable for any indirect, incidental, special, consequential, or punitive damages, or any loss of profits or revenues, whether incurred directly or indirectly.</p>
+            <h2>7. Intellectual Property</h2>
+            <p>All content on the Platform, including but not limited to logos, text, graphics, software, and data, is the property of TAAGC Global or its licensors and is protected by intellectual property laws. You may not:</p>
+            <ul>
+                <li>Copy, modify, or distribute Platform content without permission</li>
+                <li>Use our trademarks without prior written consent</li>
+                <li>Reverse engineer any part of the Platform</li>
+                <li>Remove any copyright or proprietary notices</li>
+            </ul>
 
-                <h2>11. Indemnification</h2>
-                <p>You agree to indemnify and hold harmless TAAGC, its affiliates, and their respective officers, directors, employees, and agents from any claims arising out of your use of the platform.</p>
+            <h2>8. Privacy</h2>
+            <p>Your use of the Platform is also governed by our Privacy Policy, which explains how we collect, use, and protect your personal information. By using the Platform, you consent to our data practices as described in the Privacy Policy.</p>
 
-                <h2>12. Dispute Resolution</h2>
-                <p>Any dispute arising out of or relating to these Terms shall be resolved through binding arbitration in accordance with the rules of the International Chamber of Commerce.</p>
+            <h2>9. Third-Party Links</h2>
+            <p>The Platform may contain links to third-party websites or services. We are not responsible for the content or practices of these third parties. Your use of third-party services is at your own risk and subject to their terms and conditions.</p>
 
-                <h2>13. Governing Law</h2>
-                <p>These Terms shall be governed by the laws of the United Kingdom, without regard to its conflict of law provisions.</p>
+            <h2>10. Limitation of Liability</h2>
+            <p>To the maximum extent permitted by law, TAAGC Global shall not be liable for any indirect, incidental, special, consequential, or punitive damages, including without limitation, loss of profits, data, use, goodwill, or other intangible losses, resulting from:</p>
+            <ul>
+                <li>Your use or inability to use the Platform</li>
+                <li>Any conduct or content of any third party</li>
+                <li>Unauthorized access to or alteration of your transmissions or data</li>
+                <li>Statements or conduct of any third party</li>
+            </ul>
 
-                <h2>14. Changes to Terms</h2>
-                <p>We reserve the right to modify these Terms at any time. We will provide notice of significant changes by posting the new Terms on this page.</p>
+            <h2>11. Indemnification</h2>
+            <p>You agree to indemnify and hold harmless TAAGC Global, its affiliates, officers, directors, employees, and agents from any claims, losses, damages, liabilities, including legal fees, arising out of your use of the Platform, your violation of these Terms, or your violation of any rights of another.</p>
 
-                <h2>15. Contact Information</h2>
-                <p>For questions about these Terms, please contact us at:</p>
-                <p style="margin-top:20px;">
-                    <strong>Triple A AHAL Global Concept (TAAGC)</strong><br>
-                    Email: legal@taagc.com<br>
-                    Phone: +1 (555) 123-4567<br>
-                    Address: 123 Financial District, Global Business Hub
-                </p>
+            <h2>12. Termination</h2>
+            <p>We may terminate or suspend your account and access to the Platform immediately, without prior notice or liability, for any reason, including without limitation if you breach these Terms. Upon termination, your right to use the Platform will immediately cease.</p>
+
+            <h2>13. Governing Law</h2>
+            <p>These Terms shall be governed and construed in accordance with the laws of the State of Delaware, without regard to its conflict of law provisions. Any disputes arising under these Terms shall be resolved in the federal or state courts located in Delaware.</p>
+
+            <h2>14. Changes to Terms</h2>
+            <p>We reserve the right to modify or replace these Terms at any time. We will provide notice of any material changes by posting the new Terms on the Platform. Your continued use of the Platform after any such changes constitutes your acceptance of the new Terms.</p>
+
+            <h2>15. Contact Information</h2>
+            <p>If you have any questions about these Terms, please contact us at:</p>
+            <ul>
+                <li>Email: legal@taagc.com</li>
+                <li>Address: 123 Investment Avenue, New York, NY 10001</li>
+                <li>Phone: +1 (800) 123-4567</li>
+            </ul>
+
+            <div class="last-updated">
+                <p>By using TAAGC Global, you acknowledge that you have read, understood, and agree to be bound by these Terms of Service.</p>
             </div>
         </div>
     </div>
@@ -266,24 +294,29 @@
     <!-- Footer -->
     <footer class="footer">
         <div class="container">
-            <div class="footer-content">
-                <div>
-                    <a href="/" class="navbar-brand" style="color:white;">
-                        <div class="navbar-logo">A</div>
-                        <span style="font-size:20px; font-weight:700;"><span style="color:#c19a6b;">TAAGC</span> GLOBAL</span>
-                    </a>
+            <div class="footer-grid">
+                <div class="footer-col">
+                    <h4>Legal</h4>
+                    <ul>
+                        <li><a href="/terms">Terms of Service</a></li>
+                        <li><a href="/privacy">Privacy Policy</a></li>
+                        <li><a href="/cookies">Cookie Policy</a></li>
+                    </ul>
                 </div>
-                <div class="footer-links">
-                    <a href="/about.html">About</a>
-                    <a href="/privacy.html">Privacy</a>
-                    <a href="/terms.html">Terms</a>
-                    <a href="/contact.html">Contact</a>
+                <div class="footer-col">
+                    <h4>Support</h4>
+                    <ul>
+                        <li><a href="/faq">FAQ</a></li>
+                        <li><a href="/contact">Contact</a></li>
+                    </ul>
                 </div>
             </div>
-            <div class="copyright">
-                &copy; 2026 Triple A AHAL Global Concept. All rights reserved.
+            <div class="footer-bottom">
+                <p>&copy; 2026 TAAGC Global. All rights reserved.</p>
             </div>
         </div>
     </footer>
+
+    <script src="/assets/js/platform.js"></script>
 </body>
-  </html>
+</html>
