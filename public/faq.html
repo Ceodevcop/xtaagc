@@ -1,0 +1,481 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FAQ - TAAGC Global</title>
+    
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="/assets/css/platform.css">
+    
+    <style>
+        .faq-search {
+            max-width: 600px;
+            margin: 40px auto;
+            position: relative;
+        }
+        
+        .faq-search input {
+            width: 100%;
+            padding: 20px 30px;
+            border: none;
+            border-radius: 50px;
+            box-shadow: var(--shadow-lg);
+            font-size: 16px;
+        }
+        
+        .faq-search i {
+            position: absolute;
+            right: 25px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--light);
+            font-size: 20px;
+        }
+        
+        .faq-categories {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin-bottom: 40px;
+            flex-wrap: wrap;
+        }
+        
+        .category-btn {
+            padding: 10px 25px;
+            border: 2px solid var(--accent);
+            border-radius: 30px;
+            background: transparent;
+            color: var(--accent);
+            font-weight: 600;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+        
+        .category-btn:hover,
+        .category-btn.active {
+            background: var(--accent);
+            color: white;
+        }
+        
+        .faq-section {
+            margin-bottom: 40px;
+        }
+        
+        .faq-section h2 {
+            color: var(--primary);
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid var(--accent);
+        }
+        
+        .faq-item {
+            background: white;
+            border-radius: var(--radius-lg);
+            margin-bottom: 15px;
+            box-shadow: var(--shadow-sm);
+            overflow: hidden;
+        }
+        
+        .faq-question {
+            padding: 20px 25px;
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-weight: 600;
+            color: var(--primary);
+            transition: var(--transition);
+        }
+        
+        .faq-question:hover {
+            background: var(--bg);
+        }
+        
+        .faq-question i {
+            transition: transform 0.3s;
+        }
+        
+        .faq-item.active .faq-question i {
+            transform: rotate(180deg);
+        }
+        
+        .faq-answer {
+            padding: 0 25px;
+            max-height: 0;
+            overflow: hidden;
+            transition: all 0.3s;
+            color: var(--light);
+            line-height: 1.8;
+        }
+        
+        .faq-item.active .faq-answer {
+            padding: 0 25px 25px;
+            max-height: 500px;
+        }
+        
+        .still-have-questions {
+            background: linear-gradient(135deg, var(--bg), white);
+            border-radius: var(--radius-xl);
+            padding: 60px;
+            text-align: center;
+            margin-top: 60px;
+        }
+        
+        @media (max-width: 768px) {
+            .still-have-questions {
+                padding: 40px 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Navbar -->
+    <nav class="navbar">
+        <div class="container">
+            <div class="navbar-content">
+                <a href="/" class="navbar-brand">
+                    <div class="logo-icon">TA</div>
+                    <div class="brand-text"><span>TAAGC</span> Global</div>
+                </a>
+                
+                <button class="mobile-menu-btn">
+                    <i class="fas fa-bars"></i>
+                </button>
+                
+                <div class="nav-menu">
+                    <ul class="nav-links">
+                        <li><a href="/" class="nav-link">Home</a></li>
+                        <li><a href="/about" class="nav-link">About</a></li>
+                        <li><a href="/investors" class="nav-link">Investors</a></li>
+                        <li><a href="/faq" class="nav-link active">FAQ</a></li>
+                        <li><a href="/contact" class="nav-link">Contact</a></li>
+                    </ul>
+                    
+                    <div class="nav-buttons guest-only">
+                        <a href="/login" class="btn btn-outline">Login</a>
+                        <a href="/register" class="btn btn-primary">Register</a>
+                    </div>
+                    
+                    <div class="nav-buttons auth-only" style="display: none;">
+                        <a href="/dashboard" class="btn btn-outline">Dashboard</a>
+                        <button onclick="TAAGC.Auth.logout()" class="btn btn-primary">Logout</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Header -->
+    <section style="background: linear-gradient(135deg, var(--primary), var(--primary-dark)); color: white; padding: 60px 0;">
+        <div class="container" style="text-align: center;">
+            <h1 style="color: white; font-size: 48px; margin-bottom: 20px;">Frequently Asked <span style="color: var(--accent);">Questions</span></h1>
+            <p style="color: rgba(255,255,255,0.9); max-width: 600px; margin: 0 auto;">
+                Find answers to common questions about investing with TAAGC Global
+            </p>
+        </div>
+    </section>
+
+    <!-- Search -->
+    <div class="container">
+        <div class="faq-search">
+            <input type="text" id="faqSearch" placeholder="Search questions..." onkeyup="searchFAQ()">
+            <i class="fas fa-search"></i>
+        </div>
+    </div>
+
+    <!-- Categories -->
+    <div class="container">
+        <div class="faq-categories">
+            <button class="category-btn active" onclick="filterFAQ('all')">All</button>
+            <button class="category-btn" onclick="filterFAQ('general')">General</button>
+            <button class="category-btn" onclick="filterFAQ('investing')">Investing</button>
+            <button class="category-btn" onclick="filterFAQ('account')">Account</button>
+            <button class="category-btn" onclick="filterFAQ('security')">Security</button>
+            <button class="category-btn" onclick="filterFAQ('payments')">Payments</button>
+        </div>
+    </div>
+
+    <!-- FAQ Sections -->
+    <div class="container" style="padding: 40px 0;">
+        <!-- General Questions -->
+        <div class="faq-section" data-category="general">
+            <h2>General Questions</h2>
+            
+            <div class="faq-item">
+                <div class="faq-question" onclick="toggleFAQ(this)">
+                    What is TAAGC Global?
+                    <i class="fas fa-chevron-down"></i>
+                </div>
+                <div class="faq-answer">
+                    <p>TAAGC Global is a premier investment platform that connects investors with carefully vetted opportunities worldwide. We provide access to institutional-grade investments, comprehensive portfolio management tools, and educational resources to help investors make informed decisions.</p>
+                </div>
+            </div>
+            
+            <div class="faq-item">
+                <div class="faq-question" onclick="toggleFAQ(this)">
+                    How does TAAGC Global work?
+                    <i class="fas fa-chevron-down"></i>
+                </div>
+                <div class="faq-answer">
+                    <p>Investors create an account, complete verification, and can browse investment opportunities from our partner companies. Once you find a suitable investment, you can invest directly through our platform. We handle all the paperwork and provide regular updates on your investments.</p>
+                </div>
+            </div>
+            
+            <div class="faq-item">
+                <div class="faq-question" onclick="toggleFAQ(this)">
+                    Is TAAGC Global regulated?
+                    <i class="fas fa-chevron-down"></i>
+                </div>
+                <div class="faq-answer">
+                    <p>Yes, TAAGC Global operates in compliance with international financial regulations. We work with licensed partners and follow strict compliance procedures to ensure all investments meet regulatory requirements.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Investing Questions -->
+        <div class="faq-section" data-category="investing">
+            <h2>Investing</h2>
+            
+            <div class="faq-item">
+                <div class="faq-question" onclick="toggleFAQ(this)">
+                    What is the minimum investment amount?
+                    <i class="fas fa-chevron-down"></i>
+                </div>
+                <div class="faq-answer">
+                    <p>The minimum investment amount varies by project, typically ranging from $1,000 to $25,000. Each investment opportunity clearly states its minimum investment requirement.</p>
+                </div>
+            </div>
+            
+            <div class="faq-item">
+                <div class="faq-question" onclick="toggleFAQ(this)">
+                    How do I receive returns?
+                    <i class="fas fa-chevron-down"></i>
+                </div>
+                <div class="faq-answer">
+                    <p>Returns are distributed directly to your TAAGC wallet based on the project's payout schedule (monthly, quarterly, or at maturity). You can then withdraw funds to your bank account or reinvest in new opportunities.</p>
+                </div>
+            </div>
+            
+            <div class="faq-item">
+                <div class="faq-question" onclick="toggleFAQ(this)">
+                    Can I withdraw early?
+                    <i class="fas fa-chevron-down"></i>
+                </div>
+                <div class="faq-answer">
+                    <p>Early withdrawal options depend on the specific investment. Some projects allow early exit with penalties, while others are locked until maturity. Check the investment terms before investing.</p>
+                </div>
+            </div>
+            
+            <div class="faq-item">
+                <div class="faq-question" onclick="toggleFAQ(this)">
+                    How are investments selected?
+                    <i class="fas fa-chevron-down"></i>
+                </div>
+                <div class="faq-answer">
+                    <p>Our investment team conducts thorough due diligence on all opportunities. We evaluate the project's fundamentals, management team, market potential, and risk factors before listing them on our platform.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Account Questions -->
+        <div class="faq-section" data-category="account">
+            <h2>Account Management</h2>
+            
+            <div class="faq-item">
+                <div class="faq-question" onclick="toggleFAQ(this)">
+                    How do I create an account?
+                    <i class="fas fa-chevron-down"></i>
+                </div>
+                <div class="faq-answer">
+                    <p>Click the "Register" button and fill in your details. You'll need to provide your name, email, and create a password. After registration, you'll need to verify your email and complete identity verification.</p>
+                </div>
+            </div>
+            
+            <div class="faq-item">
+                <div class="faq-question" onclick="toggleFAQ(this)">
+                    What documents are needed for verification?
+                    <i class="fas fa-chevron-down"></i>
+                </div>
+                <div class="faq-answer">
+                    <p>You'll need a government-issued ID (passport, driver's license), proof of address (utility bill, bank statement), and a selfie for identity verification. All documents must be current and legible.</p>
+                </div>
+            </div>
+            
+            <div class="faq-item">
+                <div class="faq-question" onclick="toggleFAQ(this)">
+                    How long does verification take?
+                    <i class="fas fa-chevron-down"></i>
+                </div>
+                <div class="faq-answer">
+                    <p>Verification typically takes 24-48 hours. In some cases, it may take up to 3 business days. You'll receive an email notification once your account is verified.</p>
+                </div>
+            </div>
+            
+            <div class="faq-item">
+                <div class="faq-question" onclick="toggleFAQ(this)">
+                    Can I have multiple accounts?
+                    <i class="fas fa-chevron-down"></i>
+                </div>
+                <div class="faq-answer">
+                    <p>No, each user is limited to one account. Multiple accounts are not permitted and may result in suspension of all associated accounts.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Security Questions -->
+        <div class="faq-section" data-category="security">
+            <h2>Security</h2>
+            
+            <div class="faq-item">
+                <div class="faq-question" onclick="toggleFAQ(this)">
+                    How secure is my information?
+                    <i class="fas fa-chevron-down"></i>
+                </div>
+                <div class="faq-answer">
+                    <p>We use bank-level encryption and security measures to protect your data. All information is stored securely, and we never share your personal information with third parties without your consent.</p>
+                </div>
+            </div>
+            
+            <div class="faq-item">
+                <div class="faq-question" onclick="toggleFAQ(this)">
+                    Do you offer two-factor authentication?
+                    <i class="fas fa-chevron-down"></i>
+                </div>
+                <div class="faq-answer">
+                    <p>Yes, we strongly recommend enabling two-factor authentication (2FA) for your account. You can enable it in your account security settings.</p>
+                </div>
+            </div>
+            
+            <div class="faq-item">
+                <div class="faq-question" onclick="toggleFAQ(this)">
+                    What if I forget my password?
+                    <i class="fas fa-chevron-down"></i>
+                </div>
+                <div class="faq-answer">
+                    <p>Click the "Forgot Password" link on the login page. You'll receive an email with instructions to reset your password. Make sure to choose a strong, unique password.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Payments Questions -->
+        <div class="faq-section" data-category="payments">
+            <h2>Payments & Fees</h2>
+            
+            <div class="faq-item">
+                <div class="faq-question" onclick="toggleFAQ(this)">
+                    What payment methods are accepted?
+                    <i class="fas fa-chevron-down"></i>
+                </div>
+                <div class="faq-answer">
+                    <p>We accept bank transfers, credit/debit cards, and select cryptocurrencies. Payment methods may vary by region and investment type.</p>
+                </div>
+            </div>
+            
+            <div class="faq-item">
+                <div class="faq-question" onclick="toggleFAQ(this)">
+                    Are there any fees?
+                    <i class="fas fa-chevron-down"></i>
+                </div>
+                <div class="faq-answer">
+                    <p>We charge a small platform fee on investments (typically 1-2%). There are no fees for deposits or withdrawals. Some payment processors may charge their own fees.</p>
+                </div>
+            </div>
+            
+            <div class="faq-item">
+                <div class="faq-question" onclick="toggleFAQ(this)">
+                    How long do withdrawals take?
+                    <i class="fas fa-chevron-down"></i>
+                </div>
+                <div class="faq-answer">
+                    <p>Withdrawals typically process within 1-3 business days. Bank transfers may take additional time depending on your bank.</p>
+                </div>
+            </div>
+            
+            <div class="faq-item">
+                <div class="faq-question" onclick="toggleFAQ(this)">
+                    What currencies do you support?
+                    <i class="fas fa-chevron-down"></i>
+                </div>
+                <div class="faq-answer">
+                    <p>We support USD, EUR, GBP, and select other major currencies. Cryptocurrency investments are available in Bitcoin, Ethereum, and USDT.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Still Have Questions -->
+        <div class="still-have-questions">
+            <h2 style="color: var(--primary); margin-bottom: 20px;">Still Have Questions?</h2>
+            <p style="color: var(--light); margin-bottom: 30px; max-width: 500px; margin-left: auto; margin-right: auto;">
+                Can't find the answer you're looking for? Our support team is here to help.
+            </p>
+            <a href="/contact" class="btn btn-primary btn-lg">Contact Support</a>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-grid">
+                <div class="footer-col">
+                    <h4>TAAGC Global</h4>
+                    <ul>
+                        <li><a href="/about">About Us</a></li>
+                        <li><a href="/careers">Careers</a></li>
+                        <li><a href="/press">Press</a></li>
+                    </ul>
+                </div>
+                <div class="footer-col">
+                    <h4>Support</h4>
+                    <ul>
+                        <li><a href="/faq">FAQ</a></li>
+                        <li><a href="/contact">Contact</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2026 TAAGC Global. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="/assets/js/platform.js"></script>
+    
+    <script>
+        function toggleFAQ(element) {
+            const item = element.closest('.faq-item');
+            item.classList.toggle('active');
+        }
+
+        function filterFAQ(category) {
+            document.querySelectorAll('.category-btn').forEach(btn => btn.classList.remove('active'));
+            event.target.classList.add('active');
+            
+            const sections = document.querySelectorAll('.faq-section');
+            
+            sections.forEach(section => {
+                if (category === 'all' || section.dataset.category === category) {
+                    section.style.display = 'block';
+                } else {
+                    section.style.display = 'none';
+                }
+            });
+        }
+
+        function searchFAQ() {
+            const searchTerm = document.getElementById('faqSearch').value.toLowerCase();
+            const items = document.querySelectorAll('.faq-item');
+            
+            items.forEach(item => {
+                const question = item.querySelector('.faq-question').textContent.toLowerCase();
+                if (question.includes(searchTerm)) {
+                    item.style.display = 'block';
+                } else {
+                    item.style.display = 'none';
+                }
+            });
+        }
+    </script>
+</body>
+</html>
