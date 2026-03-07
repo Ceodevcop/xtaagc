@@ -1,21 +1,22 @@
 {
   "version": 2,
-  "builds": [
-    {
-      "src": "public/**/*",
-      "use": "@vercel/static"
-    },
-    {
-      "src": "api/**/*.js",
-      "use": "@vercel/node"
-    }
-  ],
+
   "routes": [
     { "src": "^/$", "dest": "/public/index.html" },
+
     { "src": "^/login$", "dest": "/public/login.html" },
     { "src": "^/register$", "dest": "/public/register.html" },
-    { "src": "^/complete-profile$", "dest": "/public/complete-profile.html" },
     { "src": "^/events$", "dest": "/public/events.html" },
+    { "src": "^/complete-profile$", "dest": "/public/complete-profile.html" },
+
+    { "src": "^/profile/client$", "dest": "/public/profile/client/index.html" },
+    { "src": "^/profile/investors$", "dest": "/public/profile/investors/index.html" },
+
+    { "src": "^/staff$", "dest": "/public/staff/index.html" },
+
+    { "src": "^/admin/login$", "dest": "/public/xtaagc/admin-login/index.html" },
+
+    { "src": "^/admin/setup$", "dest": "/public/setup-admin.html" },
 
     { "src": "^/api/(.*)", "dest": "/api/$1" },
 
