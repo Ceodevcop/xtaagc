@@ -1,0 +1,569 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Portfolio - TAAGC Global</title>
+    
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="/assets/css/platform.css">
+    
+    <style>
+        .portfolio-summary {
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+            border-radius: var(--radius-xl);
+            padding: 40px;
+            color: white;
+            margin-bottom: 30px;
+        }
+        
+        .portfolio-chart {
+            height: 300px;
+            margin: 20px 0;
+        }
+        
+        .allocation-item {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            padding: 15px;
+            border-bottom: 1px solid #e2e8f0;
+        }
+        
+        .allocation-color {
+            width: 20px;
+            height: 20px;
+            border-radius: 4px;
+        }
+        
+        .allocation-details {
+            flex: 1;
+        }
+        
+        .allocation-bar {
+            height: 8px;
+            background: #e2e8f0;
+            border-radius: 4px;
+            overflow: hidden;
+            margin-top: 5px;
+        }
+        
+        .allocation-progress {
+            height: 100%;
+            background: var(--accent);
+            border-radius: 4px;
+        }
+        
+        .performance-periods {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+        
+        .period-btn {
+            padding: 8px 16px;
+            border: 2px solid #e2e8f0;
+            border-radius: var(--radius-md);
+            background: white;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+        
+        .period-btn:hover,
+        .period-btn.active {
+            background: var(--accent);
+            color: white;
+            border-color: var(--accent);
+        }
+        
+        .transaction-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px;
+            border-bottom: 1px solid #e2e8f0;
+        }
+        
+        .transaction-item:last-child {
+            border-bottom: none;
+        }
+        
+        .transaction-type {
+            padding: 4px 8px;
+            border-radius: 20px;
+            font-size: 11px;
+            font-weight: 600;
+        }
+        
+        .transaction-type.deposit {
+            background: #10b98120;
+            color: #10b981;
+        }
+        
+        .transaction-type.withdrawal {
+            background: #e53e3e20;
+            color: #e53e3e;
+        }
+        
+        .transaction-type.investment {
+            background: #3b82f620;
+            color: #3b82f6;
+        }
+        
+        .transaction-type.return {
+            background: #c19a6b20;
+            color: #c19a6b;
+        }
+        
+        @media (max-width: 768px) {
+            .portfolio-summary {
+                padding: 20px;
+            }
+            
+            .performance-periods {
+                flex-wrap: wrap;
+            }
+            
+            .period-btn {
+                flex: 1;
+                text-align: center;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="dashboard-layout">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <h2><span>TAAGC</span> Global</h2>
+            </div>
+            
+            <nav class="sidebar-nav" id="portfolioNav"></nav>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Top Bar -->
+            <div class="top-bar">
+                <h1>My Portfolio</h1>
+                <div class="user-menu">
+                    <div class="user-profile" onclick="window.location.href='/profile'">
+                        <div class="user-avatar" id="userAvatar">U</div>
+                        <div>
+                            <div id="userName">Loading...</div>
+                            <div style="font-size: 12px; color: var(--light);" id="userEmail"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Portfolio Summary -->
+            <div class="portfolio-summary">
+                <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 20px;">
+                    <div>
+                        <div style="opacity: 0.9;">Total Portfolio Value</div>
+                        <div style="font-size: 48px; font-weight: 700;" id="totalValue">$0</div>
+                    </div>
+                    <div>
+                        <div style="opacity: 0.9;">Total Return</div>
+                        <div style="font-size: 32px;" id="totalReturn" class="positive">+$0</div>
+                    </div>
+                    <div>
+                        <div style="opacity: 0.9;">Return %</div>
+                        <div style="font-size: 32px;" id="returnPercent" class="positive">0%</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Portfolio Tabs -->
+            <div class="tabs">
+                <button class="tab active" onclick="showTab('holdings')">Holdings</button>
+                <button class="tab" onclick="showTab('performance')">Performance</button>
+                <button class="tab" onclick="showTab('allocation')">Allocation</button>
+                <button class="tab" onclick="showTab('transactions')">Transactions</button>
+            </div>
+
+            <!-- Holdings Tab -->
+            <div id="tab-holdings" class="tab-content">
+                <div class="card">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+                        <h3>Investment Holdings</h3>
+                        <a href="/projects" class="btn btn-sm btn-primary">+ New Investment</a>
+                    </div>
+                    
+                    <div class="table-container">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Investment</th>
+                                    <th>Amount</th>
+                                    <th>Current Value</th>
+                                    <th>Return</th>
+                                    <th>Status</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="holdingsTable">
+                                <tr><td colspan="6" class="loading">Loading holdings...</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Performance Tab -->
+            <div id="tab-performance" class="tab-content" style="display: none;">
+                <div class="card">
+                    <h3 style="margin-bottom: 20px;">Performance History</h3>
+                    
+                    <div class="performance-periods">
+                        <button class="period-btn active" onclick="loadPerformance('1m')">1M</button>
+                        <button class="period-btn" onclick="loadPerformance('3m')">3M</button>
+                        <button class="period-btn" onclick="loadPerformance('6m')">6M</button>
+                        <button class="period-btn" onclick="loadPerformance('1y')">1Y</button>
+                        <button class="period-btn" onclick="loadPerformance('all')">All</button>
+                    </div>
+                    
+                    <div class="portfolio-chart">
+                        <canvas id="performanceChart"></canvas>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Allocation Tab -->
+            <div id="tab-allocation" class="tab-content" style="display: none;">
+                <div class="grid-2">
+                    <div class="card">
+                        <h3 style="margin-bottom: 20px;">Asset Allocation</h3>
+                        <div class="portfolio-chart">
+                            <canvas id="allocationChart"></canvas>
+                        </div>
+                    </div>
+                    
+                    <div class="card">
+                        <h3 style="margin-bottom: 20px;">Allocation Details</h3>
+                        <div id="allocationDetails"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Transactions Tab -->
+            <div id="tab-transactions" class="tab-content" style="display: none;">
+                <div class="card">
+                    <h3 style="margin-bottom: 20px;">Recent Transactions</h3>
+                    
+                    <div class="table-container">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Date</th>
+                                    <th>Type</th>
+                                    <th>Description</th>
+                                    <th>Amount</th>
+                                    <th>Status</th>
+                                </tr>
+                            </thead>
+                            <tbody id="transactionsTable">
+                                <tr><td colspan="5" class="loading">Loading transactions...</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
+    <script src="/assets/js/platform.js"></script>
+    
+    <script>
+        let currentUser = null;
+        let portfolioData = null;
+        let performanceChart = null;
+        let allocationChart = null;
+
+        // Check authentication
+        TAAGC.auth.onAuthStateChanged(async (user) => {
+            if (!user) {
+                window.location.href = '/login';
+                return;
+            }
+            
+            currentUser = user;
+            document.getElementById('userName').textContent = user.displayName || 'User';
+            document.getElementById('userEmail').textContent = user.email || '';
+            document.getElementById('userAvatar').textContent = (user.displayName || 'U').charAt(0).toUpperCase();
+            
+            await loadPortfolio();
+            buildNav();
+        });
+
+        function buildNav() {
+            const nav = document.getElementById('portfolioNav');
+            nav.innerHTML = `
+                <a href="/dashboard" class="nav-item"><i class="fas fa-tachometer-alt"></i><span>Dashboard</span></a>
+                <a href="/portfolio" class="nav-item active"><i class="fas fa-chart-pie"></i><span>Portfolio</span></a>
+                <a href="/projects" class="nav-item"><i class="fas fa-building"></i><span>Projects</span></a>
+                <div class="nav-section">ACCOUNT</div>
+                <a href="/profile" class="nav-item"><i class="fas fa-user"></i><span>Profile</span></a>
+                <a href="/settings" class="nav-item"><i class="fas fa-cog"></i><span>Settings</span></a>
+                <a href="#" class="nav-item" onclick="TAAGC.Auth.logout()"><i class="fas fa-sign-out-alt"></i><span>Logout</span></a>
+            `;
+        }
+
+        async function loadPortfolio() {
+            try {
+                const response = await fetch(`/api/investments/user/${currentUser.uid}`, {
+                    headers: {
+                        'Authorization': `Bearer ${await currentUser.getIdToken()}`
+                    }
+                });
+                
+                const data = await response.json();
+                
+                if (data.success) {
+                    portfolioData = data.investments;
+                    calculatePortfolio();
+                    renderHoldings();
+                    loadTransactions();
+                    initCharts();
+                }
+            } catch (error) {
+                console.error('Error loading portfolio:', error);
+            }
+        }
+
+        function calculatePortfolio() {
+            let totalValue = 0;
+            let totalInvested = 0;
+            
+            portfolioData.forEach(inv => {
+                totalInvested += inv.amount || 0;
+                totalValue += inv.currentValue || inv.amount || 0;
+            });
+            
+            const totalReturn = totalValue - totalInvested;
+            const returnPercent = totalInvested > 0 ? (totalReturn / totalInvested) * 100 : 0;
+            
+            document.getElementById('totalValue').textContent = `$${totalValue.toLocaleString()}`;
+            document.getElementById('totalReturn').textContent = `$${totalReturn.toLocaleString()}`;
+            document.getElementById('returnPercent').textContent = `${returnPercent.toFixed(1)}%`;
+            
+            document.getElementById('totalReturn').className = totalReturn >= 0 ? 'positive' : 'negative';
+            document.getElementById('returnPercent').className = totalReturn >= 0 ? 'positive' : 'negative';
+        }
+
+        function renderHoldings() {
+            const tbody = document.getElementById('holdingsTable');
+            
+            if (!portfolioData || portfolioData.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="6" class="text-center">No investments yet</td></tr>';
+                return;
+            }
+            
+            let html = '';
+            
+            portfolioData.forEach(inv => {
+                const returnAmt = (inv.currentValue || inv.amount) - inv.amount;
+                const returnPct = inv.amount > 0 ? (returnAmt / inv.amount) * 100 : 0;
+                const returnClass = returnAmt >= 0 ? 'positive' : 'negative';
+                
+                html += `
+                    <tr>
+                        <td><strong>${inv.projectName || 'Investment'}</strong><br><small>ID: ${inv.id}</small></td>
+                        <td>$${inv.amount.toLocaleString()}</td>
+                        <td>$${(inv.currentValue || inv.amount).toLocaleString()}</td>
+                        <td class="${returnClass}">$${returnAmt.toLocaleString()} (${returnPct.toFixed(1)}%)</td>
+                        <td><span class="badge badge-${inv.status}">${inv.status}</span></td>
+                        <td>
+                            <button class="btn btn-sm btn-outline" onclick="viewInvestment('${inv.id}')">View</button>
+                        </td>
+                    </tr>
+                `;
+            });
+            
+            tbody.innerHTML = html;
+        }
+
+        async function loadTransactions() {
+            try {
+                const response = await fetch(`/api/transactions/user/${currentUser.uid}`, {
+                    headers: {
+                        'Authorization': `Bearer ${await currentUser.getIdToken()}`
+                    }
+                });
+                
+                const data = await response.json();
+                
+                if (data.success && data.transactions) {
+                    renderTransactions(data.transactions);
+                }
+            } catch (error) {
+                console.error('Error loading transactions:', error);
+            }
+        }
+
+        function renderTransactions(transactions) {
+            const tbody = document.getElementById('transactionsTable');
+            
+            if (transactions.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="5" class="text-center">No transactions yet</td></tr>';
+                return;
+            }
+            
+            let html = '';
+            
+            transactions.slice(0, 10).forEach(tx => {
+                const date = tx.date ? new Date(tx.date.seconds * 1000).toLocaleDateString() : 'N/A';
+                const amountClass = tx.amount >= 0 ? 'positive' : 'negative';
+                
+                html += `
+                    <tr>
+                        <td>${date}</td>
+                        <td><span class="transaction-type ${tx.type}">${tx.type}</span></td>
+                        <td>${tx.description || tx.type}</td>
+                        <td class="${amountClass}">$${Math.abs(tx.amount).toLocaleString()}</td>
+                        <td><span class="badge badge-${tx.status}">${tx.status}</span></td>
+                    </tr>
+                `;
+            });
+            
+            tbody.innerHTML = html;
+        }
+
+        function initCharts() {
+            // Performance Chart
+            const perfCtx = document.getElementById('performanceChart')?.getContext('2d');
+            if (perfCtx) {
+                // Simulated performance data
+                const labels = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'];
+                const data = [10000, 10500, 11200, 11800, 12500, 13200];
+                
+                performanceChart = new Chart(perfCtx, {
+                    type: 'line',
+                    data: {
+                        labels: labels,
+                        datasets: [{
+                            label: 'Portfolio Value',
+                            data: data,
+                            borderColor: '#c19a6b',
+                            backgroundColor: 'rgba(193, 154, 107, 0.1)',
+                            tension: 0.4,
+                            fill: true
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: {
+                            legend: { display: false }
+                        },
+                        scales: {
+                            y: {
+                                beginAtZero: false,
+                                ticks: {
+                                    callback: (value) => '$' + value
+                                }
+                            }
+                        }
+                    }
+                });
+            }
+
+            // Allocation Chart
+            const allocCtx = document.getElementById('allocationChart')?.getContext('2d');
+            if (allocCtx && portfolioData) {
+                // Calculate allocation by type
+                const allocation = {};
+                portfolioData.forEach(inv => {
+                    const type = inv.type || 'Other';
+                    allocation[type] = (allocation[type] || 0) + (inv.currentValue || inv.amount || 0);
+                });
+                
+                allocationChart = new Chart(allocCtx, {
+                    type: 'doughnut',
+                    data: {
+                        labels: Object.keys(allocation),
+                        datasets: [{
+                            data: Object.values(allocation),
+                            backgroundColor: ['#c19a6b', '#0a2540', '#10b981', '#3b82f6', '#f59e0b'],
+                            borderWidth: 0
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: {
+                            legend: { position: 'bottom' }
+                        }
+                    }
+                });
+                
+                renderAllocationDetails(allocation);
+            }
+        }
+
+        function renderAllocationDetails(allocation) {
+            const total = Object.values(allocation).reduce((a, b) => a + b, 0);
+            let html = '';
+            
+            Object.entries(allocation).forEach(([type, value]) => {
+                const percent = (value / total) * 100;
+                html += `
+                    <div class="allocation-item">
+                        <div class="allocation-color" style="background: ${getColor(type)};"></div>
+                        <div class="allocation-details">
+                            <div style="display: flex; justify-content: space-between;">
+                                <span>${type}</span>
+                                <span>$${value.toLocaleString()} (${percent.toFixed(1)}%)</span>
+                            </div>
+                            <div class="allocation-bar">
+                                <div class="allocation-progress" style="width: ${percent}%;"></div>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            });
+            
+            document.getElementById('allocationDetails').innerHTML = html;
+        }
+
+        function getColor(type) {
+            const colors = {
+                'tech': '#c19a6b',
+                'real-estate': '#0a2540',
+                'energy': '#10b981',
+                'healthcare': '#3b82f6',
+                'other': '#f59e0b'
+            };
+            return colors[type] || colors.other;
+        }
+
+        function showTab(tab) {
+            document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+            document.querySelectorAll('.tab-content').forEach(c => c.style.display = 'none');
+            
+            event.target.classList.add('active');
+            document.getElementById(`tab-${tab}`).style.display = 'block';
+        }
+
+        function loadPerformance(period) {
+            document.querySelectorAll('.period-btn').forEach(b => b.classList.remove('active'));
+            event.target.classList.add('active');
+            
+            // Update chart data based on period
+            // This would fetch real data from API
+        }
+
+        function viewInvestment(id) {
+            window.location.href = `/investment/${id}`;
+        }
+    </script>
+</body>
+</html>
