@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard - TAAGC Admin</title>
+    
+    <!-- CDN Assets -->
+    <link href="https://cdn.taagc.website/css/taagc.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <div class="admin-container">
+        <!-- Sidebar -->
+        <aside class="admin-sidebar">
+            <div class="admin-sidebar-header">
+                <div class="admin-logo">TA</div>
+                <h3 style="color: white;"><span style="color: var(--accent);">TAAGC</span> ADMIN</h3>
+            </div>
+            
+            <nav>
+                <a href="/dashboard.html" class="admin-nav-item active">
+                    <i class="fas fa-tachometer-alt"></i> <span>Dashboard</span>
+                </a>
+                <a href="/users.html" class="admin-nav-item">
+                    <i class="fas fa-users"></i> <span>Manage Users</span>
+                </a>
+                <a href="/investments.html" class="admin-nav-item">
+                    <i class="fas fa-chart-line"></i> <span>Investments</span>
+                </a>
+                <a href="/reports.html" class="admin-nav-item">
+                    <i class="fas fa-file-alt"></i> <span>Reports</span>
+                </a>
+                <a href="/settings.html" class="admin-nav-item">
+                    <i class="fas fa-cog"></i> <span>Settings</span>
+                </a>
+            </nav>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="admin-main">
+            <div class="admin-topbar">
+                <h2 style="color: var(--primary);">Dashboard</h2>
+                
+                <div class="admin-user">
+                    <span id="userName">Loading...</span>
+                    <div class="admin-avatar" id="userAvatar">A</div>
+                    <button onclick="TAAGC.logout()" class="btn btn-outline" style="padding: 8px 15px;">
+                        <i class="fas fa-sign-out-alt"></i>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Stats Grid -->
+            <div class="stats-grid" id="statsContainer">
+                <div class="stat-card">
+                    <div class="stat-icon"><i class="fas fa-users"></i></div>
+                    <div class="stat-value">150</div>
+                    <div class="stat-label">Total Users</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon"><i class="fas fa-chart-line"></i></div>
+                    <div class="stat-value">$2.5M</div>
+                    <div class="stat-label">Investments</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon"><i class="fas fa-clock"></i></div>
+                    <div class="stat-value">12</div>
+                    <div class="stat-label">Pending</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon"><i class="fas fa-check-circle"></i></div>
+                    <div class="stat-value">98%</div>
+                    <div class="stat-label">Approval Rate</div>
+                </div>
+            </div>
+
+            <!-- Recent Users -->
+            <div class="card" style="margin-bottom: 30px;">
+                <div class="flex-between" style="margin-bottom: 20px;">
+                    <h3>Recent Users</h3>
+                    <a href="/users.html" class="btn btn-outline">View All</a>
+                </div>
+                
+                <div class="table-container">
+                    <table id="usersTable">
+                        <thead>
+                            <tr>
+                                <th>Name</th>
+                                <th>Email</th>
+                                <th>Role</th>
+                                <th>Status</th>
+                                <th>Joined</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td colspan="5" class="text-center">Loading...</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Recent Investments -->
+            <div class="card">
+                <div class="flex-between" style="margin-bottom: 20px;">
+                    <h3>Recent Investments</h3>
+                    <a href="/investments.html" class="btn btn-outline">View All</a>
+                </div>
+                
+                <div class="table-container">
+                    <table id="investmentsTable">
+                        <thead>
+                            <tr>
+                                <th>User</th>
+                                <th>Amount</th>
+                                <th>Plan</th>
+                                <th>Status</th>
+                                <th>Date</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td colspan="5" class="text-center">Loading...</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Firebase -->
+    <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
+    
+    <!-- TAAGC JS -->
+    <script src="https://cdn.taagc.website/js/taagc.js"></script>
+    
+    <script>
+        // Check authentication
+        const { authenticated, user } = TAAGC.checkAuth();
+        if (!authenticated) {
+            window.location.href = '/login.html';
+        }
+
+        // Display user info
+        if (user) {
+            document.getElementById('userName').textContent = user.fullName || user.email;
+            document.getElementById('userAvatar').textContent = (user.fullName || 'A').charAt(0);
+        }
+
+        // Load dashboard data
+        async function loadDashboard() {
+            try {
+                // Load stats
+                const stats = await TAAGC.api('/admin/stats');
+                if (stats.success) {
+                    // Update stats cards
+                }
+
+                // Load recent users
+                const users = await TAAGC.api('/admin/users?limit=5');
+                if (users.success) {
+                    const tbody = document.querySelector('#usersTable tbody');
+                    tbody.innerHTML = users.data.map(u => `
+                        <tr>
+                            <td>${u.fullName}</td>
+                            <td>${u.email}</td>
+                            <td><span class="badge badge-info">${u.role}</span></td>
+                            <td><span class="badge badge-success">${u.status}</span></td>
+                            <td>${TAAGC.formatDate(u.createdAt)}</td>
+                        </tr>
+                    `).join('');
+                }
+
+                // Load recent investments
+                const investments = await TAAGC.api('/admin/investments?limit=5');
+                if (investments.success) {
+                    const tbody = document.querySelector('#investmentsTable tbody');
+                    tbody.innerHTML = investments.data.map(i => `
+                        <tr>
+                            <td>${i.userName}</td>
+                            <td>${TAAGC.formatCurrency(i.amount)}</td>
+                            <td>${i.plan}</td>
+                            <td><span class="badge badge-${i.status === 'approved' ? 'success' : 'warning'}">${i.status}</span></td>
+                            <td>${TAAGC.formatDate(i.createdAt)}</td>
+                        </tr>
+                    `).join('');
+                }
+            } catch (error) {
+                TAAGC.toast('Error loading dashboard', 'error');
+            }
+        }
+
+        loadDashboard();
+    </script>
+</body>
+</html>
