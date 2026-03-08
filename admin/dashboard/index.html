@@ -1,0 +1,582 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TAAGC Admin Dashboard</title>
+    
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
+    
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Inter', sans-serif;
+            background: #f8fafc;
+        }
+        
+        .dashboard {
+            display: flex;
+            min-height: 100vh;
+        }
+        
+        /* Sidebar */
+        .sidebar {
+            width: 280px;
+            background: #0a2540;
+            color: white;
+            position: fixed;
+            height: 100vh;
+            overflow-y: auto;
+            transition: all 0.3s;
+        }
+        
+        .sidebar-header {
+            padding: 30px 20px;
+            text-align: center;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+        }
+        
+        .sidebar-header h2 { color: white; font-size: 24px; }
+        .sidebar-header h2 span { color: #c19a6b; }
+        
+        .user-info {
+            padding: 20px;
+            background: rgba(255,255,255,0.1);
+            margin: 20px;
+            border-radius: 10px;
+            text-align: center;
+        }
+        
+        .user-avatar {
+            width: 60px;
+            height: 60px;
+            background: #c19a6b;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 10px;
+            font-size: 24px;
+            font-weight: 700;
+        }
+        
+        .user-role {
+            display: inline-block;
+            padding: 5px 15px;
+            background: rgba(193,154,107,0.2);
+            border-radius: 20px;
+            font-size: 12px;
+            color: #c19a6b;
+            margin-top: 5px;
+        }
+        
+        .nav-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 15px 25px;
+            color: rgba(255,255,255,0.8);
+            text-decoration: none;
+            transition: all 0.3s;
+            cursor: pointer;
+        }
+        
+        .nav-item:hover,
+        .nav-item.active {
+            background: #c19a6b;
+            color: white;
+        }
+        
+        .nav-item i { width: 20px; }
+        
+        /* Super Admin Only Elements */
+        .super-admin-only {
+            display: none;
+        }
+        body.super-admin .super-admin-only {
+            display: flex;
+        }
+        
+        /* Main Content */
+        .main-content {
+            flex: 1;
+            margin-left: 280px;
+            padding: 30px;
+        }
+        
+        .top-bar {
+            background: white;
+            padding: 20px 30px;
+            border-radius: 15px;
+            margin-bottom: 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+        }
+        
+        .page-title h1 { color: #0a2540; margin-bottom: 5px; }
+        .page-title p { color: #64748b; }
+        
+        .logout-btn {
+            padding: 10px 20px;
+            background: #e53e3e;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.3s;
+        }
+        
+        .logout-btn:hover { background: #c53030; }
+        
+        /* Stats Grid */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 25px;
+            margin-bottom: 30px;
+        }
+        
+        .stat-card {
+            background: white;
+            padding: 25px;
+            border-radius: 15px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            transition: transform 0.3s;
+        }
+        
+        .stat-card:hover { transform: translateY(-5px); }
+        
+        .stat-icon {
+            width: 50px;
+            height: 50px;
+            background: rgba(193,154,107,0.1);
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #c19a6b;
+            font-size: 20px;
+            margin-bottom: 15px;
+        }
+        
+        .stat-value {
+            font-size: 28px;
+            font-weight: 700;
+            color: #0a2540;
+            margin-bottom: 5px;
+        }
+        
+        .stat-label { color: #64748b; font-size: 14px; }
+        
+        /* Dashboard Sections */
+        .dashboard-section {
+            background: white;
+            border-radius: 15px;
+            padding: 25px;
+            margin-bottom: 30px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+        }
+        
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+        
+        .section-header h3 {
+            color: #0a2540;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .section-header h3 i { color: #c19a6b; }
+        
+        /* Table */
+        .table-container {
+            overflow-x: auto;
+        }
+        
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        
+        th {
+            text-align: left;
+            padding: 15px;
+            background: #f8fafc;
+            color: #0a2540;
+            font-weight: 600;
+        }
+        
+        td {
+            padding: 15px;
+            border-bottom: 1px solid #e2e8f0;
+        }
+        
+        /* Badges */
+        .badge {
+            display: inline-block;
+            padding: 4px 8px;
+            border-radius: 20px;
+            font-size: 11px;
+            font-weight: 600;
+        }
+        .badge-success { background: rgba(16,185,129,0.1); color: #10b981; }
+        .badge-warning { background: rgba(245,158,11,0.1); color: #f59e0b; }
+        .badge-danger { background: rgba(229,62,62,0.1); color: #e53e3e; }
+        .badge-info { background: rgba(59,130,246,0.1); color: #3b82f6; }
+        
+        /* Welcome Card */
+        .welcome-card {
+            background: linear-gradient(135deg, #0a2540, #1a3a4f);
+            color: white;
+            padding: 30px;
+            border-radius: 15px;
+            margin-bottom: 30px;
+        }
+        .welcome-card h2 { color: white; margin-bottom: 10px; }
+        .welcome-card h2 span { color: #c19a6b; }
+        
+        /* Loading */
+        .loading {
+            text-align: center;
+            padding: 40px;
+            color: #64748b;
+        }
+        .loading i { font-size: 40px; color: #c19a6b; margin-bottom: 20px; }
+        
+        /* Responsive */
+        @media (max-width: 1024px) {
+            .stats-grid { grid-template-columns: repeat(2, 1fr); }
+        }
+        @media (max-width: 768px) {
+            .sidebar { width: 80px; }
+            .sidebar .nav-item span,
+            .sidebar .user-info h4,
+            .sidebar .user-info p { display: none; }
+            .main-content { margin-left: 80px; }
+            .stats-grid { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+    <div class="dashboard">
+        <!-- Sidebar -->
+        <aside class="sidebar" id="sidebar">
+            <div class="sidebar-header">
+                <h2><span>TAAGC</span> ADMIN</h2>
+            </div>
+            
+            <div class="user-info" id="userInfo">
+                <div class="user-avatar" id="userAvatar">A</div>
+                <h4 id="userName">Loading...</h4>
+                <p id="userEmail">loading...</p>
+                <span class="user-role" id="userRole">Admin</span>
+            </div>
+            
+            <nav>
+                <div class="nav-item active" onclick="showSection('dashboard')">
+                    <i class="fas fa-tachometer-alt"></i> <span>Dashboard</span>
+                </div>
+                <div class="nav-item" onclick="showSection('users')">
+                    <i class="fas fa-users"></i> <span>Users</span>
+                </div>
+                <div class="nav-item" onclick="showSection('investments')">
+                    <i class="fas fa-chart-line"></i> <span>Investments</span>
+                </div>
+                <div class="nav-item" onclick="showSection('projects')">
+                    <i class="fas fa-building"></i> <span>Projects</span>
+                </div>
+                <div class="nav-item" onclick="showSection('transactions')">
+                    <i class="fas fa-exchange-alt"></i> <span>Transactions</span>
+                </div>
+                
+                <!-- Super Admin Only Sections -->
+                <div class="nav-item super-admin-only" onclick="showSection('admins')">
+                    <i class="fas fa-user-shield"></i> <span>Manage Admins</span>
+                </div>
+                <div class="nav-item super-admin-only" onclick="showSection('settings')">
+                    <i class="fas fa-cog"></i> <span>System Settings</span>
+                </div>
+                <div class="nav-item super-admin-only" onclick="showSection('audit')">
+                    <i class="fas fa-history"></i> <span>Audit Logs</span>
+                </div>
+            </nav>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <div class="top-bar">
+                <div class="page-title">
+                    <h1 id="pageTitle">Dashboard</h1>
+                    <p id="pageSubtitle">Welcome back, Admin</p>
+                </div>
+                
+                <button class="logout-btn" onclick="logout()">
+                    <i class="fas fa-sign-out-alt"></i> Logout
+                </button>
+            </div>
+
+            <!-- Welcome Card -->
+            <div class="welcome-card" id="welcomeCard">
+                <h2>Welcome to <span>TAAGC</span> Admin</h2>
+                <p id="welcomeMessage">Loading your personalized dashboard...</p>
+            </div>
+
+            <!-- Dashboard Section (Default) -->
+            <div id="dashboard-section" class="dashboard-section">
+                <div class="stats-grid" id="statsContainer">
+                    <div class="loading"><i class="fas fa-spinner fa-spin"></i> Loading stats...</div>
+                </div>
+                
+                <div class="dashboard-section">
+                    <div class="section-header">
+                        <h3><i class="fas fa-clock"></i> Recent Activity</h3>
+                    </div>
+                    <div class="table-container" id="recentActivity">
+                        <div class="loading"><i class="fas fa-spinner fa-spin"></i> Loading...</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Users Section -->
+            <div id="users-section" class="dashboard-section" style="display: none;">
+                <div class="section-header">
+                    <h3><i class="fas fa-users"></i> Manage Users</h3>
+                </div>
+                <div class="table-container" id="usersTable">
+                    <div class="loading"><i class="fas fa-spinner fa-spin"></i> Loading users...</div>
+                </div>
+            </div>
+
+            <!-- Investments Section -->
+            <div id="investments-section" class="dashboard-section" style="display: none;">
+                <div class="section-header">
+                    <h3><i class="fas fa-chart-line"></i> Investments</h3>
+                </div>
+                <div class="table-container" id="investmentsTable">
+                    <div class="loading"><i class="fas fa-spinner fa-spin"></i> Loading investments...</div>
+                </div>
+            </div>
+
+            <!-- Projects Section -->
+            <div id="projects-section" class="dashboard-section" style="display: none;">
+                <div class="section-header">
+                    <h3><i class="fas fa-building"></i> Projects</h3>
+                </div>
+                <div class="table-container" id="projectsTable">
+                    <div class="loading"><i class="fas fa-spinner fa-spin"></i> Loading projects...</div>
+                </div>
+            </div>
+
+            <!-- Transactions Section -->
+            <div id="transactions-section" class="dashboard-section" style="display: none;">
+                <div class="section-header">
+                    <h3><i class="fas fa-exchange-alt"></i> Transactions</h3>
+                </div>
+                <div class="table-container" id="transactionsTable">
+                    <div class="loading"><i class="fas fa-spinner fa-spin"></i> Loading transactions...</div>
+                </div>
+            </div>
+
+            <!-- Admins Section (Super Admin Only) -->
+            <div id="admins-section" class="dashboard-section super-admin-only" style="display: none;">
+                <div class="section-header">
+                    <h3><i class="fas fa-user-shield"></i> Manage Administrators</h3>
+                </div>
+                <div class="table-container" id="adminsTable">
+                    <div class="loading"><i class="fas fa-spinner fa-spin"></i> Loading admins...</div>
+                </div>
+            </div>
+
+            <!-- Settings Section (Super Admin Only) -->
+            <div id="settings-section" class="dashboard-section super-admin-only" style="display: none;">
+                <div class="section-header">
+                    <h3><i class="fas fa-cog"></i> System Settings</h3>
+                </div>
+                <div class="loading"><i class="fas fa-spinner fa-spin"></i> Loading settings...</div>
+            </div>
+
+            <!-- Audit Logs Section (Super Admin Only) -->
+            <div id="audit-section" class="dashboard-section super-admin-only" style="display: none;">
+                <div class="section-header">
+                    <h3><i class="fas fa-history"></i> Audit Logs</h3>
+                </div>
+                <div class="table-container" id="auditTable">
+                    <div class="loading"><i class="fas fa-spinner fa-spin"></i> Loading logs...</div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script>
+        // Firebase Config
+        const firebaseConfig = {
+            apiKey: "AIzaSyCOcCDPqRSlAMJJBEeNchTA1qO9tl9Nldw",
+            authDomain: "xtaagc.firebaseapp.com",
+            projectId: "xtaagc"
+        };
+
+        firebase.initializeApp(firebaseConfig);
+        const auth = firebase.auth();
+        const db = firebase.firestore();
+
+        let currentUser = null;
+        let userRole = null;
+        let userData = null;
+
+        // Check authentication
+        auth.onAuthStateChanged(async (user) => {
+            if (!user) {
+                window.location.href = '/admin/login.html';
+                return;
+            }
+
+            // Get user data from Firestore
+            const userDoc = await db.collection('users').doc(user.uid).get();
+            
+            if (!userDoc.exists || !['admin', 'super_admin'].includes(userDoc.data().role)) {
+                await auth.signOut();
+                window.location.href = '/admin/login.html';
+                return;
+            }
+
+            currentUser = user;
+            userData = userDoc.data();
+            userRole = userData.role;
+
+            // Update UI based on role
+            document.body.className = userRole === 'super_admin' ? 'super-admin' : '';
+            
+            // Update user info
+            document.getElementById('userName').textContent = userData.fullName || 'Admin';
+            document.getElementById('userEmail').textContent = user.email;
+            document.getElementById('userRole').textContent = 
+                userRole === 'super_admin' ? 'Super Admin' : 'Administrator';
+            document.getElementById('userAvatar').textContent = 
+                (userData.fullName || 'A').charAt(0);
+
+            // Personalized welcome for CEO
+            if (user.email === 'ceo@taagc.website') {
+                document.getElementById('welcomeMessage').innerHTML = 
+                    'Welcome CEO. You have full super admin access to the entire system.';
+            } else {
+                document.getElementById('welcomeMessage').innerHTML = 
+                    `Welcome back, ${userData.fullName || 'Admin'}. You have ${userRole} privileges.`;
+            }
+
+            // Load dashboard data
+            loadDashboardData();
+        });
+
+        // Show different sections
+        function showSection(section) {
+            // Update active nav
+            document.querySelectorAll('.nav-item').forEach(item => {
+                item.classList.remove('active');
+            });
+            event.currentTarget.classList.add('active');
+
+            // Hide all sections
+            document.querySelectorAll('.dashboard-section').forEach(el => {
+                el.style.display = 'none';
+            });
+
+            // Show selected section
+            document.getElementById(`${section}-section`).style.display = 'block';
+            document.getElementById('pageTitle').textContent = 
+                section.charAt(0).toUpperCase() + section.slice(1);
+            
+            // Load section data
+            loadSectionData(section);
+        }
+
+        // Load dashboard data
+        async function loadDashboardData() {
+            try {
+                // Get stats based on role
+                const stats = [
+                    { icon: 'users', label: 'Total Users', value: '150' },
+                    { icon: 'chart-line', label: 'Investments', value: '$2.5M' },
+                    { icon: 'building', label: 'Projects', value: '12' },
+                    { icon: 'exchange-alt', label: 'Transactions', value: '1,234' }
+                ];
+
+                document.getElementById('statsContainer').innerHTML = stats.map(stat => `
+                    <div class="stat-card">
+                        <div class="stat-icon"><i class="fas fa-${stat.icon}"></i></div>
+                        <div class="stat-value">${stat.value}</div>
+                        <div class="stat-label">${stat.label}</div>
+                    </div>
+                `).join('');
+
+                // Load recent activity
+                const activities = [
+                    { user: 'John Doe', action: 'New investment', time: '5 min ago' },
+                    { user: 'Jane Smith', action: 'User registered', time: '15 min ago' }
+                ];
+
+                document.getElementById('recentActivity').innerHTML = `
+                    <table>
+                        <thead>
+                            <tr><th>User</th><th>Action</th><th>Time</th></tr>
+                        </thead>
+                        <tbody>
+                            ${activities.map(a => `<tr><td>${a.user}</td><td>${a.action}</td><td>${a.time}</td></tr>`).join('')}
+                        </tbody>
+                    </table>
+                `;
+
+            } catch (error) {
+                console.error('Error loading dashboard:', error);
+            }
+        }
+
+        // Load section data
+        async function loadSectionData(section) {
+            const tables = {
+                users: '#usersTable',
+                investments: '#investmentsTable',
+                projects: '#projectsTable',
+                transactions: '#transactionsTable',
+                admins: '#adminsTable',
+                audit: '#auditTable'
+            };
+
+            if (tables[section]) {
+                document.querySelector(tables[section]).innerHTML = `
+                    <table>
+                        <thead>
+                            <tr><th>ID</th><th>Name</th><th>Status</th><th>Date</th></tr>
+                        </thead>
+                        <tbody>
+                            <tr><td colspan="4" class="text-center">Loading ${section}...</td></tr>
+                        </tbody>
+                    </table>
+                `;
+            }
+        }
+
+        // Logout
+        async function logout() {
+            await auth.signOut();
+            sessionStorage.clear();
+            window.location.href = '/admin/login.html';
+        }
+    </script>
+</body>
+</html>
