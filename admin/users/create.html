@@ -1,0 +1,457 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Create User - TAAGC Admin</title>
+    
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="/assets/css/admin.css">
+    <script src="/assets/js/admin.js" defer></script>
+    
+    <style>
+        .password-strength {
+            margin-top: var(--space-xs);
+            font-size: 12px;
+        }
+        
+        .strength-bar {
+            display: flex;
+            gap: 4px;
+            margin-bottom: 4px;
+        }
+        
+        .strength-segment {
+            flex: 1;
+            height: 4px;
+            background: #e2e8f0;
+            border-radius: 2px;
+            transition: all 0.3s;
+        }
+        
+        .strength-segment.active {
+            background: var(--success);
+        }
+        
+        .permission-group {
+            background: var(--bg);
+            border-radius: var(--radius-md);
+            padding: var(--space-md);
+            margin-bottom: var(--space-md);
+        }
+        
+        .permission-group h4 {
+            color: var(--primary);
+            margin-bottom: var(--space-sm);
+        }
+        
+        .permission-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: var(--space-sm);
+        }
+    </style>
+</head>
+<body>
+    <div class="admin-container">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <div class="logo-icon">TA</div>
+                <h2><span>TAAGC</span> ADMIN</h2>
+            </div>
+
+            <div class="user-info">
+                <div class="user-avatar" data-user-avatar>A</div>
+                <div data-user-field="name">Loading...</div>
+                <div style="font-size: 12px;" data-user-field="email"></div>
+                <span class="user-role" data-user-field="role"></span>
+            </div>
+
+            <nav class="nav-menu">
+                <div class="nav-section">MAIN</div>
+                <a href="/dashboard.html" class="nav-item"><i class="fas fa-tachometer-alt"></i> Dashboard</a>
+                <a href="/users/index.html" class="nav-item active"><i class="fas fa-users"></i> Users</a>
+                <a href="/investments/index.html" class="nav-item"><i class="fas fa-chart-line"></i> Investments</a>
+            </nav>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <div class="top-bar">
+                <div class="page-title">
+                    <h1><i class="fas fa-user-plus" style="color: var(--accent);"></i> Create New User</h1>
+                    <p>Add a new user to the platform</p>
+                </div>
+                <div class="top-bar-actions">
+                    <button class="btn btn-outline" onclick="location.href='/users/index.html'">
+                        <i class="fas fa-arrow-left"></i> Back to Users
+                    </button>
+                    <button class="logout-btn" id="logoutBtn"><i class="fas fa-sign-out-alt"></i></button>
+                </div>
+            </div>
+
+            <form id="createUserForm" onsubmit="handleSubmit(event)">
+                <!-- Basic Information -->
+                <div class="card">
+                    <div class="card-header">
+                        <h2><i class="fas fa-user"></i> Basic Information</h2>
+                    </div>
+                    
+                    <div class="grid-2">
+                        <div class="form-group">
+                            <label><i class="fas fa-user"></i> Full Name *</label>
+                            <input type="text" id="fullName" class="form-control" required placeholder="John Doe">
+                        </div>
+                        
+                        <div class="form-group">
+                            <label><i class="fas fa-envelope"></i> Email Address *</label>
+                            <input type="email" id="email" class="form-control" required placeholder="john@example.com">
+                        </div>
+                        
+                        <div class="form-group">
+                            <label><i class="fas fa-phone"></i> Phone Number</label>
+                            <input type="tel" id="phone" class="form-control" placeholder="+1 234 567 8900">
+                        </div>
+                        
+                        <div class="form-group">
+                            <label><i class="fas fa-calendar"></i> Date of Birth</label>
+                            <input type="date" id="dob" class="form-control">
+                        </div>
+                        
+                        <div class="form-group">
+                            <label><i class="fas fa-map-marker-alt"></i> Address</label>
+                            <input type="text" id="address" class="form-control" placeholder="Street address">
+                        </div>
+                        
+                        <div class="form-group">
+                            <label><i class="fas fa-city"></i> City</label>
+                            <input type="text" id="city" class="form-control" placeholder="City">
+                        </div>
+                        
+                        <div class="form-group">
+                            <label><i class="fas fa-flag"></i> Country</label>
+                            <select id="country" class="form-control">
+                                <option value="">Select country</option>
+                                <option value="US">United States</option>
+                                <option value="UK">United Kingdom</option>
+                                <option value="CA">Canada</option>
+                                <option value="AU">Australia</option>
+                            </select>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label><i class="fas fa-globe"></i> Timezone</label>
+                            <select id="timezone" class="form-control">
+                                <option value="UTC">UTC</option>
+                                <option value="EST">Eastern Time</option>
+                                <option value="PST">Pacific Time</option>
+                                <option value="GMT">GMT</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Account Settings -->
+                <div class="card">
+                    <div class="card-header">
+                        <h2><i class="fas fa-cog"></i> Account Settings</h2>
+                    </div>
+                    
+                    <div class="grid-2">
+                        <div class="form-group">
+                            <label><i class="fas fa-tag"></i> User Role *</label>
+                            <select id="role" class="form-control" required onchange="togglePermissions()">
+                                <option value="client">Client</option>
+                                <option value="investor">Investor</option>
+                                <option value="staff">Staff</option>
+                                <option value="admin">Admin</option>
+                                ${TAAGC.auth.isSuperAdmin() ? '<option value="super_admin">Super Admin</option>' : ''}
+                            </select>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label><i class="fas fa-circle"></i> Account Status</label>
+                            <select id="status" class="form-control">
+                                <option value="active">Active</option>
+                                <option value="pending">Pending</option>
+                                <option value="inactive">Inactive</option>
+                            </select>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label><i class="fas fa-lock"></i> Password</label>
+                            <div class="password-field">
+                                <input type="text" id="password" class="form-control" value="Welcome@123" readonly>
+                                <i class="fas fa-copy password-toggle" onclick="copyPassword()" title="Copy password"></i>
+                            </div>
+                            <div class="password-strength">
+                                <div class="strength-bar">
+                                    <div class="strength-segment active"></div>
+                                    <div class="strength-segment active"></div>
+                                    <div class="strength-segment active"></div>
+                                    <div class="strength-segment active"></div>
+                                </div>
+                                <span style="color: var(--success);">Strong password</span>
+                            </div>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label><i class="fas fa-key"></i> Send login details via</label>
+                            <div class="flex gap-2">
+                                <label class="checkbox">
+                                    <input type="checkbox" id="sendEmail" checked> Email
+                                </label>
+                                <label class="checkbox">
+                                    <input type="checkbox" id="sendSms"> SMS
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <div class="checkbox">
+                            <input type="checkbox" id="emailVerified">
+                            <label>Mark email as verified</label>
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <div class="checkbox">
+                            <input type="checkbox" id="requirePasswordChange">
+                            <label>Require password change on first login</label>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Permissions (shown for certain roles) -->
+                <div class="card" id="permissionsCard" style="display: none;">
+                    <div class="card-header">
+                        <h2><i class="fas fa-shield-alt"></i> Permissions</h2>
+                        <button type="button" class="btn btn-sm btn-outline" onclick="toggleAllPermissions()">
+                            Toggle All
+                        </button>
+                    </div>
+                    
+                    <div class="permission-group">
+                        <h4>User Management</h4>
+                        <div class="permission-grid">
+                            <label class="checkbox">
+                                <input type="checkbox" class="permission" data-group="users"> View Users
+                            </label>
+                            <label class="checkbox">
+                                <input type="checkbox" class="permission" data-group="users"> Create Users
+                            </label>
+                            <label class="checkbox">
+                                <input type="checkbox" class="permission" data-group="users"> Edit Users
+                            </label>
+                            <label class="checkbox">
+                                <input type="checkbox" class="permission" data-group="users"> Delete Users
+                            </label>
+                        </div>
+                    </div>
+                    
+                    <div class="permission-group">
+                        <h4>Investment Management</h4>
+                        <div class="permission-grid">
+                            <label class="checkbox">
+                                <input type="checkbox" class="permission" data-group="investments"> View Investments
+                            </label>
+                            <label class="checkbox">
+                                <input type="checkbox" class="permission" data-group="investments"> Create Investments
+                            </label>
+                            <label class="checkbox">
+                                <input type="checkbox" class="permission" data-group="investments"> Approve Investments
+                            </label>
+                            <label class="checkbox">
+                                <input type="checkbox" class="permission" data-group="investments"> Process Returns
+                            </label>
+                        </div>
+                    </div>
+                    
+                    <div class="permission-group">
+                        <h4>Financial Management</h4>
+                        <div class="permission-grid">
+                            <label class="checkbox">
+                                <input type="checkbox" class="permission" data-group="financial"> View Transactions
+                            </label>
+                            <label class="checkbox">
+                                <input type="checkbox" class="permission" data-group="financial"> Process Deposits
+                            </label>
+                            <label class="checkbox">
+                                <input type="checkbox" class="permission" data-group="financial"> Process Withdrawals
+                            </label>
+                            <label class="checkbox">
+                                <input type="checkbox" class="permission" data-group="financial"> View Reports
+                            </label>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Notification Preferences -->
+                <div class="card">
+                    <div class="card-header">
+                        <h2><i class="fas fa-bell"></i> Notification Preferences</h2>
+                    </div>
+                    
+                    <div class="grid-2">
+                        <div>
+                            <h4 style="margin-bottom: var(--space-sm);">Email Notifications</h4>
+                            <div class="checkbox">
+                                <input type="checkbox" id="emailInvestment" checked>
+                                <label>Investment updates</label>
+                            </div>
+                            <div class="checkbox">
+                                <input type="checkbox" id="emailTransaction" checked>
+                                <label>Transaction alerts</label>
+                            </div>
+                            <div class="checkbox">
+                                <input type="checkbox" id="emailSecurity" checked>
+                                <label>Security alerts</label>
+                            </div>
+                            <div class="checkbox">
+                                <input type="checkbox" id="emailMarketing">
+                                <label>Marketing emails</label>
+                            </div>
+                        </div>
+                        
+                        <div>
+                            <h4 style="margin-bottom: var(--space-sm);">SMS Notifications</h4>
+                            <div class="checkbox">
+                                <input type="checkbox" id="smsLogin">
+                                <label>Login alerts</label>
+                            </div>
+                            <div class="checkbox">
+                                <input type="checkbox" id="smsTransaction">
+                                <label>Transaction confirmations</label>
+                            </div>
+                            <div class="checkbox">
+                                <input type="checkbox" id="smsWithdrawal">
+                                <label>Withdrawal alerts</label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Form Actions -->
+                <div class="flex gap-2" style="justify-content: flex-end;">
+                    <button type="button" class="btn btn-outline" onclick="location.href='/users/index.html'">
+                        Cancel
+                    </button>
+                    <button type="submit" class="btn btn-primary" id="submitBtn">
+                        <i class="fas fa-save"></i> Create User
+                    </button>
+                </div>
+            </form>
+        </main>
+    </div>
+
+    <script>
+        let generatedPassword = 'Welcome@123';
+        
+        document.addEventListener('DOMContentLoaded', () => {
+            if (!TAAGC.auth.isAuthenticated()) {
+                window.location.href = '/';
+                return;
+            }
+            
+            TAAGC.auth.updateUI();
+            generatePassword();
+        });
+
+        function togglePermissions() {
+            const role = document.getElementById('role').value;
+            const permissionsCard = document.getElementById('permissionsCard');
+            
+            // Show permissions for admin roles
+            if (['admin', 'super_admin', 'staff'].includes(role)) {
+                permissionsCard.style.display = 'block';
+            } else {
+                permissionsCard.style.display = 'none';
+            }
+        }
+
+        function generatePassword() {
+            const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@#$%';
+            generatedPassword = '';
+            for (let i = 0; i < 12; i++) {
+                generatedPassword += chars.charAt(Math.floor(Math.random() * chars.length));
+            }
+            document.getElementById('password').value = generatedPassword;
+        }
+
+        function copyPassword() {
+            const passwordInput = document.getElementById('password');
+            passwordInput.select();
+            navigator.clipboard.writeText(passwordInput.value);
+            TAAGC.ui.showToast('Password copied to clipboard', 'success');
+        }
+
+        function toggleAllPermissions() {
+            const checkboxes = document.querySelectorAll('.permission');
+            const allChecked = Array.from(checkboxes).every(cb => cb.checked);
+            checkboxes.forEach(cb => cb.checked = !allChecked);
+        }
+
+        async function handleSubmit(event) {
+            event.preventDefault();
+            
+            const submitBtn = document.getElementById('submitBtn');
+            submitBtn.innerHTML = '<span class="spinner"></span> Creating...';
+            submitBtn.disabled = true;
+            
+            try {
+                // Collect form data
+                const userData = {
+                    fullName: document.getElementById('fullName').value,
+                    email: document.getElementById('email').value,
+                    phone: document.getElementById('phone').value,
+                    dob: document.getElementById('dob').value,
+                    address: document.getElementById('address').value,
+                    city: document.getElementById('city').value,
+                    country: document.getElementById('country').value,
+                    timezone: document.getElementById('timezone').value,
+                    role: document.getElementById('role').value,
+                    status: document.getElementById('status').value,
+                    password: generatedPassword,
+                    emailVerified: document.getElementById('emailVerified').checked,
+                    requirePasswordChange: document.getElementById('requirePasswordChange').checked,
+                    notifications: {
+                        email: {
+                            investment: document.getElementById('emailInvestment').checked,
+                            transaction: document.getElementById('emailTransaction').checked,
+                            security: document.getElementById('emailSecurity').checked,
+                            marketing: document.getElementById('emailMarketing').checked
+                        },
+                        sms: {
+                            login: document.getElementById('smsLogin').checked,
+                            transaction: document.getElementById('smsTransaction').checked,
+                            withdrawal: document.getElementById('smsWithdrawal').checked
+                        }
+                    },
+                    permissions: Array.from(document.querySelectorAll('.permission:checked')).map(cb => cb.closest('label').textContent.trim())
+                };
+                
+                // API call
+                // const response = await TAAGC.api.post('/users', userData);
+                
+                // Simulate API call
+                await new Promise(resolve => setTimeout(resolve, 1000));
+                
+                TAAGC.ui.showToast('User created successfully!', 'success');
+                
+                // Redirect after delay
+                setTimeout(() => {
+                    location.href = '/users/index.html';
+                }, 1500);
+                
+            } catch (error) {
+                TAAGC.ui.showToast(error.message || 'Error creating user', 'error');
+                submitBtn.innerHTML = '<i class="fas fa-save"></i> Create User';
+                submitBtn.disabled = false;
+            }
+        }
+    </script>
+</body>
+</html>
