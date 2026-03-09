@@ -1,0 +1,413 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Agency API Keys - TAAGC Admin</title>
+    
+    <!-- Fonts & Icons -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Assets -->
+    <link rel="stylesheet" href="/assets/css/admin.css">
+    <script src="/assets/js/admin.js" defer></script>
+    
+    <style>
+        .api-key-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: var(--space-xl);
+        }
+        
+        .api-key-card {
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+            color: white;
+            border-radius: var(--radius-lg);
+            padding: var(--space-xl);
+            margin-bottom: var(--space-xl);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .api-key-card::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -10%;
+            width: 50%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 70%);
+        }
+        
+        .api-key-display {
+            background: rgba(255,255,255,0.1);
+            border-radius: var(--radius-lg);
+            padding: var(--space-lg);
+            margin: var(--space-lg) 0;
+            font-family: monospace;
+            font-size: 18px;
+            letter-spacing: 2px;
+            border: 1px solid rgba(255,255,255,0.2);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        
+        .api-key-value {
+            word-break: break-all;
+        }
+        
+        .api-key-actions {
+            display: flex;
+            gap: var(--space-sm);
+        }
+        
+        .api-key-action-btn {
+            padding: var(--space-xs) var(--space-md);
+            background: rgba(255,255,255,0.2);
+            border: none;
+            border-radius: var(--radius-md);
+            color: white;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .api-key-action-btn:hover {
+            background: var(--accent);
+        }
+        
+        .permissions-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: var(--space-md);
+            margin: var(--space-lg) 0;
+        }
+        
+        .permission-item {
+            display: flex;
+            align-items: center;
+            gap: var(--space-sm);
+            padding: var(--space-xs);
+        }
+        
+        .usage-stats {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: var(--space-lg);
+            margin: var(--space-xl) 0;
+        }
+        
+        .usage-stat {
+            text-align: center;
+            padding: var(--space-md);
+            background: var(--white);
+            border-radius: var(--radius-lg);
+            border: 1px solid #e2e8f0;
+        }
+        
+        .usage-value {
+            font-size: 28px;
+            font-weight: 700;
+            color: var(--primary);
+        }
+        
+        .usage-label {
+            color: var(--light);
+            font-size: 12px;
+        }
+        
+        .usage-bar {
+            height: 4px;
+            background: #e2e8f0;
+            border-radius: 2px;
+            margin-top: var(--space-xs);
+        }
+        
+        .usage-fill {
+            height: 100%;
+            background: var(--accent);
+            border-radius: 2px;
+        }
+        
+        .history-table {
+            background: var(--white);
+            border-radius: var(--radius-lg);
+            padding: var(--space-lg);
+            border: 1px solid #e2e8f0;
+        }
+        
+        .warning-card {
+            background: rgba(245,158,11,0.1);
+            border: 1px solid var(--warning);
+            border-radius: var(--radius-lg);
+            padding: var(--space-lg);
+            margin-top: var(--space-xl);
+            color: var(--warning);
+        }
+        
+        .endpoint-tag {
+            display: inline-block;
+            padding: 2px 8px;
+            background: var(--bg);
+            border-radius: 12px;
+            font-size: 10px;
+            margin-right: 4px;
+        }
+    </style>
+</head>
+<body>
+    <div class="admin-container">
+        <!-- Sidebar -->
+        <aside class="sidebar">...</aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <div class="top-bar">
+                <div class="page-title">
+                    <h1><i class="fas fa-key" style="color: var(--accent);"></i> Agency API Keys</h1>
+                    <p>Manage API access for Global Marketing Solutions</p>
+                </div>
+                <div class="top-bar-actions">
+                    <select class="form-control" style="width: 250px;">
+                        <option>Global Marketing Solutions</option>
+                        <option>TechPartners Inc</option>
+                        <option>Asia Pacific Consulting</option>
+                    </select>
+                    <button class="logout-btn" id="logoutBtn"><i class="fas fa-sign-out-alt"></i></button>
+                </div>
+            </div>
+
+            <!-- Active API Key -->
+            <div class="api-key-card">
+                <h3 style="color: white; margin-bottom: var(--space-xs);">Production API Key</h3>
+                <p style="opacity: 0.9; margin-bottom: var(--space-lg);">Last used: 2 minutes ago</p>
+                
+                <div class="api-key-display">
+                    <span class="api-key-value">taagc_live_8x7w3r9t2y4u6i8o0p1q2w3e4r5t6y7u</span>
+                    <div class="api-key-actions">
+                        <button class="api-key-action-btn" onclick="copyApiKey()">
+                            <i class="fas fa-copy"></i>
+                        </button>
+                        <button class="api-key-action-btn" onclick="regenerateKey()">
+                            <i class="fas fa-sync-alt"></i>
+                        </button>
+                        <button class="api-key-action-btn" onclick="revokeKey()">
+                            <i class="fas fa-ban"></i>
+                        </button>
+                    </div>
+                </div>
+                
+                <div class="flex gap-3">
+                    <div><i class="fas fa-calendar"></i> Created: Mar 1, 2024</div>
+                    <div><i class="fas fa-clock"></i> Expires: Mar 1, 2025</div>
+                    <div><i class="fas fa-hashtag"></i> Version: v2</div>
+                </div>
+            </div>
+
+            <!-- API Permissions -->
+            <div class="card">
+                <div class="card-header">
+                    <h2><i class="fas fa-shield-alt"></i> API Permissions</h2>
+                    <button class="btn btn-sm btn-outline" onclick="editPermissions()">
+                        <i class="fas fa-edit"></i> Edit Permissions
+                    </button>
+                </div>
+                
+                <div class="permissions-grid">
+                    <div class="permission-item">
+                        <input type="checkbox" checked disabled>
+                        <span>Read investments</span>
+                    </div>
+                    <div class="permission-item">
+                        <input type="checkbox" checked disabled>
+                        <span>Create investments</span>
+                    </div>
+                    <div class="permission-item">
+                        <input type="checkbox" disabled>
+                        <span>Update investments</span>
+                    </div>
+                    <div class="permission-item">
+                        <input type="checkbox" checked disabled>
+                        <span>Read users</span>
+                    </div>
+                    <div class="permission-item">
+                        <input type="checkbox" disabled>
+                        <span>Create users</span>
+                    </div>
+                    <div class="permission-item">
+                        <input type="checkbox" checked disabled>
+                        <span>Read transactions</span>
+                    </div>
+                    <div class="permission-item">
+                        <input type="checkbox" disabled>
+                        <span>Process transactions</span>
+                    </div>
+                    <div class="permission-item">
+                        <input type="checkbox" checked disabled>
+                        <span>Read reports</span>
+                    </div>
+                </div>
+                
+                <div style="margin-top: var(--space-md);">
+                    <span class="endpoint-tag">GET /api/investments</span>
+                    <span class="endpoint-tag">POST /api/investments</span>
+                    <span class="endpoint-tag">GET /api/users</span>
+                    <span class="endpoint-tag">GET /api/transactions</span>
+                    <span class="endpoint-tag">GET /api/reports</span>
+                </div>
+            </div>
+
+            <!-- Usage Statistics -->
+            <div class="usage-stats">
+                <div class="usage-stat">
+                    <div class="usage-value">12,345</div>
+                    <div class="usage-label">Total Requests</div>
+                    <div class="usage-bar">
+                        <div class="usage-fill" style="width: 65%;"></div>
+                    </div>
+                </div>
+                <div class="usage-stat">
+                    <div class="usage-value">234</div>
+                    <div class="usage-label">Requests Today</div>
+                    <div class="usage-bar">
+                        <div class="usage-fill" style="width: 45%;"></div>
+                    </div>
+                </div>
+                <div class="usage-stat">
+                    <div class="usage-value">98.5%</div>
+                    <div class="usage-label">Success Rate</div>
+                    <div class="usage-bar">
+                        <div class="usage-fill" style="width: 98%;"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Rate Limits -->
+            <div class="card">
+                <div class="card-header">
+                    <h2><i class="fas fa-tachometer-alt"></i> Rate Limits</h2>
+                </div>
+                
+                <div class="grid-2">
+                    <div>
+                        <div class="info-row">
+                            <span class="info-label">Requests per minute</span>
+                            <span class="info-value">1,000 / 1,000</span>
+                        </div>
+                        <div class="info-row">
+                            <span class="info-label">Requests per hour</span>
+                            <span class="info-value">45,000 / 60,000</span>
+                        </div>
+                        <div class="info-row">
+                            <span class="info-label">Requests per day</span>
+                            <span class="info-value">234,000 / 1,000,000</span>
+                        </div>
+                    </div>
+                    <div>
+                        <div class="info-row">
+                            <span class="info-label">Concurrent connections</span>
+                            <span class="info-value">12 / 50</span>
+                        </div>
+                        <div class="info-row">
+                            <span class="info-label">Data transfer (month)</span>
+                            <span class="info-value">1.2 GB / 5 GB</span>
+                        </div>
+                        <div class="info-row">
+                            <span class="info-label">Rate limit reset</span>
+                            <span class="info-value">in 45 minutes</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Request History -->
+            <div class="history-table">
+                <h3 style="margin-bottom: var(--space-lg);">Recent API Requests</h3>
+                
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Timestamp</th>
+                            <th>Endpoint</th>
+                            <th>Method</th>
+                            <th>Status</th>
+                            <th>Response Time</th>
+                            <th>IP Address</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>2024-03-09 10:30:22</td>
+                            <td><code>/api/investments</code></td>
+                            <td><span class="badge badge-info">GET</span></td>
+                            <td><span class="badge badge-success">200</span></td>
+                            <td>124ms</td>
+                            <td>192.168.1.100</td>
+                        </tr>
+                        <tr>
+                            <td>2024-03-09 10:28:15</td>
+                            <td><code>/api/users/12345</code></td>
+                            <td><span class="badge badge-info">GET</span></td>
+                            <td><span class="badge badge-success">200</span></td>
+                            <td>89ms</td>
+                            <td>192.168.1.100</td>
+                        </tr>
+                        <tr>
+                            <td>2024-03-09 10:25:03</td>
+                            <td><code>/api/investments</code></td>
+                            <td><span class="badge badge-warning">POST</span></td>
+                            <td><span class="badge badge-success">201</span></td>
+                            <td>234ms</td>
+                            <td>192.168.1.100</td>
+                        </tr>
+                        <tr>
+                            <td>2024-03-09 10:22:47</td>
+                            <td><code>/api/transactions</code></td>
+                            <td><span class="badge badge-info">GET</span></td>
+                            <td><span class="badge badge-success">200</span></td>
+                            <td>156ms</td>
+                            <td>192.168.1.100</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Warning Card -->
+            <div class="warning-card">
+                <div class="flex gap-2">
+                    <i class="fas fa-exclamation-triangle" style="font-size: 24px;"></i>
+                    <div>
+                        <strong>Security Notice</strong>
+                        <p style="margin-top: 4px;">Regenerating or revoking an API key will immediately block all requests using the current key. Make sure to update your applications with the new key.</p>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script>
+        function copyApiKey() {
+            navigator.clipboard.writeText('taagc_live_8x7w3r9t2y4u6i8o0p1q2w3e4r5t6y7u');
+            TAAGC.ui.showToast('API key copied to clipboard', 'success');
+        }
+
+        function regenerateKey() {
+            TAAGC.ui.confirm('Regenerate API key? The old key will stop working immediately.', () => {
+                TAAGC.ui.showToast('New API key generated', 'success');
+            });
+        }
+
+        function revokeKey() {
+            TAAGC.ui.confirm('Revoke this API key? This action cannot be undone.', () => {
+                TAAGC.ui.showToast('API key revoked', 'success');
+            });
+        }
+
+        function editPermissions() {
+            TAAGC.ui.showToast('Edit permissions feature coming soon', 'info');
+        }
+    </script>
+</body>
+</html>
