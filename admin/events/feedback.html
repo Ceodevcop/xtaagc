@@ -1,0 +1,648 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Event Feedback - TAAGC Admin</title>
+    
+    <!-- Fonts & Icons -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Chart.js for analytics -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+    
+    <!-- Assets -->
+    <link rel="stylesheet" href="/assets/css/admin.css">
+    <script src="/assets/js/admin.js" defer></script>
+    
+    <style>
+        .feedback-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: var(--space-xl);
+        }
+        
+        .rating-summary {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: var(--space-lg);
+            margin-bottom: var(--space-xl);
+        }
+        
+        .rating-card {
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+            color: white;
+            border-radius: var(--radius-lg);
+            padding: var(--space-lg);
+            text-align: center;
+        }
+        
+        .rating-value {
+            font-size: 36px;
+            font-weight: 700;
+            margin-bottom: var(--space-xs);
+        }
+        
+        .rating-label {
+            opacity: 0.9;
+            font-size: 14px;
+        }
+        
+        .rating-stars-large {
+            color: #ffd700;
+            font-size: 20px;
+            margin-top: var(--space-xs);
+        }
+        
+        .feedback-filters {
+            background: var(--white);
+            border-radius: var(--radius-lg);
+            padding: var(--space-lg);
+            margin-bottom: var(--space-xl);
+            border: 1px solid #e2e8f0;
+        }
+        
+        .filter-row {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: var(--space-md);
+            margin-bottom: var(--space-md);
+        }
+        
+        .chart-container {
+            background: var(--white);
+            border-radius: var(--radius-lg);
+            padding: var(--space-lg);
+            border: 1px solid #e2e8f0;
+            margin-bottom: var(--space-xl);
+        }
+        
+        .chart-wrapper {
+            height: 300px;
+            position: relative;
+        }
+        
+        .feedback-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+            gap: var(--space-lg);
+        }
+        
+        .feedback-card {
+            background: var(--white);
+            border-radius: var(--radius-lg);
+            border: 1px solid #e2e8f0;
+            overflow: hidden;
+            transition: all 0.3s;
+        }
+        
+        .feedback-card:hover {
+            transform: translateY(-5px);
+            box-shadow: var(--shadow-lg);
+            border-color: var(--accent);
+        }
+        
+        .feedback-header-card {
+            padding: var(--space-lg);
+            border-bottom: 1px solid #e2e8f0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .feedback-attendee {
+            display: flex;
+            align-items: center;
+            gap: var(--space-md);
+        }
+        
+        .feedback-avatar {
+            width: 50px;
+            height: 50px;
+            background: var(--accent);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 20px;
+        }
+        
+        .feedback-body {
+            padding: var(--space-lg);
+        }
+        
+        .feedback-rating {
+            color: #ffd700;
+            margin-bottom: var(--space-md);
+            font-size: 14px;
+        }
+        
+        .feedback-comment {
+            color: var(--dark);
+            line-height: 1.6;
+            margin-bottom: var(--space-md);
+        }
+        
+        .feedback-meta {
+            display: flex;
+            gap: var(--space-lg);
+            color: var(--light);
+            font-size: 12px;
+            margin-top: var(--space-md);
+        }
+        
+        .feedback-footer {
+            padding: var(--space-lg);
+            background: var(--bg);
+            border-top: 1px solid #e2e8f0;
+            display: flex;
+            justify-content: flex-end;
+            gap: var(--space-sm);
+        }
+        
+        .sentiment-positive {
+            background: rgba(16,185,129,0.1);
+            color: var(--success);
+            padding: 2px 8px;
+            border-radius: 12px;
+            font-size: 11px;
+        }
+        
+        .sentiment-neutral {
+            background: rgba(245,158,11,0.1);
+            color: var(--warning);
+            padding: 2px 8px;
+            border-radius: 12px;
+            font-size: 11px;
+        }
+        
+        .sentiment-negative {
+            background: rgba(229,62,62,0.1);
+            color: var(--danger);
+            padding: 2px 8px;
+            border-radius: 12px;
+            font-size: 11px;
+        }
+        
+        .survey-section {
+            background: var(--white);
+            border-radius: var(--radius-lg);
+            padding: var(--space-xl);
+            border: 1px solid #e2e8f0;
+            margin-bottom: var(--space-xl);
+        }
+        
+        .survey-question {
+            margin-bottom: var(--space-lg);
+            padding-bottom: var(--space-lg);
+            border-bottom: 1px solid #e2e8f0;
+        }
+        
+        .survey-question:last-child {
+            border-bottom: none;
+        }
+        
+        .question-text {
+            font-weight: 600;
+            margin-bottom: var(--space-sm);
+        }
+        
+        .question-stats {
+            display: flex;
+            gap: var(--space-xl);
+            color: var(--light);
+            font-size: 13px;
+        }
+        
+        .word-cloud {
+            display: flex;
+            flex-wrap: wrap;
+            gap: var(--space-sm);
+            padding: var(--space-lg);
+            background: var(--bg);
+            border-radius: var(--radius-lg);
+            min-height: 200px;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .word-item {
+            display: inline-block;
+            padding: 4px 12px;
+            background: white;
+            border: 1px solid #e2e8f0;
+            border-radius: 20px;
+            font-size: 14px;
+            transition: all 0.3s;
+            cursor: default;
+        }
+        
+        .word-item:hover {
+            background: var(--accent);
+            color: white;
+            transform: scale(1.1);
+        }
+        
+        .word-size-1 { font-size: 12px; }
+        .word-size-2 { font-size: 14px; }
+        .word-size-3 { font-size: 16px; }
+        .word-size-4 { font-size: 18px; }
+        .word-size-5 { font-size: 20px; font-weight: 600; }
+        
+        .export-options {
+            display: flex;
+            gap: var(--space-sm);
+        }
+    </style>
+</head>
+<body>
+    <div class="admin-container">
+        <!-- Sidebar -->
+        <aside class="sidebar">...</aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <div class="top-bar">
+                <div class="page-title">
+                    <h1><i class="fas fa-star" style="color: var(--accent);"></i> Event Feedback</h1>
+                    <p>Analyze attendee feedback and ratings</p>
+                </div>
+                <div class="top-bar-actions">
+                    <div class="export-options">
+                        <button class="btn btn-outline" onclick="exportFeedback('csv')">
+                            <i class="fas fa-file-csv"></i> CSV
+                        </button>
+                        <button class="btn btn-outline" onclick="exportFeedback('pdf')">
+                            <i class="fas fa-file-pdf"></i> PDF
+                        </button>
+                    </div>
+                    <button class="logout-btn" id="logoutBtn"><i class="fas fa-sign-out-alt"></i></button>
+                </div>
+            </div>
+
+            <!-- Event Selector -->
+            <div class="feedback-header">
+                <select class="form-control" style="width: 300px;">
+                    <option>Global Investment Summit 2024</option>
+                    <option>Investment Analysis Workshop</option>
+                    <option>Crypto Investment Strategies</option>
+                    <option>Investor Networking Mixer</option>
+                </select>
+                
+                <div class="flex gap-2">
+                    <span class="badge badge-success">89 responses</span>
+                    <span class="badge badge-info">45% response rate</span>
+                </div>
+            </div>
+
+            <!-- Rating Summary -->
+            <div class="rating-summary">
+                <div class="rating-card">
+                    <div class="rating-value">4.8</div>
+                    <div class="rating-label">Overall Rating</div>
+                    <div class="rating-stars-large">★★★★★</div>
+                </div>
+                <div class="rating-card">
+                    <div class="rating-value">4.9</div>
+                    <div class="rating-label">Content</div>
+                </div>
+                <div class="rating-card">
+                    <div class="rating-value">4.7</div>
+                    <div class="rating-label">Speakers</div>
+                </div>
+                <div class="rating-card">
+                    <div class="rating-value">4.6</div>
+                    <div class="rating-label">Venue</div>
+                </div>
+            </div>
+
+            <!-- Filters -->
+            <div class="feedback-filters">
+                <div class="filter-row">
+                    <div class="form-group">
+                        <label>Rating</label>
+                        <select class="form-control">
+                            <option>All Ratings</option>
+                            <option>5 Stars</option>
+                            <option>4 Stars</option>
+                            <option>3 Stars</option>
+                            <option>2 Stars</option>
+                            <option>1 Star</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>Sentiment</label>
+                        <select class="form-control">
+                            <option>All</option>
+                            <option>Positive</option>
+                            <option>Neutral</option>
+                            <option>Negative</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>Date Range</label>
+                        <select class="form-control">
+                            <option>All Time</option>
+                            <option>Last 7 days</option>
+                            <option>Last 30 days</option>
+                            <option>Custom</option>
+                        </select>
+                    </div>
+                </div>
+                
+                <div class="flex-between">
+                    <button class="btn btn-primary">Apply Filters</button>
+                    <button class="btn btn-outline">Reset</button>
+                </div>
+            </div>
+
+            <!-- Charts Row -->
+            <div class="grid-2">
+                <!-- Rating Distribution Chart -->
+                <div class="chart-container">
+                    <h3 style="margin-bottom: var(--space-lg);">Rating Distribution</h3>
+                    <div class="chart-wrapper">
+                        <canvas id="ratingChart"></canvas>
+                    </div>
+                </div>
+                
+                <!-- Sentiment Analysis Chart -->
+                <div class="chart-container">
+                    <h3 style="margin-bottom: var(--space-lg);">Sentiment Analysis</h3>
+                    <div class="chart-wrapper">
+                        <canvas id="sentimentChart"></canvas>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Survey Results -->
+            <div class="survey-section">
+                <h3 style="margin-bottom: var(--space-lg);">Survey Results</h3>
+                
+                <div class="survey-question">
+                    <div class="question-text">How likely are you to recommend this event to others?</div>
+                    <div class="question-stats">
+                        <span>Average: 9.2/10</span>
+                        <span>Promoters: 78%</span>
+                        <span>Passives: 15%</span>
+                        <span>Detractors: 7%</span>
+                    </div>
+                    <div class="progress-bar-large" style="margin-top: var(--space-sm);">
+                        <div class="progress-fill-large" style="width: 78%; background: var(--success);"></div>
+                    </div>
+                </div>
+                
+                <div class="survey-question">
+                    <div class="question-text">Was the event content valuable?</div>
+                    <div class="question-stats">
+                        <span>Yes: 92%</span>
+                        <span>No: 8%</span>
+                    </div>
+                    <div class="progress-bar-large" style="margin-top: var(--space-sm);">
+                        <div class="progress-fill-large" style="width: 92%; background: var(--success);"></div>
+                    </div>
+                </div>
+                
+                <div class="survey-question">
+                    <div class="question-text">Would you attend future events?</div>
+                    <div class="question-stats">
+                        <span>Yes: 88%</span>
+                        <span>Maybe: 10%</span>
+                        <span>No: 2%</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Word Cloud -->
+            <div class="chart-container">
+                <h3 style="margin-bottom: var(--space-lg);">Common Keywords</h3>
+                <div class="word-cloud">
+                    <span class="word-item word-size-5">Excellent</span>
+                    <span class="word-item word-size-4">Great speakers</span>
+                    <span class="word-item word-size-4">Informative</span>
+                    <span class="word-item word-size-3">Well organized</span>
+                    <span class="word-item word-size-5">Valuable</span>
+                    <span class="word-item word-size-3">Networking</span>
+                    <span class="word-item word-size-4">Professional</span>
+                    <span class="word-item word-size-2">Good venue</span>
+                    <span class="word-item word-size-3">Insightful</span>
+                    <span class="word-item word-size-5">Recommended</span>
+                    <span class="word-item word-size-2">Food quality</span>
+                    <span class="word-item word-size-3">Engaging</span>
+                    <span class="word-item word-size-4">Knowledgeable</span>
+                    <span class="word-item word-size-2">Parking</span>
+                    <span class="word-item word-size-3">Timing</span>
+                </div>
+            </div>
+
+            <!-- Individual Feedback -->
+            <h3 style="margin: var(--space-xl) 0 var(--space-lg);">Recent Feedback</h3>
+            
+            <div class="feedback-grid">
+                <div class="feedback-card">
+                    <div class="feedback-header-card">
+                        <div class="feedback-attendee">
+                            <div class="feedback-avatar">JD</div>
+                            <div>
+                                <div><strong>John Doe</strong></div>
+                                <div class="feedback-rating">★★★★★</div>
+                            </div>
+                        </div>
+                        <span class="sentiment-positive">Positive</span>
+                    </div>
+                    <div class="feedback-body">
+                        <div class="feedback-comment">
+                            "Excellent conference! The speakers were very knowledgeable and the networking opportunities were fantastic. Already looking forward to next year."
+                        </div>
+                        <div class="feedback-meta">
+                            <span><i class="fas fa-calendar"></i> Mar 8, 2024</span>
+                            <span><i class="fas fa-tag"></i> VIP Attendee</span>
+                        </div>
+                    </div>
+                    <div class="feedback-footer">
+                        <button class="btn btn-sm btn-outline" onclick="replyToFeedback('JD')">
+                            <i class="fas fa-reply"></i> Reply
+                        </button>
+                        <button class="btn btn-sm btn-outline-accent" onclick="featureFeedback('JD')">
+                            <i class="fas fa-star"></i> Feature
+                        </button>
+                    </div>
+                </div>
+
+                <div class="feedback-card">
+                    <div class="feedback-header-card">
+                        <div class="feedback-attendee">
+                            <div class="feedback-avatar">SJ</div>
+                            <div>
+                                <div><strong>Sarah Johnson</strong></div>
+                                <div class="feedback-rating">★★★★☆</div>
+                            </div>
+                        </div>
+                        <span class="sentiment-positive">Positive</span>
+                    </div>
+                    <div class="feedback-body">
+                        <div class="feedback-comment">
+                            "Very informative sessions, especially the panel on emerging markets. The venue was great, though lunch options could be improved."
+                        </div>
+                        <div class="feedback-meta">
+                            <span><i class="fas fa-calendar"></i> Mar 7, 2024</span>
+                            <span><i class="fas fa-tag"></i> Regular Attendee</span>
+                        </div>
+                    </div>
+                    <div class="feedback-footer">
+                        <button class="btn btn-sm btn-outline"><i class="fas fa-reply"></i> Reply</button>
+                        <button class="btn btn-sm btn-outline-accent"><i class="fas fa-star"></i> Feature</button>
+                    </div>
+                </div>
+
+                <div class="feedback-card">
+                    <div class="feedback-header-card">
+                        <div class="feedback-attendee">
+                            <div class="feedback-avatar">MC</div>
+                            <div>
+                                <div><strong>Michael Chen</strong></div>
+                                <div class="feedback-rating">★★★☆☆</div>
+                            </div>
+                        </div>
+                        <span class="sentiment-neutral">Neutral</span>
+                    </div>
+                    <div class="feedback-body">
+                        <div class="feedback-comment">
+                            "Good content but the schedule was too packed. Would prefer more breaks between sessions to allow for networking."
+                        </div>
+                        <div class="feedback-meta">
+                            <span><i class="fas fa-calendar"></i> Mar 6, 2024</span>
+                            <span><i class="fas fa-tag"></i> Speaker</span>
+                        </div>
+                    </div>
+                    <div class="feedback-footer">
+                        <button class="btn btn-sm btn-outline"><i class="fas fa-reply"></i> Reply</button>
+                        <button class="btn btn-sm btn-outline-accent"><i class="fas fa-star"></i> Feature</button>
+                    </div>
+                </div>
+
+                <div class="feedback-card">
+                    <div class="feedback-header-card">
+                        <div class="feedback-attendee">
+                            <div class="feedback-avatar">ED</div>
+                            <div>
+                                <div><strong>Emma Davis</strong></div>
+                                <div class="feedback-rating">★★★★★</div>
+                            </div>
+                        </div>
+                        <span class="sentiment-positive">Positive</span>
+                    </div>
+                    <div class="feedback-body">
+                        <div class="feedback-comment">
+                            "Best investment conference I've attended! The quality of speakers and attendees was exceptional. Already registered for next year."
+                        </div>
+                        <div class="feedback-meta">
+                            <span><i class="fas fa-calendar"></i> Mar 5, 2024</span>
+                            <span><i class="fas fa-tag"></i> VIP Attendee</span>
+                        </div>
+                    </div>
+                    <div class="feedback-footer">
+                        <button class="btn btn-sm btn-outline"><i class="fas fa-reply"></i> Reply</button>
+                        <button class="btn btn-sm btn-outline-accent"><i class="fas fa-star"></i> Feature</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Pagination -->
+            <div class="flex-center" style="margin-top: var(--space-xl);">
+                <div class="pagination">
+                    <button class="page-link"><i class="fas fa-chevron-left"></i></button>
+                    <button class="page-link active">1</button>
+                    <button class="page-link">2</button>
+                    <button class="page-link">3</button>
+                    <button class="page-link">4</button>
+                    <button class="page-link">5</button>
+                    <span class="page-link">...</span>
+                    <button class="page-link">8</button>
+                    <button class="page-link"><i class="fas fa-chevron-right"></i></button>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script>
+        let ratingChart, sentimentChart;
+
+        document.addEventListener('DOMContentLoaded', () => {
+            if (!TAAGC.auth.isAuthenticated()) {
+                window.location.href = '/';
+                return;
+            }
+            
+            TAAGC.auth.updateUI();
+            initializeCharts();
+        });
+
+        function initializeCharts() {
+            // Rating Distribution Chart
+            const ratingCtx = document.getElementById('ratingChart').getContext('2d');
+            ratingChart = new Chart(ratingCtx, {
+                type: 'bar',
+                data: {
+                    labels: ['5 Stars', '4 Stars', '3 Stars', '2 Stars', '1 Star'],
+                    datasets: [{
+                        label: 'Number of Ratings',
+                        data: [45, 28, 10, 4, 2],
+                        backgroundColor: '#c19a6b',
+                        borderRadius: 6
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            display: false
+                        }
+                    }
+                }
+            });
+
+            // Sentiment Analysis Chart
+            const sentimentCtx = document.getElementById('sentimentChart').getContext('2d');
+            sentimentChart = new Chart(sentimentCtx, {
+                type: 'doughnut',
+                data: {
+                    labels: ['Positive', 'Neutral', 'Negative'],
+                    datasets: [{
+                        data: [72, 18, 10],
+                        backgroundColor: ['#10b981', '#c19a6b', '#e53e3e'],
+                        borderWidth: 0
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            position: 'bottom'
+                        }
+                    }
+                }
+            });
+        }
+
+        function exportFeedback(format) {
+            TAAGC.ui.showToast(`Exporting feedback as ${format.toUpperCase()}...`, 'info');
+        }
+
+        function replyToFeedback(attendee) {
+            TAAGC.ui.showToast(`Reply to ${attendee}`, 'info');
+        }
+
+        function featureFeedback(attendee) {
+            TAAGC.ui.showToast(`Featured feedback from ${attendee}`, 'success');
+        }
+    </script>
+</body>
+</html>
