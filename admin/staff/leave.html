@@ -1,0 +1,547 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Leave Management - TAAGC Admin</title>
+    
+    <!-- Fonts & Icons -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Assets -->
+    <link rel="stylesheet" href="/assets/css/admin.css">
+    <script src="/assets/js/admin.js" defer></script>
+    
+    <style>
+        .leave-balances {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: var(--space-lg);
+            margin-bottom: var(--space-xl);
+        }
+        
+        .balance-card {
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+            color: white;
+            border-radius: var(--radius-lg);
+            padding: var(--space-lg);
+        }
+        
+        .balance-type {
+            font-size: 14px;
+            opacity: 0.9;
+            margin-bottom: var(--space-xs);
+        }
+        
+        .balance-value {
+            font-size: 32px;
+            font-weight: 700;
+            margin-bottom: var(--space-xs);
+        }
+        
+        .balance-used {
+            font-size: 13px;
+            opacity: 0.8;
+        }
+        
+        .leave-filters {
+            background: var(--white);
+            border-radius: var(--radius-lg);
+            padding: var(--space-lg);
+            margin-bottom: var(--space-xl);
+            border: 1px solid #e2e8f0;
+        }
+        
+        .filter-row {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: var(--space-md);
+            margin-bottom: var(--space-md);
+        }
+        
+        .leave-table {
+            background: var(--white);
+            border-radius: var(--radius-lg);
+            padding: var(--space-lg);
+            border: 1px solid #e2e8f0;
+        }
+        
+        .leave-type-badge {
+            display: inline-block;
+            padding: 4px 8px;
+            border-radius: 20px;
+            font-size: 11px;
+            font-weight: 600;
+        }
+        
+        .type-annual {
+            background: rgba(16,185,129,0.1);
+            color: var(--success);
+        }
+        
+        .type-sick {
+            background: rgba(59,130,246,0.1);
+            color: var(--info);
+        }
+        
+        .type-personal {
+            background: rgba(139,92,246,0.1);
+            color: var(--purple);
+        }
+        
+        .type-maternity {
+            background: rgba(236,72,153,0.1);
+            color: var(--pink);
+        }
+        
+        .type-unpaid {
+            background: rgba(100,116,139,0.1);
+            color: var(--light);
+        }
+        
+        .leave-status {
+            display: inline-block;
+            padding: 4px 8px;
+            border-radius: 20px;
+            font-size: 11px;
+            font-weight: 600;
+        }
+        
+        .status-approved {
+            background: rgba(16,185,129,0.1);
+            color: var(--success);
+            border: 1px solid var(--success);
+        }
+        
+        .status-pending {
+            background: rgba(245,158,11,0.1);
+            color: var(--warning);
+            border: 1px solid var(--warning);
+        }
+        
+        .status-rejected {
+            background: rgba(229,62,62,0.1);
+            color: var(--danger);
+            border: 1px solid var(--danger);
+        }
+        
+        .status-cancelled {
+            background: rgba(100,116,139,0.1);
+            color: var(--light);
+            border: 1px solid var(--light);
+        }
+        
+        .request-card {
+            background: var(--white);
+            border-radius: var(--radius-lg);
+            padding: var(--space-lg);
+            border: 1px solid #e2e8f0;
+            margin-bottom: var(--space-md);
+            transition: all 0.3s;
+        }
+        
+        .request-card:hover {
+            border-color: var(--accent);
+            box-shadow: var(--shadow-md);
+        }
+        
+        .request-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: var(--space-md);
+        }
+        
+        .request-employee {
+            display: flex;
+            align-items: center;
+            gap: var(--space-md);
+        }
+        
+        .request-avatar {
+            width: 40px;
+            height: 40px;
+            background: var(--accent);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+        }
+        
+        .request-dates {
+            display: flex;
+            gap: var(--space-xl);
+            margin: var(--space-md) 0;
+            padding: var(--space-md);
+            background: var(--bg);
+            border-radius: var(--radius-md);
+        }
+        
+        .request-actions {
+            display: flex;
+            gap: var(--space-sm);
+            justify-content: flex-end;
+            margin-top: var(--space-md);
+            padding-top: var(--space-md);
+            border-top: 1px solid #e2e8f0;
+        }
+        
+        .view-toggle {
+            display: flex;
+            gap: var(--space-xs);
+            background: var(--bg);
+            padding: 4px;
+            border-radius: var(--radius-lg);
+        }
+        
+        .view-option {
+            padding: var(--space-xs) var(--space-lg);
+            border-radius: var(--radius-md);
+            cursor: pointer;
+        }
+        
+        .view-option.active {
+            background: var(--accent);
+            color: white;
+        }
+    </style>
+</head>
+<body>
+    <div class="admin-container">
+        <!-- Sidebar -->
+        <aside class="sidebar">...</aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <div class="top-bar">
+                <div class="page-title">
+                    <h1><i class="fas fa-umbrella-beach" style="color: var(--accent);"></i> Leave Management</h1>
+                    <p>Manage staff leave requests and balances</p>
+                </div>
+                <div class="top-bar-actions">
+                    <button class="btn btn-primary" onclick="newLeaveRequest()">
+                        <i class="fas fa-plus"></i> New Request
+                    </button>
+                    <button class="btn btn-outline" onclick="exportLeaves()">
+                        <i class="fas fa-download"></i> Export
+                    </button>
+                    <button class="logout-btn" id="logoutBtn"><i class="fas fa-sign-out-alt"></i></button>
+                </div>
+            </div>
+
+            <!-- Leave Balances -->
+            <div class="leave-balances">
+                <div class="balance-card">
+                    <div class="balance-type">Annual Leave</div>
+                    <div class="balance-value">124</div>
+                    <div class="balance-used">45 days used</div>
+                </div>
+                <div class="balance-card">
+                    <div class="balance-type">Sick Leave</div>
+                    <div class="balance-value">86</div>
+                    <div class="balance-used">23 days used</div>
+                </div>
+                <div class="balance-card">
+                    <div class="balance-type">Personal Leave</div>
+                    <div class="balance-value">32</div>
+                    <div class="balance-used">12 days used</div>
+                </div>
+                <div class="balance-card">
+                    <div class="balance-type">Pending Requests</div>
+                    <div class="balance-value">8</div>
+                    <div class="balance-used">Awaiting approval</div>
+                </div>
+            </div>
+
+            <!-- View Toggle -->
+            <div class="flex-between" style="margin-bottom: var(--space-lg);">
+                <div class="view-toggle">
+                    <span class="view-option active" onclick="changeView('list')">List View</span>
+                    <span class="view-option" onclick="changeView('calendar')">Calendar</span>
+                    <span class="view-option" onclick="changeView('cards')">Cards</span>
+                </div>
+            </div>
+
+            <!-- List View -->
+            <div id="listView">
+                <!-- Filters -->
+                <div class="leave-filters">
+                    <div class="filter-row">
+                        <div class="form-group">
+                            <label>Department</label>
+                            <select class="form-control">
+                                <option>All Departments</option>
+                                <option>Management</option>
+                                <option>Operations</option>
+                                <option>Finance</option>
+                            </select>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label>Leave Type</label>
+                            <select class="form-control">
+                                <option>All Types</option>
+                                <option>Annual Leave</option>
+                                <option>Sick Leave</option>
+                                <option>Personal Leave</option>
+                            </select>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label>Status</label>
+                            <select class="form-control">
+                                <option>All Status</option>
+                                <option>Pending</option>
+                                <option>Approved</option>
+                                <option>Rejected</option>
+                            </select>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label>Date Range</label>
+                            <select class="form-control">
+                                <option>This Month</option>
+                                <option>Next Month</option>
+                                <option>Custom</option>
+                            </select>
+                        </div>
+                    </div>
+                    
+                    <div class="flex-between">
+                        <button class="btn btn-primary">Apply Filters</button>
+                        <button class="btn btn-outline">Reset</button>
+                    </div>
+                </div>
+
+                <!-- Leave Table -->
+                <div class="leave-table">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Employee</th>
+                                <th>Leave Type</th>
+                                <th>Start Date</th>
+                                <th>End Date</th>
+                                <th>Days</th>
+                                <th>Status</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="leaveBody">
+                            <!-- Leave rows will be loaded here -->
+                        </tbody>
+                    </table>
+                    
+                    <!-- Pagination -->
+                    <div class="flex-center" style="margin-top: var(--space-xl);">
+                        <div class="pagination">
+                            <button class="page-link"><i class="fas fa-chevron-left"></i></button>
+                            <button class="page-link active">1</button>
+                            <button class="page-link">2</button>
+                            <button class="page-link">3</button>
+                            <button class="page-link">4</button>
+                            <button class="page-link">5</button>
+                            <span class="page-link">...</span>
+                            <button class="page-link">8</button>
+                            <button class="page-link"><i class="fas fa-chevron-right"></i></button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Cards View -->
+            <div id="cardsView" style="display: none;">
+                <div class="grid-2" id="requestCards">
+                    <!-- Request cards will be loaded here -->
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script>
+        function generateMockLeaves() {
+            const employees = [
+                { name: 'John Smith', dept: 'Operations' },
+                { name: 'Sarah Johnson', dept: 'Marketing' },
+                { name: 'Michael Chen', dept: 'IT' },
+                { name: 'Emma Davis', dept: 'Finance' }
+            ];
+            
+            const types = ['annual', 'sick', 'personal', 'unpaid'];
+            const statuses = ['pending', 'approved', 'rejected', 'cancelled'];
+            
+            let html = '';
+            
+            for (let i = 0; i < 8; i++) {
+                const emp = employees[Math.floor(Math.random() * employees.length)];
+                const type = types[Math.floor(Math.random() * types.length)];
+                const status = statuses[Math.floor(Math.random() * statuses.length)];
+                
+                const startDate = new Date();
+                startDate.setDate(startDate.getDate() + Math.floor(Math.random() * 30));
+                const endDate = new Date(startDate);
+                endDate.setDate(endDate.getDate() + Math.floor(Math.random() * 5) + 1);
+                
+                const days = Math.ceil((endDate - startDate) / (1000 * 60 * 60 * 24));
+                
+                const typeClass = {
+                    'annual': 'type-annual',
+                    'sick': 'type-sick',
+                    'personal': 'type-personal',
+                    'unpaid': 'type-unpaid'
+                }[type];
+                
+                const statusClass = {
+                    'pending': 'status-pending',
+                    'approved': 'status-approved',
+                    'rejected': 'status-rejected',
+                    'cancelled': 'status-cancelled'
+                }[status];
+                
+                html += `
+                    <tr>
+                        <td>
+                            <div class="flex gap-2">
+                                <div class="user-avatar" style="width: 32px; height: 32px;">${emp.name.charAt(0)}</div>
+                                <div>
+                                    <div>${emp.name}</div>
+                                    <small>${emp.dept}</small>
+                                </div>
+                            </div>
+                        </td>
+                        <td><span class="leave-type-badge ${typeClass}">${type}</span></td>
+                        <td>${startDate.toLocaleDateString()}</td>
+                        <td>${endDate.toLocaleDateString()}</td>
+                        <td><strong>${days}</strong></td>
+                        <td><span class="leave-status ${statusClass}">${status}</span></td>
+                        <td>
+                            <div class="flex gap-1">
+                                ${status === 'pending' ? `
+                                    <button class="btn btn-sm btn-success" onclick="approveLeave('${i}')">
+                                        <i class="fas fa-check"></i>
+                                    </button>
+                                    <button class="btn btn-sm btn-danger" onclick="rejectLeave('${i}')">
+                                        <i class="fas fa-times"></i>
+                                    </button>
+                                ` : ''}
+                                <button class="btn btn-sm btn-outline" onclick="viewLeave('${i}')">
+                                    <i class="fas fa-eye"></i>
+                                </button>
+                            </div>
+                        </td>
+                    </tr>
+                `;
+            }
+            
+            return html;
+        }
+
+        function generateMockCards() {
+            const employees = [
+                { name: 'John Smith', dept: 'Operations' },
+                { name: 'Sarah Johnson', dept: 'Marketing' },
+                { name: 'Michael Chen', dept: 'IT' }
+            ];
+            
+            let html = '';
+            
+            for (let i = 0; i < 3; i++) {
+                const emp = employees[i];
+                
+                html += `
+                    <div class="request-card">
+                        <div class="request-header">
+                            <div class="request-employee">
+                                <div class="request-avatar">${emp.name.charAt(0)}</div>
+                                <div>
+                                    <strong>${emp.name}</strong>
+                                    <br>
+                                    <small>${emp.dept}</small>
+                                </div>
+                            </div>
+                            <span class="leave-status status-pending">Pending</span>
+                        </div>
+                        
+                        <div class="request-dates">
+                            <div>
+                                <small>Start Date</small>
+                                <div><strong>Mar 15, 2024</strong></div>
+                            </div>
+                            <div>
+                                <small>End Date</small>
+                                <div><strong>Mar 20, 2024</strong></div>
+                            </div>
+                            <div>
+                                <small>Days</small>
+                                <div><strong>5 days</strong></div>
+                            </div>
+                        </div>
+                        
+                        <div>
+                            <span class="leave-type-badge type-annual">Annual Leave</span>
+                            <span style="margin-left: var(--space-sm);">Balance: 12 days remaining</span>
+                        </div>
+                        
+                        <p style="margin-top: var(--space-md);">Family vacation - will be traveling internationally.</p>
+                        
+                        <div class="request-actions">
+                            <button class="btn btn-sm btn-success" onclick="approveLeave('${i}')">
+                                <i class="fas fa-check"></i> Approve
+                            </button>
+                            <button class="btn btn-sm btn-danger" onclick="rejectLeave('${i}')">
+                                <i class="fas fa-times"></i> Reject
+                            </button>
+                            <button class="btn btn-sm btn-outline" onclick="viewLeave('${i}')">
+                                <i class="fas fa-eye"></i> Details
+                            </button>
+                        </div>
+                    </div>
+                `;
+            }
+            
+            return html;
+        }
+
+        function loadLeaves() {
+            document.getElementById('leaveBody').innerHTML = generateMockLeaves();
+            document.getElementById('requestCards').innerHTML = generateMockCards();
+        }
+
+        function changeView(view) {
+            document.querySelectorAll('.view-option').forEach(opt => opt.classList.remove('active'));
+            event.target.classList.add('active');
+            
+            document.getElementById('listView').style.display = view === 'list' ? 'block' : 'none';
+            document.getElementById('cardsView').style.display = view === 'cards' ? 'block' : 'none';
+        }
+
+        function newLeaveRequest() {
+            TAAGC.ui.showToast('New leave request form', 'info');
+        }
+
+        function exportLeaves() {
+            TAAGC.ui.showToast('Exporting leave data...', 'info');
+        }
+
+        function approveLeave(id) {
+            TAAGC.ui.confirm('Approve this leave request?', () => {
+                TAAGC.ui.showToast('Leave request approved', 'success');
+            });
+        }
+
+        function rejectLeave(id) {
+            TAAGC.ui.confirm('Reject this leave request?', () => {
+                TAAGC.ui.showToast('Leave request rejected', 'warning');
+            });
+        }
+
+        function viewLeave(id) {
+            TAAGC.ui.showToast(`Viewing leave request ${id}`, 'info');
+        }
+
+        loadLeaves();
+    </script>
+</body>
+</html>
