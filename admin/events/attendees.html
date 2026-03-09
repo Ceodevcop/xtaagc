@@ -1,0 +1,300 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Attendee Management - TAAGC Admin</title>
+    
+    <!-- Fonts & Icons -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Assets -->
+    <link rel="stylesheet" href="/assets/css/admin.css">
+    <script src="/assets/js/admin.js" defer></script>
+    
+    <style>
+        .checkin-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: var(--space-xl);
+        }
+        
+        .checkin-stats {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: var(--space-lg);
+            margin-bottom: var(--space-xl);
+        }
+        
+        .badge-generator {
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+            color: white;
+            border-radius: var(--radius-lg);
+            padding: var(--space-xl);
+            margin-bottom: var(--space-xl);
+        }
+        
+        .badge-preview {
+            background: white;
+            color: var(--dark);
+            padding: var(--space-lg);
+            border-radius: var(--radius-lg);
+            max-width: 400px;
+            margin: var(--space-lg) 0;
+        }
+        
+        .attendee-checkin {
+            display: flex;
+            gap: var(--space-md);
+            margin-bottom: var(--space-xl);
+        }
+        
+        .quick-checkin {
+            flex: 1;
+            background: var(--white);
+            border-radius: var(--radius-lg);
+            padding: var(--space-xl);
+            border: 1px solid #e2e8f0;
+        }
+        
+        .qr-scanner-placeholder {
+            width: 200px;
+            height: 200px;
+            background: var(--bg);
+            border: 2px dashed var(--accent);
+            border-radius: var(--radius-lg);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto;
+        }
+        
+        .attendee-list {
+            background: var(--white);
+            border-radius: var(--radius-lg);
+            padding: var(--space-lg);
+            border: 1px solid #e2e8f0;
+        }
+        
+        .attendee-item {
+            display: flex;
+            align-items: center;
+            padding: var(--space-sm);
+            border-bottom: 1px solid #e2e8f0;
+        }
+        
+        .attendee-item:last-child {
+            border-bottom: none;
+        }
+        
+        .attendee-avatar {
+            width: 40px;
+            height: 40px;
+            background: var(--accent);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+        }
+    </style>
+</head>
+<body>
+    <div class="admin-container">
+        <!-- Sidebar -->
+        <aside class="sidebar">...</aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <div class="top-bar">
+                <div class="page-title">
+                    <h1><i class="fas fa-users" style="color: var(--accent);"></i> Attendee Management</h1>
+                    <p>Check-in and manage event attendees</p>
+                </div>
+                <div class="top-bar-actions">
+                    <button class="btn btn-primary" onclick="generateBadges()">
+                        <i class="fas fa-id-card"></i> Generate Badges
+                    </button>
+                    <button class="btn btn-outline" onclick="exportAttendees()">
+                        <i class="fas fa-download"></i> Export
+                    </button>
+                    <button class="logout-btn" id="logoutBtn"><i class="fas fa-sign-out-alt"></i></button>
+                </div>
+            </div>
+
+            <!-- Event Selector -->
+            <div class="checkin-header">
+                <select class="form-control" style="width: 300px;">
+                    <option>Global Investment Summit 2024</option>
+                    <option>Investment Analysis Workshop</option>
+                    <option>Crypto Investment Strategies</option>
+                </select>
+                
+                <div class="flex gap-2">
+                    <span class="badge badge-success">156 Checked In</span>
+                    <span class="badge badge-info">78 Remaining</span>
+                </div>
+            </div>
+
+            <!-- Check-in Stats -->
+            <div class="checkin-stats">
+                <div class="stat-card">
+                    <div class="stat-value">45</div>
+                    <div class="stat-label">Checked In (Morning)</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value">78</div>
+                    <div class="stat-label">Checked In (Afternoon)</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value">33</div>
+                    <div class="stat-label">VIP Attendees</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value">12</div>
+                    <div class="stat-label">Walk-ins</div>
+                </div>
+            </div>
+
+            <!-- Quick Check-in -->
+            <div class="attendee-checkin">
+                <div class="quick-checkin">
+                    <h3 style="margin-bottom: var(--space-lg);">Quick Check-in</h3>
+                    
+                    <div class="qr-scanner-placeholder">
+                        <i class="fas fa-qrcode" style="font-size: 64px; color: var(--accent);"></i>
+                    </div>
+                    <p style="text-align: center; margin: var(--space-md) 0;">Scan QR Code or Search</p>
+                    
+                    <div class="form-group">
+                        <input type="text" class="form-control" placeholder="Search by name, email, or ticket #">
+                    </div>
+                    
+                    <button class="btn btn-primary btn-block" onclick="manualCheckin()">
+                        <i class="fas fa-check"></i> Manual Check-in
+                    </button>
+                </div>
+                
+                <div class="quick-checkin">
+                    <h3 style="margin-bottom: var(--space-lg);">Recent Check-ins</h3>
+                    
+                    <div class="attendee-list">
+                        <div class="attendee-item">
+                            <div class="attendee-avatar">JD</div>
+                            <div style="flex: 1; margin-left: var(--space-md);">
+                                <div>John Doe</div>
+                                <small style="color: var(--light);">VIP - 10:23 AM</small>
+                            </div>
+                            <span class="badge badge-success">✓</span>
+                        </div>
+                        
+                        <div class="attendee-item">
+                            <div class="attendee-avatar">SJ</div>
+                            <div style="flex: 1; margin-left: var(--space-md);">
+                                <div>Sarah Johnson</div>
+                                <small style="color: var(--light);">Early Bird - 10:15 AM</small>
+                            </div>
+                            <span class="badge badge-success">✓</span>
+                        </div>
+                        
+                        <div class="attendee-item">
+                            <div class="attendee-avatar">MC</div>
+                            <div style="flex: 1; margin-left: var(--space-md);">
+                                <div>Michael Chen</div>
+                                <small style="color: var(--light);">Regular - 10:05 AM</small>
+                            </div>
+                            <span class="badge badge-success">✓</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Attendee List -->
+            <div class="attendee-list">
+                <div class="flex-between" style="margin-bottom: var(--space-lg);">
+                    <h3>All Attendees</h3>
+                    <div class="flex gap-2">
+                        <input type="text" class="form-control" placeholder="Filter attendees...">
+                        <select class="form-control" style="width: 150px;">
+                            <option>All</option>
+                            <option>Checked In</option>
+                            <option>Not Checked In</option>
+                        </select>
+                    </div>
+                </div>
+                
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Name</th>
+                            <th>Email</th>
+                            <th>Ticket Type</th>
+                            <th>Company</th>
+                            <th>Check-in Time</th>
+                            <th>Status</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>John Doe</td>
+                            <td>john.doe@email.com</td>
+                            <td><span class="ticket-badge">VIP</span></td>
+                            <td>Investment Corp</td>
+                            <td>10:23 AM</td>
+                            <td><span class="badge badge-success">Checked In</span></td>
+                            <td>
+                                <button class="btn btn-sm btn-outline"><i class="fas fa-print"></i></button>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>Sarah Johnson</td>
+                            <td>sarah.j@email.com</td>
+                            <td><span class="ticket-badge">Early Bird</span></td>
+                            <td>Wealth Management</td>
+                            <td>10:15 AM</td>
+                            <td><span class="badge badge-success">Checked In</span></td>
+                            <td>
+                                <button class="btn btn-sm btn-outline"><i class="fas fa-print"></i></button>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>Michael Chen</td>
+                            <td>michael.c@email.com</td>
+                            <td><span class="ticket-badge">Regular</span></td>
+                            <td>Tech Ventures</td>
+                            <td>-</td>
+                            <td><span class="badge badge-warning">Not Checked In</span></td>
+                            <td>
+                                <button class="btn btn-sm btn-success" onclick="checkin('michael')">
+                                    <i class="fas fa-check"></i> Check In
+                                </button>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </main>
+    </div>
+
+    <script>
+        function generateBadges() {
+            TAAGC.ui.showToast('Generating attendee badges...', 'info');
+        }
+
+        function exportAttendees() {
+            TAAGC.ui.showToast('Exporting attendee list...', 'info');
+        }
+
+        function manualCheckin() {
+            TAAGC.ui.showToast('Manual check-in', 'info');
+        }
+
+        function checkin(name) {
+            TAAGC.ui.showToast(`Checked in ${name}`, 'success');
+        }
+    </script>
+</body>
+</html>
