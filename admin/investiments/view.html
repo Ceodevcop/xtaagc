@@ -1,0 +1,982 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>View Investment - TAAGC Admin</title>
+    
+    <!-- Fonts & Icons -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Assets -->
+    <link rel="stylesheet" href="/assets/css/admin.css">
+    <script src="/assets/js/admin.js" defer></script>
+    
+    <style>
+        .investment-header {
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+            color: white;
+            padding: var(--space-xl);
+            border-radius: var(--radius-lg);
+            margin-bottom: var(--space-xl);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .investment-header::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -10%;
+            width: 50%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 70%);
+            animation: float 6s ease-in-out infinite;
+        }
+        
+        .investment-badge {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+            margin-right: var(--space-sm);
+        }
+        
+        .badge-active {
+            background: rgba(16,185,129,0.2);
+            color: #10b981;
+        }
+        
+        .badge-pending {
+            background: rgba(245,158,11,0.2);
+            color: #f59e0b;
+        }
+        
+        .badge-completed {
+            background: rgba(59,130,246,0.2);
+            color: #3b82f6;
+        }
+        
+        .investment-metrics {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: var(--space-lg);
+            margin-bottom: var(--space-xl);
+        }
+        
+        .metric-card {
+            background: var(--white);
+            padding: var(--space-lg);
+            border-radius: var(--radius-lg);
+            border: 1px solid #e2e8f0;
+            text-align: center;
+        }
+        
+        .metric-value {
+            font-size: 28px;
+            font-weight: 700;
+            color: var(--primary);
+            margin-bottom: var(--space-xs);
+        }
+        
+        .metric-label {
+            color: var(--light);
+            font-size: 13px;
+        }
+        
+        .metric-trend {
+            font-size: 12px;
+            margin-top: var(--space-xs);
+        }
+        
+        .trend-up { color: var(--success); }
+        .trend-down { color: var(--danger); }
+        
+        .info-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: var(--space-lg);
+            margin-bottom: var(--space-xl);
+        }
+        
+        .info-section {
+            background: var(--white);
+            border-radius: var(--radius-lg);
+            padding: var(--space-lg);
+            border: 1px solid #e2e8f0;
+        }
+        
+        .info-section h3 {
+            color: var(--primary);
+            margin-bottom: var(--space-lg);
+            padding-bottom: var(--space-sm);
+            border-bottom: 2px solid var(--accent);
+            display: flex;
+            align-items: center;
+            gap: var(--space-sm);
+        }
+        
+        .info-row {
+            display: flex;
+            padding: var(--space-sm) 0;
+            border-bottom: 1px solid #e2e8f0;
+        }
+        
+        .info-row:last-child {
+            border-bottom: none;
+        }
+        
+        .info-label {
+            width: 140px;
+            color: var(--light);
+            font-weight: 500;
+        }
+        
+        .info-value {
+            flex: 1;
+            color: var(--dark);
+            font-weight: 500;
+        }
+        
+        .progress-section {
+            background: var(--white);
+            border-radius: var(--radius-lg);
+            padding: var(--space-lg);
+            margin-bottom: var(--space-xl);
+            border: 1px solid #e2e8f0;
+        }
+        
+        .progress-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: var(--space-md);
+        }
+        
+        .progress-title {
+            font-size: 18px;
+            font-weight: 600;
+            color: var(--primary);
+        }
+        
+        .progress-percent {
+            font-size: 24px;
+            font-weight: 700;
+            color: var(--accent);
+        }
+        
+        .progress-bar-large {
+            height: 20px;
+            background: #e2e8f0;
+            border-radius: 10px;
+            overflow: hidden;
+            margin-bottom: var(--space-md);
+        }
+        
+        .progress-fill-large {
+            height: 100%;
+            background: linear-gradient(90deg, var(--accent), var(--accent-light));
+            border-radius: 10px;
+            transition: width 0.3s;
+        }
+        
+        .progress-stats {
+            display: flex;
+            justify-content: space-between;
+            color: var(--light);
+            font-size: 14px;
+        }
+        
+        .milestone-timeline {
+            position: relative;
+            padding: var(--space-lg);
+        }
+        
+        .milestone-item {
+            display: flex;
+            gap: var(--space-lg);
+            margin-bottom: var(--space-lg);
+            position: relative;
+        }
+        
+        .milestone-item::before {
+            content: '';
+            position: absolute;
+            left: 19px;
+            top: 40px;
+            bottom: -20px;
+            width: 2px;
+            background: #e2e8f0;
+        }
+        
+        .milestone-item:last-child::before {
+            display: none;
+        }
+        
+        .milestone-icon {
+            width: 40px;
+            height: 40px;
+            background: var(--accent);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            z-index: 2;
+        }
+        
+        .milestone-content {
+            flex: 1;
+            background: var(--bg);
+            padding: var(--space-md);
+            border-radius: var(--radius-md);
+        }
+        
+        .milestone-title {
+            font-weight: 600;
+            color: var(--primary);
+            margin-bottom: var(--space-xs);
+        }
+        
+        .milestone-date {
+            color: var(--light);
+            font-size: 12px;
+            margin-bottom: var(--space-xs);
+        }
+        
+        .milestone-status {
+            display: inline-block;
+            padding: 2px 8px;
+            border-radius: 12px;
+            font-size: 11px;
+            font-weight: 600;
+        }
+        
+        .status-completed {
+            background: rgba(16,185,129,0.1);
+            color: var(--success);
+        }
+        
+        .status-pending {
+            background: rgba(245,158,11,0.1);
+            color: var(--warning);
+        }
+        
+        .investor-list {
+            max-height: 400px;
+            overflow-y: auto;
+        }
+        
+        .investor-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: var(--space-sm);
+            border-bottom: 1px solid #e2e8f0;
+        }
+        
+        .investor-info {
+            display: flex;
+            align-items: center;
+            gap: var(--space-sm);
+        }
+        
+        .investor-avatar-small {
+            width: 32px;
+            height: 32px;
+            background: var(--accent);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 12px;
+            font-weight: 600;
+        }
+        
+        .investor-name {
+            font-weight: 500;
+            color: var(--dark);
+        }
+        
+        .investor-email {
+            font-size: 12px;
+            color: var(--light);
+        }
+        
+        .investor-amount {
+            font-weight: 600;
+            color: var(--primary);
+        }
+        
+        .document-list {
+            display: grid;
+            gap: var(--space-sm);
+        }
+        
+        .document-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: var(--space-sm);
+            background: var(--bg);
+            border-radius: var(--radius-md);
+        }
+        
+        .document-info {
+            display: flex;
+            align-items: center;
+            gap: var(--space-sm);
+        }
+        
+        .document-icon {
+            width: 32px;
+            height: 32px;
+            background: var(--accent);
+            border-radius: var(--radius-sm);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+        }
+        
+        .document-name {
+            font-weight: 500;
+        }
+        
+        .document-size {
+            font-size: 11px;
+            color: var(--light);
+        }
+        
+        .action-buttons {
+            position: sticky;
+            bottom: 30px;
+            right: 30px;
+            display: flex;
+            gap: var(--space-md);
+            justify-content: flex-end;
+            margin-top: var(--space-xl);
+        }
+        
+        .tabs {
+            display: flex;
+            gap: var(--space-sm);
+            border-bottom: 2px solid #e2e8f0;
+            margin-bottom: var(--space-xl);
+        }
+        
+        .tab {
+            padding: var(--space-md) var(--space-lg);
+            cursor: pointer;
+            font-weight: 600;
+            color: var(--light);
+            border-bottom: 2px solid transparent;
+            margin-bottom: -2px;
+        }
+        
+        .tab.active {
+            color: var(--accent);
+            border-bottom-color: var(--accent);
+        }
+        
+        .returns-calculator {
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+            color: white;
+            padding: var(--space-lg);
+            border-radius: var(--radius-lg);
+            margin-top: var(--space-lg);
+        }
+        
+        .calculator-input {
+            display: flex;
+            gap: var(--space-md);
+            align-items: flex-end;
+        }
+        
+        .calculator-result {
+            font-size: 32px;
+            font-weight: 700;
+            color: var(--accent);
+            text-align: center;
+            margin-top: var(--space-lg);
+        }
+    </style>
+</head>
+<body>
+    <div class="admin-container">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <div class="logo-icon">TA</div>
+                <h2><span>TAAGC</span> ADMIN</h2>
+            </div>
+
+            <div class="user-info">
+                <div class="user-avatar" data-user-avatar>A</div>
+                <div data-user-field="name">Loading...</div>
+                <div style="font-size: 12px; opacity: 0.7;" data-user-field="email"></div>
+                <span class="user-role" data-user-field="role"></span>
+            </div>
+
+            <nav class="nav-menu">
+                <div class="nav-section">MAIN</div>
+                <a href="/dashboard.html" class="nav-item"><i class="fas fa-tachometer-alt"></i> Dashboard</a>
+                <a href="/users/index.html" class="nav-item"><i class="fas fa-users"></i> Users</a>
+                <a href="/investments/index.html" class="nav-item active"><i class="fas fa-chart-line"></i> Investments</a>
+                <a href="/banks/index.html" class="nav-item"><i class="fas fa-university"></i> Banks</a>
+                <a href="/agencies/index.html" class="nav-item"><i class="fas fa-building"></i> Agencies</a>
+            </nav>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <div class="top-bar">
+                <div class="page-title">
+                    <h1><i class="fas fa-chart-line" style="color: var(--accent);"></i> Investment Details</h1>
+                    <p>View complete investment information</p>
+                </div>
+                <div class="top-bar-actions">
+                    <button class="btn btn-outline" onclick="location.href='/investments/index.html'">
+                        <i class="fas fa-arrow-left"></i> Back to Investments
+                    </button>
+                    <button class="logout-btn" id="logoutBtn"><i class="fas fa-sign-out-alt"></i></button>
+                </div>
+            </div>
+
+            <!-- Investment ID from URL -->
+            <div id="investmentId" style="display: none;">{{id}}</div>
+
+            <!-- Investment Header -->
+            <div class="investment-header" id="investmentHeader">
+                <div style="position: relative; z-index: 2;">
+                    <div class="flex-between" style="margin-bottom: var(--space-md);">
+                        <h1 style="font-size: 36px;" id="investmentName">Real Estate Fund Alpha</h1>
+                        <div>
+                            <span class="investment-badge badge-active" id="investmentStatus">Active</span>
+                            <span class="investment-badge" id="investmentRisk" style="background: rgba(245,158,11,0.2); color: #f59e0b;">Medium Risk</span>
+                        </div>
+                    </div>
+                    <p style="font-size: 18px; opacity: 0.9; max-width: 600px;" id="investmentDescription">High-growth real estate investment in prime commercial properties across major metropolitan areas.</p>
+                    <div class="flex gap-3" style="margin-top: var(--space-lg);">
+                        <div><i class="fas fa-folder"></i> <span id="investmentCategory">Real Estate</span></div>
+                        <div><i class="fas fa-map-marker-alt"></i> <span id="investmentLocation">New York, USA</span></div>
+                        <div><i class="fas fa-calendar"></i> Started: <span id="investmentStartDate">Jan 15, 2024</span></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Metrics -->
+            <div class="investment-metrics">
+                <div class="metric-card">
+                    <div class="metric-value" id="metricTarget">$2.5M</div>
+                    <div class="metric-label">Target Amount</div>
+                </div>
+                <div class="metric-card">
+                    <div class="metric-value" id="metricRaised">$1.8M</div>
+                    <div class="metric-label">Raised So Far</div>
+                    <div class="metric-trend trend-up">↑ 72% of target</div>
+                </div>
+                <div class="metric-card">
+                    <div class="metric-value" id="metricInvestors">124</div>
+                    <div class="metric-label">Total Investors</div>
+                    <div class="metric-trend trend-up">↑ 12 this week</div>
+                </div>
+                <div class="metric-card">
+                    <div class="metric-value" id="metricRoi">18.5%</div>
+                    <div class="metric-label">Expected ROI</div>
+                    <div class="metric-trend trend-up">↑ 2.3% above avg</div>
+                </div>
+            </div>
+
+            <!-- Tabs -->
+            <div class="tabs">
+                <div class="tab active" onclick="showTab('overview')">Overview</div>
+                <div class="tab" onclick="showTab('investors')">Investors</div>
+                <div class="tab" onclick="showTab('milestones')">Milestones</div>
+                <div class="tab" onclick="showTab('documents')">Documents</div>
+                <div class="tab" onclick="showTab('returns')">Returns Calculator</div>
+            </div>
+
+            <!-- Overview Tab -->
+            <div id="overviewTab">
+                <!-- Progress Section -->
+                <div class="progress-section">
+                    <div class="progress-header">
+                        <span class="progress-title">Funding Progress</span>
+                        <span class="progress-percent" id="progressPercent">72%</span>
+                    </div>
+                    <div class="progress-bar-large">
+                        <div class="progress-fill-large" id="progressBar" style="width: 72%;"></div>
+                    </div>
+                    <div class="progress-stats">
+                        <span><strong id="raisedAmount">$1,800,000</strong> raised of <strong id="targetAmount">$2,500,000</strong></span>
+                        <span><strong id="remainingAmount">$700,000</strong> remaining</span>
+                        <span><strong id="daysLeft">45</strong> days left</span>
+                    </div>
+                </div>
+
+                <!-- Information Grid -->
+                <div class="info-grid">
+                    <!-- Financial Details -->
+                    <div class="info-section">
+                        <h3><i class="fas fa-dollar-sign"></i> Financial Details</h3>
+                        <div class="info-row">
+                            <span class="info-label">Minimum Investment</span>
+                            <span class="info-value" id="minInvestment">$1,000</span>
+                        </div>
+                        <div class="info-row">
+                            <span class="info-label">Management Fee</span>
+                            <span class="info-value" id="managementFee">2%</span>
+                        </div>
+                        <div class="info-row">
+                            <span class="info-label">Performance Fee</span>
+                            <span class="info-value" id="performanceFee">20%</span>
+                        </div>
+                        <div class="info-row">
+                            <span class="info-label">Lock-up Period</span>
+                            <span class="info-value" id="lockupPeriod">12 months</span>
+                        </div>
+                        <div class="info-row">
+                            <span class="info-label">Distribution Frequency</span>
+                            <span class="info-value" id="distributionFreq">Quarterly</span>
+                        </div>
+                    </div>
+
+                    <!-- Project Details -->
+                    <div class="info-section">
+                        <h3><i class="fas fa-building"></i> Project Details</h3>
+                        <div class="info-row">
+                            <span class="info-label">Project Manager</span>
+                            <span class="info-value" id="projectManager">John Smith</span>
+                        </div>
+                        <div class="info-row">
+                            <span class="info-label">Start Date</span>
+                            <span class="info-value" id="startDate">Jan 15, 2024</span>
+                        </div>
+                        <div class="info-row">
+                            <span class="info-label">End Date</span>
+                            <span class="info-value" id="endDate">Jan 15, 2025</span>
+                        </div>
+                        <div class="info-row">
+                            <span class="info-label">Duration</span>
+                            <span class="info-value" id="duration">12 months</span>
+                        </div>
+                        <div class="info-row">
+                            <span class="info-label">Status</span>
+                            <span class="info-value" id="detailStatus">Active</span>
+                        </div>
+                    </div>
+
+                    <!-- Risk Assessment -->
+                    <div class="info-section">
+                        <h3><i class="fas fa-exclamation-triangle"></i> Risk Assessment</h3>
+                        <div class="info-row">
+                            <span class="info-label">Risk Level</span>
+                            <span class="info-value" id="riskLevel">Medium</span>
+                        </div>
+                        <div class="info-row">
+                            <span class="info-label">Risk Score</span>
+                            <span class="info-value" id="riskScore">65/100</span>
+                        </div>
+                        <div class="info-row">
+                            <span class="info-label">Volatility</span>
+                            <span class="info-value" id="volatility">Moderate</span>
+                        </div>
+                        <div class="info-row">
+                            <span class="info-label">Liquidity</span>
+                            <span class="info-value" id="liquidity">Low</span>
+                        </div>
+                    </div>
+
+                    <!-- Market Information -->
+                    <div class="info-section">
+                        <h3><i class="fas fa-chart-line"></i> Market Information</h3>
+                        <div class="info-row">
+                            <span class="info-label">Sector</span>
+                            <span class="info-value" id="sector">Commercial Real Estate</span>
+                        </div>
+                        <div class="info-row">
+                            <span class="info-label">Market Cap</span>
+                            <span class="info-value" id="marketCap">$50B</span>
+                        </div>
+                        <div class="info-row">
+                            <span class="info-label">Competitors</span>
+                            <span class="info-value" id="competitors">5 major</span>
+                        </div>
+                        <div class="info-row">
+                            <span class="info-label">Market Trend</span>
+                            <span class="info-value trend-up" id="marketTrend">↑ Growing</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Investors Tab -->
+            <div id="investorsTab" style="display: none;">
+                <div class="info-section">
+                    <div class="flex-between" style="margin-bottom: var(--space-lg);">
+                        <h3><i class="fas fa-users"></i> Investor List</h3>
+                        <button class="btn btn-sm btn-outline" onclick="exportInvestors()">
+                            <i class="fas fa-download"></i> Export
+                        </button>
+                    </div>
+                    
+                    <div class="investor-list" id="investorList">
+                        <!-- Investors will be loaded here -->
+                    </div>
+                </div>
+            </div>
+
+            <!-- Milestones Tab -->
+            <div id="milestonesTab" style="display: none;">
+                <div class="info-section">
+                    <h3><i class="fas fa-tasks"></i> Project Milestones</h3>
+                    <div class="milestone-timeline" id="milestoneTimeline">
+                        <!-- Milestones will be loaded here -->
+                    </div>
+                </div>
+            </div>
+
+            <!-- Documents Tab -->
+            <div id="documentsTab" style="display: none;">
+                <div class="info-section">
+                    <div class="flex-between" style="margin-bottom: var(--space-lg);">
+                        <h3><i class="fas fa-file-alt"></i> Documents</h3>
+                        <button class="btn btn-sm btn-primary" onclick="uploadDocument()">
+                            <i class="fas fa-upload"></i> Upload
+                        </button>
+                    </div>
+                    
+                    <div class="document-list" id="documentList">
+                        <!-- Documents will be loaded here -->
+                    </div>
+                </div>
+            </div>
+
+            <!-- Returns Calculator Tab -->
+            <div id="returnsTab" style="display: none;">
+                <div class="returns-calculator">
+                    <h3 style="color: white; margin-bottom: var(--space-lg);">Investment Returns Calculator</h3>
+                    
+                    <div class="calculator-input">
+                        <div class="form-group" style="flex: 1;">
+                            <label style="color: white;">Investment Amount</label>
+                            <input type="number" id="calcAmount" class="form-control" value="10000" min="1000" step="1000" onchange="calculateReturns()">
+                        </div>
+                        <div class="form-group" style="flex: 1;">
+                            <label style="color: white;">Investment Period (months)</label>
+                            <input type="number" id="calcPeriod" class="form-control" value="12" min="1" max="60" onchange="calculateReturns()">
+                        </div>
+                        <button class="btn btn-accent" onclick="calculateReturns()">
+                            <i class="fas fa-calculator"></i> Calculate
+                        </button>
+                    </div>
+                    
+                    <div class="calculator-result" id="calcResult">
+                        $11,850
+                    </div>
+                    
+                    <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: var(--space-md); margin-top: var(--space-lg);">
+                        <div>
+                            <div style="opacity: 0.7;">Expected Return</div>
+                            <div style="font-size: 20px; font-weight: 600;" id="calcReturn">$1,850</div>
+                        </div>
+                        <div>
+                            <div style="opacity: 0.7;">ROI</div>
+                            <div style="font-size: 20px; font-weight: 600;" id="calcROI">18.5%</div>
+                        </div>
+                        <div>
+                            <div style="opacity: 0.7;">Annualized</div>
+                            <div style="font-size: 20px; font-weight: 600;" id="calcAnnual">18.5%</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Action Buttons -->
+            <div class="action-buttons">
+                <button class="btn btn-success" onclick="approveInvestment()">
+                    <i class="fas fa-check"></i> Approve
+                </button>
+                <button class="btn btn-primary" onclick="editInvestment()">
+                    <i class="fas fa-edit"></i> Edit
+                </button>
+                <button class="btn btn-outline-accent" onclick="featureInvestment()">
+                    <i class="fas fa-star"></i> Feature
+                </button>
+                <button class="btn btn-danger" onclick="deleteInvestment()">
+                    <i class="fas fa-trash"></i> Delete
+                </button>
+            </div>
+        </main>
+    </div>
+
+    <script>
+        // Get investment ID from URL
+        const urlParams = new URLSearchParams(window.location.search);
+        const investmentId = urlParams.get('id') || 'inv_1000';
+
+        // Mock investment data
+        const investmentData = {
+            id: investmentId,
+            name: 'Real Estate Fund Alpha',
+            description: 'High-growth real estate investment in prime commercial properties across major metropolitan areas.',
+            category: 'Real Estate',
+            location: 'New York, USA',
+            status: 'active',
+            risk: 'medium',
+            targetAmount: 2500000,
+            raisedAmount: 1800000,
+            investors: 124,
+            roi: 18.5,
+            minInvestment: 1000,
+            managementFee: 2,
+            performanceFee: 20,
+            lockupPeriod: '12 months',
+            distributionFreq: 'Quarterly',
+            projectManager: 'John Smith',
+            startDate: '2024-01-15',
+            endDate: '2025-01-15',
+            duration: '12 months',
+            riskScore: 65,
+            volatility: 'Moderate',
+            liquidity: 'Low',
+            sector: 'Commercial Real Estate',
+            marketCap: '$50B',
+            competitors: '5 major',
+            marketTrend: 'up',
+            featured: false,
+            milestones: [
+                { title: 'Project Launch', date: '2024-01-15', status: 'completed', description: 'Investment opportunity launched' },
+                { title: 'First Funding Round', date: '2024-03-01', status: 'completed', description: 'Reached 50% funding' },
+                { title: 'Property Acquisition', date: '2024-06-01', status: 'pending', description: 'Acquire first property' },
+                { title: 'First Distribution', date: '2024-09-01', status: 'pending', description: 'First quarterly distribution' },
+                { title: 'Project Completion', date: '2025-01-15', status: 'pending', description: 'Project ends, final distribution' }
+            ],
+            investors: [
+                { name: 'John Doe', email: 'john@example.com', amount: 50000, date: '2024-01-20' },
+                { name: 'Jane Smith', email: 'jane@example.com', amount: 75000, date: '2024-01-22' },
+                { name: 'Mike Johnson', email: 'mike@example.com', amount: 25000, date: '2024-01-25' },
+                { name: 'Sarah Wilson', email: 'sarah@example.com', amount: 100000, date: '2024-02-01' },
+                { name: 'Robert Brown', email: 'robert@example.com', amount: 150000, date: '2024-02-05' }
+            ],
+            documents: [
+                { name: 'Prospectus.pdf', size: '2.5 MB', type: 'pdf', date: '2024-01-15' },
+                { name: 'Financial_Projections.xlsx', size: '1.8 MB', type: 'excel', date: '2024-01-15' },
+                { name: 'Risk_Assessment.pdf', size: '1.2 MB', type: 'pdf', date: '2024-01-16' },
+                { name: 'Legal_Agreement.pdf', size: '3.1 MB', type: 'pdf', date: '2024-01-16' }
+            ]
+        };
+
+        document.addEventListener('DOMContentLoaded', () => {
+            if (!TAAGC.auth.isAuthenticated()) {
+                window.location.href = '/';
+                return;
+            }
+            
+            TAAGC.auth.updateUI();
+            loadInvestmentData();
+        });
+
+        function loadInvestmentData() {
+            // Update header
+            document.getElementById('investmentName').textContent = investmentData.name;
+            document.getElementById('investmentDescription').textContent = investmentData.description;
+            document.getElementById('investmentCategory').textContent = investmentData.category;
+            document.getElementById('investmentLocation').textContent = investmentData.location;
+            document.getElementById('investmentStartDate').textContent = TAAGC.data.formatDate(investmentData.startDate);
+            
+            // Status badge
+            const statusBadge = document.getElementById('investmentStatus');
+            statusBadge.textContent = investmentData.status;
+            statusBadge.className = `investment-badge badge-${investmentData.status}`;
+            
+            // Risk badge
+            const riskBadge = document.getElementById('investmentRisk');
+            riskBadge.textContent = investmentData.risk.charAt(0).toUpperCase() + investmentData.risk.slice(1) + ' Risk';
+            riskBadge.style.background = `rgba(${investmentData.risk === 'low' ? '16,185,129' : investmentData.risk === 'medium' ? '245,158,11' : '229,62,62'},0.2)`;
+            riskBadge.style.color = investmentData.risk === 'low' ? '#10b981' : investmentData.risk === 'medium' ? '#f59e0b' : '#e53e3e';
+            
+            // Metrics
+            document.getElementById('metricTarget').textContent = TAAGC.data.formatCurrency(investmentData.targetAmount);
+            document.getElementById('metricRaised').textContent = TAAGC.data.formatCurrency(investmentData.raisedAmount);
+            document.getElementById('metricInvestors').textContent = investmentData.investors;
+            document.getElementById('metricRoi').textContent = investmentData.roi + '%';
+            
+            // Progress
+            const progress = (investmentData.raisedAmount / investmentData.targetAmount) * 100;
+            document.getElementById('progressPercent').textContent = progress.toFixed(1) + '%';
+            document.getElementById('progressBar').style.width = progress + '%';
+            document.getElementById('raisedAmount').textContent = TAAGC.data.formatCurrency(investmentData.raisedAmount);
+            document.getElementById('targetAmount').textContent = TAAGC.data.formatCurrency(investmentData.targetAmount);
+            document.getElementById('remainingAmount').textContent = TAAGC.data.formatCurrency(investmentData.targetAmount - investmentData.raisedAmount);
+            
+            // Financial details
+            document.getElementById('minInvestment').textContent = TAAGC.data.formatCurrency(investmentData.minInvestment);
+            document.getElementById('managementFee').textContent = investmentData.managementFee + '%';
+            document.getElementById('performanceFee').textContent = investmentData.performanceFee + '%';
+            document.getElementById('lockupPeriod').textContent = investmentData.lockupPeriod;
+            document.getElementById('distributionFreq').textContent = investmentData.distributionFreq;
+            
+            // Project details
+            document.getElementById('projectManager').textContent = investmentData.projectManager;
+            document.getElementById('startDate').textContent = TAAGC.data.formatDate(investmentData.startDate);
+            document.getElementById('endDate').textContent = TAAGC.data.formatDate(investmentData.endDate);
+            document.getElementById('duration').textContent = investmentData.duration;
+            document.getElementById('detailStatus').textContent = investmentData.status;
+            
+            // Risk assessment
+            document.getElementById('riskLevel').textContent = investmentData.risk;
+            document.getElementById('riskScore').textContent = investmentData.riskScore + '/100';
+            document.getElementById('volatility').textContent = investmentData.volatility;
+            document.getElementById('liquidity').textContent = investmentData.liquidity;
+            
+            // Market information
+            document.getElementById('sector').textContent = investmentData.sector;
+            document.getElementById('marketCap').textContent = investmentData.marketCap;
+            document.getElementById('competitors').textContent = investmentData.competitors;
+            document.getElementById('marketTrend').innerHTML = investmentData.marketTrend === 'up' ? 
+                '<span class="trend-up">↑ Growing</span>' : '<span class="trend-down">↓ Declining</span>';
+            
+            // Load investors
+            loadInvestors();
+            
+            // Load milestones
+            loadMilestones();
+            
+            // Load documents
+            loadDocuments();
+        }
+
+        function loadInvestors() {
+            const container = document.getElementById('investorList');
+            
+            container.innerHTML = investmentData.investors.map(inv => `
+                <div class="investor-item">
+                    <div class="investor-info">
+                        <div class="investor-avatar-small">${inv.name.charAt(0)}</div>
+                        <div>
+                            <div class="investor-name">${inv.name}</div>
+                            <div class="investor-email">${inv.email}</div>
+                        </div>
+                    </div>
+                    <div>
+                        <div class="investor-amount">${TAAGC.data.formatCurrency(inv.amount)}</div>
+                        <div style="font-size: 11px; color: var(--light);">${TAAGC.data.formatDate(inv.date)}</div>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function loadMilestones() {
+            const container = document.getElementById('milestoneTimeline');
+            
+            container.innerHTML = investmentData.milestones.map((milestone, index) => `
+                <div class="milestone-item">
+                    <div class="milestone-icon">
+                        <i class="fas ${milestone.status === 'completed' ? 'fa-check' : 'fa-clock'}"></i>
+                    </div>
+                    <div class="milestone-content">
+                        <div class="milestone-title">${milestone.title}</div>
+                        <div class="milestone-date">${TAAGC.data.formatDate(milestone.date)}</div>
+                        <div class="milestone-description" style="margin: var(--space-xs) 0;">${milestone.description}</div>
+                        <span class="milestone-status status-${milestone.status}">${milestone.status}</span>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function loadDocuments() {
+            const container = document.getElementById('documentList');
+            
+            container.innerHTML = investmentData.documents.map(doc => `
+                <div class="document-item">
+                    <div class="document-info">
+                        <div class="document-icon">
+                            <i class="fas fa-file-${doc.type}"></i>
+                        </div>
+                        <div>
+                            <div class="document-name">${doc.name}</div>
+                            <div class="document-size">${doc.size} • Uploaded ${TAAGC.data.formatDate(doc.date)}</div>
+                        </div>
+                    </div>
+                    <div>
+                        <button class="btn btn-sm btn-outline" onclick="downloadDocument('${doc.name}')">
+                            <i class="fas fa-download"></i>
+                        </button>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function showTab(tabName) {
+            document.querySelectorAll('.tab').forEach(tab => tab.classList.remove('active'));
+            event.target.classList.add('active');
+            
+            document.getElementById('overviewTab').style.display = tabName === 'overview' ? 'block' : 'none';
+            document.getElementById('investorsTab').style.display = tabName === 'investors' ? 'block' : 'none';
+            document.getElementById('milestonesTab').style.display = tabName === 'milestones' ? 'block' : 'none';
+            document.getElementById('documentsTab').style.display = tabName === 'documents' ? 'block' : 'none';
+            document.getElementById('returnsTab').style.display = tabName === 'returns' ? 'block' : 'none';
+        }
+
+        function calculateReturns() {
+            const amount = parseFloat(document.getElementById('calcAmount').value) || 10000;
+            const period = parseFloat(document.getElementById('calcPeriod').value) || 12;
+            const roi = investmentData.roi / 100;
+            
+            const annualReturn = amount * roi;
+            const proRatedReturn = annualReturn * (period / 12);
+            const totalReturn = amount + proRatedReturn;
+            
+            document.getElementById('calcResult').textContent = TAAGC.data.formatCurrency(totalReturn);
+            document.getElementById('calcReturn').textContent = TAAGC.data.formatCurrency(proRatedReturn);
+            document.getElementById('calcROI').textContent = (roi * 100).toFixed(1) + '%';
+            document.getElementById('calcAnnual').textContent = (roi * 100).toFixed(1) + '%';
+        }
+
+        function approveInvestment() {
+            TAAGC.ui.confirm('Approve this investment?', () => {
+                TAAGC.ui.showToast('Investment approved', 'success');
+            });
+        }
+
+        function editInvestment() {
+            location.href = `/investments/edit.html?id=${investmentId}`;
+        }
+
+        function featureInvestment() {
+            TAAGC.ui.confirm('Feature this investment?', () => {
+                TAAGC.ui.showToast('Investment featured', 'success');
+            });
+        }
+
+        function deleteInvestment() {
+            if (!TAAGC.auth.isSuperAdmin()) {
+                TAAGC.ui.showToast('Only super admins can delete investments', 'error');
+                return;
+            }
+            
+            TAAGC.ui.confirm('Delete this investment? This action cannot be undone!', () => {
+                TAAGC.ui.showToast('Investment deleted', 'success');
+                setTimeout(() => location.href = '/investments/index.html', 1500);
+            });
+        }
+
+        function exportInvestors() {
+            TAAGC.data.downloadCSV(investmentData.investors, 'investors_export.csv');
+        }
+
+        function uploadDocument() {
+            TAAGC.ui.showToast('Upload feature coming soon', 'info');
+        }
+
+        function downloadDocument(name) {
+            TAAGC.ui.showToast(`Downloading ${name}...`, 'info');
+        }
+    </script>
+</body>
+</html>
