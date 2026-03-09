@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard - TAAGC Admin</title>
+    
+    <!-- Fonts & Icons -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Firebase -->
+    <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
+    
+    <!-- 🔥 SINGLE CSS FILE -->
+    <link rel="stylesheet" href="/admin/assets/css/admin.css">
+</head>
+<body>
+    <div class="admin-container">
+        <!-- Sidebar -->
+        <aside class="admin-sidebar">
+            <div class="admin-sidebar-header">
+                <div class="admin-logo">TA</div>
+                <h2><span>TAAGC</span> ADMIN</h2>
+            </div>
+            
+            <div class="admin-user">
+                <div class="admin-avatar" id="userAvatar">A</div>
+                <h4 id="userName">Loading...</h4>
+                <p id="userEmail">loading...</p>
+                <span class="admin-role" id="userRole">Admin</span>
+            </div>
+            
+            <nav class="admin-nav">
+                <div class="admin-nav-item active" onclick="location.href='/admin/dashboard.html'">
+                    <i class="fas fa-tachometer-alt"></i> <span>Dashboard</span>
+                </div>
+                <div class="admin-nav-item" onclick="location.href='/admin/users/index.html'">
+                    <i class="fas fa-users"></i> <span>Users</span>
+                </div>
+                <div class="admin-nav-item" onclick="location.href='/admin/investments/index.html'">
+                    <i class="fas fa-chart-line"></i> <span>Investments</span>
+                </div>
+                <div class="admin-nav-item" onclick="location.href='/admin/projects/index.html'">
+                    <i class="fas fa-building"></i> <span>Projects</span>
+                </div>
+                
+                <!-- Super Admin Only -->
+                <div class="admin-nav-item super-admin-only" onclick="location.href='/admin/admins/index.html'">
+                    <i class="fas fa-user-shield"></i> <span>Manage Admins</span>
+                </div>
+                <div class="admin-nav-item super-admin-only" onclick="location.href='/admin/settings/general.html'">
+                    <i class="fas fa-cog"></i> <span>Settings</span>
+                </div>
+                <div class="admin-nav-item super-admin-only" onclick="location.href='/admin/page-creator/index.html'">
+                    <i class="fas fa-plus-circle"></i> <span>Page Creator</span>
+                </div>
+            </nav>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="admin-main">
+            <div class="admin-topbar">
+                <div class="admin-page-title">
+                    <h1>Dashboard</h1>
+                    <p>Welcome back, <span id="welcomeName">Admin</span></p>
+                </div>
+                
+                <div class="flex gap-2">
+                    <button class="btn btn-outline" id="toggleSidebar">
+                        <i class="fas fa-bars"></i>
+                    </button>
+                    <button class="btn btn-danger" id="logoutBtn">
+                        <i class="fas fa-sign-out-alt"></i> Logout
+                    </button>
+                </div>
+            </div>
+
+            <!-- Stats Grid -->
+            <div class="stats-grid" id="statsContainer">
+                <div class="stat-card">
+                    <div class="stat-icon"><i class="fas fa-users"></i></div>
+                    <div class="stat-value" id="totalUsers">0</div>
+                    <div class="stat-label">Total Users</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon"><i class="fas fa-chart-line"></i></div>
+                    <div class="stat-value" id="totalInvestments">$0</div>
+                    <div class="stat-label">Total Investments</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon"><i class="fas fa-building"></i></div>
+                    <div class="stat-value" id="totalProjects">0</div>
+                    <div class="stat-label">Active Projects</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon"><i class="fas fa-exchange-alt"></i></div>
+                    <div class="stat-value" id="totalTransactions">0</div>
+                    <div class="stat-label">Transactions</div>
+                </div>
+            </div>
+
+            <!-- Recent Activity -->
+            <div class="card">
+                <div class="card-header">
+                    <h2><i class="fas fa-clock"></i> Recent Activity</h2>
+                    <button class="btn btn-sm btn-outline" onclick="loadRecentActivity()">
+                        <i class="fas fa-sync-alt"></i> Refresh
+                    </button>
+                </div>
+                <div class="table-container">
+                    <table id="activityTable">
+                        <thead>
+                            <tr>
+                                <th>User</th>
+                                <th>Action</th>
+                                <th>Time</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr><td colspan="3" class="text-center">Loading...</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- 🔥 SINGLE JS FILE -->
+    <script src="/admin/assets/js/admin.js"></script>
+    
+    <script>
+        // Page-specific code using the global TAAGC object
+        document.addEventListener('DOMContentLoaded', function() {
+            loadDashboardStats();
+            loadRecentActivity();
+            
+            // Update welcome name
+            if (TAAGC.Admin.userData) {
+                document.getElementById('welcomeName').textContent = 
+                    TAAGC.Admin.userData.fullName || 'Admin';
+            }
+        });
+        
+        async function loadDashboardStats() {
+            try {
+                const data = await TAAGC.API.get('/admin/stats');
+                
+                document.getElementById('totalUsers').textContent = data.users || '0';
+                document.getElementById('totalInvestments').textContent = 
+                    TAAGC.Data.formatCurrency(data.investments || 0);
+                document.getElementById('totalProjects').textContent = data.projects || '0';
+                document.getElementById('totalTransactions').textContent = data.transactions || '0';
+                
+            } catch (error) {
+                TAAGC.UI.showToast('Error loading stats', 'error');
+            }
+        }
+        
+        async function loadRecentActivity() {
+            try {
+                const data = await TAAGC.API.get('/admin/activity');
+                
+                const tbody = document.querySelector('#activityTable tbody');
+                tbody.innerHTML = data.map(item => `
+                    <tr>
+                        <td>${item.user}</td>
+                        <td>${item.action}</td>
+                        <td>${TAAGC.Data.timeAgo(item.timestamp)}</td>
+                    </tr>
+                `).join('');
+                
+            } catch (error) {
+                TAAGC.UI.showToast('Error loading activity', 'error');
+            }
+        }
+    </script>
+</body>
+</html>
