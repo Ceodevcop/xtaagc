@@ -1,0 +1,762 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Investments Management - TAAGC Admin</title>
+    
+    <!-- Fonts & Icons -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Assets -->
+    <link rel="stylesheet" href="/assets/css/admin.css">
+    <script src="/assets/js/admin.js" defer></script>
+    
+    <style>
+        .investment-filters {
+            background: var(--white);
+            border-radius: var(--radius-lg);
+            padding: var(--space-lg);
+            margin-bottom: var(--space-xl);
+            border: 1px solid #e2e8f0;
+        }
+        
+        .filter-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: var(--space-md);
+            margin-bottom: var(--space-md);
+        }
+        
+        .investment-card {
+            background: var(--white);
+            border-radius: var(--radius-lg);
+            padding: var(--space-lg);
+            border: 1px solid #e2e8f0;
+            transition: all 0.3s;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .investment-card:hover {
+            transform: translateY(-5px);
+            box-shadow: var(--shadow-lg);
+            border-color: var(--accent);
+        }
+        
+        .investment-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, var(--accent), var(--accent-light));
+        }
+        
+        .investment-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: var(--space-md);
+        }
+        
+        .investment-title {
+            font-size: 18px;
+            font-weight: 700;
+            color: var(--primary);
+        }
+        
+        .investment-amount {
+            font-size: 24px;
+            font-weight: 800;
+            color: var(--accent);
+            margin: var(--space-sm) 0;
+        }
+        
+        .investment-meta {
+            display: flex;
+            gap: var(--space-md);
+            color: var(--light);
+            font-size: 13px;
+            margin-bottom: var(--space-md);
+        }
+        
+        .investment-progress {
+            margin: var(--space-md) 0;
+        }
+        
+        .progress-label {
+            display: flex;
+            justify-content: space-between;
+            font-size: 12px;
+            margin-bottom: 4px;
+        }
+        
+        .progress-bar {
+            height: 8px;
+            background: #e2e8f0;
+            border-radius: 4px;
+            overflow: hidden;
+        }
+        
+        .progress-fill {
+            height: 100%;
+            background: var(--accent);
+            border-radius: 4px;
+            transition: width 0.3s;
+        }
+        
+        .investment-footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: var(--space-md);
+            padding-top: var(--space-md);
+            border-top: 1px solid #e2e8f0;
+        }
+        
+        .investment-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 11px;
+            font-weight: 600;
+        }
+        
+        .badge-active {
+            background: rgba(16,185,129,0.1);
+            color: var(--success);
+            border: 1px solid var(--success);
+        }
+        
+        .badge-pending {
+            background: rgba(245,158,11,0.1);
+            color: var(--warning);
+            border: 1px solid var(--warning);
+        }
+        
+        .badge-completed {
+            background: rgba(59,130,246,0.1);
+            color: var(--info);
+            border: 1px solid var(--info);
+        }
+        
+        .badge-cancelled {
+            background: rgba(229,62,62,0.1);
+            color: var(--danger);
+            border: 1px solid var(--danger);
+        }
+        
+        .stats-cards {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: var(--space-lg);
+            margin-bottom: var(--space-xl);
+        }
+        
+        .stat-card {
+            background: var(--white);
+            padding: var(--space-lg);
+            border-radius: var(--radius-lg);
+            border: 1px solid #e2e8f0;
+        }
+        
+        .stat-label {
+            color: var(--light);
+            font-size: 13px;
+            margin-bottom: var(--space-xs);
+        }
+        
+        .stat-value {
+            font-size: 28px;
+            font-weight: 700;
+            color: var(--primary);
+        }
+        
+        .stat-change {
+            font-size: 12px;
+            color: var(--success);
+            margin-top: var(--space-xs);
+        }
+        
+        .view-toggle {
+            display: flex;
+            gap: var(--space-xs);
+            background: var(--bg);
+            padding: 4px;
+            border-radius: var(--radius-lg);
+        }
+        
+        .view-option {
+            padding: var(--space-sm) var(--space-lg);
+            border-radius: var(--radius-md);
+            cursor: pointer;
+            transition: all 0.3s;
+            font-size: 13px;
+        }
+        
+        .view-option.active {
+            background: var(--accent);
+            color: white;
+        }
+        
+        .investment-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+            gap: var(--space-lg);
+            margin-top: var(--space-xl);
+        }
+        
+        .table-container {
+            margin-top: var(--space-xl);
+        }
+        
+        .risk-badge {
+            display: inline-block;
+            padding: 2px 8px;
+            border-radius: 12px;
+            font-size: 10px;
+            font-weight: 600;
+        }
+        
+        .risk-low {
+            background: rgba(16,185,129,0.1);
+            color: var(--success);
+        }
+        
+        .risk-medium {
+            background: rgba(245,158,11,0.1);
+            color: var(--warning);
+        }
+        
+        .risk-high {
+            background: rgba(229,62,62,0.1);
+            color: var(--danger);
+        }
+        
+        .empty-state {
+            text-align: center;
+            padding: var(--space-xl);
+            color: var(--light);
+        }
+        
+        .empty-state i {
+            font-size: 48px;
+            color: var(--accent);
+            margin-bottom: var(--space-lg);
+            opacity: 0.5;
+        }
+    </style>
+</head>
+<body>
+    <div class="admin-container">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <div class="logo-icon">TA</div>
+                <h2><span>TAAGC</span> ADMIN</h2>
+            </div>
+
+            <div class="user-info">
+                <div class="user-avatar" data-user-avatar>A</div>
+                <div data-user-field="name">Loading...</div>
+                <div style="font-size: 12px; opacity: 0.7;" data-user-field="email"></div>
+                <span class="user-role" data-user-field="role"></span>
+            </div>
+
+            <nav class="nav-menu">
+                <div class="nav-section">MAIN</div>
+                <a href="/dashboard.html" class="nav-item"><i class="fas fa-tachometer-alt"></i> Dashboard</a>
+                <a href="/users/index.html" class="nav-item"><i class="fas fa-users"></i> Users</a>
+                <a href="/investments/index.html" class="nav-item active"><i class="fas fa-chart-line"></i> Investments</a>
+                <a href="/banks/index.html" class="nav-item"><i class="fas fa-university"></i> Banks</a>
+                <a href="/agencies/index.html" class="nav-item"><i class="fas fa-building"></i> Agencies</a>
+                
+                <div class="nav-divider"></div>
+                <div class="nav-section">INVESTMENTS</div>
+                <a href="/investments/create.html" class="nav-item">
+                    <i class="fas fa-plus-circle"></i> New Investment
+                </a>
+                <a href="/investments/reports.html" class="nav-item">
+                    <i class="fas fa-chart-pie"></i> Reports
+                </a>
+                <a href="/investments/returns.html" class="nav-item">
+                    <i class="fas fa-calculator"></i> Returns Calculator
+                </a>
+            </nav>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <div class="top-bar">
+                <div class="page-title">
+                    <h1><i class="fas fa-chart-line" style="color: var(--accent);"></i> Investments Management</h1>
+                    <p>Track and manage all investment opportunities</p>
+                </div>
+                <div class="top-bar-actions">
+                    <button class="btn btn-primary" onclick="location.href='/investments/create.html'">
+                        <i class="fas fa-plus"></i> New Investment
+                    </button>
+                    <div class="view-toggle">
+                        <span class="view-option active" onclick="changeView('grid')">Grid</span>
+                        <span class="view-option" onclick="changeView('list')">List</span>
+                    </div>
+                    <button class="logout-btn" id="logoutBtn"><i class="fas fa-sign-out-alt"></i></button>
+                </div>
+            </div>
+
+            <!-- Stats Cards -->
+            <div class="stats-cards">
+                <div class="stat-card">
+                    <div class="stat-label">Total Investments</div>
+                    <div class="stat-value" id="totalInvestments">$12.5M</div>
+                    <div class="stat-change">↑ 12% from last month</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-label">Active Projects</div>
+                    <div class="stat-value" id="activeProjects">24</div>
+                    <div class="stat-change">↑ 3 this week</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-label">Average ROI</div>
+                    <div class="stat-value" id="avgRoi">18.5%</div>
+                    <div class="stat-change">↑ 2.3%</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-label">Total Investors</div>
+                    <div class="stat-value" id="totalInvestors">1,234</div>
+                    <div class="stat-change">↑ 45 this month</div>
+                </div>
+            </div>
+
+            <!-- Filters -->
+            <div class="investment-filters">
+                <div class="filter-grid">
+                    <div class="form-group">
+                        <label><i class="fas fa-search"></i> Search</label>
+                        <input type="text" id="searchInput" class="form-control" placeholder="Investment name, project...">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label><i class="fas fa-tag"></i> Status</label>
+                        <select id="statusFilter" class="form-control">
+                            <option value="">All Status</option>
+                            <option value="active">Active</option>
+                            <option value="pending">Pending</option>
+                            <option value="completed">Completed</option>
+                            <option value="cancelled">Cancelled</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label><i class="fas fa-chart-line"></i> Risk Level</label>
+                        <select id="riskFilter" class="form-control">
+                            <option value="">All Risks</option>
+                            <option value="low">Low</option>
+                            <option value="medium">Medium</option>
+                            <option value="high">High</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label><i class="fas fa-calendar"></i> Date Range</label>
+                        <select id="dateFilter" class="form-control">
+                            <option value="">All Time</option>
+                            <option value="today">Today</option>
+                            <option value="week">This Week</option>
+                            <option value="month">This Month</option>
+                            <option value="quarter">This Quarter</option>
+                        </select>
+                    </div>
+                </div>
+                
+                <div class="flex-between">
+                    <div class="flex gap-2">
+                        <button class="btn btn-primary" onclick="applyFilters()">
+                            <i class="fas fa-filter"></i> Apply Filters
+                        </button>
+                        <button class="btn btn-outline" onclick="resetFilters()">
+                            <i class="fas fa-undo"></i> Reset
+                        </button>
+                    </div>
+                    <div class="flex gap-2">
+                        <button class="btn btn-outline" onclick="exportData()">
+                            <i class="fas fa-download"></i> Export
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Grid View -->
+            <div id="gridView" class="investment-grid">
+                <!-- Investments will be loaded here -->
+            </div>
+
+            <!-- List View -->
+            <div id="listView" class="table-container" style="display: none;">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Investment</th>
+                            <th>Amount</th>
+                            <th>Investors</th>
+                            <th>ROI</th>
+                            <th>Status</th>
+                            <th>Risk</th>
+                            <th>End Date</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="investmentsTableBody">
+                        <!-- Investments will be loaded here -->
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Pagination -->
+            <div class="flex-center" style="margin-top: var(--space-xl);">
+                <div class="pagination" id="pagination"></div>
+            </div>
+        </main>
+    </div>
+
+    <script>
+        // ============================================
+        // INVESTMENTS MANAGEMENT
+        // ============================================
+        let allInvestments = [];
+        let filteredInvestments = [];
+        let currentPage = 1;
+        const pageSize = 12;
+        let currentView = 'grid';
+
+        document.addEventListener('DOMContentLoaded', () => {
+            if (!TAAGC.auth.isAuthenticated()) {
+                window.location.href = '/';
+                return;
+            }
+            
+            TAAGC.auth.updateUI();
+            loadInvestments();
+            loadStats();
+        });
+
+        function generateMockInvestments(count = 50) {
+            const investments = [];
+            const names = [
+                'Real Estate Fund Alpha',
+                'Tech Growth Fund',
+                'Green Energy Project',
+                'Infrastructure Bond Series A',
+                'Startup Venture Capital',
+                'Commercial Real Estate',
+                'Renewable Energy Fund',
+                'Private Equity Fund',
+                'Hedge Fund Opportunities',
+                'Cryptocurrency Fund'
+            ];
+            
+            const statuses = ['active', 'pending', 'completed', 'cancelled'];
+            const risks = ['low', 'medium', 'high'];
+            const categories = ['Real Estate', 'Technology', 'Energy', 'Infrastructure', 'Venture Capital'];
+            
+            for (let i = 0; i < count; i++) {
+                const amount = Math.floor(Math.random() * 5000000) + 500000;
+                const raised = Math.floor(amount * (Math.random() * 0.9 + 0.1));
+                const investors = Math.floor(Math.random() * 200) + 10;
+                const roi = (Math.random() * 25 + 5).toFixed(1);
+                const startDate = new Date();
+                startDate.setMonth(startDate.getMonth() - Math.floor(Math.random() * 12));
+                const endDate = new Date(startDate);
+                endDate.setMonth(endDate.getMonth() + Math.floor(Math.random() * 24) + 6);
+                
+                investments.push({
+                    id: `inv_${i + 1000}`,
+                    name: names[Math.floor(Math.random() * names.length)] + ' ' + (i + 1),
+                    description: 'High-growth investment opportunity in emerging markets',
+                    category: categories[Math.floor(Math.random() * categories.length)],
+                    amount: amount,
+                    raised: raised,
+                    investors: investors,
+                    minInvestment: 1000,
+                    roi: roi,
+                    status: statuses[Math.floor(Math.random() * statuses.length)],
+                    risk: risks[Math.floor(Math.random() * risks.length)],
+                    startDate: startDate.toISOString(),
+                    endDate: endDate.toISOString(),
+                    progress: (raised / amount) * 100,
+                    featured: Math.random() > 0.7,
+                    manager: 'John Smith',
+                    location: ['USA', 'UK', 'Singapore', 'UAE'][Math.floor(Math.random() * 4)]
+                });
+            }
+            
+            return investments;
+        }
+
+        function loadInvestments() {
+            allInvestments = generateMockInvestments();
+            filteredInvestments = [...allInvestments];
+            renderInvestments();
+        }
+
+        function loadStats() {
+            const total = allInvestments.reduce((sum, inv) => sum + inv.amount, 0);
+            const active = allInvestments.filter(i => i.status === 'active').length;
+            const avgRoi = allInvestments.reduce((sum, inv) => sum + parseFloat(inv.roi), 0) / allInvestments.length;
+            const totalInvestors = allInvestments.reduce((sum, inv) => sum + inv.investors, 0);
+            
+            document.getElementById('totalInvestments').textContent = TAAGC.data.formatCurrency(total);
+            document.getElementById('activeProjects').textContent = active;
+            document.getElementById('avgRoi').textContent = avgRoi.toFixed(1) + '%';
+            document.getElementById('totalInvestors').textContent = totalInvestors.toLocaleString();
+        }
+
+        function renderInvestments() {
+            const start = (currentPage - 1) * pageSize;
+            const end = Math.min(start + pageSize, filteredInvestments.length);
+            const pageInvestments = filteredInvestments.slice(start, end);
+            
+            if (currentView === 'grid') {
+                renderGridView(pageInvestments);
+            } else {
+                renderListView(pageInvestments);
+            }
+            
+            renderPagination();
+        }
+
+        function renderGridView(investments) {
+            const grid = document.getElementById('gridView');
+            
+            if (investments.length === 0) {
+                grid.innerHTML = `
+                    <div class="empty-state" style="grid-column: 1/-1;">
+                        <i class="fas fa-chart-line"></i>
+                        <h3>No Investments Found</h3>
+                        <p>No investments match your filter criteria.</p>
+                        <button class="btn btn-outline" onclick="resetFilters()">Clear Filters</button>
+                    </div>
+                `;
+                return;
+            }
+            
+            grid.innerHTML = investments.map(inv => {
+                const statusClass = {
+                    'active': 'badge-active',
+                    'pending': 'badge-pending',
+                    'completed': 'badge-completed',
+                    'cancelled': 'badge-cancelled'
+                }[inv.status] || '';
+                
+                const riskClass = {
+                    'low': 'risk-low',
+                    'medium': 'risk-medium',
+                    'high': 'risk-high'
+                }[inv.risk] || '';
+                
+                return `
+                    <div class="investment-card" onclick="viewInvestment('${inv.id}')" style="cursor: pointer;">
+                        ${inv.featured ? '<span style="position: absolute; top: 10px; right: 10px; background: var(--accent); color: white; padding: 2px 8px; border-radius: 12px; font-size: 10px;">Featured</span>' : ''}
+                        
+                        <div class="investment-header">
+                            <span class="investment-title">${inv.name}</span>
+                            <span class="investment-badge ${statusClass}">${inv.status}</span>
+                        </div>
+                        
+                        <div class="investment-meta">
+                            <span><i class="fas fa-folder"></i> ${inv.category}</span>
+                            <span><i class="fas fa-map-marker-alt"></i> ${inv.location}</span>
+                        </div>
+                        
+                        <div class="investment-amount">${TAAGC.data.formatCurrency(inv.amount)}</div>
+                        
+                        <div class="investment-progress">
+                            <div class="progress-label">
+                                <span>Raised: ${TAAGC.data.formatCurrency(inv.raised)}</span>
+                                <span>${inv.progress.toFixed(1)}%</span>
+                            </div>
+                            <div class="progress-bar">
+                                <div class="progress-fill" style="width: ${inv.progress}%;"></div>
+                            </div>
+                        </div>
+                        
+                        <div class="investment-meta">
+                            <span><i class="fas fa-users"></i> ${inv.investors} investors</span>
+                            <span><i class="fas fa-chart-line"></i> ROI: ${inv.roi}%</span>
+                        </div>
+                        
+                        <div class="investment-footer">
+                            <span class="risk-badge ${riskClass}">${inv.risk} risk</span>
+                            <span><i class="fas fa-calendar"></i> Ends: ${TAAGC.data.formatDate(inv.endDate)}</span>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        function renderListView(investments) {
+            const tbody = document.getElementById('investmentsTableBody');
+            
+            if (investments.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="8" class="text-center">No investments found</td></tr>';
+                return;
+            }
+            
+            tbody.innerHTML = investments.map(inv => {
+                const statusClass = {
+                    'active': 'badge-success',
+                    'pending': 'badge-warning',
+                    'completed': 'badge-info',
+                    'cancelled': 'badge-danger'
+                }[inv.status] || '';
+                
+                return `
+                    <tr onclick="viewInvestment('${inv.id}')" style="cursor: pointer;">
+                        <td>
+                            <strong>${inv.name}</strong>
+                            <br>
+                            <small>${inv.category}</small>
+                        </td>
+                        <td>${TAAGC.data.formatCurrency(inv.amount)}</td>
+                        <td>${inv.investors}</td>
+                        <td>${inv.roi}%</td>
+                        <td><span class="badge ${statusClass}">${inv.status}</span></td>
+                        <td><span class="risk-badge risk-${inv.risk}">${inv.risk}</span></td>
+                        <td>${TAAGC.data.formatDate(inv.endDate)}</td>
+                        <td>
+                            <button class="btn btn-sm btn-outline" onclick="event.stopPropagation(); viewInvestment('${inv.id}')">
+                                <i class="fas fa-eye"></i>
+                            </button>
+                            <button class="btn btn-sm btn-outline-accent" onclick="event.stopPropagation(); editInvestment('${inv.id}')">
+                                <i class="fas fa-edit"></i>
+                            </button>
+                        </td>
+                    </tr>
+                `;
+            }).join('');
+        }
+
+        function renderPagination() {
+            const totalPages = Math.ceil(filteredInvestments.length / pageSize);
+            const pagination = document.getElementById('pagination');
+            
+            if (totalPages <= 1) {
+                pagination.innerHTML = '';
+                return;
+            }
+            
+            let html = '';
+            
+            // Previous button
+            html += `<button class="page-link" onclick="goToPage(${currentPage - 1})" ${currentPage === 1 ? 'disabled' : ''}>
+                <i class="fas fa-chevron-left"></i>
+            </button>`;
+            
+            // Page numbers
+            for (let i = 1; i <= totalPages; i++) {
+                if (i === 1 || i === totalPages || (i >= currentPage - 2 && i <= currentPage + 2)) {
+                    html += `<button class="page-link ${i === currentPage ? 'active' : ''}" onclick="goToPage(${i})">${i}</button>`;
+                } else if (i === currentPage - 3 || i === currentPage + 3) {
+                    html += `<span class="page-link">...</span>`;
+                }
+            }
+            
+            // Next button
+            html += `<button class="page-link" onclick="goToPage(${currentPage + 1})" ${currentPage === totalPages ? 'disabled' : ''}>
+                <i class="fas fa-chevron-right"></i>
+            </button>`;
+            
+            pagination.innerHTML = html;
+        }
+
+        function goToPage(page) {
+            const totalPages = Math.ceil(filteredInvestments.length / pageSize);
+            if (page >= 1 && page <= totalPages) {
+                currentPage = page;
+                renderInvestments();
+            }
+        }
+
+        function changeView(view) {
+            currentView = view;
+            document.querySelectorAll('.view-option').forEach(opt => opt.classList.remove('active'));
+            event.target.classList.add('active');
+            
+            document.getElementById('gridView').style.display = view === 'grid' ? 'grid' : 'none';
+            document.getElementById('listView').style.display = view === 'list' ? 'block' : 'none';
+            
+            renderInvestments();
+        }
+
+        function applyFilters() {
+            const searchTerm = document.getElementById('searchInput').value.toLowerCase();
+            const status = document.getElementById('statusFilter').value;
+            const risk = document.getElementById('riskFilter').value;
+            const dateRange = document.getElementById('dateFilter').value;
+            
+            filteredInvestments = allInvestments.filter(inv => {
+                if (searchTerm && !inv.name.toLowerCase().includes(searchTerm) && 
+                    !inv.category.toLowerCase().includes(searchTerm)) {
+                    return false;
+                }
+                
+                if (status && inv.status !== status) return false;
+                if (risk && inv.risk !== risk) return false;
+                
+                if (dateRange) {
+                    const today = new Date();
+                    const invDate = new Date(inv.startDate);
+                    
+                    switch(dateRange) {
+                        case 'today':
+                            if (invDate.toDateString() !== today.toDateString()) return false;
+                            break;
+                        case 'week':
+                            const weekAgo = new Date(today.setDate(today.getDate() - 7));
+                            if (invDate < weekAgo) return false;
+                            break;
+                        case 'month':
+                            const monthAgo = new Date(today.setMonth(today.getMonth() - 1));
+                            if (invDate < monthAgo) return false;
+                            break;
+                    }
+                }
+                
+                return true;
+            });
+            
+            currentPage = 1;
+            renderInvestments();
+        }
+
+        function resetFilters() {
+            document.getElementById('searchInput').value = '';
+            document.getElementById('statusFilter').value = '';
+            document.getElementById('riskFilter').value = '';
+            document.getElementById('dateFilter').value = '';
+            
+            filteredInvestments = [...allInvestments];
+            currentPage = 1;
+            renderInvestments();
+        }
+
+        function viewInvestment(id) {
+            location.href = `/investments/view.html?id=${id}`;
+        }
+
+        function editInvestment(id) {
+            location.href = `/investments/edit.html?id=${id}`;
+        }
+
+        function exportData() {
+            TAAGC.data.downloadCSV(filteredInvestments, 'investments_export.csv');
+            TAAGC.ui.showToast('Export started', 'success');
+        }
+    </script>
+</body>
+</html>
