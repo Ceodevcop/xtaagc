@@ -1,0 +1,443 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Staff Schedule - TAAGC Admin</title>
+    
+    <!-- Fonts & Icons -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- FullCalendar for schedule -->
+    <link href='https://cdn.jsdelivr.net/npm/fullcalendar@6.1.10/main.min.css' rel='stylesheet' />
+    <script src='https://cdn.jsdelivr.net/npm/fullcalendar@6.1.10/index.global.min.js'></script>
+    
+    <!-- Assets -->
+    <link rel="stylesheet" href="/assets/css/admin.css">
+    <script src="/assets/js/admin.js" defer></script>
+    
+    <style>
+        .schedule-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: var(--space-xl);
+        }
+        
+        .schedule-controls {
+            display: flex;
+            gap: var(--space-md);
+            align-items: center;
+        }
+        
+        .view-toggle {
+            display: flex;
+            gap: var(--space-xs);
+            background: var(--bg);
+            padding: 4px;
+            border-radius: var(--radius-lg);
+        }
+        
+        .view-btn {
+            padding: var(--space-xs) var(--space-lg);
+            border-radius: var(--radius-md);
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .view-btn.active {
+            background: var(--accent);
+            color: white;
+        }
+        
+        .schedule-stats {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: var(--space-lg);
+            margin-bottom: var(--space-xl);
+        }
+        
+        .stat-item {
+            background: var(--white);
+            padding: var(--space-md);
+            border-radius: var(--radius-md);
+            border: 1px solid #e2e8f0;
+            text-align: center;
+        }
+        
+        .stat-number {
+            font-size: 24px;
+            font-weight: 700;
+            color: var(--primary);
+        }
+        
+        .stat-label {
+            font-size: 12px;
+            color: var(--light);
+        }
+        
+        #calendar {
+            background: var(--white);
+            padding: var(--space-lg);
+            border-radius: var(--radius-lg);
+            border: 1px solid #e2e8f0;
+            margin-bottom: var(--space-xl);
+        }
+        
+        .staff-selector {
+            display: flex;
+            gap: var(--space-sm);
+            flex-wrap: wrap;
+            margin-bottom: var(--space-lg);
+        }
+        
+        .staff-chip {
+            padding: var(--space-xs) var(--space-md);
+            background: var(--white);
+            border: 1px solid #e2e8f0;
+            border-radius: 30px;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            gap: var(--space-xs);
+        }
+        
+        .staff-chip:hover {
+            border-color: var(--accent);
+        }
+        
+        .staff-chip.active {
+            background: var(--accent);
+            color: white;
+            border-color: var(--accent);
+        }
+        
+        .staff-chip .status-dot-small {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+        }
+        
+        .schedule-legend {
+            display: flex;
+            gap: var(--space-lg);
+            margin-bottom: var(--space-lg);
+            padding: var(--space-md);
+            background: var(--bg);
+            border-radius: var(--radius-md);
+        }
+        
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: var(--space-xs);
+            font-size: 12px;
+        }
+        
+        .legend-color {
+            width: 16px;
+            height: 16px;
+            border-radius: 4px;
+        }
+        
+        .shift-early { background: #10b981; }
+        .shift-morning { background: #3b82f6; }
+        .shift-afternoon { background: #f59e0b; }
+        .shift-night { background: #8b5cf6; }
+        .shift-overnight { background: #6b7280; }
+    </style>
+</head>
+<body>
+    <div class="admin-container">
+        <!-- Sidebar -->
+        <aside class="sidebar">...</aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <div class="top-bar">
+                <div class="page-title">
+                    <h1><i class="fas fa-calendar-alt" style="color: var(--accent);"></i> Staff Schedule</h1>
+                    <p>Manage shifts and work schedules</p>
+                </div>
+                <div class="top-bar-actions">
+                    <button class="btn btn-primary" onclick="createShift()">
+                        <i class="fas fa-plus"></i> Create Shift
+                    </button>
+                    <button class="btn btn-outline" onclick="publishSchedule()">
+                        <i class="fas fa-paper-plane"></i> Publish
+                    </button>
+                    <button class="logout-btn" id="logoutBtn"><i class="fas fa-sign-out-alt"></i></button>
+                </div>
+            </div>
+
+            <!-- Schedule Stats -->
+            <div class="schedule-stats">
+                <div class="stat-item">
+                    <div class="stat-number">18</div>
+                    <div class="stat-label">Staff Scheduled</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-number">124</div>
+                    <div class="stat-label">Total Hours</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-number">3</div>
+                    <div class="stat-label">Open Shifts</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-number">2</div>
+                    <div class="stat-label">Leave Requests</div>
+                </div>
+            </div>
+
+            <!-- Staff Selector -->
+            <div class="staff-selector">
+                <span class="staff-chip active" onclick="selectAllStaff()">
+                    <span class="status-dot-small" style="background: var(--accent);"></span>
+                    All Staff
+                </span>
+                <span class="staff-chip" onclick="selectStaff('emp1')">
+                    <span class="status-dot-small status-active"></span>
+                    John Smith
+                </span>
+                <span class="staff-chip" onclick="selectStaff('emp2')">
+                    <span class="status-dot-small status-active"></span>
+                    Sarah Johnson
+                </span>
+                <span class="staff-chip" onclick="selectStaff('emp3')">
+                    <span class="status-dot-small status-active"></span>
+                    Michael Chen
+                </span>
+                <span class="staff-chip" onclick="selectStaff('emp4')">
+                    <span class="status-dot-small status-away"></span>
+                    Emma Davis
+                </span>
+                <span class="staff-chip" onclick="selectStaff('emp5')">
+                    <span class="status-dot-small status-onleave"></span>
+                    Robert Wilson
+                </span>
+                <span class="staff-chip" onclick="showMoreStaff()">
+                    +8 more
+                </span>
+            </div>
+
+            <!-- Schedule Controls -->
+            <div class="schedule-header">
+                <div class="schedule-controls">
+                    <button class="btn btn-outline" onclick="prevWeek()">
+                        <i class="fas fa-chevron-left"></i>
+                    </button>
+                    <h3>March 10 - March 16, 2024</h3>
+                    <button class="btn btn-outline" onclick="nextWeek()">
+                        <i class="fas fa-chevron-right"></i>
+                    </button>
+                    <button class="btn btn-outline" onclick="goToToday()">
+                        Today
+                    </button>
+                </div>
+                
+                <div class="view-toggle">
+                    <span class="view-btn active" onclick="changeView('day')">Day</span>
+                    <span class="view-btn" onclick="changeView('week')">Week</span>
+                    <span class="view-btn" onclick="changeView('month')">Month</span>
+                </div>
+            </div>
+
+            <!-- Legend -->
+            <div class="schedule-legend">
+                <div class="legend-item">
+                    <div class="legend-color shift-early"></div>
+                    <span>Early (6am - 2pm)</span>
+                </div>
+                <div class="legend-item">
+                    <div class="legend-color shift-morning"></div>
+                    <span>Morning (8am - 4pm)</span>
+                </div>
+                <div class="legend-item">
+                    <div class="legend-color shift-afternoon"></div>
+                    <span>Afternoon (2pm - 10pm)</span>
+                </div>
+                <div class="legend-item">
+                    <div class="legend-color shift-night"></div>
+                    <span>Night (10pm - 6am)</span>
+                </div>
+                <div class="legend-item">
+                    <div class="legend-color shift-overnight"></div>
+                    <span>Overnight</span>
+                </div>
+            </div>
+
+            <!-- Calendar -->
+            <div id="calendar"></div>
+
+            <!-- Upcoming Shifts -->
+            <div class="card">
+                <div class="card-header">
+                    <h2><i class="fas fa-clock"></i> Upcoming Shifts</h2>
+                    <a href="#" class="btn btn-sm btn-outline">View All</a>
+                </div>
+                
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Staff</th>
+                            <th>Department</th>
+                            <th>Date</th>
+                            <th>Shift</th>
+                            <th>Time</th>
+                            <th>Status</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>John Smith</td>
+                            <td>Operations</td>
+                            <td>Mar 10, 2024</td>
+                            <td>Morning</td>
+                            <td>8:00 AM - 4:00 PM</td>
+                            <td><span class="badge badge-success">Confirmed</span></td>
+                        </tr>
+                        <tr>
+                            <td>Sarah Johnson</td>
+                            <td>Marketing</td>
+                            <td>Mar 10, 2024</td>
+                            <td>Afternoon</td>
+                            <td>2:00 PM - 10:00 PM</td>
+                            <td><span class="badge badge-success">Confirmed</span></td>
+                        </tr>
+                        <tr>
+                            <td>Michael Chen</td>
+                            <td>IT</td>
+                            <td>Mar 11, 2024</td>
+                            <td>Early</td>
+                            <td>6:00 AM - 2:00 PM</td>
+                            <td><span class="badge badge-warning">Pending</span></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </main>
+    </div>
+
+    <script>
+        let calendar;
+
+        document.addEventListener('DOMContentLoaded', () => {
+            if (!TAAGC.auth.isAuthenticated()) {
+                window.location.href = '/';
+                return;
+            }
+            
+            TAAGC.auth.updateUI();
+            initializeCalendar();
+        });
+
+        function initializeCalendar() {
+            const calendarEl = document.getElementById('calendar');
+            
+            calendar = new FullCalendar.Calendar(calendarEl, {
+                initialView: 'timeGridWeek',
+                headerToolbar: false,
+                height: 650,
+                slotMinTime: '00:00',
+                slotMaxTime: '24:00',
+                allDaySlot: false,
+                slotDuration: '01:00:00',
+                slotLabelInterval: '02:00',
+                events: [
+                    {
+                        title: 'John Smith',
+                        start: '2024-03-10T08:00:00',
+                        end: '2024-03-10T16:00:00',
+                        backgroundColor: '#3b82f6',
+                        borderColor: '#3b82f6',
+                        extendedProps: { shift: 'Morning' }
+                    },
+                    {
+                        title: 'Sarah Johnson',
+                        start: '2024-03-10T14:00:00',
+                        end: '2024-03-10T22:00:00',
+                        backgroundColor: '#f59e0b',
+                        borderColor: '#f59e0b',
+                        extendedProps: { shift: 'Afternoon' }
+                    },
+                    {
+                        title: 'Michael Chen',
+                        start: '2024-03-11T06:00:00',
+                        end: '2024-03-11T14:00:00',
+                        backgroundColor: '#10b981',
+                        borderColor: '#10b981',
+                        extendedProps: { shift: 'Early' }
+                    },
+                    {
+                        title: 'Emma Davis',
+                        start: '2024-03-12T22:00:00',
+                        end: '2024-03-13T06:00:00',
+                        backgroundColor: '#8b5cf6',
+                        borderColor: '#8b5cf6',
+                        extendedProps: { shift: 'Night' }
+                    }
+                ],
+                eventClick: function(info) {
+                    showShiftDetails(info.event);
+                }
+            });
+            
+            calendar.render();
+        }
+
+        function createShift() {
+            TAAGC.ui.showToast('Create shift feature', 'info');
+        }
+
+        function publishSchedule() {
+            TAAGC.ui.confirm('Publish schedule to all staff?', () => {
+                TAAGC.ui.showToast('Schedule published', 'success');
+            });
+        }
+
+        function prevWeek() {
+            calendar.prev();
+        }
+
+        function nextWeek() {
+            calendar.next();
+        }
+
+        function goToToday() {
+            calendar.today();
+        }
+
+        function changeView(view) {
+            document.querySelectorAll('.view-btn').forEach(btn => btn.classList.remove('active'));
+            event.target.classList.add('active');
+            
+            if (view === 'day') calendar.changeView('timeGridDay');
+            if (view === 'week') calendar.changeView('timeGridWeek');
+            if (view === 'month') calendar.changeView('dayGridMonth');
+        }
+
+        function selectAllStaff() {
+            document.querySelectorAll('.staff-chip').forEach(chip => chip.classList.remove('active'));
+            document.querySelector('.staff-chip:first-child').classList.add('active');
+            TAAGC.ui.showToast('Showing all staff', 'info');
+        }
+
+        function selectStaff(id) {
+            document.querySelectorAll('.staff-chip').forEach(chip => chip.classList.remove('active'));
+            event.currentTarget.classList.add('active');
+            TAAGC.ui.showToast(`Showing schedule for ${event.currentTarget.textContent.trim()}`, 'info');
+        }
+
+        function showMoreStaff() {
+            TAAGC.ui.showToast('More staff selector', 'info');
+        }
+
+        function showShiftDetails(event) {
+            TAAGC.ui.showToast(`Shift: ${event.title} (${event.extendedProps.shift})`, 'info');
+        }
+    </script>
+</body>
+</html>
