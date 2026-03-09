@@ -1,0 +1,324 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Event Speakers - TAAGC Admin</title>
+    
+    <!-- Fonts & Icons -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Assets -->
+    <link rel="stylesheet" href="/assets/css/admin.css">
+    <script src="/assets/js/admin.js" defer></script>
+    
+    <style>
+        .speakers-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: var(--space-xl);
+        }
+        
+        .speaker-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+            gap: var(--space-lg);
+        }
+        
+        .speaker-card {
+            background: var(--white);
+            border-radius: var(--radius-lg);
+            border: 1px solid #e2e8f0;
+            overflow: hidden;
+            transition: all 0.3s;
+        }
+        
+        .speaker-card:hover {
+            transform: translateY(-5px);
+            box-shadow: var(--shadow-lg);
+            border-color: var(--accent);
+        }
+        
+        .speaker-image {
+            height: 200px;
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+            position: relative;
+        }
+        
+        .speaker-photo-placeholder {
+            width: 100%;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 48px;
+        }
+        
+        .speaker-content {
+            padding: var(--space-lg);
+        }
+        
+        .speaker-name {
+            font-size: 20px;
+            font-weight: 700;
+            color: var(--primary);
+            margin-bottom: 4px;
+        }
+        
+        .speaker-title {
+            color: var(--accent);
+            font-size: 14px;
+            margin-bottom: var(--space-xs);
+        }
+        
+        .speaker-company {
+            color: var(--light);
+            font-size: 13px;
+            margin-bottom: var(--space-md);
+        }
+        
+        .speaker-bio {
+            color: var(--dark);
+            font-size: 14px;
+            line-height: 1.6;
+            margin-bottom: var(--space-md);
+        }
+        
+        .speaker-sessions {
+            background: var(--bg);
+            border-radius: var(--radius-md);
+            padding: var(--space-sm);
+            margin-bottom: var(--space-md);
+        }
+        
+        .session-tag {
+            display: inline-block;
+            padding: 2px 8px;
+            background: var(--accent);
+            color: white;
+            border-radius: 12px;
+            font-size: 10px;
+            margin-right: 4px;
+            margin-bottom: 2px;
+        }
+        
+        .speaker-social {
+            display: flex;
+            gap: var(--space-sm);
+            margin-top: var(--space-md);
+        }
+        
+        .social-link {
+            width: 36px;
+            height: 36px;
+            background: var(--bg);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--accent);
+            transition: all 0.3s;
+        }
+        
+        .social-link:hover {
+            background: var(--accent);
+            color: white;
+        }
+        
+        .speaker-footer {
+            padding: var(--space-lg);
+            background: var(--bg);
+            border-top: 1px solid #e2e8f0;
+            display: flex;
+            justify-content: space-between;
+        }
+    </style>
+</head>
+<body>
+    <div class="admin-container">
+        <!-- Sidebar -->
+        <aside class="sidebar">...</aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <div class="top-bar">
+                <div class="page-title">
+                    <h1><i class="fas fa-microphone" style="color: var(--accent);"></i> Event Speakers</h1>
+                    <p>Manage speakers across all events</p>
+                </div>
+                <div class="top-bar-actions">
+                    <button class="btn btn-primary" onclick="addSpeaker()">
+                        <i class="fas fa-plus"></i> Add Speaker
+                    </button>
+                    <button class="btn btn-outline" onclick="exportSpeakers()">
+                        <i class="fas fa-download"></i> Export
+                    </button>
+                    <button class="logout-btn" id="logoutBtn"><i class="fas fa-sign-out-alt"></i></button>
+                </div>
+            </div>
+
+            <!-- Filters -->
+            <div class="events-filters">
+                <div class="filter-row">
+                    <div class="form-group">
+                        <label>Event</label>
+                        <select class="form-control">
+                            <option>All Events</option>
+                            <option>Global Investment Summit</option>
+                            <option>Investment Workshop</option>
+                            <option>Crypto Webinar</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>Role</label>
+                        <select class="form-control">
+                            <option>All Roles</option>
+                            <option>Keynote Speaker</option>
+                            <option>Panelist</option>
+                            <option>Moderator</option>
+                            <option>Workshop Leader</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>Search</label>
+                        <input type="text" class="form-control" placeholder="Search speakers...">
+                    </div>
+                </div>
+                
+                <div class="flex-between">
+                    <button class="btn btn-primary">Apply Filters</button>
+                    <button class="btn btn-outline">Reset</button>
+                </div>
+            </div>
+
+            <!-- Speakers Grid -->
+            <div class="speaker-grid">
+                <div class="speaker-card">
+                    <div class="speaker-image">
+                        <div class="speaker-photo-placeholder">RW</div>
+                    </div>
+                    <div class="speaker-content">
+                        <div class="speaker-name">Robert Wilson</div>
+                        <div class="speaker-title">CEO & Founder</div>
+                        <div class="speaker-company">TAAGC Global</div>
+                        <div class="speaker-bio">
+                            Visionary leader with 20+ years in investment banking. Regular speaker at global finance conferences.
+                        </div>
+                        
+                        <div class="speaker-sessions">
+                            <span class="session-tag">Keynote: Future of Investment</span>
+                            <span class="session-tag">CEO Panel</span>
+                        </div>
+                        
+                        <div class="speaker-social">
+                            <a href="#" class="social-link"><i class="fab fa-linkedin-in"></i></a>
+                            <a href="#" class="social-link"><i class="fab fa-twitter"></i></a>
+                            <a href="#" class="social-link"><i class="fas fa-globe"></i></a>
+                        </div>
+                    </div>
+                    <div class="speaker-footer">
+                        <span class="badge badge-accent">3 Events</span>
+                        <div>
+                            <button class="btn btn-sm btn-outline" onclick="editSpeaker('rw')">
+                                <i class="fas fa-edit"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="speaker-card">
+                    <div class="speaker-image">
+                        <div class="speaker-photo-placeholder">SJ</div>
+                    </div>
+                    <div class="speaker-content">
+                        <div class="speaker-name">Sarah Johnson</div>
+                        <div class="speaker-title">Chief Investment Officer</div>
+                        <div class="speaker-company">TAAGC Global</div>
+                        <div class="speaker-bio">
+                            Expert in portfolio management and investment strategies. PhD in Economics from Stanford.
+                        </div>
+                        
+                        <div class="speaker-sessions">
+                            <span class="session-tag">Investment Strategies</span>
+                            <span class="session-tag">Panel: Emerging Markets</span>
+                        </div>
+                        
+                        <div class="speaker-social">
+                            <a href="#" class="social-link"><i class="fab fa-linkedin-in"></i></a>
+                            <a href="#" class="social-link"><i class="fab fa-twitter"></i></a>
+                        </div>
+                    </div>
+                    <div class="speaker-footer">
+                        <span class="badge badge-accent">2 Events</span>
+                        <div>
+                            <button class="btn btn-sm btn-outline"><i class="fas fa-edit"></i></button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="speaker-card">
+                    <div class="speaker-image">
+                        <div class="speaker-photo-placeholder">MC</div>
+                    </div>
+                    <div class="speaker-content">
+                        <div class="speaker-name">Michael Chen</div>
+                        <div class="speaker-title">Managing Partner</div>
+                        <div class="speaker-company">VC Fund</div>
+                        <div class="speaker-bio">
+                            Venture capitalist specializing in fintech and blockchain startups. 50+ successful investments.
+                        </div>
+                        
+                        <div class="speaker-sessions">
+                            <span class="session-tag">Startup Pitch Session</span>
+                            <span class="session-tag">VC Panel</span>
+                        </div>
+                        
+                        <div class="speaker-social">
+                            <a href="#" class="social-link"><i class="fab fa-linkedin-in"></i></a>
+                            <a href="#" class="social-link"><i class="fab fa-twitter"></i></a>
+                        </div>
+                    </div>
+                    <div class="speaker-footer">
+                        <span class="badge badge-accent">1 Event</span>
+                        <div>
+                            <button class="btn btn-sm btn-outline"><i class="fas fa-edit"></i></button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Pagination -->
+            <div class="flex-center" style="margin-top: var(--space-xl);">
+                <div class="pagination">
+                    <button class="page-link"><i class="fas fa-chevron-left"></i></button>
+                    <button class="page-link active">1</button>
+                    <button class="page-link">2</button>
+                    <button class="page-link">3</button>
+                    <span class="page-link">...</span>
+                    <button class="page-link">5</button>
+                    <button class="page-link"><i class="fas fa-chevron-right"></i></button>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script>
+        function addSpeaker() {
+            TAAGC.ui.showToast('Add new speaker', 'info');
+        }
+
+        function exportSpeakers() {
+            TAAGC.ui.showToast('Exporting speakers...', 'info');
+        }
+
+        function editSpeaker(id) {
+            TAAGC.ui.showToast(`Editing speaker ${id}`, 'info');
+        }
+    </script>
+</body>
+</html>
