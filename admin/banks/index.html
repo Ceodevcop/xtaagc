@@ -1,0 +1,792 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Banks & Financial Institutions - TAAGC Admin</title>
+    
+    <!-- Fonts & Icons -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Assets -->
+    <link rel="stylesheet" href="/assets/css/admin.css">
+    <script src="/assets/js/admin.js" defer></script>
+    
+    <style>
+        .bank-filters {
+            background: var(--white);
+            border-radius: var(--radius-lg);
+            padding: var(--space-lg);
+            margin-bottom: var(--space-xl);
+            border: 1px solid #e2e8f0;
+        }
+        
+        .filter-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: var(--space-md);
+            margin-bottom: var(--space-md);
+        }
+        
+        .stats-cards {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: var(--space-lg);
+            margin-bottom: var(--space-xl);
+        }
+        
+        .stat-card {
+            background: var(--white);
+            padding: var(--space-lg);
+            border-radius: var(--radius-lg);
+            border: 1px solid #e2e8f0;
+        }
+        
+        .stat-icon {
+            width: 48px;
+            height: 48px;
+            background: rgba(193,154,107,0.1);
+            border-radius: var(--radius-md);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--accent);
+            font-size: 20px;
+            margin-bottom: var(--space-md);
+        }
+        
+        .stat-value {
+            font-size: 28px;
+            font-weight: 700;
+            color: var(--primary);
+            margin-bottom: var(--space-xs);
+        }
+        
+        .stat-label {
+            color: var(--light);
+            font-size: 13px;
+        }
+        
+        .bank-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+            gap: var(--space-lg);
+        }
+        
+        .bank-card {
+            background: var(--white);
+            border-radius: var(--radius-lg);
+            border: 1px solid #e2e8f0;
+            overflow: hidden;
+            transition: all 0.3s;
+            position: relative;
+        }
+        
+        .bank-card:hover {
+            transform: translateY(-5px);
+            box-shadow: var(--shadow-lg);
+            border-color: var(--accent);
+        }
+        
+        .bank-header {
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+            color: white;
+            padding: var(--space-lg);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .bank-header::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -10%;
+            width: 50%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 70%);
+        }
+        
+        .bank-logo {
+            width: 60px;
+            height: 60px;
+            background: rgba(255,255,255,0.2);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            margin-bottom: var(--space-md);
+        }
+        
+        .bank-name {
+            font-size: 20px;
+            font-weight: 700;
+            margin-bottom: var(--space-xs);
+        }
+        
+        .bank-type {
+            font-size: 13px;
+            opacity: 0.8;
+        }
+        
+        .bank-body {
+            padding: var(--space-lg);
+        }
+        
+        .bank-info-row {
+            display: flex;
+            justify-content: space-between;
+            padding: var(--space-sm) 0;
+            border-bottom: 1px solid #e2e8f0;
+        }
+        
+        .bank-info-row:last-child {
+            border-bottom: none;
+        }
+        
+        .bank-info-label {
+            color: var(--light);
+            font-size: 13px;
+        }
+        
+        .bank-info-value {
+            font-weight: 600;
+            color: var(--dark);
+        }
+        
+        .bank-balance {
+            font-size: 24px;
+            font-weight: 700;
+            color: var(--accent);
+            margin: var(--space-md) 0;
+        }
+        
+        .bank-footer {
+            padding: var(--space-lg);
+            background: var(--bg);
+            border-top: 1px solid #e2e8f0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .status-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 11px;
+            font-weight: 600;
+        }
+        
+        .status-active {
+            background: rgba(16,185,129,0.1);
+            color: var(--success);
+            border: 1px solid var(--success);
+        }
+        
+        .status-inactive {
+            background: rgba(100,116,139,0.1);
+            color: var(--light);
+            border: 1px solid var(--light);
+        }
+        
+        .status-pending {
+            background: rgba(245,158,11,0.1);
+            color: var(--warning);
+            border: 1px solid var(--warning);
+        }
+        
+        .api-status {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            font-size: 11px;
+        }
+        
+        .api-connected {
+            color: var(--success);
+        }
+        
+        .api-disconnected {
+            color: var(--danger);
+        }
+        
+        .quick-actions {
+            display: flex;
+            gap: var(--space-sm);
+            margin-top: var(--space-xl);
+        }
+        
+        .quick-action-btn {
+            flex: 1;
+            padding: var(--space-md);
+            background: var(--white);
+            border: 1px solid #e2e8f0;
+            border-radius: var(--radius-md);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: var(--space-sm);
+            color: var(--dark);
+            text-decoration: none;
+            transition: all 0.3s;
+        }
+        
+        .quick-action-btn:hover {
+            border-color: var(--accent);
+            color: var(--accent);
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-md);
+        }
+        
+        .sync-progress {
+            height: 4px;
+            background: #e2e8f0;
+            border-radius: 2px;
+            overflow: hidden;
+            margin-top: var(--space-xs);
+        }
+        
+        .sync-bar {
+            height: 100%;
+            background: var(--accent);
+            width: 0%;
+            transition: width 0.3s;
+        }
+        
+        .bank-meta {
+            display: flex;
+            gap: var(--space-md);
+            color: var(--light);
+            font-size: 12px;
+            margin-top: var(--space-xs);
+        }
+    </style>
+</head>
+<body>
+    <div class="admin-container">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <div class="logo-icon">TA</div>
+                <h2><span>TAAGC</span> ADMIN</h2>
+            </div>
+
+            <div class="user-info">
+                <div class="user-avatar" data-user-avatar>A</div>
+                <div data-user-field="name">Loading...</div>
+                <div style="font-size: 12px; opacity: 0.7;" data-user-field="email"></div>
+                <span class="user-role" data-user-field="role"></span>
+            </div>
+
+            <nav class="nav-menu">
+                <div class="nav-section">MAIN</div>
+                <a href="/dashboard.html" class="nav-item"><i class="fas fa-tachometer-alt"></i> Dashboard</a>
+                <a href="/users/index.html" class="nav-item"><i class="fas fa-users"></i> Users</a>
+                <a href="/investments/index.html" class="nav-item"><i class="fas fa-chart-line"></i> Investments</a>
+                <a href="/transactions/index.html" class="nav-item"><i class="fas fa-exchange-alt"></i> Transactions</a>
+                <a href="/banks/index.html" class="nav-item active"><i class="fas fa-university"></i> Banks</a>
+                
+                <div class="nav-divider"></div>
+                <div class="nav-section">BANKING</div>
+                <a href="/banks/accounts.html" class="nav-item">
+                    <i class="fas fa-credit-card"></i> Accounts
+                </a>
+                <a href="/banks/transactions.html" class="nav-item">
+                    <i class="fas fa-exchange-alt"></i> Bank Transactions
+                </a>
+                <a href="/banks/reconciliation.html" class="nav-item">
+                    <i class="fas fa-balance-scale"></i> Reconciliation
+                </a>
+                <a href="/banks/statements.html" class="nav-item">
+                    <i class="fas fa-file-invoice"></i> Statements
+                </a>
+                <a href="/banks/api-config.html" class="nav-item super-admin-only">
+                    <i class="fas fa-code"></i> API Configuration
+                </a>
+            </nav>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <div class="top-bar">
+                <div class="page-title">
+                    <h1><i class="fas fa-university" style="color: var(--accent);"></i> Banks & Financial Institutions</h1>
+                    <p>Manage connected banks and financial partners</p>
+                </div>
+                <div class="top-bar-actions">
+                    <button class="btn btn-primary" onclick="location.href='/banks/create.html'">
+                        <i class="fas fa-plus"></i> Connect Bank
+                    </button>
+                    <button class="btn btn-outline" onclick="syncAllBanks()">
+                        <i class="fas fa-sync-alt"></i> Sync All
+                    </button>
+                    <button class="logout-btn" id="logoutBtn"><i class="fas fa-sign-out-alt"></i></button>
+                </div>
+            </div>
+
+            <!-- Quick Actions -->
+            <div class="quick-actions">
+                <a href="/banks/accounts.html" class="quick-action-btn">
+                    <i class="fas fa-credit-card"></i>
+                    <span>View All Accounts</span>
+                </a>
+                <a href="/banks/transactions.html" class="quick-action-btn">
+                    <i class="fas fa-exchange-alt"></i>
+                    <span>Bank Transactions</span>
+                </a>
+                <a href="/banks/reconciliation.html" class="quick-action-btn">
+                    <i class="fas fa-balance-scale"></i>
+                    <span>Reconciliation</span>
+                </a>
+                <a href="/banks/statements.html" class="quick-action-btn">
+                    <i class="fas fa-file-invoice"></i>
+                    <span>Statements</span>
+                </a>
+            </div>
+
+            <!-- Stats Cards -->
+            <div class="stats-cards">
+                <div class="stat-card">
+                    <div class="stat-icon"><i class="fas fa-university"></i></div>
+                    <div class="stat-value" id="totalBanks">8</div>
+                    <div class="stat-label">Connected Banks</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon"><i class="fas fa-credit-card"></i></div>
+                    <div class="stat-value" id="totalAccounts">24</div>
+                    <div class="stat-label">Bank Accounts</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon"><i class="fas fa-dollar-sign"></i></div>
+                    <div class="stat-value" id="totalBalance">$12.5M</div>
+                    <div class="stat-label">Total Balance</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon"><i class="fas fa-clock"></i></div>
+                    <div class="stat-value" id="pendingSync">3</div>
+                    <div class="stat-label">Pending Sync</div>
+                </div>
+            </div>
+
+            <!-- Filters -->
+            <div class="bank-filters">
+                <div class="filter-grid">
+                    <div class="form-group">
+                        <label><i class="fas fa-search"></i> Search Banks</label>
+                        <input type="text" id="searchInput" class="form-control" placeholder="Bank name, country...">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label><i class="fas fa-tag"></i> Bank Type</label>
+                        <select id="typeFilter" class="form-control">
+                            <option value="">All Types</option>
+                            <option value="commercial">Commercial Bank</option>
+                            <option value="investment">Investment Bank</option>
+                            <option value="central">Central Bank</option>
+                            <option value="digital">Digital Bank</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label><i class="fas fa-circle"></i> Status</label>
+                        <select id="statusFilter" class="form-control">
+                            <option value="">All Status</option>
+                            <option value="active">Active</option>
+                            <option value="inactive">Inactive</option>
+                            <option value="pending">Pending</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label><i class="fas fa-globe"></i> Country</label>
+                        <select id="countryFilter" class="form-control">
+                            <option value="">All Countries</option>
+                            <option value="US">United States</option>
+                            <option value="UK">United Kingdom</option>
+                            <option value="SG">Singapore</option>
+                            <option value="AE">UAE</option>
+                        </select>
+                    </div>
+                </div>
+                
+                <div class="flex-between">
+                    <div class="flex gap-2">
+                        <button class="btn btn-primary" onclick="applyFilters()">
+                            <i class="fas fa-filter"></i> Apply Filters
+                        </button>
+                        <button class="btn btn-outline" onclick="resetFilters()">
+                            <i class="fas fa-undo"></i> Reset
+                        </button>
+                    </div>
+                    <div class="flex gap-2">
+                        <button class="btn btn-outline" onclick="exportBanks()">
+                            <i class="fas fa-download"></i> Export
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Banks Grid -->
+            <div class="bank-grid" id="banksGrid">
+                <!-- Bank cards will be loaded here -->
+            </div>
+
+            <!-- Pagination -->
+            <div class="flex-center" style="margin-top: var(--space-xl);">
+                <div class="pagination" id="pagination"></div>
+            </div>
+        </main>
+    </div>
+
+    <script>
+        let allBanks = [];
+        let filteredBanks = [];
+        let currentPage = 1;
+        const pageSize = 9;
+
+        document.addEventListener('DOMContentLoaded', () => {
+            if (!TAAGC.auth.isAuthenticated()) {
+                window.location.href = '/';
+                return;
+            }
+            
+            TAAGC.auth.updateUI();
+            loadBanks();
+        });
+
+        function generateMockBanks() {
+            return [
+                {
+                    id: 'bank_1',
+                    name: 'Chase Bank',
+                    type: 'commercial',
+                    country: 'US',
+                    status: 'active',
+                    balance: 5245000,
+                    accounts: 8,
+                    lastSync: '2024-03-09T10:30:00',
+                    apiConnected: true,
+                    swiftCode: 'CHASUS33',
+                    routingNumber: '021000021',
+                    address: '270 Park Avenue, New York, NY 10017',
+                    phone: '+1-800-935-9935',
+                    website: 'www.chase.com',
+                    logo: '🏦',
+                    connectionType: 'API Direct',
+                    syncProgress: 100
+                },
+                {
+                    id: 'bank_2',
+                    name: 'Bank of America',
+                    type: 'commercial',
+                    country: 'US',
+                    status: 'active',
+                    balance: 3890000,
+                    accounts: 6,
+                    lastSync: '2024-03-09T09:15:00',
+                    apiConnected: true,
+                    swiftCode: 'BOFAUS3N',
+                    routingNumber: '026009593',
+                    address: '100 N Tryon St, Charlotte, NC 28202',
+                    phone: '+1-800-432-1000',
+                    website: 'www.bankofamerica.com',
+                    logo: '🏦',
+                    connectionType: 'API Direct',
+                    syncProgress: 100
+                },
+                {
+                    id: 'bank_3',
+                    name: 'Wells Fargo',
+                    type: 'commercial',
+                    country: 'US',
+                    status: 'active',
+                    balance: 2750000,
+                    accounts: 5,
+                    lastSync: '2024-03-09T08:45:00',
+                    apiConnected: true,
+                    swiftCode: 'WFBIUS6S',
+                    routingNumber: '121000248',
+                    address: '420 Montgomery St, San Francisco, CA 94104',
+                    phone: '+1-800-869-3557',
+                    website: 'www.wellsfargo.com',
+                    logo: '🏦',
+                    connectionType: 'API Direct',
+                    syncProgress: 100
+                },
+                {
+                    id: 'bank_4',
+                    name: 'HSBC',
+                    type: 'investment',
+                    country: 'UK',
+                    status: 'active',
+                    balance: 6780000,
+                    accounts: 12,
+                    lastSync: '2024-03-09T07:30:00',
+                    apiConnected: true,
+                    swiftCode: 'HSBCHKHH',
+                    routingNumber: '004-123456-789',
+                    address: '8 Canada Square, London E14 5HQ',
+                    phone: '+44-20-7991-8888',
+                    website: 'www.hsbc.com',
+                    logo: '🏛️',
+                    connectionType: 'SWIFT',
+                    syncProgress: 100
+                },
+                {
+                    id: 'bank_5',
+                    name: 'DBS Bank',
+                    type: 'commercial',
+                    country: 'SG',
+                    status: 'active',
+                    balance: 4250000,
+                    accounts: 7,
+                    lastSync: '2024-03-09T06:20:00',
+                    apiConnected: true,
+                    swiftCode: 'DBSSSGSG',
+                    routingNumber: '7171-010-001',
+                    address: '12 Marina Blvd, Singapore 018982',
+                    phone: '+65-6878-8888',
+                    website: 'www.dbs.com',
+                    logo: '🏦',
+                    connectionType: 'API Direct',
+                    syncProgress: 100
+                },
+                {
+                    id: 'bank_6',
+                    name: 'Emirates NBD',
+                    type: 'commercial',
+                    country: 'AE',
+                    status: 'pending',
+                    balance: 0,
+                    accounts: 0,
+                    lastSync: '2024-03-08T15:45:00',
+                    apiConnected: false,
+                    swiftCode: 'EBILAEAD',
+                    routingNumber: '123-456-789',
+                    address: 'Baniyas Road, Deira, Dubai',
+                    phone: '+971-4-609-2222',
+                    website: 'www.emiratesnbd.com',
+                    logo: '🏛️',
+                    connectionType: 'Pending Setup',
+                    syncProgress: 45
+                }
+            ];
+        }
+
+        function loadBanks() {
+            allBanks = generateMockBanks();
+            filteredBanks = [...allBanks];
+            renderBanks();
+            updateStats();
+        }
+
+        function renderBanks() {
+            const start = (currentPage - 1) * pageSize;
+            const end = Math.min(start + pageSize, filteredBanks.length);
+            const pageBanks = filteredBanks.slice(start, end);
+            
+            const grid = document.getElementById('banksGrid');
+            
+            if (pageBanks.length === 0) {
+                grid.innerHTML = '<div class="empty-state" style="grid-column: 1/-1;">No banks found</div>';
+                return;
+            }
+            
+            grid.innerHTML = pageBanks.map(bank => {
+                const lastSyncTime = TAAGC.data.timeAgo(bank.lastSync);
+                const statusClass = bank.status === 'active' ? 'status-active' : 
+                                   bank.status === 'inactive' ? 'status-inactive' : 'status-pending';
+                
+                return `
+                    <div class="bank-card">
+                        <div class="bank-header">
+                            <div class="bank-logo">${bank.logo}</div>
+                            <div class="bank-name">${bank.name}</div>
+                            <div class="bank-type">${bank.type.replace('_', ' ')} • ${bank.country}</div>
+                        </div>
+                        
+                        <div class="bank-body">
+                            <div class="bank-balance">${TAAGC.data.formatCurrency(bank.balance)}</div>
+                            
+                            <div class="bank-info-row">
+                                <span class="bank-info-label">SWIFT/BIC</span>
+                                <span class="bank-info-value"><code>${bank.swiftCode}</code></span>
+                            </div>
+                            
+                            <div class="bank-info-row">
+                                <span class="bank-info-label">Routing Number</span>
+                                <span class="bank-info-value"><code>${bank.routingNumber}</code></span>
+                            </div>
+                            
+                            <div class="bank-info-row">
+                                <span class="bank-info-label">Bank Accounts</span>
+                                <span class="bank-info-value">${bank.accounts} accounts</span>
+                            </div>
+                            
+                            <div class="bank-meta">
+                                <span><i class="fas fa-clock"></i> Last sync: ${lastSyncTime}</span>
+                                <span class="api-status ${bank.apiConnected ? 'api-connected' : 'api-disconnected'}">
+                                    <i class="fas fa-circle"></i> ${bank.apiConnected ? 'API Connected' : 'Disconnected'}
+                                </span>
+                            </div>
+                            
+                            ${bank.syncProgress < 100 ? `
+                                <div class="sync-progress">
+                                    <div class="sync-bar" style="width: ${bank.syncProgress}%;"></div>
+                                </div>
+                            ` : ''}
+                        </div>
+                        
+                        <div class="bank-footer">
+                            <span class="status-badge ${statusClass}">
+                                <i class="fas fa-circle"></i> ${bank.status}
+                            </span>
+                            
+                            <div class="flex gap-1">
+                                <button class="btn btn-sm btn-outline" onclick="viewBank('${bank.id}')" title="View">
+                                    <i class="fas fa-eye"></i>
+                                </button>
+                                <button class="btn btn-sm btn-outline-accent" onclick="syncBank('${bank.id}')" title="Sync">
+                                    <i class="fas fa-sync-alt"></i>
+                                </button>
+                                <button class="btn btn-sm btn-outline" onclick="editBank('${bank.id}')" title="Edit">
+                                    <i class="fas fa-edit"></i>
+                                </button>
+                                ${TAAGC.auth.isSuperAdmin() ? `
+                                    <button class="btn btn-sm btn-outline-danger" onclick="deleteBank('${bank.id}')" title="Delete">
+                                        <i class="fas fa-trash"></i>
+                                    </button>
+                                ` : ''}
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+            
+            updatePagination();
+        }
+
+        function updateStats() {
+            const totalBalance = allBanks.reduce((sum, bank) => sum + bank.balance, 0);
+            const totalAccounts = allBanks.reduce((sum, bank) => sum + bank.accounts, 0);
+            const pendingSync = allBanks.filter(b => b.syncProgress < 100).length;
+            
+            document.getElementById('totalBanks').textContent = allBanks.length;
+            document.getElementById('totalAccounts').textContent = totalAccounts;
+            document.getElementById('totalBalance').textContent = TAAGC.data.formatCurrency(totalBalance);
+            document.getElementById('pendingSync').textContent = pendingSync;
+        }
+
+        function updatePagination() {
+            const totalPages = Math.ceil(filteredBanks.length / pageSize);
+            const pagination = document.getElementById('pagination');
+            
+            if (totalPages <= 1) {
+                pagination.innerHTML = '';
+                return;
+            }
+            
+            let html = '';
+            
+            html += `<button class="page-link" onclick="goToPage(${currentPage - 1})" ${currentPage === 1 ? 'disabled' : ''}>
+                <i class="fas fa-chevron-left"></i>
+            </button>`;
+            
+            for (let i = 1; i <= totalPages; i++) {
+                if (i === 1 || i === totalPages || (i >= currentPage - 2 && i <= currentPage + 2)) {
+                    html += `<button class="page-link ${i === currentPage ? 'active' : ''}" onclick="goToPage(${i})">${i}</button>`;
+                } else if (i === currentPage - 3 || i === currentPage + 3) {
+                    html += `<span class="page-link">...</span>`;
+                }
+            }
+            
+            html += `<button class="page-link" onclick="goToPage(${currentPage + 1})" ${currentPage === totalPages ? 'disabled' : ''}>
+                <i class="fas fa-chevron-right"></i>
+            </button>`;
+            
+            pagination.innerHTML = html;
+        }
+
+        function goToPage(page) {
+            const totalPages = Math.ceil(filteredBanks.length / pageSize);
+            if (page >= 1 && page <= totalPages) {
+                currentPage = page;
+                renderBanks();
+            }
+        }
+
+        function applyFilters() {
+            const searchTerm = document.getElementById('searchInput').value.toLowerCase();
+            const type = document.getElementById('typeFilter').value;
+            const status = document.getElementById('statusFilter').value;
+            const country = document.getElementById('countryFilter').value;
+            
+            filteredBanks = allBanks.filter(bank => {
+                if (searchTerm && !bank.name.toLowerCase().includes(searchTerm) && 
+                    !bank.swiftCode.toLowerCase().includes(searchTerm)) {
+                    return false;
+                }
+                
+                if (type && bank.type !== type) return false;
+                if (status && bank.status !== status) return false;
+                if (country && bank.country !== country) return false;
+                
+                return true;
+            });
+            
+            currentPage = 1;
+            renderBanks();
+        }
+
+        function resetFilters() {
+            document.getElementById('searchInput').value = '';
+            document.getElementById('typeFilter').value = '';
+            document.getElementById('statusFilter').value = '';
+            document.getElementById('countryFilter').value = '';
+            
+            filteredBanks = [...allBanks];
+            currentPage = 1;
+            renderBanks();
+        }
+
+        function viewBank(id) {
+            location.href = `/banks/view.html?id=${id}`;
+        }
+
+        function editBank(id) {
+            location.href = `/banks/edit.html?id=${id}`;
+        }
+
+        function syncBank(id) {
+            TAAGC.ui.showToast(`Syncing bank...`, 'info');
+            setTimeout(() => {
+                TAAGC.ui.showToast('Bank synced successfully', 'success');
+            }, 2000);
+        }
+
+        function syncAllBanks() {
+            TAAGC.ui.showToast('Starting sync for all banks...', 'info');
+        }
+
+        function deleteBank(id) {
+            if (!TAAGC.auth.isSuperAdmin()) {
+                TAAGC.ui.showToast('Only super admins can delete banks', 'error');
+                return;
+            }
+            
+            TAAGC.ui.confirm('Are you sure you want to disconnect this bank?', () => {
+                TAAGC.ui.showToast('Bank disconnected', 'success');
+                loadBanks();
+            });
+        }
+
+        function exportBanks() {
+            TAAGC.data.downloadCSV(allBanks, 'banks_export.csv');
+        }
+    </script>
+</body>
+</html>
