@@ -14,142 +14,115 @@
     }
   ],
   "routes": [
-    {
-      "src": "/",
-      "dest": "/index.html"
-    },
-    {
-      "src": "/dashboard",
-      "dest": "/dashboard.html"
-    },
-    {
-      "src": "/profile",
-      "dest": "/profile.html"
-    },
-    {
-      "src": "/users",
-      "dest": "/users/index.html"
-    },
-    {
-      "src": "/users/create",
-      "dest": "/users/create.html"
-    },
-    {
-      "src": "/users/edit",
-      "dest": "/users/edit.html"
-    },
-    {
-      "src": "/users/view",
-      "dest": "/users/view.html"
-    },
-    {
-      "src": "/admins",
-      "dest": "/admins/index.html"
-    },
-    {
-      "src": "/admins/create",
-      "dest": "/admins/create.html"
-    },
-    {
-      "src": "/staff",
-      "dest": "/staff/index.html"
-    },
-    {
-      "src": "/staff/schedule",
-      "dest": "/staff/schedule.html"
-    },
-    {
-      "src": "/staff/attendance",
-      "dest": "/staff/attendance.html"
-    },
-    {
-      "src": "/staff/leave",
-      "dest": "/staff/leave.html"
-    },
-    {
-      "src": "/staff/performance",
-      "dest": "/staff/performance.html"
-    },
-    {
-      "src": "/investments",
-      "dest": "/investments/index.html"
-    },
-    {
-      "src": "/investments/create",
-      "dest": "/investments/create.html"
-    },
-    {
-      "src": "/transactions",
-      "dest": "/transactions/index.html"
-    },
-    {
-      "src": "/transactions/deposits",
-      "dest": "/transactions/deposits.html"
-    },
-    {
-      "src": "/transactions/withdrawals",
-      "dest": "/transactions/withdrawals.html"
-    },
-    {
-      "src": "/banks",
-      "dest": "/banks/index.html"
-    },
-    {
-      "src": "/banks/accounts",
-      "dest": "/banks/accounts.html"
-    },
-    {
-      "src": "/banks/transactions",
-      "dest": "/banks/transactions.html"
-    },
-    {
-      "src": "/banks/reconciliation",
-      "dest": "/banks/reconciliation.html"
-    },
-    {
-      "src": "/agencies",
-      "dest": "/agencies/index.html"
-    },
-    {
-      "src": "/agencies/contracts",
-      "dest": "/agencies/contracts.html"
-    },
-    {
-      "src": "/agencies/commissions",
-      "dest": "/agencies/commissions.html"
-    },
-    {
-      "src": "/agencies/payments",
-      "dest": "/agencies/payments.html"
-    },
-    {
-      "src": "/events",
-      "dest": "/events/index.html"
-    },
-    {
-      "src": "/events/calendar",
-      "dest": "/events/calendar.html"
-    },
-    {
-      "src": "/events/registrations",
-      "dest": "/events/registrations.html"
-    },
-    {
-      "src": "/events/attendees",
-      "dest": "/events/attendees.html"
-    },
-    {
-      "src": "/events/feedback",
-      "dest": "/events/feedback.html"
-    },
-    {
-      "src": "/assets/(.*)",
-      "dest": "/assets/$1"
-    },
-    {
-      "src": "/(.*)",
-      "dest": "/$1"
-    }
+    // 🔐 LOGIN & AUTH
+    { "src": "/", "dest": "/index.html" },
+    { "src": "/login", "dest": "/index.html" },
+    
+    // 📊 DASHBOARD (FOLDER)
+    { "src": "/dashboard", "dest": "/dashboard/index.html" },
+    { "src": "/dashboard/", "dest": "/dashboard/index.html" },
+    
+    // 👥 USERS MODULE
+    { "src": "/users", "dest": "/users/index.html" },
+    { "src": "/users/", "dest": "/users/index.html" },
+    { "src": "/users/create", "dest": "/users/create.html" },
+    { "src": "/users/edit", "dest": "/users/edit.html" },
+    { "src": "/users/view", "dest": "/users/view.html" },
+    { "src": "/users/permissions", "dest": "/users/permissions.html" },
+    { "src": "/users/activity", "dest": "/users/activity.html" },
+    
+    // 👑 ADMINS MODULE (CEO ONLY)
+    { "src": "/admins", "dest": "/admins/index.html" },
+    { "src": "/admins/", "dest": "/admins/index.html" },
+    { "src": "/admins/create", "dest": "/admins/create.html" },
+    { "src": "/admins/edit", "dest": "/admins/edit.html" },
+    { "src": "/admins/permissions", "dest": "/admins/permissions.html" },
+    
+    // 👔 STAFF MODULE
+    { "src": "/staff", "dest": "/staff/index.html" },
+    { "src": "/staff/", "dest": "/staff/index.html" },
+    { "src": "/staff/create", "dest": "/staff/create.html" },
+    { "src": "/staff/edit", "dest": "/staff/edit.html" },
+    { "src": "/staff/view", "dest": "/staff/view.html" },
+    { "src": "/staff/schedule", "dest": "/staff/schedule.html" },
+    { "src": "/staff/attendance", "dest": "/staff/attendance.html" },
+    { "src": "/staff/leave", "dest": "/staff/leave.html" },
+    { "src": "/staff/performance", "dest": "/staff/performance.html" },
+    { "src": "/staff/payroll", "dest": "/staff/payroll.html" },
+    { "src": "/staff/training", "dest": "/staff/training.html" },
+    { "src": "/staff/departments", "dest": "/staff/departments.html" },
+    
+    // 💰 INVESTMENTS MODULE
+    { "src": "/investments", "dest": "/investments/index.html" },
+    { "src": "/investments/", "dest": "/investments/index.html" },
+    { "src": "/investments/create", "dest": "/investments/create.html" },
+    { "src": "/investments/edit", "dest": "/investments/edit.html" },
+    { "src": "/investments/view", "dest": "/investments/view.html" },
+    { "src": "/investments/approve", "dest": "/investments/approve.html" },
+    { "src": "/investments/returns", "dest": "/investments/returns.html" },
+    { "src": "/investments/reports", "dest": "/investments/reports.html" },
+    
+    // 💳 TRANSACTIONS MODULE
+    { "src": "/transactions", "dest": "/transactions/index.html" },
+    { "src": "/transactions/", "dest": "/transactions/index.html" },
+    { "src": "/transactions/deposits", "dest": "/transactions/deposits.html" },
+    { "src": "/transactions/withdrawals", "dest": "/transactions/withdrawals.html" },
+    { "src": "/transactions/pending", "dest": "/transactions/pending.html" },
+    { "src": "/transactions/disputes", "dest": "/transactions/disputes.html" },
+    { "src": "/transactions/reconciliation", "dest": "/transactions/reconciliation.html" },
+    
+    // 🏦 BANKS MODULE
+    { "src": "/banks", "dest": "/banks/index.html" },
+    { "src": "/banks/", "dest": "/banks/index.html" },
+    { "src": "/banks/create", "dest": "/banks/create.html" },
+    { "src": "/banks/edit", "dest": "/banks/edit.html" },
+    { "src": "/banks/view", "dest": "/banks/view.html" },
+    { "src": "/banks/accounts", "dest": "/banks/accounts.html" },
+    { "src": "/banks/transactions", "dest": "/banks/transactions.html" },
+    { "src": "/banks/reconciliation", "dest": "/banks/reconciliation.html" },
+    { "src": "/banks/statements", "dest": "/banks/statements.html" },
+    { "src": "/banks/reports", "dest": "/banks/reports.html" },
+    { "src": "/banks/audit", "dest": "/banks/audit.html" },
+    { "src": "/banks/api-config", "dest": "/banks/api-config.html" },
+    { "src": "/banks/compliance", "dest": "/banks/compliance.html" },
+    
+    // 🤝 AGENCIES MODULE
+    { "src": "/agencies", "dest": "/agencies/index.html" },
+    { "src": "/agencies/", "dest": "/agencies/index.html" },
+    { "src": "/agencies/create", "dest": "/agencies/create.html" },
+    { "src": "/agencies/edit", "dest": "/agencies/edit.html" },
+    { "src": "/agencies/view", "dest": "/agencies/view.html" },
+    { "src": "/agencies/contracts", "dest": "/agencies/contracts.html" },
+    { "src": "/agencies/commissions", "dest": "/agencies/commissions.html" },
+    { "src": "/agencies/payments", "dest": "/agencies/payments.html" },
+    { "src": "/agencies/performance", "dest": "/agencies/performance.html" },
+    { "src": "/agencies/reports", "dest": "/agencies/reports.html" },
+    { "src": "/agencies/api-keys", "dest": "/agencies/api-keys.html" },
+    { "src": "/agencies/settings", "dest": "/agencies/settings.html" },
+    
+    // 🎉 EVENTS MODULE
+    { "src": "/events", "dest": "/events/index.html" },
+    { "src": "/events/", "dest": "/events/index.html" },
+    { "src": "/events/create", "dest": "/events/create.html" },
+    { "src": "/events/edit", "dest": "/events/edit.html" },
+    { "src": "/events/view", "dest": "/events/view.html" },
+    { "src": "/events/calendar", "dest": "/events/calendar.html" },
+    { "src": "/events/registrations", "dest": "/events/registrations.html" },
+    { "src": "/events/attendees", "dest": "/events/attendees.html" },
+    { "src": "/events/feedback", "dest": "/events/feedback.html" },
+    { "src": "/events/speakers", "dest": "/events/speakers.html" },
+    { "src": "/events/sponsors", "dest": "/events/sponsors.html" },
+    { "src": "/events/venues", "dest": "/events/venues.html" },
+    
+    // 📁 ASSETS
+    { "src": "/assets/(.*)", "dest": "/assets/$1" },
+    
+    // 📄 PROFILE & UTILITIES
+    { "src": "/profile", "dest": "/profile.html" },
+    { "src": "/admin/setup", "dest": "/admin/setup.html" },
+    
+    // 🔄 CATCH-ALL (must be last)
+    { "src": "/(.*)", "dest": "/$1" }
   ],
   "headers": [
     {
@@ -170,6 +143,10 @@
         {
           "key": "Strict-Transport-Security",
           "value": "max-age=63072000; includeSubDomains; preload"
+        },
+        {
+          "key": "Referrer-Policy",
+          "value": "strict-origin-when-cross-origin"
         }
       ]
     },
@@ -187,9 +164,6 @@
     "NEXT_PUBLIC_FIREBASE_API_KEY": "AIzaSyCOcCDPqRSlAMJJBEeNchTA1qO9tl9Nldw",
     "NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN": "xtaagc.firebaseapp.com",
     "NEXT_PUBLIC_FIREBASE_PROJECT_ID": "xtaagc",
-    "NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET": "xtaagc.appspot.com",
-    "NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID": "256073982437",
-    "NEXT_PUBLIC_FIREBASE_APP_ID": "1:256073982437:web:8da63bb7acc86c0ca98f0c",
     "NEXT_PUBLIC_API_URL": "https://api.taagc.website",
     "NODE_ENV": "production"
   },
