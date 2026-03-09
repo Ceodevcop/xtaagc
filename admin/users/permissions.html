@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>User Permissions - TAAGC Admin</title>
+    
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="/assets/css/admin.css">
+    <script src="/assets/js/admin.js" defer></script>
+    
+    <style>
+        .permission-matrix {
+            background: var(--white);
+            border-radius: var(--radius-lg);
+            overflow: hidden;
+        }
+        
+        .matrix-header {
+            display: grid;
+            grid-template-columns: 200px repeat(5, 1fr);
+            background: var(--primary);
+            color: white;
+            padding: var(--space-md);
+            font-weight: 600;
+        }
+        
+        .matrix-row {
+            display: grid;
+            grid-template-columns: 200px repeat(5, 1fr);
+            padding: var(--space-sm) var(--space-md);
+            border-bottom: 1px solid #e2e8f0;
+        }
+        
+        .matrix-row:hover {
+            background: var(--bg);
+        }
+        
+        .permission-category {
+            background: var(--bg);
+            padding: var(--space-md);
+            font-weight: 600;
+            color: var(--primary);
+            border-bottom: 2px solid var(--accent);
+        }
+    </style>
+</head>
+<body>
+    <div class="admin-container">
+        <!-- Sidebar -->
+        <aside class="sidebar">...</aside>
+
+        <main class="main-content">
+            <div class="top-bar">
+                <div class="page-title">
+                    <h1><i class="fas fa-shield-alt" style="color: var(--accent);"></i> User Permissions</h1>
+                    <p>Manage granular permissions for John Doe</p>
+                </div>
+                <div class="top-bar-actions">
+                    <button class="btn btn-primary" onclick="savePermissions()">
+                        <i class="fas fa-save"></i> Save Changes
+                    </button>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="permission-matrix">
+                    <div class="permission-category">User Management</div>
+                    
+                    <div class="matrix-header">
+                        <div>Permission</div>
+                        <div>View</div>
+                        <div>Create</div>
+                        <div>Edit</div>
+                        <div>Delete</div>
+                        <div>Approve</div>
+                    </div>
+                    
+                    <div class="matrix-row">
+                        <div>Users</div>
+                        <div><input type="checkbox" checked></div>
+                        <div><input type="checkbox" checked></div>
+                        <div><input type="checkbox" checked></div>
+                        <div><input type="checkbox"></div>
+                        <div><input type="checkbox"></div>
+                    </div>
+                    
+                    <div class="matrix-row">
+                        <div>Admins</div>
+                        <div><input type="checkbox"></div>
+                        <div><input type="checkbox"></div>
+                        <div><input type="checkbox"></div>
+                        <div><input type="checkbox"></div>
+                        <div><input type="checkbox"></div>
+                    </div>
+                    
+                    <div class="permission-category">Investment Management</div>
+                    
+                    <div class="matrix-row">
+                        <div>Investments</div>
+                        <div><input type="checkbox" checked></div>
+                        <div><input type="checkbox" checked></div>
+                        <div><input type="checkbox" checked></div>
+                        <div><input type="checkbox"></div>
+                        <div><input type="checkbox" checked></div>
+                    </div>
+                    
+                    <div class="matrix-row">
+                        <div>Projects</div>
+                        <div><input type="checkbox" checked></div>
+                        <div><input type="checkbox"></div>
+                        <div><input type="checkbox"></div>
+                        <div><input type="checkbox"></div>
+                        <div><input type="checkbox" checked></div>
+                    </div>
+                    
+                    <div class="permission-category">Financial Management</div>
+                    
+                    <div class="matrix-row">
+                        <div>Transactions</div>
+                        <div><input type="checkbox" checked></div>
+                        <div><input type="checkbox"></div>
+                        <div><input type="checkbox"></div>
+                        <div><input type="checkbox"></div>
+                        <div><input type="checkbox" checked></div>
+                    </div>
+                    
+                    <div class="matrix-row">
+                        <div>Withdrawals</div>
+                        <div><input type="checkbox" checked></div>
+                        <div><input type="checkbox"></div>
+                        <div><input type="checkbox"></div>
+                        <div><input type="checkbox"></div>
+                        <div><input type="checkbox" checked></div>
+                    </div>
+                    
+                    <div class="matrix-row">
+                        <div>Deposits</div>
+                        <div><input type="checkbox" checked></div>
+                        <div><input type="checkbox"></div>
+                        <div><input type="checkbox"></div>
+                        <div><input type="checkbox"></div>
+                        <div><input type="checkbox" checked></div>
+                    </div>
+                    
+                    <div class="permission-category">System Settings (Admin Only)</div>
+                    
+                    <div class="matrix-row">
+                        <div>Settings</div>
+                        <div><input type="checkbox"></div>
+                        <div><input type="checkbox"></div>
+                        <div><input type="checkbox"></div>
+                        <div><input type="checkbox"></div>
+                        <div><input type="checkbox"></div>
+                    </div>
+                    
+                    <div class="matrix-row">
+                        <div>API Keys</div>
+                        <div><input type="checkbox"></div>
+                        <div><input type="checkbox"></div>
+                        <div><input type="checkbox"></div>
+                        <div><input type="checkbox"></div>
+                        <div><input type="checkbox"></div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+</body>
+</html>
