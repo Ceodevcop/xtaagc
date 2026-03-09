@@ -1,0 +1,982 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>View Agency - TAAGC Admin</title>
+    
+    <!-- Fonts & Icons -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Assets -->
+    <link rel="stylesheet" href="/assets/css/admin.css">
+    <script src="/assets/js/admin.js" defer></script>
+    
+    <style>
+        .agency-profile-header {
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+            color: white;
+            padding: var(--space-xl);
+            border-radius: var(--radius-lg);
+            margin-bottom: var(--space-xl);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .agency-profile-header::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -10%;
+            width: 50%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 70%);
+        }
+        
+        .agency-logo-large {
+            width: 100px;
+            height: 100px;
+            background: rgba(255,255,255,0.2);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 40px;
+            margin-bottom: var(--space-md);
+        }
+        
+        .agency-name-large {
+            font-size: 36px;
+            font-weight: 700;
+            margin-bottom: var(--space-xs);
+        }
+        
+        .agency-meta-large {
+            display: flex;
+            gap: var(--space-lg);
+            opacity: 0.9;
+            font-size: 14px;
+            margin-bottom: var(--space-lg);
+        }
+        
+        .agency-stats-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: var(--space-lg);
+            margin-bottom: var(--space-xl);
+        }
+        
+        .agency-stat-card {
+            background: var(--white);
+            padding: var(--space-lg);
+            border-radius: var(--radius-lg);
+            border: 1px solid #e2e8f0;
+            text-align: center;
+        }
+        
+        .agency-stat-value {
+            font-size: 28px;
+            font-weight: 700;
+            color: var(--primary);
+            margin-bottom: var(--space-xs);
+        }
+        
+        .agency-stat-label {
+            color: var(--light);
+            font-size: 13px;
+        }
+        
+        .agency-stat-change {
+            font-size: 12px;
+            margin-top: var(--space-xs);
+        }
+        
+        .change-positive { color: var(--success); }
+        .change-negative { color: var(--danger); }
+        
+        .profile-tabs {
+            display: flex;
+            gap: var(--space-sm);
+            border-bottom: 2px solid #e2e8f0;
+            margin-bottom: var(--space-xl);
+        }
+        
+        .profile-tab {
+            padding: var(--space-md) var(--space-lg);
+            cursor: pointer;
+            font-weight: 600;
+            color: var(--light);
+            border-bottom: 2px solid transparent;
+            margin-bottom: -2px;
+        }
+        
+        .profile-tab.active {
+            color: var(--accent);
+            border-bottom-color: var(--accent);
+        }
+        
+        .info-section {
+            background: var(--white);
+            border-radius: var(--radius-lg);
+            padding: var(--space-xl);
+            border: 1px solid #e2e8f0;
+            margin-bottom: var(--space-xl);
+        }
+        
+        .info-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: var(--space-lg);
+        }
+        
+        .info-row {
+            display: flex;
+            padding: var(--space-sm) 0;
+            border-bottom: 1px solid #e2e8f0;
+        }
+        
+        .info-row:last-child {
+            border-bottom: none;
+        }
+        
+        .info-label {
+            width: 150px;
+            color: var(--light);
+            font-weight: 500;
+        }
+        
+        .info-value {
+            flex: 1;
+            color: var(--dark);
+            font-weight: 500;
+        }
+        
+        .tier-badge-large {
+            display: inline-block;
+            padding: 4px 16px;
+            border-radius: 30px;
+            font-size: 14px;
+            font-weight: 600;
+            color: white;
+        }
+        
+        .tier-platinum {
+            background: linear-gradient(135deg, #8b5cf6, #6d28d9);
+        }
+        
+        .tier-gold {
+            background: linear-gradient(135deg, #f59e0b, #d97706);
+        }
+        
+        .tier-silver {
+            background: linear-gradient(135deg, #94a3b8, #64748b);
+        }
+        
+        .tier-bronze {
+            background: linear-gradient(135deg, #b45309, #92400e);
+        }
+        
+        .status-badge-large {
+            display: inline-block;
+            padding: 4px 16px;
+            border-radius: 30px;
+            font-size: 14px;
+            font-weight: 600;
+        }
+        
+        .status-active {
+            background: rgba(16,185,129,0.1);
+            color: var(--success);
+            border: 1px solid var(--success);
+        }
+        
+        .contract-card-mini {
+            background: var(--bg);
+            border-radius: var(--radius-md);
+            padding: var(--space-md);
+            margin-bottom: var(--space-sm);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .contract-dates {
+            font-size: 12px;
+            color: var(--light);
+        }
+        
+        .contact-person {
+            display: flex;
+            align-items: center;
+            gap: var(--space-md);
+            padding: var(--space-md);
+            background: var(--bg);
+            border-radius: var(--radius-md);
+            margin-bottom: var(--space-sm);
+        }
+        
+        .contact-avatar {
+            width: 50px;
+            height: 50px;
+            background: var(--accent);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 20px;
+        }
+        
+        .performance-meter {
+            background: var(--bg);
+            border-radius: var(--radius-lg);
+            padding: var(--space-md);
+            margin-bottom: var(--space-sm);
+        }
+        
+        .meter-label {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: var(--space-xs);
+        }
+        
+        .meter-bar {
+            height: 8px;
+            background: #e2e8f0;
+            border-radius: 4px;
+            overflow: hidden;
+        }
+        
+        .meter-fill {
+            height: 100%;
+            background: var(--accent);
+            border-radius: 4px;
+            transition: width 0.3s;
+        }
+        
+        .recent-activity {
+            max-height: 400px;
+            overflow-y: auto;
+        }
+        
+        .activity-item {
+            display: flex;
+            gap: var(--space-md);
+            padding: var(--space-sm) 0;
+            border-bottom: 1px solid #e2e8f0;
+        }
+        
+        .activity-icon {
+            width: 36px;
+            height: 36px;
+            background: rgba(193,154,107,0.1);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--accent);
+        }
+        
+        .activity-content {
+            flex: 1;
+        }
+        
+        .activity-title {
+            font-weight: 600;
+            color: var(--dark);
+        }
+        
+        .activity-time {
+            font-size: 11px;
+            color: var(--light);
+        }
+        
+        .action-buttons {
+            position: sticky;
+            bottom: 30px;
+            right: 30px;
+            display: flex;
+            gap: var(--space-md);
+            justify-content: flex-end;
+            margin-top: var(--space-xl);
+        }
+    </style>
+</head>
+<body>
+    <div class="admin-container">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <div class="logo-icon">TA</div>
+                <h2><span>TAAGC</span> ADMIN</h2>
+            </div>
+
+            <div class="user-info">
+                <div class="user-avatar" data-user-avatar>A</div>
+                <div data-user-field="name">Loading...</div>
+                <div style="font-size: 12px; opacity: 0.7;" data-user-field="email"></div>
+                <span class="user-role" data-user-field="role"></span>
+            </div>
+
+            <nav class="nav-menu">
+                <div class="nav-section">MAIN</div>
+                <a href="/dashboard.html" class="nav-item"><i class="fas fa-tachometer-alt"></i> Dashboard</a>
+                <a href="/users/index.html" class="nav-item"><i class="fas fa-users"></i> Users</a>
+                <a href="/investments/index.html" class="nav-item"><i class="fas fa-chart-line"></i> Investments</a>
+                <a href="/transactions/index.html" class="nav-item"><i class="fas fa-exchange-alt"></i> Transactions</a>
+                <a href="/banks/index.html" class="nav-item"><i class="fas fa-university"></i> Banks</a>
+                <a href="/agencies/index.html" class="nav-item active"><i class="fas fa-building"></i> Agencies</a>
+            </nav>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <div class="top-bar">
+                <div class="page-title">
+                    <h1><i class="fas fa-building" style="color: var(--accent);"></i> Agency Profile</h1>
+                    <p>Complete agency information and performance</p>
+                </div>
+                <div class="top-bar-actions">
+                    <button class="btn btn-outline" onclick="location.href='/agencies/index.html'">
+                        <i class="fas fa-arrow-left"></i> Back to Agencies
+                    </button>
+                    <button class="logout-btn" id="logoutBtn"><i class="fas fa-sign-out-alt"></i></button>
+                </div>
+            </div>
+
+            <!-- Agency ID from URL -->
+            <div id="agencyId" style="display: none;">{{id}}</div>
+
+            <!-- Agency Profile Header -->
+            <div class="agency-profile-header" id="agencyHeader">
+                <div style="position: relative; z-index: 2;">
+                    <div class="agency-logo-large" id="agencyLogo">🏢</div>
+                    <div class="agency-name-large" id="agencyName">Global Marketing Solutions</div>
+                    <div class="agency-meta-large">
+                        <span><i class="fas fa-map-marker-alt"></i> <span id="agencyCountry">United States</span></span>
+                        <span><i class="fas fa-tag"></i> <span id="agencyCategory">Marketing Agency</span></span>
+                        <span><i class="fas fa-calendar"></i> Partner since <span id="agencyJoinDate">Jan 15, 2023</span></span>
+                    </div>
+                    <div class="flex gap-2">
+                        <span class="tier-badge-large tier-platinum" id="agencyTier">PLATINUM</span>
+                        <span class="status-badge-large status-active" id="agencyStatus">Active</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Agency Stats -->
+            <div class="agency-stats-grid">
+                <div class="agency-stat-card">
+                    <div class="agency-stat-value" id="statClients">45</div>
+                    <div class="agency-stat-label">Active Clients</div>
+                    <div class="agency-stat-change change-positive">↑ 8 this month</div>
+                </div>
+                <div class="agency-stat-card">
+                    <div class="agency-stat-value" id="statRevenue">$1.25M</div>
+                    <div class="agency-stat-label">Total Revenue</div>
+                    <div class="agency-stat-change change-positive">↑ 15.3%</div>
+                </div>
+                <div class="agency-stat-card">
+                    <div class="agency-stat-value" id="statCommissions">$187K</div>
+                    <div class="agency-stat-label">Commissions Earned</div>
+                    <div class="agency-stat-change change-positive">↑ 12.1%</div>
+                </div>
+                <div class="agency-stat-card">
+                    <div class="agency-stat-value" id="statPerformance">98%</div>
+                    <div class="agency-stat-label">Performance Score</div>
+                    <div class="agency-stat-change change-positive">↑ 2%</div>
+                </div>
+            </div>
+
+            <!-- Profile Tabs -->
+            <div class="profile-tabs">
+                <div class="profile-tab active" onclick="showTab('overview')">Overview</div>
+                <div class="profile-tab" onclick="showTab('contacts')">Contacts</div>
+                <div class="profile-tab" onclick="showTab('contracts')">Contracts</div>
+                <div class="profile-tab" onclick="showTab('performance')">Performance</div>
+                <div class="profile-tab" onclick="showTab('activity')">Activity Log</div>
+                <div class="profile-tab" onclick="showTab('settings')">Settings</div>
+            </div>
+
+            <!-- Overview Tab -->
+            <div id="overviewTab">
+                <div class="info-grid">
+                    <!-- Agency Information -->
+                    <div class="info-section">
+                        <h3 style="margin-bottom: var(--space-lg);"><i class="fas fa-info-circle"></i> Agency Information</h3>
+                        
+                        <div class="info-row">
+                            <span class="info-label">Full Name</span>
+                            <span class="info-value" id="detailFullName">Global Marketing Solutions</span>
+                        </div>
+                        <div class="info-row">
+                            <span class="info-label">Agency ID</span>
+                            <span class="info-value"><code id="detailAgencyId">AG-1001</code></span>
+                        </div>
+                        <div class="info-row">
+                            <span class="info-label">Category</span>
+                            <span class="info-value" id="detailCategory">Marketing Agency</span>
+                        </div>
+                        <div class="info-row">
+                            <span class="info-label">Tier</span>
+                            <span class="info-value" id="detailTier">Platinum</span>
+                        </div>
+                        <div class="info-row">
+                            <span class="info-label">Commission Rate</span>
+                            <span class="info-value" id="detailCommission">15%</span>
+                        </div>
+                        <div class="info-row">
+                            <span class="info-label">Payment Terms</span>
+                            <span class="info-value" id="detailPaymentTerms">Net 30</span>
+                        </div>
+                    </div>
+
+                    <!-- Contact Information -->
+                    <div class="info-section">
+                        <h3 style="margin-bottom: var(--space-lg);"><i class="fas fa-address-book"></i> Contact Information</h3>
+                        
+                        <div class="info-row">
+                            <span class="info-label">Primary Contact</span>
+                            <span class="info-value" id="detailContact">Sarah Johnson</span>
+                        </div>
+                        <div class="info-row">
+                            <span class="info-label">Email</span>
+                            <span class="info-value" id="detailEmail">sarah@globalmarketing.com</span>
+                        </div>
+                        <div class="info-row">
+                            <span class="info-label">Phone</span>
+                            <span class="info-value" id="detailPhone">+1-212-555-0123</span>
+                        </div>
+                        <div class="info-row">
+                            <span class="info-label">Website</span>
+                            <span class="info-value" id="detailWebsite">www.globalmarketing.com</span>
+                        </div>
+                        <div class="info-row">
+                            <span class="info-label">Tax ID</span>
+                            <span class="info-value" id="detailTaxId">12-3456789</span>
+                        </div>
+                    </div>
+
+                    <!-- Address -->
+                    <div class="info-section">
+                        <h3 style="margin-bottom: var(--space-lg);"><i class="fas fa-map-marker-alt"></i> Address</h3>
+                        
+                        <div class="info-row">
+                            <span class="info-label">Street</span>
+                            <span class="info-value" id="detailStreet">350 Madison Avenue</span>
+                        </div>
+                        <div class="info-row">
+                            <span class="info-label">City</span>
+                            <span class="info-value" id="detailCity">New York</span>
+                        </div>
+                        <div class="info-row">
+                            <span class="info-label">State</span>
+                            <span class="info-value" id="detailState">NY</span>
+                        </div>
+                        <div class="info-row">
+                            <span class="info-label">ZIP Code</span>
+                            <span class="info-value" id="detailZip">10017</span>
+                        </div>
+                        <div class="info-row">
+                            <span class="info-label">Country</span>
+                            <span class="info-value" id="detailCountry">USA</span>
+                        </div>
+                    </div>
+
+                    <!-- Bank Information -->
+                    <div class="info-section">
+                        <h3 style="margin-bottom: var(--space-lg);"><i class="fas fa-university"></i> Bank Information</h3>
+                        
+                        <div class="info-row">
+                            <span class="info-label">Bank Name</span>
+                            <span class="info-value" id="detailBankName">Chase Bank</span>
+                        </div>
+                        <div class="info-row">
+                            <span class="info-label">Account Holder</span>
+                            <span class="info-value" id="detailBankHolder">Global Marketing Solutions</span>
+                        </div>
+                        <div class="info-row">
+                            <span class="info-label">Account Number</span>
+                            <span class="info-value" id="detailBankAccount">••••••••1234</span>
+                        </div>
+                        <div class="info-row">
+                            <span class="info-label">Routing Number</span>
+                            <span class="info-value" id="detailBankRouting">021000021</span>
+                        </div>
+                        <div class="info-row">
+                            <span class="info-label">SWIFT/BIC</span>
+                            <span class="info-value" id="detailBankSwift">CHASUS33</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Recent Contracts -->
+                <div class="info-section">
+                    <div class="flex-between" style="margin-bottom: var(--space-lg);">
+                        <h3><i class="fas fa-file-contract"></i> Active Contracts</h3>
+                        <a href="/agencies/contracts.html?agency=global" class="btn btn-sm btn-outline">View All</a>
+                    </div>
+                    
+                    <div class="contract-card-mini">
+                        <div>
+                            <strong>Exclusive Marketing Agreement</strong>
+                            <div class="contract-dates">Jan 15, 2024 - Jan 14, 2025</div>
+                        </div>
+                        <span class="badge badge-success">Active</span>
+                    </div>
+                    
+                    <div class="contract-card-mini">
+                        <div>
+                            <strong>Referral Partnership</strong>
+                            <div class="contract-dates">Mar 1, 2024 - Feb 28, 2025</div>
+                        </div>
+                        <span class="badge badge-success">Active</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Contacts Tab -->
+            <div id="contactsTab" style="display: none;">
+                <div class="info-section">
+                    <div class="flex-between" style="margin-bottom: var(--space-lg);">
+                        <h3><i class="fas fa-users"></i> Agency Contacts</h3>
+                        <button class="btn btn-sm btn-primary" onclick="addContact()">
+                            <i class="fas fa-user-plus"></i> Add Contact
+                        </button>
+                    </div>
+                    
+                    <div id="contactsList">
+                        <div class="contact-person">
+                            <div class="contact-avatar">SJ</div>
+                            <div style="flex: 1;">
+                                <div><strong>Sarah Johnson</strong> · Primary Contact</div>
+                                <div style="font-size: 13px; color: var(--light);">
+                                    <i class="fas fa-envelope"></i> sarah@globalmarketing.com · 
+                                    <i class="fas fa-phone"></i> +1-212-555-0123
+                                </div>
+                            </div>
+                            <button class="btn btn-sm btn-outline" onclick="editContact('sarah')">
+                                <i class="fas fa-edit"></i>
+                            </button>
+                        </div>
+                        
+                        <div class="contact-person">
+                            <div class="contact-avatar">MD</div>
+                            <div style="flex: 1;">
+                                <div><strong>Michael Davis</strong> · Account Manager</div>
+                                <div style="font-size: 13px; color: var(--light);">
+                                    <i class="fas fa-envelope"></i> michael@globalmarketing.com · 
+                                    <i class="fas fa-phone"></i> +1-212-555-0456
+                                </div>
+                            </div>
+                            <button class="btn btn-sm btn-outline" onclick="editContact('michael')">
+                                <i class="fas fa-edit"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Contracts Tab -->
+            <div id="contractsTab" style="display: none;">
+                <div class="info-section">
+                    <div class="flex-between" style="margin-bottom: var(--space-lg);">
+                        <h3><i class="fas fa-file-contract"></i> All Contracts</h3>
+                        <button class="btn btn-sm btn-primary" onclick="addContract()">
+                            <i class="fas fa-plus"></i> New Contract
+                        </button>
+                    </div>
+                    
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Contract Name</th>
+                                <th>Type</th>
+                                <th>Start Date</th>
+                                <th>End Date</th>
+                                <th>Value</th>
+                                <th>Status</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>Exclusive Marketing Agreement</td>
+                                <td>Exclusive</td>
+                                <td>Jan 15, 2024</td>
+                                <td>Jan 14, 2025</td>
+                                <td>$1,250,000</td>
+                                <td><span class="badge badge-success">Active</span></td>
+                                <td>
+                                    <button class="btn btn-sm btn-outline"><i class="fas fa-eye"></i></button>
+                                    <button class="btn btn-sm btn-outline-accent"><i class="fas fa-edit"></i></button>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>Referral Partnership</td>
+                                <td>Non-Exclusive</td>
+                                <td>Mar 1, 2024</td>
+                                <td>Feb 28, 2025</td>
+                                <td>$500,000</td>
+                                <td><span class="badge badge-success">Active</span></td>
+                                <td>
+                                    <button class="btn btn-sm btn-outline"><i class="fas fa-eye"></i></button>
+                                    <button class="btn btn-sm btn-outline-accent"><i class="fas fa-edit"></i></button>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Performance Tab -->
+            <div id="performanceTab" style="display: none;">
+                <div class="grid-2">
+                    <div class="info-section">
+                        <h3 style="margin-bottom: var(--space-lg);"><i class="fas fa-chart-line"></i> Performance Metrics</h3>
+                        
+                        <div class="performance-meter">
+                            <div class="meter-label">
+                                <span>Client Acquisition</span>
+                                <span>94%</span>
+                            </div>
+                            <div class="meter-bar">
+                                <div class="meter-fill" style="width: 94%;"></div>
+                            </div>
+                        </div>
+                        
+                        <div class="performance-meter">
+                            <div class="meter-label">
+                                <span>Revenue Target</span>
+                                <span>87%</span>
+                            </div>
+                            <div class="meter-bar">
+                                <div class="meter-fill" style="width: 87%;"></div>
+                            </div>
+                        </div>
+                        
+                        <div class="performance-meter">
+                            <div class="meter-label">
+                                <span>Client Retention</span>
+                                <span>96%</span>
+                            </div>
+                            <div class="meter-bar">
+                                <div class="meter-fill" style="width: 96%;"></div>
+                            </div>
+                        </div>
+                        
+                        <div class="performance-meter">
+                            <div class="meter-label">
+                                <span>Response Time</span>
+                                <span>99%</span>
+                            </div>
+                            <div class="meter-bar">
+                                <div class="meter-fill" style="width: 99%;"></div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="info-section">
+                        <h3 style="margin-bottom: var(--space-lg);"><i class="fas fa-trophy"></i> Rankings</h3>
+                        
+                        <div class="info-row">
+                            <span class="info-label">Overall Rank</span>
+                            <span class="info-value">#3 of 24</span>
+                        </div>
+                        <div class="info-row">
+                            <span class="info-label">Category Rank</span>
+                            <span class="info-value">#1 in Marketing</span>
+                        </div>
+                        <div class="info-row">
+                            <span class="info-label">Growth Rate</span>
+                            <span class="info-value change-positive">+15.3%</span>
+                        </div>
+                        <div class="info-row">
+                            <span class="info-label">Quality Score</span>
+                            <span class="info-value">4.8/5.0</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Activity Tab -->
+            <div id="activityTab" style="display: none;">
+                <div class="info-section">
+                    <h3 style="margin-bottom: var(--space-lg);"><i class="fas fa-history"></i> Recent Activity</h3>
+                    
+                    <div class="recent-activity" id="activityList">
+                        <!-- Activity items will be loaded here -->
+                    </div>
+                </div>
+            </div>
+
+            <!-- Settings Tab -->
+            <div id="settingsTab" style="display: none;">
+                <div class="info-section">
+                    <h3 style="margin-bottom: var(--space-lg);"><i class="fas fa-cog"></i> Agency Settings</h3>
+                    
+                    <div class="form-group">
+                        <label class="checkbox">
+                            <input type="checkbox" id="autoNotify" checked>
+                            <span>Send automatic notifications for commission payments</span>
+                        </label>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="checkbox">
+                            <input type="checkbox" id="includeReports" checked>
+                            <span>Include in monthly performance reports</span>
+                        </label>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="checkbox">
+                            <input type="checkbox" id="portalAccess" checked>
+                            <span>Enable partner portal access</span>
+                        </label>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>Notification Email</label>
+                        <input type="email" class="form-control" value="partners@globalmarketing.com">
+                    </div>
+                    
+                    <button class="btn btn-primary" onclick="saveSettings()">
+                        <i class="fas fa-save"></i> Save Settings
+                    </button>
+                </div>
+                
+                <!-- Danger Zone -->
+                <div class="info-section" style="border-color: var(--danger);">
+                    <h3 style="color: var(--danger); margin-bottom: var(--space-lg);">Danger Zone</h3>
+                    
+                    <div class="flex-between" style="margin-bottom: var(--space-md);">
+                        <div>
+                            <strong>Suspend Agency</strong>
+                            <p style="color: var(--light); font-size: 13px;">Temporarily disable agency access</p>
+                        </div>
+                        <button class="btn btn-warning" onclick="suspendAgency()">
+                            <i class="fas fa-pause"></i> Suspend
+                        </button>
+                    </div>
+                    
+                    <div class="flex-between">
+                        <div>
+                            <strong>Terminate Partnership</strong>
+                            <p style="color: var(--light); font-size: 13px;">Permanently remove agency and all data</p>
+                        </div>
+                        <button class="btn btn-danger" onclick="deleteAgency()">
+                            <i class="fas fa-trash"></i> Terminate
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Action Buttons -->
+            <div class="action-buttons">
+                <button class="btn btn-primary" onclick="editAgency()">
+                    <i class="fas fa-edit"></i> Edit Agency
+                </button>
+                <button class="btn btn-outline-accent" onclick="manageCommissions()">
+                    <i class="fas fa-percent"></i> Commissions
+                </button>
+                <button class="btn btn-outline" onclick="generateReport()">
+                    <i class="fas fa-file-pdf"></i> Generate Report
+                </button>
+                <button class="btn btn-outline" onclick="sendMessage()">
+                    <i class="fas fa-envelope"></i> Send Message
+                </button>
+            </div>
+        </main>
+    </div>
+
+    <script>
+        // Get agency ID from URL
+        const urlParams = new URLSearchParams(window.location.search);
+        const agencyId = urlParams.get('id') || 'ag_1001';
+
+        // Mock agency data
+        const agencyData = {
+            id: agencyId,
+            name: 'Global Marketing Solutions',
+            category: 'Marketing Agency',
+            country: 'United States',
+            joinDate: '2023-01-15',
+            tier: 'platinum',
+            status: 'active',
+            contact: 'Sarah Johnson',
+            email: 'sarah@globalmarketing.com',
+            phone: '+1-212-555-0123',
+            website: 'www.globalmarketing.com',
+            taxId: '12-3456789',
+            commission: 15,
+            paymentTerms: 'Net 30',
+            address: {
+                street: '350 Madison Avenue',
+                city: 'New York',
+                state: 'NY',
+                zip: '10017',
+                country: 'USA'
+            },
+            bank: {
+                name: 'Chase Bank',
+                holder: 'Global Marketing Solutions',
+                account: '••••••••1234',
+                routing: '021000021',
+                swift: 'CHASUS33'
+            },
+            stats: {
+                clients: 45,
+                revenue: 1250000,
+                commissions: 187500,
+                performance: 98
+            },
+            activity: [
+                { action: 'Agency profile updated', timestamp: '2024-03-08T10:30:00', user: 'Admin' },
+                { action: 'Commission payment processed: $15,234', timestamp: '2024-03-07T14:20:00', user: 'System' },
+                { action: 'New contract signed: Exclusive Marketing Agreement', timestamp: '2024-03-05T09:15:00', user: 'Admin' },
+                { action: 'Agency tier upgraded to Platinum', timestamp: '2024-03-01T11:00:00', user: 'System' }
+            ]
+        };
+
+        document.addEventListener('DOMContentLoaded', () => {
+            if (!TAAGC.auth.isAuthenticated()) {
+                window.location.href = '/';
+                return;
+            }
+            
+            TAAGC.auth.updateUI();
+            loadAgencyData();
+            loadActivity();
+        });
+
+        function loadAgencyData() {
+            // Update header
+            document.getElementById('agencyName').textContent = agencyData.name;
+            document.getElementById('agencyCountry').textContent = agencyData.country;
+            document.getElementById('agencyCategory').textContent = agencyData.category;
+            document.getElementById('agencyJoinDate').textContent = TAAGC.data.formatDate(agencyData.joinDate);
+            
+            const tierElement = document.getElementById('agencyTier');
+            tierElement.textContent = agencyData.tier.toUpperCase();
+            tierElement.className = `tier-badge-large tier-${agencyData.tier}`;
+            
+            const statusElement = document.getElementById('agencyStatus');
+            statusElement.textContent = agencyData.status;
+            statusElement.className = `status-badge-large status-${agencyData.status}`;
+            
+            // Update stats
+            document.getElementById('statClients').textContent = agencyData.stats.clients;
+            document.getElementById('statRevenue').textContent = '$' + (agencyData.stats.revenue/1000000).toFixed(2) + 'M';
+            document.getElementById('statCommissions').textContent = '$' + (agencyData.stats.commissions/1000).toFixed(0) + 'K';
+            document.getElementById('statPerformance').textContent = agencyData.stats.performance + '%';
+            
+            // Update details
+            document.getElementById('detailFullName').textContent = agencyData.name;
+            document.getElementById('detailAgencyId').textContent = agencyId;
+            document.getElementById('detailCategory').textContent = agencyData.category;
+            document.getElementById('detailTier').textContent = agencyData.tier;
+            document.getElementById('detailCommission').textContent = agencyData.commission + '%';
+            document.getElementById('detailPaymentTerms').textContent = agencyData.paymentTerms;
+            document.getElementById('detailContact').textContent = agencyData.contact;
+            document.getElementById('detailEmail').textContent = agencyData.email;
+            document.getElementById('detailPhone').textContent = agencyData.phone;
+            document.getElementById('detailWebsite').textContent = agencyData.website;
+            document.getElementById('detailTaxId').textContent = agencyData.taxId;
+            
+            // Address
+            document.getElementById('detailStreet').textContent = agencyData.address.street;
+            document.getElementById('detailCity').textContent = agencyData.address.city;
+            document.getElementById('detailState').textContent = agencyData.address.state;
+            document.getElementById('detailZip').textContent = agencyData.address.zip;
+            document.getElementById('detailCountry').textContent = agencyData.address.country;
+            
+            // Bank
+            document.getElementById('detailBankName').textContent = agencyData.bank.name;
+            document.getElementById('detailBankHolder').textContent = agencyData.bank.holder;
+            document.getElementById('detailBankAccount').textContent = agencyData.bank.account;
+            document.getElementById('detailBankRouting').textContent = agencyData.bank.routing;
+            document.getElementById('detailBankSwift').textContent = agencyData.bank.swift;
+        }
+
+        function loadActivity() {
+            const container = document.getElementById('activityList');
+            
+            container.innerHTML = agencyData.activity.map(item => `
+                <div class="activity-item">
+                    <div class="activity-icon">
+                        <i class="fas fa-history"></i>
+                    </div>
+                    <div class="activity-content">
+                        <div class="activity-title">${item.action}</div>
+                        <div class="activity-time">${TAAGC.data.timeAgo(item.timestamp)} by ${item.user}</div>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function showTab(tabName) {
+            document.querySelectorAll('.profile-tab').forEach(tab => tab.classList.remove('active'));
+            event.target.classList.add('active');
+            
+            document.getElementById('overviewTab').style.display = tabName === 'overview' ? 'block' : 'none';
+            document.getElementById('contactsTab').style.display = tabName === 'contacts' ? 'block' : 'none';
+            document.getElementById('contractsTab').style.display = tabName === 'contracts' ? 'block' : 'none';
+            document.getElementById('performanceTab').style.display = tabName === 'performance' ? 'block' : 'none';
+            document.getElementById('activityTab').style.display = tabName === 'activity' ? 'block' : 'none';
+            document.getElementById('settingsTab').style.display = tabName === 'settings' ? 'block' : 'none';
+        }
+
+        function editAgency() {
+            location.href = `/agencies/edit.html?id=${agencyId}`;
+        }
+
+        function manageCommissions() {
+            location.href = `/agencies/commissions.html?agency=${agencyId}`;
+        }
+
+        function addContact() {
+            TAAGC.ui.showToast('Add contact feature coming soon', 'info');
+        }
+
+        function editContact(name) {
+            TAAGC.ui.showToast(`Editing ${name}`, 'info');
+        }
+
+        function addContract() {
+            TAAGC.ui.showToast('Add contract feature coming soon', 'info');
+        }
+
+        function generateReport() {
+            TAAGC.ui.showToast('Generating agency report...', 'info');
+        }
+
+        function sendMessage() {
+            TAAGC.ui.showToast('Message feature coming soon', 'info');
+        }
+
+        function saveSettings() {
+            TAAGC.ui.showToast('Settings saved', 'success');
+        }
+
+        function suspendAgency() {
+            TAAGC.ui.confirm('Suspend this agency?', () => {
+                TAAGC.ui.showToast('Agency suspended', 'warning');
+            });
+        }
+
+        function deleteAgency() {
+            if (!TAAGC.auth.isSuperAdmin()) {
+                TAAGC.ui.showToast('Only super admins can delete agencies', 'error');
+                return;
+            }
+            
+            TAAGC.ui.confirm('Permanently delete this agency? This action cannot be undone!', () => {
+                TAAGC.ui.showToast('Agency deleted', 'success');
+                setTimeout(() => location.href = '/agencies/index.html', 1500);
+            });
+        }
+    </script>
+</body>
+</html>
