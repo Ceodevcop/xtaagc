@@ -1,0 +1,496 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Agency Payments - TAAGC Admin</title>
+    
+    <!-- Fonts & Icons -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Assets -->
+    <link rel="stylesheet" href="/assets/css/admin.css">
+    <script src="/assets/js/admin.js" defer></script>
+    
+    <style>
+        .payments-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: var(--space-xl);
+        }
+        
+        .payment-summary {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: var(--space-lg);
+            margin-bottom: var(--space-xl);
+        }
+        
+        .payment-card {
+            background: var(--white);
+            border-radius: var(--radius-lg);
+            padding: var(--space-lg);
+            border: 1px solid #e2e8f0;
+        }
+        
+        .payment-value {
+            font-size: 28px;
+            font-weight: 700;
+            color: var(--primary);
+            margin: var(--space-xs) 0;
+        }
+        
+        .payment-label {
+            color: var(--light);
+            font-size: 13px;
+        }
+        
+        .payment-trend {
+            font-size: 12px;
+            margin-top: var(--space-xs);
+        }
+        
+        .payment-filters {
+            background: var(--white);
+            border-radius: var(--radius-lg);
+            padding: var(--space-lg);
+            margin-bottom: var(--space-xl);
+            border: 1px solid #e2e8f0;
+        }
+        
+        .filter-row {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: var(--space-md);
+            margin-bottom: var(--space-md);
+        }
+        
+        .payment-table {
+            background: var(--white);
+            border-radius: var(--radius-lg);
+            padding: var(--space-lg);
+            border: 1px solid #e2e8f0;
+        }
+        
+        .payment-status {
+            display: inline-block;
+            padding: 4px 8px;
+            border-radius: 20px;
+            font-size: 11px;
+            font-weight: 600;
+        }
+        
+        .status-paid {
+            background: rgba(16,185,129,0.1);
+            color: var(--success);
+        }
+        
+        .status-pending {
+            background: rgba(245,158,11,0.1);
+            color: var(--warning);
+        }
+        
+        .status-processing {
+            background: rgba(59,130,246,0.1);
+            color: var(--info);
+        }
+        
+        .status-failed {
+            background: rgba(229,62,62,0.1);
+            color: var(--danger);
+        }
+        
+        .payment-method-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            padding: 2px 8px;
+            background: var(--bg);
+            border-radius: 12px;
+            font-size: 11px;
+        }
+        
+        .bulk-payment-bar {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            background: var(--primary);
+            color: white;
+            padding: var(--space-md) var(--space-lg);
+            border-radius: 50px;
+            box-shadow: var(--shadow-xl);
+            display: none;
+            align-items: center;
+            gap: var(--space-md);
+            z-index: 1000;
+        }
+        
+        .bulk-payment-bar.active {
+            display: flex;
+        }
+        
+        .schedule-payment {
+            background: var(--bg);
+            border-radius: var(--radius-lg);
+            padding: var(--space-lg);
+            margin-top: var(--space-xl);
+        }
+        
+        .reconciliation-note {
+            display: flex;
+            align-items: center;
+            gap: var(--space-sm);
+            padding: var(--space-sm) var(--space-md);
+            background: rgba(59,130,246,0.1);
+            border-radius: var(--radius-md);
+            color: var(--info);
+            font-size: 13px;
+            margin-top: var(--space-sm);
+        }
+    </style>
+</head>
+<body>
+    <div class="admin-container">
+        <!-- Sidebar -->
+        <aside class="sidebar">...</aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <div class="top-bar">
+                <div class="page-title">
+                    <h1><i class="fas fa-money-bill" style="color: var(--accent);"></i> Agency Payments</h1>
+                    <p>Manage commission payouts and payment history</p>
+                </div>
+                <div class="top-bar-actions">
+                    <button class="btn btn-primary" onclick="processBulkPayment()">
+                        <i class="fas fa-play"></i> Process Payments
+                    </button>
+                    <button class="btn btn-outline" onclick="schedulePayment()">
+                        <i class="fas fa-calendar"></i> Schedule
+                    </button>
+                    <button class="logout-btn" id="logoutBtn"><i class="fas fa-sign-out-alt"></i></button>
+                </div>
+            </div>
+
+            <!-- Payment Summary -->
+            <div class="payment-summary">
+                <div class="payment-card">
+                    <div class="payment-label">Total Paid (MTD)</div>
+                    <div class="payment-value">$89,234</div>
+                    <div class="payment-trend change-positive">↑ 12.3% vs last month</div>
+                </div>
+                <div class="payment-card">
+                    <div class="payment-label">Pending Payments</div>
+                    <div class="payment-value">$28,456</div>
+                    <div class="payment-trend">12 agencies</div>
+                </div>
+                <div class="payment-card">
+                    <div class="payment-label">Processing</div>
+                    <div class="payment-value">$15,678</div>
+                    <div class="payment-trend">5 transactions</div>
+                </div>
+                <div class="payment-card">
+                    <div class="payment-label">Next Payout</div>
+                    <div class="payment-value">$34,567</div>
+                    <div class="payment-trend">Due Mar 15, 2024</div>
+                </div>
+            </div>
+
+            <!-- Filters -->
+            <div class="payment-filters">
+                <div class="filter-row">
+                    <div class="form-group">
+                        <label>Date Range</label>
+                        <div class="flex gap-2">
+                            <input type="date" class="form-control" value="2024-03-01">
+                            <input type="date" class="form-control" value="2024-03-09">
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>Agency</label>
+                        <select class="form-control">
+                            <option>All Agencies</option>
+                            <option>Global Marketing Solutions</option>
+                            <option>TechPartners Inc</option>
+                            <option>Asia Pacific Consulting</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>Payment Status</label>
+                        <select class="form-control">
+                            <option>All Status</option>
+                            <option>Paid</option>
+                            <option>Pending</option>
+                            <option>Processing</option>
+                            <option>Failed</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>Payment Method</label>
+                        <select class="form-control">
+                            <option>All Methods</option>
+                            <option>Bank Transfer</option>
+                            <option>Wire Transfer</option>
+                            <option>Check</option>
+                            <option>PayPal</option>
+                        </select>
+                    </div>
+                </div>
+                
+                <div class="flex-between">
+                    <div class="flex gap-2">
+                        <button class="btn btn-primary">Apply Filters</button>
+                        <button class="btn btn-outline">Reset</button>
+                    </div>
+                    <div class="flex gap-2">
+                        <button class="btn btn-outline" onclick="exportPayments()">
+                            <i class="fas fa-download"></i> Export
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Payments Table -->
+            <div class="payment-table">
+                <table>
+                    <thead>
+                        <tr>
+                            <th width="30"><input type="checkbox" id="selectAll"></th>
+                            <th>Payment ID</th>
+                            <th>Agency</th>
+                            <th>Period</th>
+                            <th>Amount</th>
+                            <th>Commission</th>
+                            <th>Payment Method</th>
+                            <th>Status</th>
+                            <th>Date</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="paymentsBody">
+                        <!-- Payment rows will be loaded here -->
+                    </tbody>
+                </table>
+                
+                <!-- Pagination -->
+                <div class="flex-center" style="margin-top: var(--space-xl);">
+                    <div class="pagination">
+                        <button class="page-link"><i class="fas fa-chevron-left"></i></button>
+                        <button class="page-link active">1</button>
+                        <button class="page-link">2</button>
+                        <button class="page-link">3</button>
+                        <button class="page-link">4</button>
+                        <button class="page-link">5</button>
+                        <span class="page-link">...</span>
+                        <button class="page-link">8</button>
+                        <button class="page-link"><i class="fas fa-chevron-right"></i></button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Schedule Payment -->
+            <div class="schedule-payment">
+                <h3 style="margin-bottom: var(--space-lg);">Schedule Future Payment</h3>
+                
+                <div class="grid-3">
+                    <div class="form-group">
+                        <label>Agency</label>
+                        <select class="form-control">
+                            <option>Select Agency</option>
+                            <option>Global Marketing Solutions</option>
+                            <option>TechPartners Inc</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>Amount</label>
+                        <input type="number" class="form-control" placeholder="Enter amount">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>Payment Date</label>
+                        <input type="date" class="form-control" value="2024-03-15">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>Payment Method</label>
+                        <select class="form-control">
+                            <option>Bank Transfer</option>
+                            <option>Wire Transfer</option>
+                            <option>Check</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>Reference</label>
+                        <input type="text" class="form-control" placeholder="Payment reference">
+                    </div>
+                    
+                    <div class="form-group">
+                        <button class="btn btn-primary" style="margin-top: 24px;">
+                            <i class="fas fa-calendar-plus"></i> Schedule Payment
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Reconciliation Note -->
+            <div class="reconciliation-note">
+                <i class="fas fa-info-circle"></i>
+                <span>All payments are reconciled with bank statements. Last reconciliation: March 9, 2024</span>
+            </div>
+
+            <!-- Bulk Payment Bar -->
+            <div class="bulk-payment-bar" id="bulkPaymentBar">
+                <span><span id="selectedCount">0</span> payments selected</span>
+                <div class="flex gap-2">
+                    <button class="btn btn-sm btn-success" onclick="bulkProcess()">
+                        <i class="fas fa-play"></i> Process
+                    </button>
+                    <button class="btn btn-sm btn-warning" onclick="bulkHold()">
+                        <i class="fas fa-pause"></i> Hold
+                    </button>
+                    <button class="btn btn-sm btn-outline" onclick="cancelBulk()">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script>
+        function generateMockPayments() {
+            const agencies = [
+                { name: 'Global Marketing Solutions', id: 'AG-1001' },
+                { name: 'TechPartners Inc', id: 'AG-1002' },
+                { name: 'Asia Pacific Consulting', id: 'AG-1003' },
+                { name: 'SalesForce Partners', id: 'AG-1004' },
+                { name: 'European Investment Partners', id: 'AG-1005' }
+            ];
+            
+            const payments = [];
+            const statuses = ['paid', 'pending', 'processing', 'failed'];
+            const methods = ['Bank Transfer', 'Wire Transfer', 'Check', 'PayPal'];
+            
+            for (let i = 0; i < 15; i++) {
+                const agency = agencies[Math.floor(Math.random() * agencies.length)];
+                const amount = Math.floor(Math.random() * 25000) + 5000;
+                const commission = amount * 0.15;
+                const status = statuses[Math.floor(Math.random() * statuses.length)];
+                const method = methods[Math.floor(Math.random() * methods.length)];
+                const date = new Date();
+                date.setDate(date.getDate() - Math.floor(Math.random() * 30));
+                
+                const statusClass = {
+                    'paid': 'status-paid',
+                    'pending': 'status-pending',
+                    'processing': 'status-processing',
+                    'failed': 'status-failed'
+                }[status];
+                
+                payments.push(`
+                    <tr>
+                        <td><input type="checkbox" class="payment-checkbox" value="PMT${1000 + i}"></td>
+                        <td><code>PMT${1000 + i}</code></td>
+                        <td>
+                            <div><strong>${agency.name}</strong></div>
+                            <small style="color: var(--light);">${agency.id}</small>
+                        </td>
+                        <td>March 2024</td>
+                        <td><strong>$${amount.toLocaleString()}</strong></td>
+                        <td>$${commission.toLocaleString()}</td>
+                        <td>
+                            <span class="payment-method-badge">
+                                <i class="fas ${method === 'Bank Transfer' ? 'fa-university' : method === 'Wire Transfer' ? 'fa-bolt' : method === 'Check' ? 'fa-money-check' : 'fa-paypal'}"></i>
+                                ${method}
+                            </span>
+                        </td>
+                        <td><span class="payment-status ${statusClass}">${status}</span></td>
+                        <td>${TAAGC.data.formatDate(date)}</td>
+                        <td>
+                            <div class="flex gap-1">
+                                <button class="btn btn-sm btn-outline" onclick="viewPayment('PMT${1000 + i}')" title="View">
+                                    <i class="fas fa-eye"></i>
+                                </button>
+                                <button class="btn btn-sm btn-outline-accent" onclick="processPayment('PMT${1000 + i}')" title="Process">
+                                    <i class="fas fa-play"></i>
+                                </button>
+                                <button class="btn btn-sm btn-outline" onclick="receiptPayment('PMT${1000 + i}')" title="Receipt">
+                                    <i class="fas fa-receipt"></i>
+                                </button>
+                            </div>
+                        </td>
+                    </tr>
+                `);
+            }
+            
+            return payments.join('');
+        }
+
+        function loadPayments() {
+            document.getElementById('paymentsBody').innerHTML = generateMockPayments();
+        }
+
+        function processBulkPayment() {
+            TAAGC.ui.showToast('Processing bulk payments...', 'info');
+        }
+
+        function schedulePayment() {
+            TAAGC.ui.showToast('Schedule payment feature', 'info');
+        }
+
+        function viewPayment(id) {
+            TAAGC.ui.showToast(`Viewing payment ${id}`, 'info');
+        }
+
+        function processPayment(id) {
+            TAAGC.ui.showToast(`Processing payment ${id}`, 'info');
+        }
+
+        function receiptPayment(id) {
+            TAAGC.ui.showToast(`Generating receipt for ${id}`, 'info');
+        }
+
+        function exportPayments() {
+            TAAGC.ui.showToast('Exporting payment data...', 'info');
+        }
+
+        // Bulk actions
+        document.getElementById('selectAll').addEventListener('change', function(e) {
+            document.querySelectorAll('.payment-checkbox').forEach(cb => {
+                cb.checked = e.target.checked;
+            });
+            updateSelectedCount();
+        });
+
+        function updateSelectedCount() {
+            const count = document.querySelectorAll('.payment-checkbox:checked').length;
+            document.getElementById('selectedCount').textContent = count;
+            document.getElementById('bulkPaymentBar').classList.toggle('active', count > 0);
+        }
+
+        function bulkProcess() {
+            TAAGC.ui.showToast('Processing selected payments', 'success');
+            cancelBulk();
+        }
+
+        function bulkHold() {
+            TAAGC.ui.showToast('Selected payments placed on hold', 'warning');
+            cancelBulk();
+        }
+
+        function cancelBulk() {
+            document.querySelectorAll('.payment-checkbox').forEach(cb => cb.checked = false);
+            document.getElementById('selectAll').checked = false;
+            document.getElementById('bulkPaymentBar').classList.remove('active');
+        }
+
+        loadPayments();
+    </script>
+</body>
+</html>
