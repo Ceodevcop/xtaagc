@@ -650,6 +650,61 @@ document.getElementById('loginForm').addEventListener('submit', async (e) => {
         document.getElementById('notificationBell')?.addEventListener('click', () => {
             TAAGC.ui.showToast('You have 3 unread notifications', 'info');
         });
+
+        document.addEventListener('DOMContentLoaded', async () => {
+    console.log('1. Dashboard loading...');
+    console.log('2. Current URL:', window.location.href);
+    
+    // Check what tokens exist
+    const localToken = localStorage.getItem('adminToken');
+    const sessionToken = sessionStorage.getItem('adminToken');
+    const localUser = localStorage.getItem('adminUser');
+    const sessionUser = sessionStorage.getItem('adminUser');
+    
+    console.log('3. localStorage token:', localToken ? 'Present' : 'Missing');
+    console.log('4. sessionStorage token:', sessionToken ? 'Present' : 'Missing');
+    console.log('5. localStorage user:', localUser ? 'Present' : 'Missing');
+    console.log('6. sessionStorage user:', sessionUser ? 'Present' : 'Missing');
+    
+    // Check TAAGC object
+    console.log('7. TAAGC.auth methods:', {
+        isAuthenticated: typeof TAAGC.auth.isAuthenticated,
+        requireAuth: typeof TAAGC.auth.requireAuth,
+        verifyToken: typeof TAAGC.auth.verifyToken
+    });
+    
+    // Try sync check first
+    const syncCheck = TAAGC.auth.isAuthenticated();
+    console.log('8. Sync auth check:', syncCheck);
+    
+    if (!syncCheck) {
+        console.log('9. No token found, redirecting to login');
+        window.location.href = '/';
+        return;
+    }
+    
+    // Try async verification
+    try {
+        console.log('10. Verifying token...');
+        const isValid = await TAAGC.auth.verifyToken();
+        console.log('11. Token valid:', isValid);
+        
+        if (!isValid) {
+            console.log('12. Token invalid, redirecting to login');
+            window.location.href = '/';
+            return;
+        }
+        
+        console.log('13. Authentication successful, loading dashboard');
+        TAAGC.auth.updateUI();
+        
+        // Rest of your dashboard code...
+        
+    } catch (error) {
+        console.error('14. Auth error:', error);
+        window.location.href = '/';
+    }
+});
     </script>
 </body>
 </html>
