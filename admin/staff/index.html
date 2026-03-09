@@ -1,0 +1,678 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Staff Management - TAAGC Admin</title>
+    
+    <!-- Fonts & Icons -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Assets -->
+    <link rel="stylesheet" href="/assets/css/admin.css">
+    <script src="/assets/js/admin.js" defer></script>
+    
+    <style>
+        .staff-filters {
+            background: var(--white);
+            border-radius: var(--radius-lg);
+            padding: var(--space-lg);
+            margin-bottom: var(--space-xl);
+            border: 1px solid #e2e8f0;
+        }
+        
+        .filter-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: var(--space-md);
+            margin-bottom: var(--space-md);
+        }
+        
+        .stats-cards {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: var(--space-lg);
+            margin-bottom: var(--space-xl);
+        }
+        
+        .stat-card {
+            background: var(--white);
+            padding: var(--space-lg);
+            border-radius: var(--radius-lg);
+            border: 1px solid #e2e8f0;
+        }
+        
+        .stat-icon {
+            width: 48px;
+            height: 48px;
+            background: rgba(193,154,107,0.1);
+            border-radius: var(--radius-md);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--accent);
+            font-size: 20px;
+            margin-bottom: var(--space-md);
+        }
+        
+        .stat-value {
+            font-size: 28px;
+            font-weight: 700;
+            color: var(--primary);
+            margin-bottom: var(--space-xs);
+        }
+        
+        .stat-label {
+            color: var(--light);
+            font-size: 13px;
+        }
+        
+        .staff-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: var(--space-lg);
+        }
+        
+        .staff-card {
+            background: var(--white);
+            border-radius: var(--radius-lg);
+            border: 1px solid #e2e8f0;
+            overflow: hidden;
+            transition: all 0.3s;
+        }
+        
+        .staff-card:hover {
+            transform: translateY(-5px);
+            box-shadow: var(--shadow-lg);
+            border-color: var(--accent);
+        }
+        
+        .staff-header {
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+            color: white;
+            padding: var(--space-lg);
+            position: relative;
+        }
+        
+        .staff-avatar {
+            width: 80px;
+            height: 80px;
+            background: rgba(255,255,255,0.2);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 32px;
+            margin: 0 auto var(--space-md);
+            border: 3px solid rgba(255,255,255,0.3);
+        }
+        
+        .staff-name {
+            font-size: 18px;
+            font-weight: 700;
+            text-align: center;
+            margin-bottom: var(--space-xs);
+        }
+        
+        .staff-position {
+            font-size: 13px;
+            opacity: 0.9;
+            text-align: center;
+        }
+        
+        .staff-body {
+            padding: var(--space-lg);
+        }
+        
+        .staff-info-row {
+            display: flex;
+            align-items: center;
+            gap: var(--space-sm);
+            padding: var(--space-xs) 0;
+            color: var(--dark);
+            font-size: 13px;
+        }
+        
+        .staff-info-row i {
+            width: 20px;
+            color: var(--accent);
+        }
+        
+        .staff-footer {
+            padding: var(--space-lg);
+            background: var(--bg);
+            border-top: 1px solid #e2e8f0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .staff-badge {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 11px;
+            font-weight: 600;
+        }
+        
+        .badge-fulltime {
+            background: rgba(16,185,129,0.1);
+            color: var(--success);
+        }
+        
+        .badge-parttime {
+            background: rgba(245,158,11,0.1);
+            color: var(--warning);
+        }
+        
+        .badge-contract {
+            background: rgba(59,130,246,0.1);
+            color: var(--info);
+        }
+        
+        .badge-intern {
+            background: rgba(139,92,246,0.1);
+            color: var(--purple);
+        }
+        
+        .status-dot {
+            display: inline-block;
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            margin-right: 4px;
+        }
+        
+        .status-active {
+            background: var(--success);
+        }
+        
+        .status-away {
+            background: var(--warning);
+        }
+        
+        .status-offline {
+            background: var(--light);
+        }
+        
+        .status-onleave {
+            background: var(--danger);
+        }
+        
+        .quick-actions {
+            display: flex;
+            gap: var(--space-sm);
+            margin-top: var(--space-xl);
+        }
+        
+        .quick-action-btn {
+            flex: 1;
+            padding: var(--space-md);
+            background: var(--white);
+            border: 1px solid #e2e8f0;
+            border-radius: var(--radius-md);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: var(--space-sm);
+            color: var(--dark);
+            text-decoration: none;
+            transition: all 0.3s;
+        }
+        
+        .quick-action-btn:hover {
+            border-color: var(--accent);
+            color: var(--accent);
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-md);
+        }
+        
+        .department-tag {
+            display: inline-block;
+            padding: 2px 8px;
+            background: var(--bg);
+            border-radius: 12px;
+            font-size: 10px;
+            color: var(--light);
+            margin-right: 4px;
+        }
+    </style>
+</head>
+<body>
+    <div class="admin-container">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <div class="logo-icon">TA</div>
+                <h2><span>TAAGC</span> ADMIN</h2>
+            </div>
+
+            <div class="user-info">
+                <div class="user-avatar" data-user-avatar>A</div>
+                <div data-user-field="name">Loading...</div>
+                <div style="font-size: 12px; opacity: 0.7;" data-user-field="email"></div>
+                <span class="user-role" data-user-field="role"></span>
+            </div>
+
+            <nav class="nav-menu">
+                <div class="nav-section">MAIN</div>
+                <a href="/dashboard.html" class="nav-item"><i class="fas fa-tachometer-alt"></i> Dashboard</a>
+                <a href="/users/index.html" class="nav-item"><i class="fas fa-users"></i> Users</a>
+                <a href="/investments/index.html" class="nav-item"><i class="fas fa-chart-line"></i> Investments</a>
+                <a href="/transactions/index.html" class="nav-item"><i class="fas fa-exchange-alt"></i> Transactions</a>
+                <a href="/banks/index.html" class="nav-item"><i class="fas fa-university"></i> Banks</a>
+                <a href="/agencies/index.html" class="nav-item"><i class="fas fa-building"></i> Agencies</a>
+                <a href="/staff/index.html" class="nav-item active"><i class="fas fa-user-tie"></i> Staff</a>
+                
+                <div class="nav-divider"></div>
+                <div class="nav-section">HR MANAGEMENT</div>
+                <a href="/staff/schedule.html" class="nav-item">
+                    <i class="fas fa-calendar-alt"></i> Schedule
+                </a>
+                <a href="/staff/attendance.html" class="nav-item">
+                    <i class="fas fa-clock"></i> Attendance
+                </a>
+                <a href="/staff/leave.html" class="nav-item">
+                    <i class="fas fa-umbrella-beach"></i> Leave
+                </a>
+                <a href="/staff/payroll.html" class="nav-item">
+                    <i class="fas fa-money-bill-wave"></i> Payroll
+                </a>
+                <a href="/staff/performance.html" class="nav-item">
+                    <i class="fas fa-chart-line"></i> Performance
+                </a>
+                <a href="/staff/departments.html" class="nav-item">
+                    <i class="fas fa-sitemap"></i> Departments
+                </a>
+            </nav>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <div class="top-bar">
+                <div class="page-title">
+                    <h1><i class="fas fa-user-tie" style="color: var(--accent);"></i> Staff Management</h1>
+                    <p>Manage employees, schedules, and performance</p>
+                </div>
+                <div class="top-bar-actions">
+                    <button class="btn btn-primary" onclick="location.href='/staff/create.html'">
+                        <i class="fas fa-plus"></i> Add Staff
+                    </button>
+                    <button class="btn btn-outline" onclick="exportStaff()">
+                        <i class="fas fa-download"></i> Export
+                    </button>
+                    <button class="logout-btn" id="logoutBtn"><i class="fas fa-sign-out-alt"></i></button>
+                </div>
+            </div>
+
+            <!-- Quick Actions -->
+            <div class="quick-actions">
+                <a href="/staff/schedule.html" class="quick-action-btn">
+                    <i class="fas fa-calendar-alt"></i> Schedule
+                </a>
+                <a href="/staff/attendance.html" class="quick-action-btn">
+                    <i class="fas fa-clock"></i> Attendance
+                </a>
+                <a href="/staff/leave.html" class="quick-action-btn">
+                    <i class="fas fa-umbrella-beach"></i> Leave Requests
+                </a>
+                <a href="/staff/payroll.html" class="quick-action-btn">
+                    <i class="fas fa-money-bill-wave"></i> Payroll
+                </a>
+            </div>
+
+            <!-- Stats Cards -->
+            <div class="stats-cards">
+                <div class="stat-card">
+                    <div class="stat-icon"><i class="fas fa-user-tie"></i></div>
+                    <div class="stat-value" id="totalStaff">124</div>
+                    <div class="stat-label">Total Staff</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon"><i class="fas fa-check-circle"></i></div>
+                    <div class="stat-value" id="presentToday">98</div>
+                    <div class="stat-label">Present Today</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon"><i class="fas fa-umbrella-beach"></i></div>
+                    <div class="stat-value" id="onLeave">12</div>
+                    <div class="stat-label">On Leave</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon"><i class="fas fa-clock"></i></div>
+                    <div class="stat-value" id="lateToday">5</div>
+                    <div class="stat-label">Late Today</div>
+                </div>
+            </div>
+
+            <!-- Filters -->
+            <div class="staff-filters">
+                <div class="filter-grid">
+                    <div class="form-group">
+                        <label><i class="fas fa-search"></i> Search</label>
+                        <input type="text" id="searchInput" class="form-control" placeholder="Name, email, position...">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label><i class="fas fa-sitemap"></i> Department</label>
+                        <select id="departmentFilter" class="form-control">
+                            <option value="">All Departments</option>
+                            <option value="management">Management</option>
+                            <option value="operations">Operations</option>
+                            <option value="finance">Finance</option>
+                            <option value="marketing">Marketing</option>
+                            <option value="it">IT</option>
+                            <option value="hr">Human Resources</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label><i class="fas fa-briefcase"></i> Employment Type</label>
+                        <select id="employmentFilter" class="form-control">
+                            <option value="">All Types</option>
+                            <option value="fulltime">Full Time</option>
+                            <option value="parttime">Part Time</option>
+                            <option value="contract">Contract</option>
+                            <option value="intern">Intern</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label><i class="fas fa-circle"></i> Status</label>
+                        <select id="statusFilter" class="form-control">
+                            <option value="">All Status</option>
+                            <option value="active">Active</option>
+                            <option value="away">Away</option>
+                            <option value="offline">Offline</option>
+                            <option value="leave">On Leave</option>
+                        </select>
+                    </div>
+                </div>
+                
+                <div class="flex-between">
+                    <div class="flex gap-2">
+                        <button class="btn btn-primary" onclick="applyFilters()">
+                            <i class="fas fa-filter"></i> Apply Filters
+                        </button>
+                        <button class="btn btn-outline" onclick="resetFilters()">
+                            <i class="fas fa-undo"></i> Reset
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Staff Grid -->
+            <div class="staff-grid" id="staffGrid">
+                <!-- Staff cards will be loaded here -->
+            </div>
+
+            <!-- Pagination -->
+            <div class="flex-center" style="margin-top: var(--space-xl);">
+                <div class="pagination" id="pagination"></div>
+            </div>
+        </main>
+    </div>
+
+    <script>
+        let allStaff = [];
+        let filteredStaff = [];
+        let currentPage = 1;
+        const pageSize = 12;
+
+        document.addEventListener('DOMContentLoaded', () => {
+            if (!TAAGC.auth.isAuthenticated()) {
+                window.location.href = '/';
+                return;
+            }
+            
+            TAAGC.auth.updateUI();
+            loadStaff();
+        });
+
+        function generateMockStaff() {
+            const firstNames = ['John', 'Jane', 'Michael', 'Sarah', 'David', 'Emma', 'Robert', 'Lisa', 'William', 'Maria'];
+            const lastNames = ['Smith', 'Johnson', 'Williams', 'Brown', 'Jones', 'Garcia', 'Miller', 'Davis', 'Rodriguez', 'Martinez'];
+            const departments = ['Management', 'Operations', 'Finance', 'Marketing', 'IT', 'HR'];
+            const positions = [
+                'Manager', 'Supervisor', 'Analyst', 'Specialist', 'Coordinator', 
+                'Director', 'Assistant', 'Associate', 'Lead', 'Executive'
+            ];
+            const employmentTypes = ['fulltime', 'parttime', 'contract', 'intern'];
+            const statuses = ['active', 'away', 'offline', 'leave'];
+            
+            const staff = [];
+            
+            for (let i = 0; i < 50; i++) {
+                const firstName = firstNames[Math.floor(Math.random() * firstNames.length)];
+                const lastName = lastNames[Math.floor(Math.random() * lastNames.length)];
+                const department = departments[Math.floor(Math.random() * departments.length)];
+                const position = positions[Math.floor(Math.random() * positions.length)];
+                const employmentType = employmentTypes[Math.floor(Math.random() * employmentTypes.length)];
+                const status = statuses[Math.floor(Math.random() * statuses.length)];
+                
+                const joinDate = new Date();
+                joinDate.setMonth(joinDate.getMonth() - Math.floor(Math.random() * 60));
+                
+                staff.push({
+                    id: `emp_${1000 + i}`,
+                    name: `${firstName} ${lastName}`,
+                    email: `${firstName.toLowerCase()}.${lastName.toLowerCase()}@taagc.com`,
+                    phone: `+1-${Math.floor(Math.random() * 900) + 100}-${Math.floor(Math.random() * 900) + 100}-${Math.floor(Math.random() * 9000) + 1000}`,
+                    department: department,
+                    position: position,
+                    employmentType: employmentType,
+                    status: status,
+                    joinDate: joinDate.toISOString(),
+                    manager: 'Sarah Wilson',
+                    location: ['New York', 'London', 'Singapore', 'Dubai'][Math.floor(Math.random() * 4)]
+                });
+            }
+            
+            return staff;
+        }
+
+        function loadStaff() {
+            allStaff = generateMockStaff();
+            filteredStaff = [...allStaff];
+            renderStaff();
+            updateStats();
+        }
+
+        function renderStaff() {
+            const start = (currentPage - 1) * pageSize;
+            const end = Math.min(start + pageSize, filteredStaff.length);
+            const pageStaff = filteredStaff.slice(start, end);
+            
+            const grid = document.getElementById('staffGrid');
+            
+            if (pageStaff.length === 0) {
+                grid.innerHTML = '<div class="empty-state" style="grid-column: 1/-1;">No staff found</div>';
+                return;
+            }
+            
+            grid.innerHTML = pageStaff.map(staff => {
+                const statusDotClass = {
+                    'active': 'status-active',
+                    'away': 'status-away',
+                    'offline': 'status-offline',
+                    'leave': 'status-onleave'
+                }[staff.status];
+                
+                const employmentBadgeClass = {
+                    'fulltime': 'badge-fulltime',
+                    'parttime': 'badge-parttime',
+                    'contract': 'badge-contract',
+                    'intern': 'badge-intern'
+                }[staff.employmentType];
+                
+                const statusText = staff.status === 'active' ? 'Active' :
+                                  staff.status === 'away' ? 'Away' :
+                                  staff.status === 'offline' ? 'Offline' : 'On Leave';
+                
+                return `
+                    <div class="staff-card">
+                        <div class="staff-header">
+                            <div class="staff-avatar">
+                                ${staff.name.charAt(0)}
+                            </div>
+                            <div class="staff-name">${staff.name}</div>
+                            <div class="staff-position">${staff.position}</div>
+                        </div>
+                        
+                        <div class="staff-body">
+                            <div class="staff-info-row">
+                                <i class="fas fa-envelope"></i>
+                                <span>${staff.email}</span>
+                            </div>
+                            <div class="staff-info-row">
+                                <i class="fas fa-phone"></i>
+                                <span>${staff.phone}</span>
+                            </div>
+                            <div class="staff-info-row">
+                                <i class="fas fa-sitemap"></i>
+                                <span>${staff.department}</span>
+                            </div>
+                            <div class="staff-info-row">
+                                <i class="fas fa-map-marker-alt"></i>
+                                <span>${staff.location}</span>
+                            </div>
+                            <div class="staff-info-row">
+                                <i class="fas fa-calendar"></i>
+                                <span>Joined ${TAAGC.data.formatDate(staff.joinDate)}</span>
+                            </div>
+                        </div>
+                        
+                        <div class="staff-footer">
+                            <div>
+                                <span class="status-dot ${statusDotClass}"></span>
+                                <span>${statusText}</span>
+                            </div>
+                            <div>
+                                <span class="staff-badge ${employmentBadgeClass}">
+                                    ${staff.employmentType}
+                                </span>
+                                <span class="department-tag">${staff.department.substring(0, 3).toUpperCase()}</span>
+                            </div>
+                            <div class="flex gap-1">
+                                <button class="btn btn-sm btn-outline" onclick="viewStaff('${staff.id}')" title="View">
+                                    <i class="fas fa-eye"></i>
+                                </button>
+                                <button class="btn btn-sm btn-outline-accent" onclick="editStaff('${staff.id}')" title="Edit">
+                                    <i class="fas fa-edit"></i>
+                                </button>
+                                <button class="btn btn-sm btn-outline" onclick="messageStaff('${staff.id}')" title="Message">
+                                    <i class="fas fa-envelope"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+            
+            updatePagination();
+        }
+
+        function updateStats() {
+            const total = allStaff.length;
+            const present = allStaff.filter(s => s.status === 'active').length;
+            const onLeave = allStaff.filter(s => s.status === 'leave').length;
+            const late = Math.floor(Math.random() * 10);
+            
+            document.getElementById('totalStaff').textContent = total;
+            document.getElementById('presentToday').textContent = present;
+            document.getElementById('onLeave').textContent = onLeave;
+            document.getElementById('lateToday').textContent = late;
+        }
+
+        function updatePagination() {
+            const totalPages = Math.ceil(filteredStaff.length / pageSize);
+            const pagination = document.getElementById('pagination');
+            
+            if (totalPages <= 1) {
+                pagination.innerHTML = '';
+                return;
+            }
+            
+            let html = '';
+            
+            html += `<button class="page-link" onclick="goToPage(${currentPage - 1})" ${currentPage === 1 ? 'disabled' : ''}>
+                <i class="fas fa-chevron-left"></i>
+            </button>`;
+            
+            for (let i = 1; i <= totalPages; i++) {
+                if (i === 1 || i === totalPages || (i >= currentPage - 2 && i <= currentPage + 2)) {
+                    html += `<button class="page-link ${i === currentPage ? 'active' : ''}" onclick="goToPage(${i})">${i}</button>`;
+                } else if (i === currentPage - 3 || i === currentPage + 3) {
+                    html += `<span class="page-link">...</span>`;
+                }
+            }
+            
+            html += `<button class="page-link" onclick="goToPage(${currentPage + 1})" ${currentPage === totalPages ? 'disabled' : ''}>
+                <i class="fas fa-chevron-right"></i>
+            </button>`;
+            
+            pagination.innerHTML = html;
+        }
+
+        function goToPage(page) {
+            const totalPages = Math.ceil(filteredStaff.length / pageSize);
+            if (page >= 1 && page <= totalPages) {
+                currentPage = page;
+                renderStaff();
+            }
+        }
+
+        function applyFilters() {
+            const searchTerm = document.getElementById('searchInput').value.toLowerCase();
+            const department = document.getElementById('departmentFilter').value;
+            const employment = document.getElementById('employmentFilter').value;
+            const status = document.getElementById('statusFilter').value;
+            
+            filteredStaff = allStaff.filter(staff => {
+                if (searchTerm && !staff.name.toLowerCase().includes(searchTerm) && 
+                    !staff.email.toLowerCase().includes(searchTerm) &&
+                    !staff.position.toLowerCase().includes(searchTerm)) {
+                    return false;
+                }
+                
+                if (department && staff.department !== department) return false;
+                if (employment && staff.employmentType !== employment) return false;
+                if (status && staff.status !== status) return false;
+                
+                return true;
+            });
+            
+            currentPage = 1;
+            renderStaff();
+        }
+
+        function resetFilters() {
+            document.getElementById('searchInput').value = '';
+            document.getElementById('departmentFilter').value = '';
+            document.getElementById('employmentFilter').value = '';
+            document.getElementById('statusFilter').value = '';
+            
+            filteredStaff = [...allStaff];
+            currentPage = 1;
+            renderStaff();
+        }
+
+        function viewStaff(id) {
+            location.href = `/staff/view.html?id=${id}`;
+        }
+
+        function editStaff(id) {
+            location.href = `/staff/edit.html?id=${id}`;
+        }
+
+        function messageStaff(id) {
+            TAAGC.ui.showToast(`Messaging staff member ${id}`, 'info');
+        }
+
+        function exportStaff() {
+            TAAGC.data.downloadCSV(allStaff, 'staff_export.csv');
+        }
+    </script>
+</body>
+</html>
