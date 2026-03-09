@@ -1,0 +1,1151 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>User Activity Log - TAAGC Admin</title>
+    
+    <!-- Fonts & Icons -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Assets -->
+    <link rel="stylesheet" href="/assets/css/admin.css">
+    <script src="/assets/js/admin.js" defer></script>
+    
+    <style>
+        .activity-filters {
+            background: var(--white);
+            border-radius: var(--radius-lg);
+            padding: var(--space-lg);
+            margin-bottom: var(--space-xl);
+            border: 1px solid #e2e8f0;
+            box-shadow: var(--shadow-sm);
+        }
+        
+        .filter-row {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: var(--space-md);
+            margin-bottom: var(--space-md);
+        }
+        
+        .date-range {
+            display: flex;
+            gap: var(--space-sm);
+            align-items: center;
+        }
+        
+        .date-range input {
+            flex: 1;
+        }
+        
+        .activity-timeline {
+            position: relative;
+            padding: var(--space-lg);
+        }
+        
+        .timeline-controls {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: var(--space-xl);
+            flex-wrap: wrap;
+            gap: var(--space-md);
+        }
+        
+        .timeline-view-options {
+            display: flex;
+            gap: var(--space-xs);
+            background: var(--bg);
+            padding: 4px;
+            border-radius: var(--radius-lg);
+        }
+        
+        .view-option {
+            padding: var(--space-sm) var(--space-lg);
+            border-radius: var(--radius-md);
+            cursor: pointer;
+            transition: all 0.3s;
+            font-size: 13px;
+            font-weight: 600;
+        }
+        
+        .view-option.active {
+            background: var(--accent);
+            color: white;
+        }
+        
+        .timeline-header {
+            display: grid;
+            grid-template-columns: 200px 1fr 150px 100px;
+            background: var(--primary);
+            color: white;
+            padding: var(--space-md) var(--space-lg);
+            border-radius: var(--radius-md) var(--radius-md) 0 0;
+            font-weight: 600;
+            font-size: 13px;
+        }
+        
+        .timeline-row {
+            display: grid;
+            grid-template-columns: 200px 1fr 150px 100px;
+            padding: var(--space-md) var(--space-lg);
+            border-bottom: 1px solid #e2e8f0;
+            background: var(--white);
+            transition: all 0.3s;
+            cursor: pointer;
+        }
+        
+        .timeline-row:hover {
+            background: var(--bg);
+            transform: translateX(5px);
+            box-shadow: var(--shadow-sm);
+        }
+        
+        .timeline-row.highlight {
+            background: rgba(193,154,107,0.1);
+            border-left: 3px solid var(--accent);
+        }
+        
+        .activity-type {
+            display: inline-flex;
+            align-items: center;
+            gap: var(--space-xs);
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 11px;
+            font-weight: 600;
+        }
+        
+        .type-login {
+            background: rgba(59,130,246,0.1);
+            color: var(--info);
+            border: 1px solid var(--info);
+        }
+        
+        .type-investment {
+            background: rgba(16,185,129,0.1);
+            color: var(--success);
+            border: 1px solid var(--success);
+        }
+        
+        .type-transaction {
+            background: rgba(139,92,246,0.1);
+            color: var(--purple);
+            border: 1px solid var(--purple);
+        }
+        
+        .type-profile {
+            background: rgba(245,158,11,0.1);
+            color: var(--warning);
+            border: 1px solid var(--warning);
+        }
+        
+        .type-security {
+            background: rgba(229,62,62,0.1);
+            color: var(--danger);
+            border: 1px solid var(--danger);
+        }
+        
+        .type-withdrawal {
+            background: rgba(236,72,153,0.1);
+            color: var(--pink);
+            border: 1px solid var(--pink);
+        }
+        
+        .type-deposit {
+            background: rgba(16,185,129,0.1);
+            color: var(--success);
+            border: 1px solid var(--success);
+        }
+        
+        .timeline-details {
+            display: none;
+            grid-column: 1 / -1;
+            background: var(--bg);
+            padding: var(--space-lg);
+            border-radius: var(--radius-md);
+            margin-top: var(--space-sm);
+            border: 1px solid #e2e8f0;
+        }
+        
+        .timeline-row.expanded .timeline-details {
+            display: block;
+        }
+        
+        .details-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: var(--space-lg);
+        }
+        
+        .detail-item {
+            margin-bottom: var(--space-md);
+        }
+        
+        .detail-label {
+            font-size: 11px;
+            color: var(--light);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 4px;
+        }
+        
+        .detail-value {
+            font-weight: 600;
+            color: var(--dark);
+            font-size: 14px;
+        }
+        
+        .detail-value code {
+            background: var(--white);
+            padding: 2px 6px;
+            border-radius: 4px;
+            border: 1px solid #e2e8f0;
+        }
+        
+        .ip-info {
+            display: flex;
+            align-items: center;
+            gap: var(--space-sm);
+        }
+        
+        .ip-badge {
+            background: var(--primary);
+            color: white;
+            padding: 2px 8px;
+            border-radius: 12px;
+            font-size: 10px;
+        }
+        
+        .user-agent {
+            font-size: 12px;
+            color: var(--light);
+            max-width: 300px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+        
+        .location-info {
+            display: flex;
+            align-items: center;
+            gap: var(--space-xs);
+            font-size: 12px;
+        }
+        
+        .activity-chart {
+            background: var(--white);
+            border-radius: var(--radius-lg);
+            padding: var(--space-lg);
+            margin-bottom: var(--space-xl);
+            border: 1px solid #e2e8f0;
+        }
+        
+        .chart-bars {
+            display: flex;
+            align-items: flex-end;
+            gap: 2px;
+            height: 200px;
+            margin-top: var(--space-lg);
+        }
+        
+        .chart-bar {
+            flex: 1;
+            background: linear-gradient(to top, var(--accent), var(--accent-light));
+            border-radius: 4px 4px 0 0;
+            transition: height 0.3s;
+            position: relative;
+            min-width: 30px;
+        }
+        
+        .chart-bar:hover {
+            background: var(--accent-dark);
+        }
+        
+        .chart-bar::after {
+            content: attr(data-value);
+            position: absolute;
+            top: -25px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 11px;
+            color: var(--light);
+            white-space: nowrap;
+        }
+        
+        .chart-label {
+            text-align: center;
+            font-size: 11px;
+            color: var(--light);
+            margin-top: var(--space-xs);
+        }
+        
+        .stats-mini-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: var(--space-md);
+            margin-bottom: var(--space-xl);
+        }
+        
+        .stat-mini-card {
+            background: var(--white);
+            padding: var(--space-md);
+            border-radius: var(--radius-md);
+            border: 1px solid #e2e8f0;
+        }
+        
+        .stat-mini-value {
+            font-size: 20px;
+            font-weight: 700;
+            color: var(--primary);
+        }
+        
+        .stat-mini-label {
+            font-size: 11px;
+            color: var(--light);
+        }
+        
+        .export-options {
+            display: flex;
+            gap: var(--space-sm);
+        }
+        
+        .real-time-badge {
+            display: flex;
+            align-items: center;
+            gap: var(--space-xs);
+            background: rgba(16,185,129,0.1);
+            color: var(--success);
+            padding: var(--space-xs) var(--space-md);
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+        
+        .real-time-dot {
+            width: 8px;
+            height: 8px;
+            background: var(--success);
+            border-radius: 50%;
+            animation: pulse 2s infinite;
+        }
+        
+        @keyframes pulse {
+            0% { opacity: 1; transform: scale(1); }
+            50% { opacity: 0.5; transform: scale(1.2); }
+            100% { opacity: 1; transform: scale(1); }
+        }
+        
+        .empty-state {
+            text-align: center;
+            padding: var(--space-xl);
+            color: var(--light);
+        }
+        
+        .empty-state i {
+            font-size: 48px;
+            color: var(--accent);
+            margin-bottom: var(--space-lg);
+            opacity: 0.5;
+        }
+        
+        .device-icon {
+            width: 32px;
+            height: 32px;
+            background: var(--bg);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--accent);
+        }
+    </style>
+</head>
+<body>
+    <div class="admin-container">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <div class="logo-icon">TA</div>
+                <h2><span>TAAGC</span> ADMIN</h2>
+            </div>
+
+            <div class="user-info">
+                <div class="user-avatar" data-user-avatar>A</div>
+                <div data-user-field="name">Loading...</div>
+                <div style="font-size: 12px; opacity: 0.7;" data-user-field="email"></div>
+                <span class="user-role" data-user-field="role"></span>
+            </div>
+
+            <nav class="nav-menu">
+                <div class="nav-section">MAIN</div>
+                <a href="/dashboard.html" class="nav-item"><i class="fas fa-tachometer-alt"></i> Dashboard</a>
+                <a href="/users/index.html" class="nav-item active"><i class="fas fa-users"></i> Users</a>
+                <a href="/investments/index.html" class="nav-item"><i class="fas fa-chart-line"></i> Investments</a>
+                <a href="/banks/index.html" class="nav-item"><i class="fas fa-university"></i> Banks</a>
+                <a href="/agencies/index.html" class="nav-item"><i class="fas fa-building"></i> Agencies</a>
+                
+                <div class="nav-divider"></div>
+                <div class="nav-section">USER SPECIFIC</div>
+                <a href="/users/view.html?id={{userId}}" class="nav-item">
+                    <i class="fas fa-user-circle"></i> Profile
+                </a>
+                <a href="/users/activity.html?id={{userId}}" class="nav-item active">
+                    <i class="fas fa-history"></i> Activity Log
+                </a>
+                <a href="/users/permissions.html?id={{userId}}" class="nav-item">
+                    <i class="fas fa-shield-alt"></i> Permissions
+                </a>
+            </nav>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <div class="top-bar">
+                <div class="page-title">
+                    <h1><i class="fas fa-history" style="color: var(--accent);"></i> User Activity Log</h1>
+                    <p id="userInfo">Complete activity history for <span id="userName">John Doe</span></p>
+                </div>
+                <div class="top-bar-actions">
+                    <div class="real-time-badge">
+                        <span class="real-time-dot"></span>
+                        <span>Live Updates</span>
+                    </div>
+                    <button class="btn btn-outline" onclick="location.href='/users/view.html?id=' + getUserId()">
+                        <i class="fas fa-arrow-left"></i> Back to Profile
+                    </button>
+                    <button class="logout-btn" id="logoutBtn"><i class="fas fa-sign-out-alt"></i></button>
+                </div>
+            </div>
+
+            <!-- User ID from URL -->
+            <div id="userId" style="display: none;">{{userId}}</div>
+
+            <!-- Quick Stats -->
+            <div class="stats-mini-grid" id="activityStats">
+                <div class="stat-mini-card">
+                    <div class="stat-mini-value" id="totalActivities">0</div>
+                    <div class="stat-mini-label">Total Activities</div>
+                </div>
+                <div class="stat-mini-card">
+                    <div class="stat-mini-value" id="loginCount">0</div>
+                    <div class="stat-mini-label">Logins</div>
+                </div>
+                <div class="stat-mini-card">
+                    <div class="stat-mini-value" id="investmentCount">0</div>
+                    <div class="stat-mini-label">Investments</div>
+                </div>
+                <div class="stat-mini-card">
+                    <div class="stat-mini-value" id="transactionCount">0</div>
+                    <div class="stat-mini-label">Transactions</div>
+                </div>
+            </div>
+
+            <!-- Activity Chart -->
+            <div class="activity-chart">
+                <div class="flex-between">
+                    <h3><i class="fas fa-chart-line" style="color: var(--accent);"></i> Activity Timeline (Last 7 Days)</h3>
+                    <select id="chartRange" class="form-control" style="width: 150px;" onchange="updateChart()">
+                        <option value="7">Last 7 days</option>
+                        <option value="30">Last 30 days</option>
+                        <option value="90">Last 90 days</option>
+                        <option value="365">Last year</option>
+                    </select>
+                </div>
+                <div class="chart-bars" id="activityChart">
+                    <!-- Chart bars will be inserted here -->
+                </div>
+            </div>
+
+            <!-- Filters -->
+            <div class="activity-filters">
+                <div class="filter-row">
+                    <div class="form-group">
+                        <label><i class="fas fa-search"></i> Search Activities</label>
+                        <input type="text" id="searchInput" class="form-control" placeholder="Search by action, IP, or details...">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label><i class="fas fa-tag"></i> Activity Type</label>
+                        <select id="typeFilter" class="form-control" multiple size="4">
+                            <option value="login" selected>Login</option>
+                            <option value="logout" selected>Logout</option>
+                            <option value="investment" selected>Investment</option>
+                            <option value="transaction" selected>Transaction</option>
+                            <option value="withdrawal" selected>Withdrawal</option>
+                            <option value="deposit" selected>Deposit</option>
+                            <option value="profile" selected>Profile Update</option>
+                            <option value="security" selected>Security</option>
+                        </select>
+                        <small style="color: var(--light);">Ctrl+click to select multiple</small>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label><i class="fas fa-calendar"></i> Date Range</label>
+                        <div class="date-range">
+                            <input type="date" id="startDate" class="form-control" value="2024-03-01">
+                            <span>to</span>
+                            <input type="date" id="endDate" class="form-control" value="2024-03-09">
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="filter-row">
+                    <div class="form-group">
+                        <label><i class="fas fa-globe"></i> IP Address</label>
+                        <input type="text" id="ipFilter" class="form-control" placeholder="Filter by IP...">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label><i class="fas fa-laptop"></i> Device/Platform</label>
+                        <select id="deviceFilter" class="form-control">
+                            <option value="">All Devices</option>
+                            <option value="Windows">Windows</option>
+                            <option value="Mac">Mac</option>
+                            <option value="Linux">Linux</option>
+                            <option value="iOS">iOS</option>
+                            <option value="Android">Android</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label><i class="fas fa-flag"></i> Status</label>
+                        <select id="statusFilter" class="form-control">
+                            <option value="">All Status</option>
+                            <option value="success">Success</option>
+                            <option value="failed">Failed</option>
+                            <option value="pending">Pending</option>
+                        </select>
+                    </div>
+                </div>
+                
+                <div class="flex-between">
+                    <div class="flex gap-2">
+                        <button class="btn btn-primary" onclick="applyFilters()">
+                            <i class="fas fa-filter"></i> Apply Filters
+                        </button>
+                        <button class="btn btn-outline" onclick="resetFilters()">
+                            <i class="fas fa-undo"></i> Reset
+                        </button>
+                    </div>
+                    
+                    <div class="export-options">
+                        <button class="btn btn-outline" onclick="exportActivity('csv')">
+                            <i class="fas fa-file-csv"></i> CSV
+                        </button>
+                        <button class="btn btn-outline" onclick="exportActivity('pdf')">
+                            <i class="fas fa-file-pdf"></i> PDF
+                        </button>
+                        <button class="btn btn-outline" onclick="exportActivity('json')">
+                            <i class="fas fa-file-code"></i> JSON
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Timeline Controls -->
+            <div class="timeline-controls">
+                <div class="flex gap-2">
+                    <span class="badge badge-info" id="showingCount">Showing 50 of 247 activities</span>
+                    <span class="badge badge-accent" id="selectedPeriod">Mar 1 - Mar 9, 2024</span>
+                </div>
+                
+                <div class="timeline-view-options">
+                    <span class="view-option active" onclick="changeView('list')">List View</span>
+                    <span class="view-option" onclick="changeView('timeline')">Timeline</span>
+                    <span class="view-option" onclick="changeView('compact')">Compact</span>
+                </div>
+            </div>
+
+            <!-- Activity Timeline -->
+            <div class="card" id="timelineContainer">
+                <!-- List View Header -->
+                <div class="timeline-header" id="listHeader">
+                    <div>Timestamp</div>
+                    <div>Activity</div>
+                    <div>IP Address</div>
+                    <div>Status</div>
+                </div>
+                
+                <!-- Timeline Rows -->
+                <div id="timelineRows">
+                    <!-- Activities will be inserted here -->
+                </div>
+                
+                <!-- Loading State -->
+                <div id="loadingState" class="empty-state" style="display: none;">
+                    <i class="fas fa-spinner fa-spin"></i>
+                    <p>Loading activity log...</p>
+                </div>
+                
+                <!-- Empty State -->
+                <div id="emptyState" class="empty-state" style="display: none;">
+                    <i class="fas fa-history"></i>
+                    <h3>No Activity Found</h3>
+                    <p>No activities match your filter criteria.</p>
+                    <button class="btn btn-outline" onclick="resetFilters()">Clear Filters</button>
+                </div>
+            </div>
+
+            <!-- Load More -->
+            <div class="flex-center" style="margin-top: var(--space-xl);">
+                <button class="btn btn-outline" onclick="loadMore()" id="loadMoreBtn">
+                    <i class="fas fa-arrow-down"></i> Load More Activities
+                </button>
+            </div>
+        </main>
+    </div>
+
+    <!-- Activity Detail Modal -->
+    <div class="modal" id="activityModal">
+        <div class="modal-content" style="max-width: 700px;">
+            <div class="modal-header">
+                <h2><i class="fas fa-info-circle" style="color: var(--accent);"></i> Activity Details</h2>
+                <span class="modal-close" onclick="closeModal()">&times;</span>
+            </div>
+            <div id="modalContent">
+                <!-- Modal content will be inserted here -->
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Get user ID from URL
+        function getUserId() {
+            const urlParams = new URLSearchParams(window.location.search);
+            return urlParams.get('id') || 'usr_12345';
+        }
+
+        const userId = getUserId();
+        let allActivities = [];
+        let filteredActivities = [];
+        let currentPage = 1;
+        const pageSize = 50;
+        let currentView = 'list';
+        let realtimeInterval;
+
+        // Mock user data
+        const userData = {
+            id: userId,
+            fullName: 'John Doe',
+            email: 'john.doe@example.com'
+        };
+
+        document.addEventListener('DOMContentLoaded', () => {
+            if (!TAAGC.auth.isAuthenticated()) {
+                window.location.href = '/';
+                return;
+            }
+            
+            TAAGC.auth.updateUI();
+            document.getElementById('userName').textContent = userData.fullName;
+            
+            loadActivities();
+            generateChartData();
+            startRealtimeUpdates();
+        });
+
+        // Generate mock activity data
+        function generateMockActivities(count = 200) {
+            const activities = [];
+            const types = ['login', 'logout', 'investment', 'transaction', 'withdrawal', 'deposit', 'profile', 'security'];
+            const statuses = ['success', 'failed', 'pending'];
+            const ips = ['192.168.1.100', '203.0.113.45', '198.51.100.78', '172.16.0.1', '10.0.0.5', '45.33.22.11'];
+            const devices = ['Chrome on Windows', 'Safari on Mac', 'Firefox on Linux', 'Chrome on Android', 'Safari on iOS'];
+            const locations = ['New York, US', 'London, UK', 'Tokyo, JP', 'Sydney, AU', 'Berlin, DE', 'Singapore, SG'];
+            
+            for (let i = 0; i < count; i++) {
+                const type = types[Math.floor(Math.random() * types.length)];
+                const date = new Date();
+                date.setHours(date.getHours() - Math.floor(Math.random() * 24 * 7)); // Last 7 days
+                date.setMinutes(date.getMinutes() - Math.floor(Math.random() * 60));
+                
+                let action = '';
+                let details = {};
+                
+                switch(type) {
+                    case 'login':
+                        action = `User logged in ${Math.random() > 0.8 ? 'from new device' : ''}`;
+                        details = { method: 'password', success: Math.random() > 0.1 };
+                        break;
+                    case 'logout':
+                        action = 'User logged out';
+                        details = { method: 'manual' };
+                        break;
+                    case 'investment':
+                        action = `Invested $${(Math.random() * 10000).toFixed(2)} in ${['Real Estate', 'Tech Fund', 'Green Energy'][Math.floor(Math.random() * 3)]}`;
+                        details = { amount: Math.random() * 10000, project: 'Project ' + Math.floor(Math.random() * 5) };
+                        break;
+                    case 'transaction':
+                        action = `${['Deposit', 'Withdrawal'][Math.floor(Math.random() * 2)]} of $${(Math.random() * 5000).toFixed(2)}`;
+                        details = { amount: Math.random() * 5000, method: 'bank transfer' };
+                        break;
+                    case 'withdrawal':
+                        action = `Withdrawal request for $${(Math.random() * 2000).toFixed(2)}`;
+                        details = { amount: Math.random() * 2000, status: 'pending' };
+                        break;
+                    case 'deposit':
+                        action = `Deposit of $${(Math.random() * 5000).toFixed(2)} confirmed`;
+                        details = { amount: Math.random() * 5000, method: 'wire transfer' };
+                        break;
+                    case 'profile':
+                        action = `Updated ${['email', 'phone', 'address', 'password'][Math.floor(Math.random() * 4)]}`;
+                        details = { field: 'email', old: 'old@email.com', new: 'new@email.com' };
+                        break;
+                    case 'security':
+                        action = `${['2FA enabled', 'Password changed', 'Security question updated'][Math.floor(Math.random() * 3)]}`;
+                        details = { type: '2fa', enabled: true };
+                        break;
+                }
+                
+                activities.push({
+                    id: `act_${i + 1000}`,
+                    userId: userId,
+                    timestamp: date.toISOString(),
+                    type: type,
+                    action: action,
+                    status: statuses[Math.floor(Math.random() * statuses.length)],
+                    ip: ips[Math.floor(Math.random() * ips.length)],
+                    userAgent: devices[Math.floor(Math.random() * devices.length)],
+                    location: locations[Math.floor(Math.random() * locations.length)],
+                    device: devices[Math.floor(Math.random() * devices.length)].split(' on ')[0],
+                    platform: devices[Math.floor(Math.random() * devices.length)].split(' on ')[1],
+                    details: details,
+                    metadata: {
+                        browser: ['Chrome', 'Firefox', 'Safari'][Math.floor(Math.random() * 3)],
+                        os: ['Windows', 'Mac', 'Linux', 'Android', 'iOS'][Math.floor(Math.random() * 5)]
+                    }
+                });
+            }
+            
+            // Sort by timestamp (newest first)
+            return activities.sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
+        }
+
+        function loadActivities() {
+            document.getElementById('loadingState').style.display = 'block';
+            document.getElementById('timelineRows').innerHTML = '';
+            
+            setTimeout(() => {
+                allActivities = generateMockActivities(247);
+                filteredActivities = [...allActivities];
+                renderActivities();
+                updateStats();
+                document.getElementById('loadingState').style.display = 'none';
+            }, 800);
+        }
+
+        function renderActivities() {
+            const start = (currentPage - 1) * pageSize;
+            const end = Math.min(start + pageSize, filteredActivities.length);
+            const pageActivities = filteredActivities.slice(start, end);
+            
+            document.getElementById('showingCount').textContent = 
+                `Showing ${start + 1}-${end} of ${filteredActivities.length} activities`;
+            
+            if (pageActivities.length === 0) {
+                document.getElementById('emptyState').style.display = 'block';
+                document.getElementById('timelineRows').innerHTML = '';
+                document.getElementById('listHeader').style.display = 'none';
+                return;
+            }
+            
+            document.getElementById('emptyState').style.display = 'none';
+            document.getElementById('listHeader').style.display = 'grid';
+            
+            const rows = document.getElementById('timelineRows');
+            
+            if (currentView === 'list') {
+                rows.innerHTML = pageActivities.map(activity => `
+                    <div class="timeline-row" onclick="toggleDetails('${activity.id}')" id="row-${activity.id}">
+                        <div>${formatTimestamp(activity.timestamp)}</div>
+                        <div>
+                            <span class="activity-type type-${activity.type}">
+                                <i class="fas ${getTypeIcon(activity.type)}"></i> ${activity.type}
+                            </span>
+                            <span style="margin-left: var(--space-sm);">${activity.action}</span>
+                        </div>
+                        <div>
+                            <div class="ip-info">
+                                <code>${activity.ip}</code>
+                                <span class="ip-badge">${activity.location.split(',')[0]}</span>
+                            </div>
+                        </div>
+                        <div>
+                            <span class="badge badge-${activity.status === 'success' ? 'success' : activity.status === 'failed' ? 'danger' : 'warning'}">
+                                ${activity.status}
+                            </span>
+                        </div>
+                        
+                        <!-- Expandable Details -->
+                        <div class="timeline-details" id="details-${activity.id}">
+                            <div class="details-grid">
+                                <div>
+                                    <div class="detail-label">Device Information</div>
+                                    <div class="detail-value">
+                                        <div class="flex gap-2" style="align-items: center;">
+                                            <div class="device-icon">
+                                                <i class="fas ${getDeviceIcon(activity.metadata.os)}"></i>
+                                            </div>
+                                            <div>
+                                                <div><strong>${activity.metadata.os}</strong></div>
+                                                <div class="user-agent">${activity.userAgent}</div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div>
+                                    <div class="detail-label">Location</div>
+                                    <div class="detail-value">
+                                        <div class="location-info">
+                                            <i class="fas fa-map-marker-alt" style="color: var(--accent);"></i>
+                                            <span>${activity.location}</span>
+                                        </div>
+                                        <div class="user-agent">ISP: ${['Comcast', 'Verizon', 'AT&T', 'Google Fiber'][Math.floor(Math.random() * 4)]}</div>
+                                    </div>
+                                </div>
+                                
+                                <div>
+                                    <div class="detail-label">Additional Details</div>
+                                    <div class="detail-value">
+                                        <div><strong>Activity ID:</strong> <code>${activity.id}</code></div>
+                                        <div><strong>User ID:</strong> <code>${activity.userId}</code></div>
+                                        ${Object.entries(activity.details).map(([key, value]) => 
+                                            `<div><strong>${key}:</strong> ${value}</div>`
+                                        ).join('')}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                `).join('');
+            } else if (currentView === 'compact') {
+                rows.innerHTML = pageActivities.map(activity => `
+                    <div class="timeline-row" style="grid-template-columns: 150px 1fr 100px;" onclick="showModal('${activity.id}')">
+                        <div>${formatTime(activity.timestamp)}</div>
+                        <div>
+                            <span class="activity-type type-${activity.type}">
+                                <i class="fas ${getTypeIcon(activity.type)}"></i>
+                            </span>
+                            <span>${activity.action}</span>
+                        </div>
+                        <div>
+                            <span class="badge badge-${activity.status === 'success' ? 'success' : 'danger'}">●</span>
+                        </div>
+                    </div>
+                `).join('');
+            }
+            
+            // Hide load more if no more activities
+            if (end >= filteredActivities.length) {
+                document.getElementById('loadMoreBtn').style.display = 'none';
+            } else {
+                document.getElementById('loadMoreBtn').style.display = 'inline-flex';
+            }
+        }
+
+        function updateStats() {
+            const stats = {
+                total: allActivities.length,
+                logins: allActivities.filter(a => a.type === 'login').length,
+                investments: allActivities.filter(a => a.type === 'investment').length,
+                transactions: allActivities.filter(a => ['transaction', 'withdrawal', 'deposit'].includes(a.type)).length
+            };
+            
+            document.getElementById('totalActivities').textContent = stats.total;
+            document.getElementById('loginCount').textContent = stats.logins;
+            document.getElementById('investmentCount').textContent = stats.investments;
+            document.getElementById('transactionCount').textContent = stats.transactions;
+        }
+
+        function generateChartData() {
+            const days = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+            const chartData = [];
+            
+            for (let i = 6; i >= 0; i--) {
+                const date = new Date();
+                date.setDate(date.getDate() - i);
+                const dayStr = days[date.getDay()];
+                const count = Math.floor(Math.random() * 15) + 5;
+                chartData.push({ day: dayStr, count: count, date: date });
+            }
+            
+            const maxCount = Math.max(...chartData.map(d => d.count));
+            
+            const chartHtml = chartData.map(data => `
+                <div style="flex: 1; display: flex; flex-direction: column; align-items: center;">
+                    <div class="chart-bar" style="height: ${(data.count / maxCount) * 180}px;" data-value="${data.count}"></div>
+                    <div class="chart-label">${data.day}</div>
+                </div>
+            `).join('');
+            
+            document.getElementById('activityChart').innerHTML = chartHtml;
+        }
+
+        function applyFilters() {
+            const searchTerm = document.getElementById('searchInput').value.toLowerCase();
+            const selectedTypes = Array.from(document.getElementById('typeFilter').selectedOptions).map(opt => opt.value);
+            const startDate = document.getElementById('startDate').value;
+            const endDate = document.getElementById('endDate').value;
+            const ipFilter = document.getElementById('ipFilter').value.toLowerCase();
+            const deviceFilter = document.getElementById('deviceFilter').value;
+            const statusFilter = document.getElementById('statusFilter').value;
+            
+            filteredActivities = allActivities.filter(activity => {
+                // Search filter
+                if (searchTerm && !activity.action.toLowerCase().includes(searchTerm) && 
+                    !activity.ip.includes(searchTerm) && !activity.location.toLowerCase().includes(searchTerm)) {
+                    return false;
+                }
+                
+                // Type filter
+                if (selectedTypes.length && !selectedTypes.includes(activity.type)) {
+                    return false;
+                }
+                
+                // Date range filter
+                if (startDate && endDate) {
+                    const activityDate = new Date(activity.timestamp);
+                    const start = new Date(startDate);
+                    const end = new Date(endDate);
+                    end.setHours(23, 59, 59);
+                    if (activityDate < start || activityDate > end) {
+                        return false;
+                    }
+                }
+                
+                // IP filter
+                if (ipFilter && !activity.ip.toLowerCase().includes(ipFilter)) {
+                    return false;
+                }
+                
+                // Device filter
+                if (deviceFilter && activity.metadata.os !== deviceFilter) {
+                    return false;
+                }
+                
+                // Status filter
+                if (statusFilter && activity.status !== statusFilter) {
+                    return false;
+                }
+                
+                return true;
+            });
+            
+            currentPage = 1;
+            renderActivities();
+        }
+
+        function resetFilters() {
+            document.getElementById('searchInput').value = '';
+            Array.from(document.getElementById('typeFilter').options).forEach(opt => opt.selected = true);
+            
+            const today = new Date();
+            const weekAgo = new Date();
+            weekAgo.setDate(weekAgo.getDate() - 7);
+            
+            document.getElementById('startDate').value = weekAgo.toISOString().split('T')[0];
+            document.getElementById('endDate').value = today.toISOString().split('T')[0];
+            document.getElementById('ipFilter').value = '';
+            document.getElementById('deviceFilter').value = '';
+            document.getElementById('statusFilter').value = '';
+            
+            filteredActivities = [...allActivities];
+            currentPage = 1;
+            renderActivities();
+        }
+
+        function loadMore() {
+            currentPage++;
+            renderActivities();
+        }
+
+        function changeView(view) {
+            currentView = view;
+            document.querySelectorAll('.view-option').forEach(opt => opt.classList.remove('active'));
+            event.target.classList.add('active');
+            
+            if (view === 'list') {
+                document.getElementById('listHeader').style.display = 'grid';
+            } else {
+                document.getElementById('listHeader').style.display = 'none';
+            }
+            
+            renderActivities();
+        }
+
+        function toggleDetails(activityId) {
+            const row = document.getElementById(`row-${activityId}`);
+            row.classList.toggle('expanded');
+        }
+
+        function showModal(activityId) {
+            const activity = allActivities.find(a => a.id === activityId);
+            if (!activity) return;
+            
+            const modal = document.getElementById('activityModal');
+            const modalContent = document.getElementById('modalContent');
+            
+            modalContent.innerHTML = `
+                <div class="details-grid" style="grid-template-columns: 1fr;">
+                    <div class="detail-item">
+                        <div class="detail-label">Timestamp</div>
+                        <div class="detail-value">${formatTimestamp(activity.timestamp)}</div>
+                    </div>
+                    <div class="detail-item">
+                        <div class="detail-label">Activity Type</div>
+                        <div class="detail-value">
+                            <span class="activity-type type-${activity.type}">
+                                <i class="fas ${getTypeIcon(activity.type)}"></i> ${activity.type}
+                            </span>
+                        </div>
+                    </div>
+                    <div class="detail-item">
+                        <div class="detail-label">Action</div>
+                        <div class="detail-value">${activity.action}</div>
+                    </div>
+                    <div class="detail-item">
+                        <div class="detail-label">Status</div>
+                        <div class="detail-value">
+                            <span class="badge badge-${activity.status === 'success' ? 'success' : 'danger'}">${activity.status}</span>
+                        </div>
+                    </div>
+                    <div class="detail-item">
+                        <div class="detail-label">IP Address</div>
+                        <div class="detail-value"><code>${activity.ip}</code></div>
+                    </div>
+                    <div class="detail-item">
+                        <div class="detail-label">Location</div>
+                        <div class="detail-value">${activity.location}</div>
+                    </div>
+                    <div class="detail-item">
+                        <div class="detail-label">Device</div>
+                        <div class="detail-value">${activity.userAgent}</div>
+                    </div>
+                    <div class="detail-item">
+                        <div class="detail-label">Activity ID</div>
+                        <div class="detail-value"><code>${activity.id}</code></div>
+                    </div>
+                </div>
+            `;
+            
+            modal.classList.add('active');
+        }
+
+        function closeModal() {
+            document.getElementById('activityModal').classList.remove('active');
+        }
+
+        function exportActivity(format) {
+            let data = filteredActivities;
+            let filename = `user_activity_${userId}_${new Date().toISOString().split('T')[0]}`;
+            
+            switch(format) {
+                case 'csv':
+                    const csvData = data.map(a => ({
+                        Timestamp: new Date(a.timestamp).toLocaleString(),
+                        Type: a.type,
+                        Action: a.action,
+                        Status: a.status,
+                        IP: a.ip,
+                        Location: a.location,
+                        Device: a.userAgent
+                    }));
+                    TAAGC.data.downloadCSV(csvData, filename + '.csv');
+                    break;
+                    
+                case 'json':
+                    const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+                    const url = window.URL.createObjectURL(blob);
+                    const a = document.createElement('a');
+                    a.href = url;
+                    a.download = filename + '.json';
+                    a.click();
+                    break;
+                    
+                case 'pdf':
+                    TAAGC.ui.showToast('PDF export coming soon', 'info');
+                    break;
+            }
+            
+            TAAGC.ui.showToast(`Exporting ${data.length} activities...`, 'info');
+        }
+
+        function updateChart() {
+            const range = document.getElementById('chartRange').value;
+            generateChartData();
+        }
+
+        function startRealtimeUpdates() {
+            // Simulate real-time updates every 30 seconds
+            realtimeInterval = setInterval(() => {
+                const newActivity = generateMockActivities(1)[0];
+                allActivities.unshift(newActivity);
+                filteredActivities.unshift(newActivity);
+                
+                if (filteredActivities.length > 0) {
+                    renderActivities();
+                    updateStats();
+                    TAAGC.ui.showToast('New activity recorded', 'info');
+                }
+            }, 30000);
+        }
+
+        // Helper functions
+        function formatTimestamp(timestamp) {
+            const date = new Date(timestamp);
+            const today = new Date();
+            const yesterday = new Date(today);
+            yesterday.setDate(yesterday.getDate() - 1);
+            
+            if (date.toDateString() === today.toDateString()) {
+                return `Today at ${date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}`;
+            } else if (date.toDateString() === yesterday.toDateString()) {
+                return `Yesterday at ${date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}`;
+            } else {
+                return date.toLocaleDateString() + ' ' + date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+            }
+        }
+
+        function formatTime(timestamp) {
+            const date = new Date(timestamp);
+            return date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+        }
+
+        function getTypeIcon(type) {
+            const icons = {
+                login: 'fa-sign-in-alt',
+                logout: 'fa-sign-out-alt',
+                investment: 'fa-chart-line',
+                transaction: 'fa-exchange-alt',
+                withdrawal: 'fa-arrow-up',
+                deposit: 'fa-arrow-down',
+                profile: 'fa-user-edit',
+                security: 'fa-shield-alt'
+            };
+            return icons[type] || 'fa-circle';
+        }
+
+        function getDeviceIcon(os) {
+            const icons = {
+                Windows: 'fa-windows',
+                Mac: 'fa-apple',
+                Linux: 'fa-linux',
+                Android: 'fa-android',
+                iOS: 'fa-apple'
+            };
+            return icons[os] || 'fa-laptop';
+        }
+
+        // Clean up on page unload
+        window.addEventListener('beforeunload', () => {
+            if (realtimeInterval) {
+                clearInterval(realtimeInterval);
+            }
+        });
+    </script>
+</body>
+</html>
