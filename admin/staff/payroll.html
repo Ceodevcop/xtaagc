@@ -1,0 +1,479 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Payroll Management - TAAGC Admin</title>
+    
+    <!-- Fonts & Icons -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Assets -->
+    <link rel="stylesheet" href="/assets/css/admin.css">
+    <script src="/assets/js/admin.js" defer></script>
+    
+    <style>
+        .payroll-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: var(--space-xl);
+        }
+        
+        .payroll-period {
+            display: flex;
+            align-items: center;
+            gap: var(--space-md);
+            background: var(--white);
+            padding: var(--space-sm) var(--space-lg);
+            border-radius: var(--radius-lg);
+            border: 1px solid #e2e8f0;
+        }
+        
+        .summary-cards {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: var(--space-lg);
+            margin-bottom: var(--space-xl);
+        }
+        
+        .summary-card {
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+            color: white;
+            border-radius: var(--radius-lg);
+            padding: var(--space-lg);
+        }
+        
+        .summary-label {
+            font-size: 14px;
+            opacity: 0.9;
+            margin-bottom: var(--space-xs);
+        }
+        
+        .summary-value {
+            font-size: 28px;
+            font-weight: 700;
+        }
+        
+        .payroll-filters {
+            background: var(--white);
+            border-radius: var(--radius-lg);
+            padding: var(--space-lg);
+            margin-bottom: var(--space-xl);
+            border: 1px solid #e2e8f0;
+        }
+        
+        .filter-row {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: var(--space-md);
+            margin-bottom: var(--space-md);
+        }
+        
+        .payroll-table {
+            background: var(--white);
+            border-radius: var(--radius-lg);
+            padding: var(--space-lg);
+            border: 1px solid #e2e8f0;
+        }
+        
+        .payment-status {
+            display: inline-block;
+            padding: 4px 8px;
+            border-radius: 20px;
+            font-size: 11px;
+            font-weight: 600;
+        }
+        
+        .status-paid {
+            background: rgba(16,185,129,0.1);
+            color: var(--success);
+        }
+        
+        .status-pending {
+            background: rgba(245,158,11,0.1);
+            color: var(--warning);
+        }
+        
+        .status-processing {
+            background: rgba(59,130,246,0.1);
+            color: var(--info);
+        }
+        
+        .payroll-actions {
+            display: flex;
+            gap: var(--space-md);
+            justify-content: flex-end;
+            margin-top: var(--space-xl);
+        }
+        
+        .action-btn {
+            padding: var(--space-md) var(--space-xl);
+            background: var(--white);
+            border: 1px solid #e2e8f0;
+            border-radius: var(--radius-md);
+            display: flex;
+            align-items: center;
+            gap: var(--space-sm);
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .action-btn:hover {
+            background: var(--accent);
+            color: white;
+            border-color: var(--accent);
+        }
+        
+        .action-btn.primary {
+            background: var(--accent);
+            color: white;
+            border-color: var(--accent);
+        }
+        
+        .deductions-breakdown {
+            background: var(--bg);
+            border-radius: var(--radius-md);
+            padding: var(--space-sm);
+            margin-top: var(--space-xs);
+            font-size: 12px;
+        }
+        
+        .bulk-payroll {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            background: var(--primary);
+            color: white;
+            padding: var(--space-md) var(--space-lg);
+            border-radius: 50px;
+            box-shadow: var(--shadow-xl);
+            display: none;
+            align-items: center;
+            gap: var(--space-md);
+            z-index: 1000;
+        }
+        
+        .bulk-payroll.active {
+            display: flex;
+        }
+    </style>
+</head>
+<body>
+    <div class="admin-container">
+        <!-- Sidebar -->
+        <aside class="sidebar">...</aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <div class="top-bar">
+                <div class="page-title">
+                    <h1><i class="fas fa-money-bill-wave" style="color: var(--accent);"></i> Payroll Management</h1>
+                    <p>Process payroll and manage compensation</p>
+                </div>
+                <div class="top-bar-actions">
+                    <button class="btn btn-primary" onclick="runPayroll()">
+                        <i class="fas fa-play"></i> Run Payroll
+                    </button>
+                    <button class="btn btn-outline" onclick="exportPayroll()">
+                        <i class="fas fa-download"></i> Export
+                    </button>
+                    <button class="logout-btn" id="logoutBtn"><i class="fas fa-sign-out-alt"></i></button>
+                </div>
+            </div>
+
+            <!-- Payroll Period -->
+            <div class="payroll-header">
+                <div class="payroll-period">
+                    <button class="btn btn-sm btn-outline" onclick="prevPeriod()">
+                        <i class="fas fa-chevron-left"></i>
+                    </button>
+                    <span style="font-weight: 600;">March 2024</span>
+                    <button class="btn btn-sm btn-outline" onclick="nextPeriod()">
+                        <i class="fas fa-chevron-right"></i>
+                    </button>
+                </div>
+                
+                <div class="flex gap-2">
+                    <span class="badge badge-info">Pay Period: Mar 1 - Mar 31, 2024</span>
+                    <span class="badge badge-warning">Payment Date: Apr 5, 2024</span>
+                </div>
+            </div>
+
+            <!-- Summary Cards -->
+            <div class="summary-cards">
+                <div class="summary-card">
+                    <div class="summary-label">Total Payroll</div>
+                    <div class="summary-value">$524,567</div>
+                </div>
+                <div class="summary-card">
+                    <div class="summary-label">Net Pay</div>
+                    <div class="summary-value">$412,345</div>
+                </div>
+                <div class="summary-card">
+                    <div class="summary-label">Taxes & Deductions</div>
+                    <div class="summary-value">$112,222</div>
+                </div>
+                <div class="summary-card">
+                    <div class="summary-label">Employees</div>
+                    <div class="summary-value">124</div>
+                </div>
+            </div>
+
+            <!-- Filters -->
+            <div class="payroll-filters">
+                <div class="filter-row">
+                    <div class="form-group">
+                        <label>Department</label>
+                        <select class="form-control">
+                            <option>All Departments</option>
+                            <option>Management</option>
+                            <option>Operations</option>
+                            <option>Finance</option>
+                            <option>Marketing</option>
+                            <option>IT</option>
+                            <option>HR</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>Payment Status</label>
+                        <select class="form-control">
+                            <option>All Status</option>
+                            <option>Paid</option>
+                            <option>Pending</option>
+                            <option>Processing</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>Employment Type</label>
+                        <select class="form-control">
+                            <option>All Types</option>
+                            <option>Full Time</option>
+                            <option>Part Time</option>
+                            <option>Contract</option>
+                        </select>
+                    </div>
+                </div>
+                
+                <div class="flex-between">
+                    <button class="btn btn-primary">Apply Filters</button>
+                    <button class="btn btn-outline">Reset</button>
+                </div>
+            </div>
+
+            <!-- Payroll Table -->
+            <div class="payroll-table">
+                <table>
+                    <thead>
+                        <tr>
+                            <th width="30"><input type="checkbox" id="selectAll"></th>
+                            <th>Employee</th>
+                            <th>Department</th>
+                            <th>Gross Pay</th>
+                            <th>Deductions</th>
+                            <th>Net Pay</th>
+                            <th>Status</th>
+                            <th>Payment Method</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="payrollBody">
+                        <!-- Payroll rows will be loaded here -->
+                    </tbody>
+                </table>
+                
+                <!-- Pagination -->
+                <div class="flex-center" style="margin-top: var(--space-xl);">
+                    <div class="pagination">
+                        <button class="page-link"><i class="fas fa-chevron-left"></i></button>
+                        <button class="page-link active">1</button>
+                        <button class="page-link">2</button>
+                        <button class="page-link">3</button>
+                        <button class="page-link">4</button>
+                        <button class="page-link">5</button>
+                        <span class="page-link">...</span>
+                        <button class="page-link">8</button>
+                        <button class="page-link"><i class="fas fa-chevron-right"></i></button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Action Buttons -->
+            <div class="payroll-actions">
+                <button class="action-btn" onclick="previewPayroll()">
+                    <i class="fas fa-eye"></i> Preview
+                </button>
+                <button class="action-btn" onclick="validatePayroll()">
+                    <i class="fas fa-check-circle"></i> Validate
+                </button>
+                <button class="action-btn primary" onclick="processPayroll()">
+                    <i class="fas fa-play"></i> Process Payroll
+                </button>
+                <button class="action-btn" onclick="generatePayslips()">
+                    <i class="fas fa-file-pdf"></i> Generate Payslips
+                </button>
+            </div>
+
+            <!-- Bulk Actions -->
+            <div class="bulk-payroll" id="bulkPayroll">
+                <span><span id="selectedCount">0</span> employees selected</span>
+                <div class="flex gap-2">
+                    <button class="btn btn-sm btn-success" onclick="bulkMarkPaid()">
+                        <i class="fas fa-check"></i> Mark Paid
+                    </button>
+                    <button class="btn btn-sm btn-outline" onclick="cancelBulk()">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script>
+        function generateMockPayroll() {
+            const employees = [
+                { name: 'John Smith', dept: 'Operations', salary: 85000 },
+                { name: 'Sarah Johnson', dept: 'Marketing', salary: 92000 },
+                { name: 'Michael Chen', dept: 'IT', salary: 110000 },
+                { name: 'Emma Davis', dept: 'Finance', salary: 95000 },
+                { name: 'Robert Wilson', dept: 'Management', salary: 150000 }
+            ];
+            
+            const statuses = ['paid', 'pending', 'processing', 'paid', 'pending'];
+            const methods = ['Direct Deposit', 'Direct Deposit', 'Check', 'Direct Deposit', 'Wire Transfer'];
+            
+            let html = '';
+            
+            for (let i = 0; i < employees.length; i++) {
+                const emp = employees[i];
+                const monthlyGross = Math.round(emp.salary / 12);
+                const deductions = Math.round(monthlyGross * 0.22); // Approx 22% for taxes
+                const netPay = monthlyGross - deductions;
+                
+                const statusClass = {
+                    'paid': 'status-paid',
+                    'pending': 'status-pending',
+                    'processing': 'status-processing'
+                }[statuses[i]];
+                
+                html += `
+                    <tr>
+                        <td><input type="checkbox" class="payroll-checkbox" value="${i}"></td>
+                        <td>
+                            <div class="flex gap-2">
+                                <div class="user-avatar" style="width: 32px; height: 32px;">${emp.name.charAt(0)}</div>
+                                <div>
+                                    <div>${emp.name}</div>
+                                    <small>${emp.dept}</small>
+                                </div>
+                            </div>
+                        </td>
+                        <td>${emp.dept}</td>
+                        <td><strong>$${monthlyGross.toLocaleString()}</strong></td>
+                        <td>
+                            $${deductions.toLocaleString()}
+                            <div class="deductions-breakdown">
+                                Tax: $${Math.round(deductions * 0.7).toLocaleString()}<br>
+                                Benefits: $${Math.round(deductions * 0.3).toLocaleString()}
+                            </div>
+                        </td>
+                        <td><strong>$${netPay.toLocaleString()}</strong></td>
+                        <td><span class="payment-status ${statusClass}">${statuses[i]}</span></td>
+                        <td>${methods[i]}</td>
+                        <td>
+                            <div class="flex gap-1">
+                                <button class="btn btn-sm btn-outline" onclick="viewPayslip('${i}')" title="Payslip">
+                                    <i class="fas fa-file-invoice"></i>
+                                </button>
+                                <button class="btn btn-sm btn-outline" onclick="editPayroll('${i}')" title="Edit">
+                                    <i class="fas fa-edit"></i>
+                                </button>
+                            </div>
+                        </td>
+                    </tr>
+                `;
+            }
+            
+            return html;
+        }
+
+        function loadPayroll() {
+            document.getElementById('payrollBody').innerHTML = generateMockPayroll();
+        }
+
+        function prevPeriod() {
+            TAAGC.ui.showToast('Previous period', 'info');
+        }
+
+        function nextPeriod() {
+            TAAGC.ui.showToast('Next period', 'info');
+        }
+
+        function runPayroll() {
+            TAAGC.ui.confirm('Run payroll for March 2024?', () => {
+                TAAGC.ui.showToast('Payroll processing started', 'success');
+            });
+        }
+
+        function exportPayroll() {
+            TAAGC.ui.showToast('Exporting payroll data...', 'info');
+        }
+
+        function previewPayroll() {
+            TAAGC.ui.showToast('Previewing payroll', 'info');
+        }
+
+        function validatePayroll() {
+            TAAGC.ui.showToast('Validating payroll data...', 'info');
+        }
+
+        function processPayroll() {
+            TAAGC.ui.confirm('Process payroll? This will initiate payments.', () => {
+                TAAGC.ui.showToast('Payroll processed successfully', 'success');
+            });
+        }
+
+        function generatePayslips() {
+            TAAGC.ui.showToast('Generating payslips...', 'info');
+        }
+
+        function viewPayslip(id) {
+            TAAGC.ui.showToast(`Viewing payslip for employee ${id}`, 'info');
+        }
+
+        function editPayroll(id) {
+            TAAGC.ui.showToast(`Editing payroll for employee ${id}`, 'info');
+        }
+
+        // Bulk actions
+        document.getElementById('selectAll').addEventListener('change', function(e) {
+            document.querySelectorAll('.payroll-checkbox').forEach(cb => {
+                cb.checked = e.target.checked;
+            });
+            updateSelectedCount();
+        });
+
+        function updateSelectedCount() {
+            const count = document.querySelectorAll('.payroll-checkbox:checked').length;
+            document.getElementById('selectedCount').textContent = count;
+            document.getElementById('bulkPayroll').classList.toggle('active', count > 0);
+        }
+
+        function bulkMarkPaid() {
+            TAAGC.ui.showToast('Marked selected as paid', 'success');
+            cancelBulk();
+        }
+
+        function cancelBulk() {
+            document.querySelectorAll('.payroll-checkbox').forEach(cb => cb.checked = false);
+            document.getElementById('selectAll').checked = false;
+            document.getElementById('bulkPayroll').classList.remove('active');
+        }
+
+        loadPayroll();
+    </script>
+</body>
+</html>
