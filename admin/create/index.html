@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Create User - TAAGC Admin</title>
+    
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
+    
+    <link rel="stylesheet" href="/assets/css/admin.css">
+    <script src="assets/js/admin.js"></script>
+</head>
+<body>
+    <div class="admin-container">
+        <!-- Sidebar (same) -->
+        <aside class="admin-sidebar">...</aside>
+
+        <main class="admin-main">
+            <div class="admin-topbar">
+                <div class="admin-page-title">
+                    <h1>Create New User</h1>
+                    <p>Add a new user to the platform</p>
+                </div>
+                <div class="flex gap-2">
+                    <button class="btn btn-outline" onclick="history.back()">
+                        <i class="fas fa-arrow-left"></i> Back
+                    </button>
+                </div>
+            </div>
+
+            <div class="card">
+                <form id="createUserForm">
+                    <div class="grid-2">
+                        <div class="form-group">
+                            <label><i class="fas fa-user"></i> Full Name</label>
+                            <input type="text" class="form-control" id="fullName" required>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label><i class="fas fa-envelope"></i> Email</label>
+                            <input type="email" class="form-control" id="email" required>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label><i class="fas fa-phone"></i> Phone</label>
+                            <input type="tel" class="form-control" id="phone">
+                        </div>
+                        
+                        <div class="form-group">
+                            <label><i class="fas fa-tag"></i> Role</label>
+                            <select class="form-control" id="role" required>
+                                <option value="client">Client</option>
+                                <option value="investor">Investor</option>
+                                ${TAAGC.Auth.isSuperAdmin() ? `
+                                    <option value="admin">Admin</option>
+                                    <option value="super_admin">Super Admin</option>
+                                ` : ''}
+                            </select>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label><i class="fas fa-circle"></i> Status</label>
+                            <select class="form-control" id="status" required>
+                                <option value="active">Active</option>
+                                <option value="pending">Pending</option>
+                                <option value="suspended">Suspended</option>
+                            </select>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label><i class="fas fa-lock"></i> Temporary Password</label>
+                            <div class="password-field">
+                                <input type="text" class="form-control" id="password" value="Welcome123!" readonly>
+                                <i class="fas fa-copy password-toggle" onclick="copyPassword()" title="Copy password"></i>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="flex gap-2" style="margin-top: 30px;">
+                        <button type="submit" class="btn btn-primary">
+                            <i class="fas fa-save"></i> Create User
+                        </button>
+                        <button type="button" class="btn btn-outline" onclick="history.back()">
+                            Cancel
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </main>
+    </div>
+
+    <script>
+        document.getElementById('createUserForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const userData = {
+                fullName: document.getElementById('fullName').value,
+                email: document.getElementById('email').value,
+                phone: document.getElementById('phone').value,
+                role: document.getElementById('role').value,
+                status: document.getElementById('status').value
+            };
+            
+            try {
+                const result = await TAAGC.API.post('/admin/users/create', userData);
+                TAAGC.UI.showToast('User created successfully!', 'success');
+                setTimeout(() => {
+                    location.href = '/admin/users/index.html';
+                }, 1500);
+            } catch (error) {
+                TAAGC.UI.showToast('Error creating user', 'error');
+            }
+        });
+
+        function copyPassword() {
+            const password = document.getElementById('password');
+            password.select();
+            navigator.clipboard.writeText(password.value);
+            TAAGC.UI.showToast('Password copied!', 'success');
+        }
+    </script>
+</body>
+</html>
