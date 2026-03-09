@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Management - TAAGC (CEO Only)</title>
+    
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
+    
+    <link rel="stylesheet" href="/assets/css/admin.css">
+    <script src="/assets/js/admin.js"></script>
+</head>
+<body class="super-admin">
+    <div class="admin-container">
+        <aside class="admin-sidebar">...</aside>
+
+        <main class="admin-main">
+            <div class="admin-topbar">
+                <div class="admin-page-title">
+                    <h1><i class="fas fa-crown" style="color: #c19a6b;"></i> Admin Management</h1>
+                    <p>CEO Only - Manage all administrators</p>
+                </div>
+                
+                <div class="flex gap-2">
+                    <button class="btn btn-primary" onclick="location.href='/admin/admins/create.html'">
+                        <i class="fas fa-plus"></i> New Admin
+                    </button>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="table-container">
+                    <table id="adminsTable">
+                        <thead>
+                            <tr>
+                                <th>Name</th>
+                                <th>Email</th>
+                                <th>Role</th>
+                                <th>Permissions</th>
+                                <th>Last Active</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="adminsTableBody"></tbody>
+                    </table>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', async function() {
+            if (!TAAGC.Auth.isSuperAdmin()) {
+                TAAGC.UI.showToast('Access denied. CEO only.', 'error');
+                setTimeout(() => location.href = '/admin/dashboard.html', 2000);
+                return;
+            }
+            
+            loadAdmins();
+        });
+
+        async function loadAdmins() {
+            try {
+                const data = await TAAGC.API.get('/admin/admins');
+                const tbody = document.getElementById('adminsTableBody');
+                
+                tbody.innerHTML = data.admins.map(admin => `
+                    <tr>
+                        <td>${admin.fullName}</td>
+                        <td>${admin.email}</td>
+                        <td><span class="badge ${admin.role === 'super_admin' ? 'badge-danger' : 'badge-warning'}">${admin.role}</span></td>
+                        <td>${admin.permissions?.length || 0} permissions</td>
+                        <td>${TAAGC.Data.timeAgo(admin.lastActive)}</td>
+                        <td>
+                            <button class="btn btn-sm btn-outline-accent" onclick="editAdmin('${admin.id}')">
+                                <i class="fas fa-edit"></i>
+                            </button>
+                            ${admin.role !== 'super_admin' ? `
+                                <button class="btn btn-sm btn-outline-danger" onclick="deleteAdmin('${admin.id}')">
+                                    <i class="fas fa-trash"></i>
+                                </button>
+                            ` : ''}
+                        </td>
+                    </tr>
+                `).join('');
+                
+            } catch (error) {
+                TAAGC.UI.showToast('Error loading admins', 'error');
+            }
+        }
+
+        function editAdmin(id) {
+            location.href = `/admin/admins/edit.html?id=${id}`;
+        }
+
+        function deleteAdmin(id) {
+            TAAGC.UI.confirm('Delete this admin?', async () => {
+                await TAAGC.API.delete(`/admin/admins/${id}`);
+                TAAGC.UI.showToast('Admin deleted', 'success');
+                loadAdmins();
+            });
+        }
+    </script>
+</body>
+</html>
