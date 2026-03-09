@@ -1,0 +1,770 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Users Management - TAAGC Admin</title>
+    
+    <!-- Fonts & Icons -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Assets -->
+    <link rel="stylesheet" href="/assets/css/admin.css">
+    <script src="/assets/js/admin.js" defer></script>
+    
+    <style>
+        .user-filters {
+            background: var(--white);
+            padding: var(--space-lg);
+            border-radius: var(--radius-lg);
+            margin-bottom: var(--space-xl);
+            border: 1px solid #e2e8f0;
+        }
+        
+        .filter-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: var(--space-md);
+        }
+        
+        .user-avatar-lg {
+            width: 80px;
+            height: 80px;
+            background: var(--accent);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 32px;
+            font-weight: 700;
+            color: white;
+        }
+        
+        .user-stat-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: var(--space-xs);
+            padding: var(--space-xs) var(--space-sm);
+            background: var(--bg);
+            border-radius: 20px;
+            font-size: 12px;
+        }
+        
+        .bulk-actions {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            background: var(--primary);
+            color: white;
+            padding: var(--space-md) var(--space-lg);
+            border-radius: 50px;
+            box-shadow: var(--shadow-xl);
+            display: none;
+            align-items: center;
+            gap: var(--space-md);
+            z-index: 1000;
+        }
+        
+        .bulk-actions.active {
+            display: flex;
+        }
+    </style>
+</head>
+<body>
+    <div class="admin-container">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <div class="logo-icon">TA</div>
+                <h2><span>TAAGC</span> ADMIN</h2>
+            </div>
+
+            <div class="user-info">
+                <div class="user-avatar" data-user-avatar>A</div>
+                <div data-user-field="name">Loading...</div>
+                <div style="font-size: 12px; opacity: 0.7;" data-user-field="email"></div>
+                <span class="user-role" data-user-field="role"></span>
+            </div>
+
+            <nav class="nav-menu">
+                <div class="nav-section">MAIN</div>
+                <a href="/dashboard.html" class="nav-item"><i class="fas fa-tachometer-alt"></i> Dashboard</a>
+                <a href="/users/index.html" class="nav-item active"><i class="fas fa-users"></i> Users</a>
+                <a href="/investments/index.html" class="nav-item"><i class="fas fa-chart-line"></i> Investments</a>
+                <a href="/banks/index.html" class="nav-item"><i class="fas fa-university"></i> Banks</a>
+                <a href="/agencies/index.html" class="nav-item"><i class="fas fa-building"></i> Agencies</a>
+                
+                <!-- CEO Only -->
+                <div class="nav-divider super-admin-only"></div>
+                <div class="nav-section super-admin-only">CEO ONLY</div>
+                <a href="/admins/index.html" class="nav-item super-admin-only"><i class="fas fa-user-shield"></i> Manage Admins</a>
+                <a href="/settings/general.html" class="nav-item super-admin-only"><i class="fas fa-cog"></i> Settings</a>
+            </nav>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <div class="top-bar">
+                <div class="page-title">
+                    <h1><i class="fas fa-users" style="color: var(--accent);"></i> Users Management</h1>
+                    <p>Manage all platform users, roles, and permissions</p>
+                </div>
+                <div class="top-bar-actions">
+                    <button class="btn btn-primary" onclick="location.href='/users/create.html'">
+                        <i class="fas fa-plus"></i> Add User
+                    </button>
+                    <button class="btn btn-outline" id="exportBtn">
+                        <i class="fas fa-download"></i> Export
+                    </button>
+                    <button class="logout-btn" id="logoutBtn"><i class="fas fa-sign-out-alt"></i></button>
+                </div>
+            </div>
+
+            <!-- Quick Stats -->
+            <div class="stats-grid" style="grid-template-columns: repeat(6, 1fr);">
+                <div class="stat-card">
+                    <div class="stat-value" id="totalUsers">0</div>
+                    <div class="stat-label">Total Users</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value" id="activeUsers">0</div>
+                    <div class="stat-label">Active</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value" id="pendingUsers">0</div>
+                    <div class="stat-label">Pending</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value" id="investors">0</div>
+                    <div class="stat-label">Investors</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value" id="clients">0</div>
+                    <div class="stat-label">Clients</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value" id="newToday">0</div>
+                    <div class="stat-label">New Today</div>
+                </div>
+            </div>
+
+            <!-- Filters -->
+            <div class="user-filters">
+                <div class="filter-grid">
+                    <div class="form-group">
+                        <label><i class="fas fa-search"></i> Search</label>
+                        <input type="text" id="searchInput" class="form-control" placeholder="Name, email, phone...">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label><i class="fas fa-tag"></i> Role</label>
+                        <select id="roleFilter" class="form-control">
+                            <option value="">All Roles</option>
+                            <option value="super_admin">Super Admin</option>
+                            <option value="admin">Admin</option>
+                            <option value="investor">Investor</option>
+                            <option value="client">Client</option>
+                            <option value="staff">Staff</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label><i class="fas fa-circle"></i> Status</label>
+                        <select id="statusFilter" class="form-control">
+                            <option value="">All Status</option>
+                            <option value="active">Active</option>
+                            <option value="pending">Pending</option>
+                            <option value="suspended">Suspended</option>
+                            <option value="inactive">Inactive</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label><i class="fas fa-calendar"></i> Joined</label>
+                        <select id="dateFilter" class="form-control">
+                            <option value="">Any time</option>
+                            <option value="today">Today</option>
+                            <option value="week">This week</option>
+                            <option value="month">This month</option>
+                            <option value="year">This year</option>
+                        </select>
+                    </div>
+                </div>
+                
+                <div class="flex-between" style="margin-top: var(--space-md);">
+                    <div class="flex gap-2">
+                        <span class="user-stat-badge"><i class="fas fa-check-circle" style="color: var(--success);"></i> <span id="selectedCount">0</span> selected</span>
+                        <span class="user-stat-badge"><i class="fas fa-sync-alt"></i> Last updated: <span id="lastUpdate">Just now</span></span>
+                    </div>
+                    <div class="flex gap-2">
+                        <button class="btn btn-sm btn-outline" onclick="resetFilters()"><i class="fas fa-undo"></i> Reset</button>
+                        <button class="btn btn-sm btn-primary" onclick="applyFilters()"><i class="fas fa-filter"></i> Apply</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Users Table -->
+            <div class="card">
+                <div class="table-container">
+                    <table id="usersTable">
+                        <thead>
+                            <tr>
+                                <th width="30"><input type="checkbox" id="selectAll" onchange="toggleSelectAll()"></th>
+                                <th>User</th>
+                                <th>Role</th>
+                                <th>Status</th>
+                                <th>Investments</th>
+                                <th>Joined</th>
+                                <th>Last Active</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="usersTableBody">
+                            <tr><td colspan="8" class="text-center">Loading users...</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+                
+                <!-- Pagination -->
+                <div class="flex-between" style="margin-top: var(--space-lg);">
+                    <div class="flex gap-2">
+                        <span>Showing <span id="showingStart">1</span>-<span id="showingEnd">10</span> of <span id="totalCount">0</span></span>
+                        <select id="pageSize" class="form-control" style="width: 70px;" onchange="changePageSize()">
+                            <option value="10">10</option>
+                            <option value="25">25</option>
+                            <option value="50">50</option>
+                            <option value="100">100</option>
+                        </select>
+                    </div>
+                    
+                    <div class="pagination" id="pagination"></div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Bulk Actions Bar -->
+    <div class="bulk-actions" id="bulkActions">
+        <span><span id="bulkSelectedCount">0</span> users selected</span>
+        <div class="flex gap-2">
+            <button class="btn btn-sm btn-success" onclick="bulkApprove()"><i class="fas fa-check"></i> Approve</button>
+            <button class="btn btn-sm btn-warning" onclick="bulkSuspend()"><i class="fas fa-ban"></i> Suspend</button>
+            <button class="btn btn-sm btn-danger" onclick="bulkDelete()"><i class="fas fa-trash"></i> Delete</button>
+            <button class="btn btn-sm btn-outline" onclick="cancelBulk()"><i class="fas fa-times"></i></button>
+        </div>
+    </div>
+
+    <script>
+        // ============================================
+        // USERS MANAGEMENT - FULL CRUD
+        // ============================================
+        let allUsers = [];
+        let filteredUsers = [];
+        let currentPage = 1;
+        let pageSize = 10;
+        let selectedUsers = new Set();
+        
+        // API Endpoints (for reference)
+        const API = {
+            users: '/api/users',
+            stats: '/api/users/stats'
+        };
+
+        document.addEventListener('DOMContentLoaded', async () => {
+            if (!TAAGC.auth.isAuthenticated()) {
+                window.location.href = '/';
+                return;
+            }
+            
+            TAAGC.auth.updateUI();
+            await loadUsers();
+            await loadStats();
+            
+            // Setup event listeners
+            setupEventListeners();
+        });
+
+        // ============================================
+        // LOAD USERS FROM API
+        // ============================================
+        async function loadUsers() {
+            TAAGC.ui.showLoading('usersTableBody');
+            
+            try {
+                // In production, use actual API call:
+                // const response = await TAAGC.api.get('/users', {
+                //     page: currentPage,
+                //     limit: pageSize,
+                //     role: getSelectedRole(),
+                //     status: getSelectedStatus()
+                // });
+                // allUsers = response.users;
+                
+                // Simulated data for now
+                await simulateApiCall();
+                
+                applyFilters();
+                renderTable();
+                updatePagination();
+                
+            } catch (error) {
+                TAAGC.ui.showToast('Error loading users', 'error');
+            }
+        }
+
+        // Simulate API call (remove in production)
+        async function simulateApiCall() {
+            return new Promise(resolve => {
+                setTimeout(() => {
+                    allUsers = generateMockUsers(157);
+                    resolve();
+                }, 500);
+            });
+        }
+
+        function generateMockUsers(count) {
+            const users = [];
+            const roles = ['super_admin', 'admin', 'investor', 'client', 'staff'];
+            const statuses = ['active', 'pending', 'suspended', 'inactive'];
+            const firstNames = ['John', 'Jane', 'Michael', 'Sarah', 'David', 'Emma', 'Robert', 'Lisa', 'William', 'Maria'];
+            const lastNames = ['Smith', 'Johnson', 'Williams', 'Brown', 'Jones', 'Garcia', 'Miller', 'Davis', 'Rodriguez', 'Martinez'];
+            
+            for (let i = 0; i < count; i++) {
+                const firstName = firstNames[Math.floor(Math.random() * firstNames.length)];
+                const lastName = lastNames[Math.floor(Math.random() * lastNames.length)];
+                const role = roles[Math.floor(Math.random() * roles.length)];
+                const status = statuses[Math.floor(Math.random() * statuses.length)];
+                const daysAgo = Math.floor(Math.random() * 365);
+                const joinDate = new Date();
+                joinDate.setDate(joinDate.getDate() - daysAgo);
+                
+                users.push({
+                    id: `usr_${i + 1000}`,
+                    fullName: `${firstName} ${lastName}`,
+                    email: `${firstName.toLowerCase()}.${lastName.toLowerCase()}@example.com`,
+                    phone: `+1${Math.floor(Math.random() * 9000000000 + 1000000000)}`,
+                    role: role,
+                    status: status,
+                    investments: Math.floor(Math.random() * 10),
+                    investmentTotal: Math.floor(Math.random() * 50000),
+                    createdAt: joinDate.toISOString(),
+                    lastActive: new Date(joinDate.getTime() + Math.random() * 30 * 24 * 60 * 60 * 1000).toISOString(),
+                    emailVerified: Math.random() > 0.3,
+                    twoFactorEnabled: Math.random() > 0.8,
+                    avatar: null
+                });
+            }
+            
+            // Sort by join date (newest first)
+            return users.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+        }
+
+        // ============================================
+        // LOAD STATS
+        // ============================================
+        async function loadStats() {
+            try {
+                // const stats = await TAAGC.api.get('/users/stats');
+                
+                const active = allUsers.filter(u => u.status === 'active').length;
+                const pending = allUsers.filter(u => u.status === 'pending').length;
+                const investors = allUsers.filter(u => u.role === 'investor').length;
+                const clients = allUsers.filter(u => u.role === 'client').length;
+                const today = allUsers.filter(u => {
+                    const date = new Date(u.createdAt);
+                    const today = new Date();
+                    return date.toDateString() === today.toDateString();
+                }).length;
+                
+                document.getElementById('totalUsers').textContent = allUsers.length;
+                document.getElementById('activeUsers').textContent = active;
+                document.getElementById('pendingUsers').textContent = pending;
+                document.getElementById('investors').textContent = investors;
+                document.getElementById('clients').textContent = clients;
+                document.getElementById('newToday').textContent = today;
+                
+            } catch (error) {
+                console.error('Error loading stats:', error);
+            }
+        }
+
+        // ============================================
+        // RENDER TABLE
+        // ============================================
+        function renderTable() {
+            const start = (currentPage - 1) * pageSize;
+            const end = Math.min(start + pageSize, filteredUsers.length);
+            const pageUsers = filteredUsers.slice(start, end);
+            
+            document.getElementById('showingStart').textContent = filteredUsers.length ? start + 1 : 0;
+            document.getElementById('showingEnd').textContent = end;
+            document.getElementById('totalCount').textContent = filteredUsers.length;
+            
+            const tbody = document.getElementById('usersTableBody');
+            
+            if (pageUsers.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="8" class="text-center">No users found</td></tr>';
+                return;
+            }
+            
+            tbody.innerHTML = pageUsers.map(user => `
+                <tr>
+                    <td><input type="checkbox" class="user-checkbox" value="${user.id}" onchange="updateSelectedCount()" ${selectedUsers.has(user.id) ? 'checked' : ''}></td>
+                    <td>
+                        <div class="flex gap-2" style="align-items: center;">
+                            <div class="user-avatar" style="width: 40px; height: 40px; font-size: 16px; margin: 0;">
+                                ${user.fullName.charAt(0)}
+                            </div>
+                            <div>
+                                <strong>${user.fullName}</strong>
+                                <br>
+                                <small style="color: var(--light);">${user.email}</small>
+                                ${!user.emailVerified ? '<i class="fas fa-exclamation-circle" style="color: var(--warning); margin-left: 5px;" title="Email not verified"></i>' : ''}
+                            </div>
+                        </div>
+                    </td>
+                    <td>
+                        <span class="badge ${user.role === 'super_admin' ? 'badge-danger' : 
+                                          user.role === 'admin' ? 'badge-warning' : 
+                                          user.role === 'investor' ? 'badge-success' : 
+                                          user.role === 'staff' ? 'badge-purple' : 'badge-info'}">
+                            ${user.role.replace('_', ' ')}
+                        </span>
+                    </td>
+                    <td>
+                        <span class="badge ${user.status === 'active' ? 'badge-success' : 
+                                          user.status === 'pending' ? 'badge-warning' : 
+                                          user.status === 'suspended' ? 'badge-danger' : 'badge-info'}">
+                            ${user.status}
+                        </span>
+                        ${user.twoFactorEnabled ? '<i class="fas fa-shield-alt" style="color: var(--success); margin-left: 5px;" title="2FA Enabled"></i>' : ''}
+                    </td>
+                    <td>
+                        <div><strong>${user.investments}</strong> investments</div>
+                        <small>${TAAGC.data.formatCurrency(user.investmentTotal)}</small>
+                    </td>
+                    <td>${TAAGC.data.formatDate(user.createdAt)}</td>
+                    <td>
+                        <div>${TAAGC.data.timeAgo(user.lastActive)}</div>
+                        <small style="color: var(--light);">${new Date(user.lastActive).toLocaleTimeString()}</small>
+                    </td>
+                    <td>
+                        <div class="flex gap-1">
+                            <button class="btn btn-sm btn-outline" onclick="viewUser('${user.id}')" title="View">
+                                <i class="fas fa-eye"></i>
+                            </button>
+                            <button class="btn btn-sm btn-outline-accent" onclick="editUser('${user.id}')" title="Edit">
+                                <i class="fas fa-edit"></i>
+                            </button>
+                            ${TAAGC.auth.isSuperAdmin() ? `
+                                <button class="btn btn-sm btn-outline-danger" onclick="deleteUser('${user.id}')" title="Delete">
+                                    <i class="fas fa-trash"></i>
+                                </button>
+                            ` : ''}
+                        </div>
+                    </td>
+                </tr>
+            `).join('');
+            
+            // Update select all checkbox
+            const selectAll = document.getElementById('selectAll');
+            if (selectAll) {
+                const allCheckboxes = document.querySelectorAll('.user-checkbox');
+                const checkedCheckboxes = document.querySelectorAll('.user-checkbox:checked');
+                selectAll.checked = allCheckboxes.length > 0 && allCheckboxes.length === checkedCheckboxes.length;
+                selectAll.indeterminate = checkedCheckboxes.length > 0 && checkedCheckboxes.length < allCheckboxes.length;
+            }
+        }
+
+        // ============================================
+        // FILTERS
+        // ============================================
+        function applyFilters() {
+            const searchTerm = document.getElementById('searchInput').value.toLowerCase();
+            const role = document.getElementById('roleFilter').value;
+            const status = document.getElementById('statusFilter').value;
+            const dateFilter = document.getElementById('dateFilter').value;
+            
+            filteredUsers = allUsers.filter(user => {
+                // Search filter
+                if (searchTerm) {
+                    const matches = 
+                        user.fullName.toLowerCase().includes(searchTerm) ||
+                        user.email.toLowerCase().includes(searchTerm) ||
+                        (user.phone && user.phone.includes(searchTerm));
+                    if (!matches) return false;
+                }
+                
+                // Role filter
+                if (role && user.role !== role) return false;
+                
+                // Status filter
+                if (status && user.status !== status) return false;
+                
+                // Date filter
+                if (dateFilter) {
+                    const joinDate = new Date(user.createdAt);
+                    const today = new Date();
+                    const diffDays = Math.floor((today - joinDate) / (1000 * 60 * 60 * 24));
+                    
+                    if (dateFilter === 'today' && diffDays > 1) return false;
+                    if (dateFilter === 'week' && diffDays > 7) return false;
+                    if (dateFilter === 'month' && diffDays > 30) return false;
+                    if (dateFilter === 'year' && diffDays > 365) return false;
+                }
+                
+                return true;
+            });
+            
+            currentPage = 1;
+            renderTable();
+            updatePagination();
+            document.getElementById('lastUpdate').textContent = 'Just now';
+        }
+
+        function resetFilters() {
+            document.getElementById('searchInput').value = '';
+            document.getElementById('roleFilter').value = '';
+            document.getElementById('statusFilter').value = '';
+            document.getElementById('dateFilter').value = '';
+            applyFilters();
+        }
+
+        function getSelectedRole() {
+            return document.getElementById('roleFilter').value;
+        }
+
+        function getSelectedStatus() {
+            return document.getElementById('statusFilter').value;
+        }
+
+        // ============================================
+        // PAGINATION
+        // ============================================
+        function updatePagination() {
+            const totalPages = Math.ceil(filteredUsers.length / pageSize);
+            const pagination = document.getElementById('pagination');
+            
+            if (totalPages <= 1) {
+                pagination.innerHTML = '';
+                return;
+            }
+            
+            let html = '';
+            
+            // Previous button
+            html += `<button class="page-link" onclick="goToPage(${currentPage - 1})" ${currentPage === 1 ? 'disabled' : ''}>
+                <i class="fas fa-chevron-left"></i>
+            </button>`;
+            
+            // Page numbers
+            for (let i = 1; i <= totalPages; i++) {
+                if (i === 1 || i === totalPages || (i >= currentPage - 2 && i <= currentPage + 2)) {
+                    html += `<button class="page-link ${i === currentPage ? 'active' : ''}" onclick="goToPage(${i})">${i}</button>`;
+                } else if (i === currentPage - 3 || i === currentPage + 3) {
+                    html += `<span class="page-link">...</span>`;
+                }
+            }
+            
+            // Next button
+            html += `<button class="page-link" onclick="goToPage(${currentPage + 1})" ${currentPage === totalPages ? 'disabled' : ''}>
+                <i class="fas fa-chevron-right"></i>
+            </button>`;
+            
+            pagination.innerHTML = html;
+        }
+
+        function goToPage(page) {
+            const totalPages = Math.ceil(filteredUsers.length / pageSize);
+            if (page >= 1 && page <= totalPages) {
+                currentPage = page;
+                renderTable();
+                updatePagination();
+            }
+        }
+
+        function changePageSize() {
+            pageSize = parseInt(document.getElementById('pageSize').value);
+            currentPage = 1;
+            renderTable();
+            updatePagination();
+        }
+
+        // ============================================
+        // SELECTION & BULK ACTIONS
+        // ============================================
+        function toggleSelectAll() {
+            const selectAll = document.getElementById('selectAll');
+            const checkboxes = document.querySelectorAll('.user-checkbox');
+            
+            checkboxes.forEach(cb => {
+                cb.checked = selectAll.checked;
+                if (selectAll.checked) {
+                    selectedUsers.add(cb.value);
+                } else {
+                    selectedUsers.delete(cb.value);
+                }
+            });
+            
+            updateSelectedCount();
+        }
+
+        function updateSelectedCount() {
+            const checkboxes = document.querySelectorAll('.user-checkbox:checked');
+            selectedUsers = new Set(Array.from(checkboxes).map(cb => cb.value));
+            
+            const count = selectedUsers.size;
+            document.getElementById('selectedCount').textContent = count;
+            document.getElementById('bulkSelectedCount').textContent = count;
+            
+            const bulkActions = document.getElementById('bulkActions');
+            if (count > 0) {
+                bulkActions.classList.add('active');
+            } else {
+                bulkActions.classList.remove('active');
+            }
+        }
+
+        function cancelBulk() {
+            selectedUsers.clear();
+            document.querySelectorAll('.user-checkbox').forEach(cb => cb.checked = false);
+            document.getElementById('selectAll').checked = false;
+            updateSelectedCount();
+        }
+
+        async function bulkApprove() {
+            if (selectedUsers.size === 0) return;
+            
+            TAAGC.ui.confirm(`Approve ${selectedUsers.size} selected users?`, async () => {
+                try {
+                    // await TAAGC.api.post('/users/bulk/approve', { userIds: Array.from(selectedUsers) });
+                    TAAGC.ui.showToast(`${selectedUsers.size} users approved`, 'success');
+                    cancelBulk();
+                    await loadUsers();
+                } catch (error) {
+                    TAAGC.ui.showToast('Error approving users', 'error');
+                }
+            });
+        }
+
+        async function bulkSuspend() {
+            if (selectedUsers.size === 0) return;
+            
+            TAAGC.ui.confirm(`Suspend ${selectedUsers.size} selected users?`, async () => {
+                try {
+                    // await TAAGC.api.post('/users/bulk/suspend', { userIds: Array.from(selectedUsers) });
+                    TAAGC.ui.showToast(`${selectedUsers.size} users suspended`, 'success');
+                    cancelBulk();
+                    await loadUsers();
+                } catch (error) {
+                    TAAGC.ui.showToast('Error suspending users', 'error');
+                }
+            });
+        }
+
+        async function bulkDelete() {
+            if (selectedUsers.size === 0) return;
+            
+            TAAGC.ui.confirm(`Permanently delete ${selectedUsers.size} selected users? This action cannot be undone!`, async () => {
+                try {
+                    // await TAAGC.api.delete('/users/bulk', { userIds: Array.from(selectedUsers) });
+                    TAAGC.ui.showToast(`${selectedUsers.size} users deleted`, 'success');
+                    cancelBulk();
+                    await loadUsers();
+                } catch (error) {
+                    TAAGC.ui.showToast('Error deleting users', 'error');
+                }
+            });
+        }
+
+        // ============================================
+        // USER ACTIONS
+        // ============================================
+        function viewUser(id) {
+            location.href = `/users/view.html?id=${id}`;
+        }
+
+        function editUser(id) {
+            location.href = `/users/edit.html?id=${id}`;
+        }
+
+        function deleteUser(id) {
+            TAAGC.ui.confirm('Are you sure you want to delete this user? This action cannot be undone!', async () => {
+                try {
+                    // await TAAGC.api.delete(`/users/${id}`);
+                    TAAGC.ui.showToast('User deleted successfully', 'success');
+                    selectedUsers.delete(id);
+                    await loadUsers();
+                } catch (error) {
+                    TAAGC.ui.showToast('Error deleting user', 'error');
+                }
+            });
+        }
+
+        // ============================================
+        // EXPORT
+        // ============================================
+        document.getElementById('exportBtn').addEventListener('click', () => {
+            const data = filteredUsers.map(u => ({
+                Name: u.fullName,
+                Email: u.email,
+                Role: u.role,
+                Status: u.status,
+                Investments: u.investments,
+                'Investment Total': u.investmentTotal,
+                Joined: new Date(u.createdAt).toLocaleDateString(),
+                'Last Active': new Date(u.lastActive).toLocaleString()
+            }));
+            
+            TAAGC.data.downloadCSV(data, 'users_export.csv');
+            TAAGC.ui.showToast('Export started', 'success');
+        });
+
+        // ============================================
+        // EVENT LISTENERS
+        // ============================================
+        function setupEventListeners() {
+            // Real-time search (debounced)
+            let searchTimeout;
+            document.getElementById('searchInput').addEventListener('input', () => {
+                clearTimeout(searchTimeout);
+                searchTimeout = setTimeout(applyFilters, 300);
+            });
+            
+            // Filter changes
+            document.getElementById('roleFilter').addEventListener('change', applyFilters);
+            document.getElementById('statusFilter').addEventListener('change', applyFilters);
+            document.getElementById('dateFilter').addEventListener('change', applyFilters);
+            
+            // Keyboard shortcuts
+            document.addEventListener('keydown', (e) => {
+                // Ctrl/Cmd + F for search focus
+                if ((e.ctrlKey || e.metaKey) && e.key === 'f') {
+                    e.preventDefault();
+                    document.getElementById('searchInput').focus();
+                }
+                
+                // Escape to clear selection
+                if (e.key === 'Escape') {
+                    cancelBulk();
+                }
+            });
+        }
+
+        // ============================================
+        // REAL-TIME UPDATES (WebSocket)
+        // ============================================
+        function setupRealtimeUpdates() {
+            // In production, use WebSocket for real-time updates
+            // const ws = new WebSocket(TAAGC.config.wsUrl);
+            // ws.onmessage = (event) => {
+            //     const data = JSON.parse(event.data);
+            //     if (data.type === 'user_update') {
+            //         loadUsers();
+            //     }
+            // };
+        }
+    </script>
+</body>
+</html>
