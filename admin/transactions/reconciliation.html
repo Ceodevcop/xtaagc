@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Reconciliation - TAAGC Admin</title>
+    
+    <!-- Fonts & Icons -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Assets -->
+    <link rel="stylesheet" href="/assets/css/admin.css">
+    <script src="/assets/js/admin.js" defer></script>
+    
+    <style>
+        .reconciliation-header {
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+            color: white;
+            padding: var(--space-xl);
+            border-radius: var(--radius-lg);
+            margin-bottom: var(--space-xl);
+        }
+        
+        .balance-comparison {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: var(--space-xl);
+            text-align: center;
+        }
+        
+        .balance-item {
+            padding: var(--space-lg);
+            background: rgba(255,255,255,0.1);
+            border-radius: var(--radius-lg);
+        }
+        
+        .balance-label {
+            font-size: 13px;
+            opacity: 0.8;
+            margin-bottom: var(--space-xs);
+        }
+        
+        .balance-amount {
+            font-size: 32px;
+            font-weight: 700;
+        }
+        
+        .balance-difference {
+            font-size: 18px;
+            margin-top: var(--space-xs);
+        }
+        
+        .difference-positive { color: var(--success); }
+        .difference-negative { color: var(--danger); }
+        
+        .reconciliation-table {
+            background: var(--white);
+            border-radius: var(--radius-lg);
+            padding: var(--space-lg);
+            border: 1px solid #e2e8f0;
+        }
+        
+        .match-status {
+            display: inline-block;
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            margin-right: 8px;
+        }
+        
+        .status-matched { background: var(--success); }
+        .status-unmatched { background: var(--danger); }
+        .status-pending { background: var(--warning); }
+        
+        .reconcile-actions {
+            display: flex;
+            gap: var(--space-md);
+            justify-content: flex-end;
+            margin-top: var(--space-xl);
+        }
+    </style>
+</head>
+<body>
+    <div class="admin-container">
+        <!-- Sidebar -->
+        <aside class="sidebar">...</aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <div class="top-bar">
+                <div class="page-title">
+                    <h1><i class="fas fa-balance-scale" style="color: var(--accent);"></i> Daily Reconciliation</h1>
+                    <p>March 9, 2024</p>
+                </div>
+                <div class="top-bar-actions">
+                    <button class="btn btn-outline" onclick="runReconciliation()">
+                        <i class="fas fa-sync-alt"></i> Run Reconciliation
+                    </button>
+                    <button class="btn btn-primary" onclick="exportReconciliation()">
+                        <i class="fas fa-download"></i> Export Report
+                    </button>
+                    <button class="logout-btn" id="logoutBtn"><i class="fas fa-sign-out-alt"></i></button>
+                </div>
+            </div>
+
+            <!-- Balance Comparison -->
+            <div class="reconciliation-header">
+                <h3 style="color: white; margin-bottom: var(--space-lg);">Balance Comparison</h3>
+                <div class="balance-comparison">
+                    <div class="balance-item">
+                        <div class="balance-label">System Balance</div>
+                        <div class="balance-amount" id="systemBalance">$1,245,678</div>
+                    </div>
+                    <div class="balance-item">
+                        <div class="balance-label">Bank Balance</div>
+                        <div class="balance-amount" id="bankBalance">$1,245,000</div>
+                    </div>
+                    <div class="balance-item">
+                        <div class="balance-label">Difference</div>
+                        <div class="balance-amount difference-positive" id="difference">$678</div>
+                        <div class="balance-difference difference-positive">↑ 0.05%</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Reconciliation Items -->
+            <div class="reconciliation-table">
+                <h3 style="margin-bottom: var(--space-lg);">Unmatched Transactions</h3>
+                
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Status</th>
+                            <th>Date</th>
+                            <th>Transaction ID</th>
+                            <th>Description</th>
+                            <th>System Amount</th>
+                            <th>Bank Amount</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="reconciliationBody">
+                        <tr>
+                            <td><span class="match-status status-unmatched"></span> Unmatched</td>
+                            <td>2024-03-09</td>
+                            <td><code>TXN12345</code></td>
+                            <td>Bank transfer deposit</td>
+                            <td class="amount-positive">$5,000.00</td>
+                            <td class="amount-positive">$5,000.00</td>
+                            <td><button class="btn btn-sm btn-success" onclick="matchTransaction()">Match</button></td>
+                        </tr>
+                        <tr>
+                            <td><span class="match-status status-unmatched"></span> Unmatched</td>
+                            <td>2024-03-08</td>
+                            <td><code>TXN12346</code></td>
+                            <td>Wire transfer fee</td>
+                            <td class="amount-negative">-$25.00</td>
+                            <td class="amount-negative">-$25.00</td>
+                            <td><button class="btn btn-sm btn-success" onclick="matchTransaction()">Match</button></td>
+                        </tr>
+                        <tr>
+                            <td><span class="match-status status-pending"></span> Pending</td>
+                            <td>2024-03-07</td>
+                            <td><code>TXN12347</code></td>
+                            <td>Credit card deposit</td>
+                            <td class="amount-positive">$1,000.00</td>
+                            <td>-</td>
+                            <td><button class="btn btn-sm btn-warning" onclick="investigateTransaction()">Investigate</button></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Reconciliation Summary -->
+            <div class="grid-3" style="margin-top: var(--space-xl);">
+                <div class="stat-card">
+                    <div class="stat-value" id="matchedCount">147</div>
+                    <div class="stat-label">Matched Transactions</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value" id="unmatchedCount">3</div>
+                    <div class="stat-label">Unmatched</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value" id="pendingCount">1</div>
+                    <div class="stat-label">Pending Investigation</div>
+                </div>
+            </div>
+
+            <!-- Actions -->
+            <div class="reconcile-actions">
+                <button class="btn btn-success btn-lg" onclick="completeReconciliation()">
+                    <i class="fas fa-check-circle"></i> Complete Reconciliation
+                </button>
+                <button class="btn btn-outline btn-lg" onclick="saveProgress()">
+                    <i class="fas fa-save"></i> Save Progress
+                </button>
+            </div>
+        </main>
+    </div>
+
+    <script>
+        function runReconciliation() {
+            TAAGC.ui.showToast('Running reconciliation...', 'info');
+            setTimeout(() => {
+                TAAGC.ui.showToast('Reconciliation complete', 'success');
+            }, 2000);
+        }
+
+        function matchTransaction() {
+            TAAGC.ui.showToast('Transaction matched', 'success');
+        }
+
+        function investigateTransaction() {
+            TAAGC.ui.showToast('Opening investigation...', 'info');
+        }
+
+        function completeReconciliation() {
+            TAAGC.ui.confirm('Complete reconciliation and lock period?', () => {
+                TAAGC.ui.showToast('Reconciliation completed', 'success');
+            });
+        }
+
+        function saveProgress() {
+            TAAGC.ui.showToast('Progress saved', 'success');
+        }
+
+        function exportReconciliation() {
+            TAAGC.ui.showToast('Exporting reconciliation report...', 'info');
+        }
+    </script>
+</body>
+</html>
