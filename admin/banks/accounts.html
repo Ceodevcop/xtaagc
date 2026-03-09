@@ -1,0 +1,310 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bank Accounts - TAAGC Admin</title>
+    
+    <!-- Fonts & Icons -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Assets -->
+    <link rel="stylesheet" href="/assets/css/admin.css">
+    <script src="/assets/js/admin.js" defer></script>
+    
+    <style>
+        .accounts-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: var(--space-xl);
+        }
+        
+        .bank-selector {
+            display: flex;
+            gap: var(--space-sm);
+            overflow-x: auto;
+            padding-bottom: var(--space-sm);
+            margin-bottom: var(--space-xl);
+        }
+        
+        .bank-tab {
+            padding: var(--space-sm) var(--space-lg);
+            border: 1px solid #e2e8f0;
+            border-radius: var(--radius-lg);
+            cursor: pointer;
+            white-space: nowrap;
+            transition: all 0.3s;
+        }
+        
+        .bank-tab:hover {
+            border-color: var(--accent);
+        }
+        
+        .bank-tab.active {
+            background: var(--accent);
+            color: white;
+            border-color: var(--accent);
+        }
+        
+        .account-card {
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+            color: white;
+            border-radius: var(--radius-lg);
+            padding: var(--space-xl);
+            position: relative;
+            overflow: hidden;
+            margin-bottom: var(--space-lg);
+        }
+        
+        .account-card::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -10%;
+            width: 50%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 70%);
+        }
+        
+        .account-type {
+            font-size: 14px;
+            opacity: 0.8;
+            margin-bottom: var(--space-xs);
+        }
+        
+        .account-number {
+            font-size: 24px;
+            font-family: monospace;
+            letter-spacing: 2px;
+            margin-bottom: var(--space-md);
+        }
+        
+        .account-balance {
+            font-size: 32px;
+            font-weight: 700;
+            color: var(--accent);
+            margin-bottom: var(--space-xs);
+        }
+        
+        .account-currency {
+            font-size: 14px;
+            opacity: 0.8;
+        }
+        
+        .account-footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: var(--space-lg);
+            padding-top: var(--space-lg);
+            border-top: 1px solid rgba(255,255,255,0.1);
+        }
+        
+        .account-badge {
+            background: rgba(255,255,255,0.2);
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+        }
+        
+        .account-actions {
+            display: flex;
+            gap: var(--space-sm);
+        }
+        
+        .transactions-preview {
+            background: var(--white);
+            border-radius: var(--radius-lg);
+            padding: var(--space-lg);
+            margin-top: var(--space-xl);
+        }
+        
+        .summary-cards {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: var(--space-lg);
+            margin-bottom: var(--space-xl);
+        }
+    </style>
+</head>
+<body>
+    <div class="admin-container">
+        <!-- Sidebar -->
+        <aside class="sidebar">...</aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <div class="top-bar">
+                <div class="page-title">
+                    <h1><i class="fas fa-credit-card" style="color: var(--accent);"></i> Bank Accounts</h1>
+                    <p>Manage all connected bank accounts</p>
+                </div>
+                <div class="top-bar-actions">
+                    <button class="btn btn-primary" onclick="addAccount()">
+                        <i class="fas fa-plus"></i> Add Account
+                    </button>
+                    <button class="btn btn-outline" onclick="refreshAccounts()">
+                        <i class="fas fa-sync-alt"></i> Refresh
+                    </button>
+                    <button class="logout-btn" id="logoutBtn"><i class="fas fa-sign-out-alt"></i></button>
+                </div>
+            </div>
+
+            <!-- Summary Cards -->
+            <div class="summary-cards">
+                <div class="stat-card">
+                    <div class="stat-value" id="totalAccounts">24</div>
+                    <div class="stat-label">Total Accounts</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value" id="totalBalance">$12.5M</div>
+                    <div class="stat-label">Total Balance</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value" id="avgBalance">$520K</div>
+                    <div class="stat-label">Average Balance</div>
+                </div>
+            </div>
+
+            <!-- Bank Selector -->
+            <div class="bank-selector" id="bankSelector">
+                <span class="bank-tab active" onclick="selectBank('all')">All Banks</span>
+                <span class="bank-tab" onclick="selectBank('chase')">Chase Bank</span>
+                <span class="bank-tab" onclick="selectBank('bofa')">Bank of America</span>
+                <span class="bank-tab" onclick="selectBank('wells')">Wells Fargo</span>
+                <span class="bank-tab" onclick="selectBank('hsbc')">HSBC</span>
+            </div>
+
+            <!-- Accounts Grid -->
+            <div class="grid-2" id="accountsGrid">
+                <!-- Account cards will be loaded here -->
+            </div>
+
+            <!-- Recent Transactions -->
+            <div class="transactions-preview">
+                <div class="flex-between" style="margin-bottom: var(--space-lg);">
+                    <h3>Recent Transactions</h3>
+                    <a href="/banks/transactions.html" class="btn btn-sm btn-outline">View All</a>
+                </div>
+                
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Date</th>
+                            <th>Account</th>
+                            <th>Description</th>
+                            <th>Amount</th>
+                            <th>Status</th>
+                        </tr>
+                    </thead>
+                    <tbody id="recentTransactions">
+                        <tr>
+                            <td>2024-03-09</td>
+                            <td>Chase •••• 1234</td>
+                            <td>Wire transfer from client</td>
+                            <td class="amount-positive">+$5,000.00</td>
+                            <td><span class="badge badge-success">Completed</span></td>
+                        </tr>
+                        <tr>
+                            <td>2024-03-08</td>
+                            <td>BOA •••• 5678</td>
+                            <td>Monthly interest</td>
+                            <td class="amount-positive">+$125.50</td>
+                            <td><span class="badge badge-success">Completed</span></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </main>
+    </div>
+
+    <script>
+        function generateMockAccounts() {
+            return [
+                {
+                    bank: 'Chase Bank',
+                    type: 'Business Checking',
+                    number: '••••••••1234',
+                    balance: 1250000,
+                    currency: 'USD',
+                    status: 'active',
+                    lastSync: '2024-03-09T10:30:00'
+                },
+                {
+                    bank: 'Chase Bank',
+                    type: 'Savings',
+                    number: '••••••••5678',
+                    balance: 3500000,
+                    currency: 'USD',
+                    status: 'active',
+                    lastSync: '2024-03-09T10:30:00'
+                },
+                {
+                    bank: 'Bank of America',
+                    type: 'Business Checking',
+                    number: '••••••••9012',
+                    balance: 890000,
+                    currency: 'USD',
+                    status: 'active',
+                    lastSync: '2024-03-09T09:15:00'
+                }
+            ];
+        }
+
+        function loadAccounts() {
+            const accounts = generateMockAccounts();
+            const grid = document.getElementById('accountsGrid');
+            
+            grid.innerHTML = accounts.map(acc => `
+                <div class="account-card">
+                    <div class="account-type">${acc.bank} • ${acc.type}</div>
+                    <div class="account-number">${acc.number}</div>
+                    <div class="account-balance">${TAAGC.data.formatCurrency(acc.balance)}</div>
+                    <div class="account-currency">${acc.currency}</div>
+                    
+                    <div class="account-footer">
+                        <span class="account-badge">
+                            <i class="fas fa-circle" style="color: var(--success);"></i> Last sync: ${TAAGC.data.timeAgo(acc.lastSync)}
+                        </span>
+                        <div class="account-actions">
+                            <button class="btn btn-sm" style="background: rgba(255,255,255,0.2); color: white;" onclick="viewAccount('${acc.number}')">
+                                <i class="fas fa-eye"></i>
+                            </button>
+                            <button class="btn btn-sm" style="background: rgba(255,255,255,0.2); color: white;" onclick="syncAccount('${acc.number}')">
+                                <i class="fas fa-sync-alt"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function selectBank(bank) {
+            document.querySelectorAll('.bank-tab').forEach(tab => tab.classList.remove('active'));
+            event.target.classList.add('active');
+            TAAGC.ui.showToast(`Showing ${bank} accounts`, 'info');
+        }
+
+        function addAccount() {
+            TAAGC.ui.showToast('Add account feature coming soon', 'info');
+        }
+
+        function refreshAccounts() {
+            TAAGC.ui.showToast('Refreshing accounts...', 'info');
+            setTimeout(loadAccounts, 1000);
+        }
+
+        function viewAccount(accountNumber) {
+            TAAGC.ui.showToast(`Viewing account ${accountNumber}`, 'info');
+        }
+
+        function syncAccount(accountNumber) {
+            TAAGC.ui.showToast(`Syncing account ${accountNumber}...`, 'info');
+        }
+
+        loadAccounts();
+    </script>
+</body>
+</html>
