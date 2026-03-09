@@ -1,0 +1,835 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Staff Profile - TAAGC Admin</title>
+    
+    <!-- Fonts & Icons -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Assets -->
+    <link rel="stylesheet" href="/assets/css/admin.css">
+    <script src="/assets/js/admin.js" defer></script>
+    
+    <style>
+        .profile-header {
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+            color: white;
+            padding: var(--space-xl);
+            border-radius: var(--radius-lg);
+            margin-bottom: var(--space-xl);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .profile-header::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -10%;
+            width: 50%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 70%);
+        }
+        
+        .profile-avatar-large {
+            width: 120px;
+            height: 120px;
+            background: rgba(255,255,255,0.2);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 48px;
+            margin-bottom: var(--space-md);
+            border: 4px solid rgba(255,255,255,0.3);
+        }
+        
+        .profile-name {
+            font-size: 36px;
+            font-weight: 700;
+            margin-bottom: var(--space-xs);
+        }
+        
+        .profile-title {
+            font-size: 18px;
+            opacity: 0.9;
+            margin-bottom: var(--space-md);
+        }
+        
+        .profile-meta {
+            display: flex;
+            gap: var(--space-xl);
+            flex-wrap: wrap;
+        }
+        
+        .meta-item {
+            display: flex;
+            align-items: center;
+            gap: var(--space-sm);
+        }
+        
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: var(--space-lg);
+            margin-bottom: var(--space-xl);
+        }
+        
+        .stat-card {
+            background: var(--white);
+            border-radius: var(--radius-lg);
+            padding: var(--space-lg);
+            border: 1px solid #e2e8f0;
+            text-align: center;
+        }
+        
+        .stat-value {
+            font-size: 28px;
+            font-weight: 700;
+            color: var(--primary);
+            margin-bottom: var(--space-xs);
+        }
+        
+        .stat-label {
+            color: var(--light);
+            font-size: 13px;
+        }
+        
+        .profile-tabs {
+            display: flex;
+            gap: var(--space-sm);
+            border-bottom: 2px solid #e2e8f0;
+            margin-bottom: var(--space-xl);
+            flex-wrap: wrap;
+        }
+        
+        .profile-tab {
+            padding: var(--space-md) var(--space-lg);
+            cursor: pointer;
+            font-weight: 600;
+            color: var(--light);
+            border-bottom: 2px solid transparent;
+            margin-bottom: -2px;
+        }
+        
+        .profile-tab.active {
+            color: var(--accent);
+            border-bottom-color: var(--accent);
+        }
+        
+        .info-section {
+            background: var(--white);
+            border-radius: var(--radius-lg);
+            padding: var(--space-xl);
+            border: 1px solid #e2e8f0;
+            margin-bottom: var(--space-xl);
+        }
+        
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: var(--space-lg);
+            padding-bottom: var(--space-md);
+            border-bottom: 2px solid var(--accent);
+        }
+        
+        .info-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: var(--space-lg);
+        }
+        
+        .info-row {
+            display: flex;
+            padding: var(--space-sm) 0;
+            border-bottom: 1px solid #e2e8f0;
+        }
+        
+        .info-row:last-child {
+            border-bottom: none;
+        }
+        
+        .info-label {
+            width: 140px;
+            color: var(--light);
+            font-weight: 500;
+        }
+        
+        .info-value {
+            flex: 1;
+            color: var(--dark);
+            font-weight: 500;
+        }
+        
+        .timeline {
+            position: relative;
+            padding-left: var(--space-xl);
+        }
+        
+        .timeline-item {
+            position: relative;
+            padding-bottom: var(--space-lg);
+            border-left: 2px solid var(--accent);
+            padding-left: var(--space-lg);
+        }
+        
+        .timeline-item::before {
+            content: '';
+            position: absolute;
+            left: -9px;
+            top: 0;
+            width: 16px;
+            height: 16px;
+            border-radius: 50%;
+            background: var(--accent);
+            border: 3px solid var(--white);
+            box-shadow: var(--shadow-sm);
+        }
+        
+        .timeline-date {
+            font-size: 12px;
+            color: var(--light);
+            margin-bottom: 4px;
+        }
+        
+        .timeline-title {
+            font-weight: 600;
+            color: var(--dark);
+            margin-bottom: 4px;
+        }
+        
+        .skill-tag {
+            display: inline-block;
+            padding: 4px 12px;
+            background: var(--bg);
+            border-radius: 20px;
+            font-size: 12px;
+            margin-right: 8px;
+            margin-bottom: 8px;
+        }
+        
+        .skill-level {
+            width: 60px;
+            height: 6px;
+            background: #e2e8f0;
+            border-radius: 3px;
+            display: inline-block;
+            margin-left: 8px;
+        }
+        
+        .skill-level-fill {
+            height: 100%;
+            background: var(--accent);
+            border-radius: 3px;
+        }
+        
+        .document-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: var(--space-sm);
+            border-bottom: 1px solid #e2e8f0;
+        }
+        
+        .document-item:last-child {
+            border-bottom: none;
+        }
+        
+        .document-info {
+            display: flex;
+            align-items: center;
+            gap: var(--space-md);
+        }
+        
+        .document-icon {
+            width: 40px;
+            height: 40px;
+            background: rgba(193,154,107,0.1);
+            border-radius: var(--radius-md);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--accent);
+        }
+        
+        .action-buttons {
+            position: sticky;
+            bottom: 30px;
+            right: 30px;
+            display: flex;
+            gap: var(--space-md);
+            justify-content: flex-end;
+            margin-top: var(--space-xl);
+        }
+    </style>
+</head>
+<body>
+    <div class="admin-container">
+        <!-- Sidebar -->
+        <aside class="sidebar">...</aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <div class="top-bar">
+                <div class="page-title">
+                    <h1><i class="fas fa-user-circle" style="color: var(--accent);"></i> Staff Profile</h1>
+                    <p>Complete employee information</p>
+                </div>
+                <div class="top-bar-actions">
+                    <button class="btn btn-outline" onclick="location.href='/staff/index.html'">
+                        <i class="fas fa-arrow-left"></i> Back to Staff
+                    </button>
+                    <button class="logout-btn" id="logoutBtn"><i class="fas fa-sign-out-alt"></i></button>
+                </div>
+            </div>
+
+            <!-- Profile Header -->
+            <div class="profile-header">
+                <div style="position: relative; z-index: 2;">
+                    <div class="profile-avatar-large">JD</div>
+                    <div class="profile-name">John Doe</div>
+                    <div class="profile-title">Senior Operations Manager</div>
+                    <div class="profile-meta">
+                        <span class="meta-item"><i class="fas fa-envelope"></i> john.doe@taagc.com</span>
+                        <span class="meta-item"><i class="fas fa-phone"></i> +1-212-555-0123</span>
+                        <span class="meta-item"><i class="fas fa-map-marker-alt"></i> New York, NY</span>
+                        <span class="meta-item"><i class="fas fa-calendar"></i> Joined Jan 15, 2020</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Stats Cards -->
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-value">98%</div>
+                    <div class="stat-label">Attendance Rate</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value">4.8</div>
+                    <div class="stat-label">Performance Rating</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value">15</div>
+                    <div class="stat-label">Leave Days Left</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value">3</div>
+                    <div class="stat-label">Years of Service</div>
+                </div>
+            </div>
+
+            <!-- Profile Tabs -->
+            <div class="profile-tabs">
+                <div class="profile-tab active" onclick="showTab('personal')">Personal Info</div>
+                <div class="profile-tab" onclick="showTab('employment')">Employment</div>
+                <div class="profile-tab" onclick="showTab('skills')">Skills & Training</div>
+                <div class="profile-tab" onclick="showTab('documents')">Documents</div>
+                <div class="profile-tab" onclick="showTab('activity')">Activity</div>
+                <div class="profile-tab" onclick="showTab('compensation')">Compensation</div>
+            </div>
+
+            <!-- Personal Info Tab -->
+            <div id="personalTab">
+                <div class="info-grid">
+                    <!-- Personal Details -->
+                    <div class="info-section">
+                        <div class="section-header">
+                            <h3><i class="fas fa-user"></i> Personal Details</h3>
+                            <button class="btn btn-sm btn-outline" onclick="editPersonal()">
+                                <i class="fas fa-edit"></i> Edit
+                            </button>
+                        </div>
+                        
+                        <div class="info-row">
+                            <span class="info-label">Full Name</span>
+                            <span class="info-value">John Michael Doe</span>
+                        </div>
+                        <div class="info-row">
+                            <span class="info-label">Date of Birth</span>
+                            <span class="info-value">March 15, 1985</span>
+                        </div>
+                        <div class="info-row">
+                            <span class="info-label">Gender</span>
+                            <span class="info-value">Male</span>
+                        </div>
+                        <div class="info-row">
+                            <span class="info-label">Marital Status</span>
+                            <span class="info-value">Married</span>
+                        </div>
+                        <div class="info-row">
+                            <span class="info-label">Nationality</span>
+                            <span class="info-value">American</span>
+                        </div>
+                    </div>
+
+                    <!-- Contact Information -->
+                    <div class="info-section">
+                        <div class="section-header">
+                            <h3><i class="fas fa-address-book"></i> Contact Information</h3>
+                            <button class="btn btn-sm btn-outline" onclick="editContact()">
+                                <i class="fas fa-edit"></i> Edit
+                            </button>
+                        </div>
+                        
+                        <div class="info-row">
+                            <span class="info-label">Email</span>
+                            <span class="info-value">john.doe@taagc.com</span>
+                        </div>
+                        <div class="info-row">
+                            <span class="info-label">Personal Email</span>
+                            <span class="info-value">john.doe@gmail.com</span>
+                        </div>
+                        <div class="info-row">
+                            <span class="info-label">Phone</span>
+                            <span class="info-value">+1-212-555-0123</span>
+                        </div>
+                        <div class="info-row">
+                            <span class="info-label">Emergency Contact</span>
+                            <span class="info-value">Jane Doe (Wife) - +1-212-555-0456</span>
+                        </div>
+                    </div>
+
+                    <!-- Address -->
+                    <div class="info-section">
+                        <div class="section-header">
+                            <h3><i class="fas fa-map-marker-alt"></i> Address</h3>
+                            <button class="btn btn-sm btn-outline" onclick="editAddress()">
+                                <i class="fas fa-edit"></i> Edit
+                            </button>
+                        </div>
+                        
+                        <div class="info-row">
+                            <span class="info-label">Street</span>
+                            <span class="info-value">123 Main Street, Apt 4B</span>
+                        </div>
+                        <div class="info-row">
+                            <span class="info-label">City</span>
+                            <span class="info-value">New York</span>
+                        </div>
+                        <div class="info-row">
+                            <span class="info-label">State</span>
+                            <span class="info-value">NY</span>
+                        </div>
+                        <div class="info-row">
+                            <span class="info-label">ZIP Code</span>
+                            <span class="info-value">10001</span>
+                        </div>
+                        <div class="info-row">
+                            <span class="info-label">Country</span>
+                            <span class="info-value">USA</span>
+                        </div>
+                    </div>
+
+                    <!-- Emergency Contact -->
+                    <div class="info-section">
+                        <div class="section-header">
+                            <h3><i class="fas fa-phone-alt"></i> Emergency Contact</h3>
+                            <button class="btn btn-sm btn-outline" onclick="editEmergency()">
+                                <i class="fas fa-edit"></i> Edit
+                            </button>
+                        </div>
+                        
+                        <div class="info-row">
+                            <span class="info-label">Name</span>
+                            <span class="info-value">Jane Doe</span>
+                        </div>
+                        <div class="info-row">
+                            <span class="info-label">Relationship</span>
+                            <span class="info-value">Spouse</span>
+                        </div>
+                        <div class="info-row">
+                            <span class="info-label">Phone</span>
+                            <span class="info-value">+1-212-555-0456</span>
+                        </div>
+                        <div class="info-row">
+                            <span class="info-label">Alternative</span>
+                            <span class="info-value">+1-212-555-0789</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Employment Tab -->
+            <div id="employmentTab" style="display: none;">
+                <div class="info-section">
+                    <div class="section-header">
+                        <h3><i class="fas fa-briefcase"></i> Employment Details</h3>
+                        <button class="btn btn-sm btn-outline" onclick="editEmployment()">
+                            <i class="fas fa-edit"></i> Edit
+                        </button>
+                    </div>
+                    
+                    <div class="grid-2">
+                        <div>
+                            <div class="info-row">
+                                <span class="info-label">Employee ID</span>
+                                <span class="info-value">EMP-2020-001</span>
+                            </div>
+                            <div class="info-row">
+                                <span class="info-label">Department</span>
+                                <span class="info-value">Operations</span>
+                            </div>
+                            <div class="info-row">
+                                <span class="info-label">Position</span>
+                                <span class="info-value">Senior Operations Manager</span>
+                            </div>
+                            <div class="info-row">
+                                <span class="info-label">Employment Type</span>
+                                <span class="info-value">Full Time</span>
+                            </div>
+                        </div>
+                        <div>
+                            <div class="info-row">
+                                <span class="info-label">Manager</span>
+                                <span class="info-value">Sarah Wilson (COO)</span>
+                            </div>
+                            <div class="info-row">
+                                <span class="info-label">Join Date</span>
+                                <span class="info-value">January 15, 2020</span>
+                            </div>
+                            <div class="info-row">
+                                <span class="info-label">Contract End</span>
+                                <span class="info-value">Permanent</span>
+                            </div>
+                            <div class="info-row">
+                                <span class="info-label">Probation End</span>
+                                <span class="info-value">April 15, 2020</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="info-section">
+                    <h3 style="margin-bottom: var(--space-lg);"><i class="fas fa-history"></i> Employment History</h3>
+                    
+                    <div class="timeline">
+                        <div class="timeline-item">
+                            <div class="timeline-date">Jan 2023 - Present</div>
+                            <div class="timeline-title">Senior Operations Manager</div>
+                            <div style="color: var(--light);">Promoted to senior role, managing team of 12</div>
+                        </div>
+                        <div class="timeline-item">
+                            <div class="timeline-date">Jan 2020 - Dec 2022</div>
+                            <div class="timeline-title">Operations Manager</div>
+                            <div style="color: var(--light);">Joined as Operations Manager</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Skills & Training Tab -->
+            <div id="skillsTab" style="display: none;">
+                <div class="info-section">
+                    <div class="section-header">
+                        <h3><i class="fas fa-code"></i> Skills</h3>
+                        <button class="btn btn-sm btn-outline" onclick="addSkill()">
+                            <i class="fas fa-plus"></i> Add Skill
+                        </button>
+                    </div>
+                    
+                    <div>
+                        <div class="skill-tag">
+                            Project Management
+                            <span class="skill-level">
+                                <span class="skill-level-fill" style="width: 90%;"></span>
+                            </span>
+                        </div>
+                        <div class="skill-tag">
+                            Team Leadership
+                            <span class="skill-level">
+                                <span class="skill-level-fill" style="width: 85%;"></span>
+                            </span>
+                        </div>
+                        <div class="skill-tag">
+                            Data Analysis
+                            <span class="skill-level">
+                                <span class="skill-level-fill" style="width: 75%;"></span>
+                            </span>
+                        </div>
+                        <div class="skill-tag">
+                            Budget Planning
+                            <span class="skill-level">
+                                <span class="skill-level-fill" style="width: 80%;"></span>
+                            </span>
+                        </div>
+                        <div class="skill-tag">
+                            Stakeholder Management
+                            <span class="skill-level">
+                                <span class="skill-level-fill" style="width: 88%;"></span>
+                            </span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="info-section">
+                    <div class="section-header">
+                        <h3><i class="fas fa-graduation-cap"></i> Training & Certifications</h3>
+                        <button class="btn btn-sm btn-outline" onclick="addTraining()">
+                            <i class="fas fa-plus"></i> Add Training
+                        </button>
+                    </div>
+                    
+                    <div class="timeline">
+                        <div class="timeline-item">
+                            <div class="timeline-date">Mar 2024</div>
+                            <div class="timeline-title">Advanced Leadership Program</div>
+                            <div style="color: var(--light);">Harvard Business School Online</div>
+                        </div>
+                        <div class="timeline-item">
+                            <div class="timeline-date">Nov 2023</div>
+                            <div class="timeline-title">PMP Certification</div>
+                            <div style="color: var(--light);">Project Management Institute</div>
+                        </div>
+                        <div class="timeline-item">
+                            <div class="timeline-date">Jun 2022</div>
+                            <div class="timeline-title">Six Sigma Black Belt</div>
+                            <div style="color: var(--light);">ASQ</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Documents Tab -->
+            <div id="documentsTab" style="display: none;">
+                <div class="info-section">
+                    <div class="section-header">
+                        <h3><i class="fas fa-file-alt"></i> Documents</h3>
+                        <button class="btn btn-sm btn-primary" onclick="uploadDocument()">
+                            <i class="fas fa-upload"></i> Upload
+                        </button>
+                    </div>
+                    
+                    <div class="document-item">
+                        <div class="document-info">
+                            <div class="document-icon"><i class="fas fa-file-pdf"></i></div>
+                            <div>
+                                <strong>Employment Contract.pdf</strong>
+                                <br>
+                                <small>Uploaded: Jan 15, 2020 · 2.4 MB</small>
+                            </div>
+                        </div>
+                        <button class="btn btn-sm btn-outline" onclick="downloadDocument('contract')">
+                            <i class="fas fa-download"></i>
+                        </button>
+                    </div>
+                    
+                    <div class="document-item">
+                        <div class="document-info">
+                            <div class="document-icon"><i class="fas fa-file-pdf"></i></div>
+                            <div>
+                                <strong>ID Proof - Passport.pdf</strong>
+                                <br>
+                                <small>Uploaded: Jan 15, 2020 · 1.8 MB</small>
+                            </div>
+                        </div>
+                        <button class="btn btn-sm btn-outline" onclick="downloadDocument('passport')">
+                            <i class="fas fa-download"></i>
+                        </button>
+                    </div>
+                    
+                    <div class="document-item">
+                        <div class="document-info">
+                            <div class="document-icon"><i class="fas fa-file-pdf"></i></div>
+                            <div>
+                                <strong>Tax Forms - W4.pdf</strong>
+                                <br>
+                                <small>Uploaded: Jan 15, 2024 · 1.2 MB</small>
+                            </div>
+                        </div>
+                        <button class="btn btn-sm btn-outline" onclick="downloadDocument('tax')">
+                            <i class="fas fa-download"></i>
+                        </button>
+                    </div>
+                    
+                    <div class="document-item">
+                        <div class="document-info">
+                            <div class="document-icon"><i class="fas fa-file-pdf"></i></div>
+                            <div>
+                                <strong>Performance Review Q4 2023.pdf</strong>
+                                <br>
+                                <small>Uploaded: Jan 10, 2024 · 856 KB</small>
+                            </div>
+                        </div>
+                        <button class="btn btn-sm btn-outline" onclick="downloadDocument('review')">
+                            <i class="fas fa-download"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Activity Tab -->
+            <div id="activityTab" style="display: none;">
+                <div class="info-section">
+                    <h3 style="margin-bottom: var(--space-lg);"><i class="fas fa-clock"></i> Recent Activity</h3>
+                    
+                    <div class="timeline">
+                        <div class="timeline-item">
+                            <div class="timeline-date">Today, 09:30 AM</div>
+                            <div class="timeline-title">Clock In</div>
+                            <div style="color: var(--light);">Started shift - Operations</div>
+                        </div>
+                        <div class="timeline-item">
+                            <div class="timeline-date">Yesterday, 05:30 PM</div>
+                            <div class="timeline-title">Clock Out</div>
+                            <div style="color: var(--light);">Completed 8.5 hour shift</div>
+                        </div>
+                        <div class="timeline-item">
+                            <div class="timeline-date">Mar 8, 2024</div>
+                            <div class="timeline-title">Leave Request Approved</div>
+                            <div style="color: var(--light);">Annual leave for Mar 15-20 approved</div>
+                        </div>
+                        <div class="timeline-item">
+                            <div class="timeline-date">Mar 5, 2024</div>
+                            <div class="timeline-title">Performance Review Completed</div>
+                            <div style="color: var(--light);">Q1 2024 review - Rating: 4.8/5.0</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Compensation Tab -->
+            <div id="compensationTab" style="display: none;">
+                <div class="info-section">
+                    <div class="section-header">
+                        <h3><i class="fas fa-money-bill"></i> Compensation Details</h3>
+                        <button class="btn btn-sm btn-outline" onclick="editCompensation()">
+                            <i class="fas fa-edit"></i> Edit
+                        </button>
+                    </div>
+                    
+                    <div class="grid-2">
+                        <div>
+                            <div class="info-row">
+                                <span class="info-label">Base Salary</span>
+                                <span class="info-value">$95,000/year</span>
+                            </div>
+                            <div class="info-row">
+                                <span class="info-label">Pay Frequency</span>
+                                <span class="info-value">Monthly</span>
+                            </div>
+                            <div class="info-row">
+                                <span class="info-label">Last Review</span>
+                                <span class="info-value">January 2024</span>
+                            </div>
+                            <div class="info-row">
+                                <span class="info-label">Next Review</span>
+                                <span class="info-value">January 2025</span>
+                            </div>
+                        </div>
+                        <div>
+                            <div class="info-row">
+                                <span class="info-label">Bonus Target</span>
+                                <span class="info-value">15% of salary</span>
+                            </div>
+                            <div class="info-row">
+                                <span class="info-label">Last Bonus</span>
+                                <span class="info-value">$14,250 (Dec 2023)</span>
+                            </div>
+                            <div class="info-row">
+                                <span class="info-label">Benefits</span>
+                                <span class="info-value">Health, Dental, 401k</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="info-section">
+                    <h3 style="margin-bottom: var(--space-lg);"><i class="fas fa-history"></i> Salary History</h3>
+                    
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Effective Date</th>
+                                <th>Salary</th>
+                                <th>Change</th>
+                                <th>Reason</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>Jan 2024</td>
+                                <td>$95,000</td>
+                                <td class="amount-positive">+8.0%</td>
+                                <td>Annual Review</td>
+                            </tr>
+                            <tr>
+                                <td>Jan 2023</td>
+                                <td>$88,000</td>
+                                <td class="amount-positive">+6.0%</td>
+                                <td>Annual Review</td>
+                            </tr>
+                            <tr>
+                                <td>Jan 2022</td>
+                                <td>$83,000</td>
+                                <td class="amount-positive">+5.1%</td>
+                                <td>Annual Review</td>
+                            </tr>
+                            <tr>
+                                <td>Jan 2021</td>
+                                <td>$79,000</td>
+                                <td class="amount-positive">+5.3%</td>
+                                <td>Annual Review</td>
+                            </tr>
+                            <tr>
+                                <td>Jan 2020</td>
+                                <td>$75,000</td>
+                                <td>-</td>
+                                <td>Starting Salary</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Action Buttons -->
+            <div class="action-buttons">
+                <button class="btn btn-primary" onclick="editStaff()">
+                    <i class="fas fa-edit"></i> Edit Profile
+                </button>
+                <button class="btn btn-outline-accent" onclick="sendMessage()">
+                    <i class="fas fa-envelope"></i> Send Message
+                </button>
+                <button class="btn btn-outline" onclick="viewSchedule()">
+                    <i class="fas fa-calendar"></i> View Schedule
+                </button>
+                <button class="btn btn-outline" onclick="viewPayroll()">
+                    <i class="fas fa-money-bill"></i> Payroll History
+                </button>
+            </div>
+        </main>
+    </div>
+
+    <script>
+        function showTab(tab) {
+            document.querySelectorAll('.profile-tab').forEach(t => t.classList.remove('active'));
+            event.target.classList.add('active');
+            
+            document.getElementById('personalTab').style.display = tab === 'personal' ? 'block' : 'none';
+            document.getElementById('employmentTab').style.display = tab === 'employment' ? 'block' : 'none';
+            document.getElementById('skillsTab').style.display = tab === 'skills' ? 'block' : 'none';
+            document.getElementById('documentsTab').style.display = tab === 'documents' ? 'block' : 'none';
+            document.getElementById('activityTab').style.display = tab === 'activity' ? 'block' : 'none';
+            document.getElementById('compensationTab').style.display = tab === 'compensation' ? 'block' : 'none';
+        }
+
+        function editPersonal() { TAAGC.ui.showToast('Edit personal info', 'info'); }
+        function editContact() { TAAGC.ui.showToast('Edit contact info', 'info'); }
+        function editAddress() { TAAGC.ui.showToast('Edit address', 'info'); }
+        function editEmergency() { TAAGC.ui.showToast('Edit emergency contact', 'info'); }
+        function editEmployment() { TAAGC.ui.showToast('Edit employment details', 'info'); }
+        function editCompensation() { TAAGC.ui.showToast('Edit compensation', 'info'); }
+        function addSkill() { TAAGC.ui.showToast('Add skill', 'info'); }
+        function addTraining() { TAAGC.ui.showToast('Add training', 'info'); }
+        function uploadDocument() { TAAGC.ui.showToast('Upload document', 'info'); }
+        function downloadDocument(doc) { TAAGC.ui.showToast(`Downloading ${doc}`, 'info'); }
+        function editStaff() { TAAGC.ui.showToast('Edit staff profile', 'info'); }
+        function sendMessage() { TAAGC.ui.showToast('Send message', 'info'); }
+        function viewSchedule() { TAAGC.ui.showToast('View schedule', 'info'); }
+        function viewPayroll() { TAAGC.ui.showToast('View payroll history', 'info'); }
+    </script>
+</body>
+</html>
