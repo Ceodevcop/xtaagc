@@ -1,0 +1,629 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Events Management - TAAGC Admin</title>
+    
+    <!-- Fonts & Icons -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Assets -->
+    <link rel="stylesheet" href="/assets/css/admin.css">
+    <script src="/assets/js/admin.js" defer></script>
+    
+    <style>
+        .events-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: var(--space-xl);
+        }
+        
+        .quick-stats {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: var(--space-lg);
+            margin-bottom: var(--space-xl);
+        }
+        
+        .stat-card {
+            background: var(--white);
+            border-radius: var(--radius-lg);
+            padding: var(--space-lg);
+            border: 1px solid #e2e8f0;
+        }
+        
+        .stat-icon {
+            width: 48px;
+            height: 48px;
+            background: rgba(193,154,107,0.1);
+            border-radius: var(--radius-md);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--accent);
+            font-size: 20px;
+            margin-bottom: var(--space-md);
+        }
+        
+        .stat-value {
+            font-size: 28px;
+            font-weight: 700;
+            color: var(--primary);
+            margin-bottom: var(--space-xs);
+        }
+        
+        .stat-label {
+            color: var(--light);
+            font-size: 13px;
+        }
+        
+        .events-filters {
+            background: var(--white);
+            border-radius: var(--radius-lg);
+            padding: var(--space-lg);
+            margin-bottom: var(--space-xl);
+            border: 1px solid #e2e8f0;
+        }
+        
+        .filter-row {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: var(--space-md);
+            margin-bottom: var(--space-md);
+        }
+        
+        .events-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+            gap: var(--space-lg);
+        }
+        
+        .event-card {
+            background: var(--white);
+            border-radius: var(--radius-lg);
+            border: 1px solid #e2e8f0;
+            overflow: hidden;
+            transition: all 0.3s;
+            cursor: pointer;
+        }
+        
+        .event-card:hover {
+            transform: translateY(-5px);
+            box-shadow: var(--shadow-lg);
+            border-color: var(--accent);
+        }
+        
+        .event-image {
+            height: 160px;
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .event-badge {
+            position: absolute;
+            top: var(--space-md);
+            right: var(--space-md);
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 11px;
+            font-weight: 600;
+        }
+        
+        .badge-upcoming {
+            background: var(--accent);
+            color: white;
+        }
+        
+        .badge-ongoing {
+            background: #10b981;
+            color: white;
+        }
+        
+        .badge-completed {
+            background: #64748b;
+            color: white;
+        }
+        
+        .badge-cancelled {
+            background: #e53e3e;
+            color: white;
+        }
+        
+        .event-category {
+            position: absolute;
+            bottom: var(--space-md);
+            left: var(--space-md);
+            color: white;
+            font-size: 12px;
+            background: rgba(0,0,0,0.3);
+            padding: 2px 8px;
+            border-radius: 12px;
+        }
+        
+        .event-content {
+            padding: var(--space-lg);
+        }
+        
+        .event-title {
+            font-size: 18px;
+            font-weight: 700;
+            color: var(--primary);
+            margin-bottom: var(--space-xs);
+        }
+        
+        .event-date {
+            color: var(--accent);
+            font-size: 13px;
+            font-weight: 600;
+            margin-bottom: var(--space-xs);
+        }
+        
+        .event-location {
+            color: var(--light);
+            font-size: 13px;
+            margin-bottom: var(--space-md);
+        }
+        
+        .event-meta {
+            display: flex;
+            justify-content: space-between;
+            padding: var(--space-sm) 0;
+            border-top: 1px solid #e2e8f0;
+            border-bottom: 1px solid #e2e8f0;
+            margin-bottom: var(--space-md);
+        }
+        
+        .meta-item {
+            text-align: center;
+            flex: 1;
+        }
+        
+        .meta-value {
+            font-size: 16px;
+            font-weight: 700;
+            color: var(--primary);
+        }
+        
+        .meta-label {
+            font-size: 11px;
+            color: var(--light);
+        }
+        
+        .event-footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .capacity-bar {
+            width: 100px;
+            height: 6px;
+            background: #e2e8f0;
+            border-radius: 3px;
+            overflow: hidden;
+        }
+        
+        .capacity-fill {
+            height: 100%;
+            background: var(--accent);
+            border-radius: 3px;
+        }
+        
+        .view-toggle {
+            display: flex;
+            gap: var(--space-xs);
+            background: var(--bg);
+            padding: 4px;
+            border-radius: var(--radius-lg);
+        }
+        
+        .view-option {
+            padding: var(--space-xs) var(--space-lg);
+            border-radius: var(--radius-md);
+            cursor: pointer;
+        }
+        
+        .view-option.active {
+            background: var(--accent);
+            color: white;
+        }
+        
+        .quick-actions {
+            display: flex;
+            gap: var(--space-sm);
+            margin-bottom: var(--space-xl);
+        }
+        
+        .quick-action-btn {
+            flex: 1;
+            padding: var(--space-md);
+            background: var(--white);
+            border: 1px solid #e2e8f0;
+            border-radius: var(--radius-md);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: var(--space-sm);
+            color: var(--dark);
+            text-decoration: none;
+            transition: all 0.3s;
+        }
+        
+        .quick-action-btn:hover {
+            border-color: var(--accent);
+            color: var(--accent);
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-md);
+        }
+    </style>
+</head>
+<body>
+    <div class="admin-container">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <div class="logo-icon">TA</div>
+                <h2><span>TAAGC</span> ADMIN</h2>
+            </div>
+
+            <div class="user-info">
+                <div class="user-avatar" data-user-avatar>A</div>
+                <div data-user-field="name">Loading...</div>
+                <div style="font-size: 12px; opacity: 0.7;" data-user-field="email"></div>
+                <span class="user-role" data-user-field="role"></span>
+            </div>
+
+            <nav class="nav-menu">
+                <div class="nav-section">MAIN</div>
+                <a href="/dashboard.html" class="nav-item"><i class="fas fa-tachometer-alt"></i> Dashboard</a>
+                <a href="/users/index.html" class="nav-item"><i class="fas fa-users"></i> Users</a>
+                <a href="/investments/index.html" class="nav-item"><i class="fas fa-chart-line"></i> Investments</a>
+                <a href="/transactions/index.html" class="nav-item"><i class="fas fa-exchange-alt"></i> Transactions</a>
+                <a href="/banks/index.html" class="nav-item"><i class="fas fa-university"></i> Banks</a>
+                <a href="/agencies/index.html" class="nav-item"><i class="fas fa-building"></i> Agencies</a>
+                <a href="/staff/index.html" class="nav-item"><i class="fas fa-user-tie"></i> Staff</a>
+                <a href="/events/index.html" class="nav-item active"><i class="fas fa-calendar"></i> Events</a>
+                
+                <div class="nav-divider"></div>
+                <div class="nav-section">EVENT MANAGEMENT</div>
+                <a href="/events/calendar.html" class="nav-item">
+                    <i class="fas fa-calendar-alt"></i> Calendar
+                </a>
+                <a href="/events/registrations.html" class="nav-item">
+                    <i class="fas fa-user-plus"></i> Registrations
+                </a>
+                <a href="/events/attendees.html" class="nav-item">
+                    <i class="fas fa-users"></i> Attendees
+                </a>
+                <a href="/events/speakers.html" class="nav-item">
+                    <i class="fas fa-microphone"></i> Speakers
+                </a>
+                <a href="/events/sponsors.html" class="nav-item">
+                    <i class="fas fa-handshake"></i> Sponsors
+                </a>
+                <a href="/events/venues.html" class="nav-item">
+                    <i class="fas fa-map-marker-alt"></i> Venues
+                </a>
+            </nav>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <div class="top-bar">
+                <div class="page-title">
+                    <h1><i class="fas fa-calendar" style="color: var(--accent);"></i> Events Management</h1>
+                    <p>Manage all company events and activities</p>
+                </div>
+                <div class="top-bar-actions">
+                    <button class="btn btn-primary" onclick="location.href='/events/create.html'">
+                        <i class="fas fa-plus"></i> Create Event
+                    </button>
+                    <div class="view-toggle">
+                        <span class="view-option active" onclick="changeView('grid')">Grid</span>
+                        <span class="view-option" onclick="changeView('list')">List</span>
+                    </div>
+                    <button class="logout-btn" id="logoutBtn"><i class="fas fa-sign-out-alt"></i></button>
+                </div>
+            </div>
+
+            <!-- Quick Actions -->
+            <div class="quick-actions">
+                <a href="/events/calendar.html" class="quick-action-btn">
+                    <i class="fas fa-calendar-alt"></i> Calendar View
+                </a>
+                <a href="/events/registrations.html" class="quick-action-btn">
+                    <i class="fas fa-user-plus"></i> Registrations
+                </a>
+                <a href="/events/attendees.html" class="quick-action-btn">
+                    <i class="fas fa-users"></i> Check-in
+                </a>
+                <a href="/events/feedback.html" class="quick-action-btn">
+                    <i class="fas fa-star"></i> Feedback
+                </a>
+            </div>
+
+            <!-- Quick Stats -->
+            <div class="quick-stats">
+                <div class="stat-card">
+                    <div class="stat-icon"><i class="fas fa-calendar-check"></i></div>
+                    <div class="stat-value" id="upcomingEvents">12</div>
+                    <div class="stat-label">Upcoming Events</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon"><i class="fas fa-play-circle"></i></div>
+                    <div class="stat-value" id="ongoingEvents">3</div>
+                    <div class="stat-label">Ongoing</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon"><i class="fas fa-users"></i></div>
+                    <div class="stat-value" id="totalRegistrations">456</div>
+                    <div class="stat-label">Registrations</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon"><i class="fas fa-dollar-sign"></i></div>
+                    <div class="stat-value" id="totalRevenue">$45.6K</div>
+                    <div class="stat-label">Revenue</div>
+                </div>
+            </div>
+
+            <!-- Filters -->
+            <div class="events-filters">
+                <div class="filter-row">
+                    <div class="form-group">
+                        <label>Event Type</label>
+                        <select class="form-control">
+                            <option>All Types</option>
+                            <option>Conference</option>
+                            <option>Webinar</option>
+                            <option>Workshop</option>
+                            <option>Networking</option>
+                            <option>Training</option>
+                            <option>Meeting</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>Status</label>
+                        <select class="form-control">
+                            <option>All Status</option>
+                            <option>Upcoming</option>
+                            <option>Ongoing</option>
+                            <option>Completed</option>
+                            <option>Cancelled</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>Date Range</label>
+                        <select class="form-control">
+                            <option>All Dates</option>
+                            <option>This Week</option>
+                            <option>This Month</option>
+                            <option>Next Month</option>
+                            <option>Custom</option>
+                        </select>
+                    </div>
+                </div>
+                
+                <div class="flex-between">
+                    <div class="flex gap-2">
+                        <button class="btn btn-primary">Apply Filters</button>
+                        <button class="btn btn-outline">Reset</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Events Grid -->
+            <div id="eventsGridView">
+                <div class="events-grid">
+                    <div class="event-card" onclick="viewEvent('evt1')">
+                        <div class="event-image">
+                            <span class="event-badge badge-upcoming">Upcoming</span>
+                            <span class="event-category">Conference</span>
+                        </div>
+                        <div class="event-content">
+                            <div class="event-title">Global Investment Summit 2024</div>
+                            <div class="event-date">📅 May 15-17, 2024</div>
+                            <div class="event-location">📍 New York Convention Center</div>
+                            
+                            <div class="event-meta">
+                                <div class="meta-item">
+                                    <div class="meta-value">234</div>
+                                    <div class="meta-label">Registered</div>
+                                </div>
+                                <div class="meta-item">
+                                    <div class="meta-value">12</div>
+                                    <div class="meta-label">Speakers</div>
+                                </div>
+                                <div class="meta-item">
+                                    <div class="meta-value">8</div>
+                                    <div class="meta-label">Sponsors</div>
+                                </div>
+                            </div>
+                            
+                            <div class="event-footer">
+                                <div class="capacity-bar">
+                                    <div class="capacity-fill" style="width: 78%;"></div>
+                                </div>
+                                <span style="font-size: 12px;">Capacity: 300</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="event-card" onclick="viewEvent('evt2')">
+                        <div class="event-image">
+                            <span class="event-badge badge-ongoing">Ongoing</span>
+                            <span class="event-category">Webinar</span>
+                        </div>
+                        <div class="event-content">
+                            <div class="event-title">Crypto & Blockchain Basics</div>
+                            <div class="event-date">📅 Mar 9, 2024 (2:00 PM EST)</div>
+                            <div class="event-location">💻 Online (Zoom)</div>
+                            
+                            <div class="event-meta">
+                                <div class="meta-item">
+                                    <div class="meta-value">156</div>
+                                    <div class="meta-label">Attendees</div>
+                                </div>
+                                <div class="meta-item">
+                                    <div class="meta-value">2</div>
+                                    <div class="meta-label">Speakers</div>
+                                </div>
+                                <div class="meta-item">
+                                    <div class="meta-value">45</div>
+                                    <div class="meta-label">Waiting</div>
+                                </div>
+                            </div>
+                            
+                            <div class="event-footer">
+                                <span class="badge badge-success">Live Now</span>
+                                <button class="btn btn-sm btn-accent">Join</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="event-card" onclick="viewEvent('evt3')">
+                        <div class="event-image">
+                            <span class="event-badge badge-upcoming">Upcoming</span>
+                            <span class="event-category">Workshop</span>
+                        </div>
+                        <div class="event-content">
+                            <div class="event-title">Investment Analysis Workshop</div>
+                            <div class="event-date">📅 Mar 25, 2024</div>
+                            <div class="event-location">📍 Chicago Financial District</div>
+                            
+                            <div class="event-meta">
+                                <div class="meta-item">
+                                    <div class="meta-value">45</div>
+                                    <div class="meta-label">Registered</div>
+                                </div>
+                                <div class="meta-item">
+                                    <div class="meta-value">3</div>
+                                    <div class="meta-label">Instructors</div>
+                                </div>
+                                <div class="meta-item">
+                                    <div class="meta-value">$299</div>
+                                    <div class="meta-label">Price</div>
+                                </div>
+                            </div>
+                            
+                            <div class="event-footer">
+                                <div class="capacity-bar">
+                                    <div class="capacity-fill" style="width: 45%;"></div>
+                                </div>
+                                <span style="font-size: 12px;">Capacity: 100</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="event-card" onclick="viewEvent('evt4')">
+                        <div class="event-image">
+                            <span class="event-badge badge-completed">Completed</span>
+                            <span class="event-category">Networking</span>
+                        </div>
+                        <div class="event-content">
+                            <div class="event-title">Investor Networking Mixer</div>
+                            <div class="event-date">📅 Mar 5, 2024</div>
+                            <div class="event-location">📍 The Rooftop Lounge, NYC</div>
+                            
+                            <div class="event-meta">
+                                <div class="meta-item">
+                                    <div class="meta-value">89</div>
+                                    <div class="meta-label">Attended</div>
+                                </div>
+                                <div class="meta-item">
+                                    <div class="meta-value">4.8</div>
+                                    <div class="meta-label">Rating</div>
+                                </div>
+                            </div>
+                            
+                            <div class="event-footer">
+                                <span class="badge badge-info">Feedback Available</span>
+                                <button class="btn btn-sm btn-outline">View Report</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Pagination -->
+                <div class="flex-center" style="margin-top: var(--space-xl);">
+                    <div class="pagination">
+                        <button class="page-link"><i class="fas fa-chevron-left"></i></button>
+                        <button class="page-link active">1</button>
+                        <button class="page-link">2</button>
+                        <button class="page-link">3</button>
+                        <button class="page-link">4</button>
+                        <button class="page-link">5</button>
+                        <span class="page-link">...</span>
+                        <button class="page-link">8</button>
+                        <button class="page-link"><i class="fas fa-chevron-right"></i></button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- List View (hidden by default) -->
+            <div id="eventsListView" style="display: none;">
+                <div class="card">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Event Name</th>
+                                <th>Type</th>
+                                <th>Date</th>
+                                <th>Location</th>
+                                <th>Registrations</th>
+                                <th>Status</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>Global Investment Summit 2024</td>
+                                <td>Conference</td>
+                                <td>May 15-17, 2024</td>
+                                <td>New York</td>
+                                <td>234/300</td>
+                                <td><span class="badge badge-success">Upcoming</span></td>
+                                <td>
+                                    <button class="btn btn-sm btn-outline"><i class="fas fa-eye"></i></button>
+                                    <button class="btn btn-sm btn-outline-accent"><i class="fas fa-edit"></i></button>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>Crypto & Blockchain Basics</td>
+                                <td>Webinar</td>
+                                <td>Mar 9, 2024</td>
+                                <td>Online</td>
+                                <td>156/500</td>
+                                <td><span class="badge badge-info">Ongoing</span></td>
+                                <td>
+                                    <button class="btn btn-sm btn-outline"><i class="fas fa-eye"></i></button>
+                                    <button class="btn btn-sm btn-outline-accent"><i class="fas fa-edit"></i></button>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script>
+        function changeView(view) {
+            document.querySelectorAll('.view-option').forEach(opt => opt.classList.remove('active'));
+            event.target.classList.add('active');
+            
+            document.getElementById('eventsGridView').style.display = view === 'grid' ? 'block' : 'none';
+            document.getElementById('eventsListView').style.display = view === 'list' ? 'block' : 'none';
+        }
+
+        function viewEvent(id) {
+            location.href = `/events/view.html?id=${id}`;
+        }
+    </script>
+</body>
+</html>
