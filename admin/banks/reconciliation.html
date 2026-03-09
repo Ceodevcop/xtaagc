@@ -1,0 +1,439 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bank Reconciliation - TAAGC Admin</title>
+    
+    <!-- Fonts & Icons -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Assets -->
+    <link rel="stylesheet" href="/assets/css/admin.css">
+    <script src="/assets/js/admin.js" defer></script>
+    
+    <style>
+        .reconciliation-header {
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+            color: white;
+            padding: var(--space-xl);
+            border-radius: var(--radius-lg);
+            margin-bottom: var(--space-xl);
+        }
+        
+        .reconciliation-meta {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: var(--space-xl);
+        }
+        
+        .reconciliation-selector {
+            display: flex;
+            gap: var(--space-md);
+            align-items: center;
+        }
+        
+        .balance-cards {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: var(--space-xl);
+            margin-bottom: var(--space-xl);
+        }
+        
+        .balance-card {
+            background: rgba(255,255,255,0.1);
+            border-radius: var(--radius-lg);
+            padding: var(--space-lg);
+            text-align: center;
+        }
+        
+        .balance-label {
+            font-size: 13px;
+            opacity: 0.8;
+            margin-bottom: var(--space-xs);
+        }
+        
+        .balance-value {
+            font-size: 32px;
+            font-weight: 700;
+        }
+        
+        .balance-diff {
+            font-size: 14px;
+            margin-top: var(--space-xs);
+        }
+        
+        .diff-positive { color: var(--success); }
+        .diff-negative { color: var(--danger); }
+        
+        .reconciliation-table {
+            background: var(--white);
+            border-radius: var(--radius-lg);
+            padding: var(--space-lg);
+            border: 1px solid #e2e8f0;
+        }
+        
+        .match-status {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 11px;
+        }
+        
+        .status-matched {
+            background: rgba(16,185,129,0.1);
+            color: var(--success);
+        }
+        
+        .status-unmatched {
+            background: rgba(229,62,62,0.1);
+            color: var(--danger);
+        }
+        
+        .status-partial {
+            background: rgba(245,158,11,0.1);
+            color: var(--warning);
+        }
+        
+        .reconciliation-progress {
+            background: var(--white);
+            border-radius: var(--radius-lg);
+            padding: var(--space-lg);
+            margin-top: var(--space-xl);
+        }
+        
+        .progress-item {
+            margin-bottom: var(--space-md);
+        }
+        
+        .progress-header {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: var(--space-xs);
+        }
+        
+        .progress-bar-bg {
+            height: 8px;
+            background: #e2e8f0;
+            border-radius: 4px;
+            overflow: hidden;
+        }
+        
+        .progress-bar-fill {
+            height: 100%;
+            background: var(--accent);
+            border-radius: 4px;
+            width: 0%;
+            transition: width 0.3s;
+        }
+        
+        .reconciliation-actions {
+            display: flex;
+            gap: var(--space-md);
+            justify-content: flex-end;
+            margin-top: var(--space-xl);
+        }
+        
+        .statement-upload {
+            border: 2px dashed #e2e8f0;
+            border-radius: var(--radius-lg);
+            padding: var(--space-xl);
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s;
+            margin-bottom: var(--space-xl);
+        }
+        
+        .statement-upload:hover {
+            border-color: var(--accent);
+            background: rgba(193,154,107,0.05);
+        }
+        
+        .statement-upload i {
+            font-size: 48px;
+            color: var(--accent);
+            margin-bottom: var(--space-md);
+        }
+        
+        .differences-list {
+            background: var(--bg);
+            border-radius: var(--radius-lg);
+            padding: var(--space-lg);
+            margin-top: var(--space-lg);
+        }
+        
+        .difference-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: var(--space-sm);
+            border-bottom: 1px solid #e2e8f0;
+        }
+        
+        .difference-item:last-child {
+            border-bottom: none;
+        }
+        
+        .difference-amount {
+            font-weight: 700;
+        }
+    </style>
+</head>
+<body>
+    <div class="admin-container">
+        <!-- Sidebar -->
+        <aside class="sidebar">...</aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <div class="top-bar">
+                <div class="page-title">
+                    <h1><i class="fas fa-balance-scale" style="color: var(--accent);"></i> Bank Reconciliation</h1>
+                    <p>Reconcile bank statements with transactions</p>
+                </div>
+                <div class="top-bar-actions">
+                    <button class="btn btn-primary" onclick="startReconciliation()">
+                        <i class="fas fa-play"></i> Start Reconciliation
+                    </button>
+                    <button class="btn btn-outline" onclick="exportReconciliation()">
+                        <i class="fas fa-download"></i> Export Report
+                    </button>
+                    <button class="logout-btn" id="logoutBtn"><i class="fas fa-sign-out-alt"></i></button>
+                </div>
+            </div>
+
+            <!-- Reconciliation Meta -->
+            <div class="reconciliation-meta">
+                <div class="reconciliation-selector">
+                    <select class="form-control" style="width: 300px;">
+                        <option>Chase Bank - Business Checking (••••1234)</option>
+                        <option>Chase Bank - Savings (••••5678)</option>
+                        <option>Bank of America - Checking (••••9012)</option>
+                    </select>
+                    
+                    <select class="form-control" style="width: 200px;">
+                        <option>March 2024</option>
+                        <option>February 2024</option>
+                        <option>January 2024</option>
+                        <option>December 2023</option>
+                    </select>
+                </div>
+                
+                <div class="flex gap-2">
+                    <span class="badge badge-success">Last reconciled: Mar 1, 2024</span>
+                    <span class="badge badge-warning">8 transactions pending</span>
+                </div>
+            </div>
+
+            <!-- Statement Upload -->
+            <div class="statement-upload" onclick="uploadStatement()">
+                <i class="fas fa-cloud-upload-alt"></i>
+                <h3>Upload Bank Statement</h3>
+                <p style="color: var(--light);">Click to upload or drag and drop your bank statement (PDF, CSV, OFX)</p>
+                <small style="color: var(--lighter);">Last uploaded: March 9, 2024</small>
+            </div>
+
+            <!-- Balance Comparison -->
+            <div class="balance-cards">
+                <div class="balance-card">
+                    <div class="balance-label">System Balance</div>
+                    <div class="balance-value" id="systemBalance">$1,245,678</div>
+                    <div class="balance-diff">As of Mar 9, 2024</div>
+                </div>
+                <div class="balance-card">
+                    <div class="balance-label">Statement Balance</div>
+                    <div class="balance-value" id="statementBalance">$1,245,000</div>
+                    <div class="balance-diff diff-negative">From uploaded statement</div>
+                </div>
+                <div class="balance-card">
+                    <div class="balance-label">Difference</div>
+                    <div class="balance-value" id="balanceDiff">$678</div>
+                    <div class="balance-diff diff-positive">To be reconciled</div>
+                </div>
+            </div>
+
+            <!-- Reconciliation Progress -->
+            <div class="reconciliation-progress">
+                <h3 style="margin-bottom: var(--space-lg);">Reconciliation Progress</h3>
+                
+                <div class="progress-item">
+                    <div class="progress-header">
+                        <span>Overall Progress</span>
+                        <span>85%</span>
+                    </div>
+                    <div class="progress-bar-bg">
+                        <div class="progress-bar-fill" style="width: 85%;"></div>
+                    </div>
+                </div>
+                
+                <div class="progress-item">
+                    <div class="progress-header">
+                        <span>Matched Transactions</span>
+                        <span>116 / 124</span>
+                    </div>
+                    <div class="progress-bar-bg">
+                        <div class="progress-bar-fill" style="width: 93.5%;"></div>
+                    </div>
+                </div>
+                
+                <div class="progress-item">
+                    <div class="progress-header">
+                        <span>Amount Matched</span>
+                        <span>$1,234,567 / $1,245,678</span>
+                    </div>
+                    <div class="progress-bar-bg">
+                        <div class="progress-bar-fill" style="width: 99.1%;"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Differences Summary -->
+            <div class="differences-list">
+                <h4 style="margin-bottom: var(--space-md);">Unreconciled Differences</h4>
+                
+                <div class="difference-item">
+                    <div>
+                        <strong>Bank fee not recorded</strong>
+                        <br>
+                        <small>Mar 5, 2024 · Monthly service fee</small>
+                    </div>
+                    <div class="difference-amount amount-negative">-$25.00</div>
+                    <button class="btn btn-sm btn-success" onclick="addTransaction()">
+                        <i class="fas fa-plus"></i> Add
+                    </button>
+                </div>
+                
+                <div class="difference-item">
+                    <div>
+                        <strong>Interest earned</strong>
+                        <br>
+                        <small>Mar 1, 2024 · Monthly interest</small>
+                    </div>
+                    <div class="difference-amount amount-positive">+$178.50</div>
+                    <button class="btn btn-sm btn-success" onclick="addTransaction()">
+                        <i class="fas fa-plus"></i> Add
+                    </button>
+                </div>
+                
+                <div class="difference-item">
+                    <div>
+                        <strong>Wire transfer - Client payment</strong>
+                        <br>
+                        <small>Mar 3, 2024 · Not yet recorded in system</small>
+                    </div>
+                    <div class="difference-amount amount-positive">+$5,000.00</div>
+                    <button class="btn btn-sm btn-warning" onclick="matchManually()">
+                        <i class="fas fa-link"></i> Match
+                    </button>
+                </div>
+            </div>
+
+            <!-- Reconciliation Table -->
+            <div class="reconciliation-table">
+                <h3 style="margin-bottom: var(--space-lg);">Unmatched Transactions</h3>
+                
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Date</th>
+                            <th>Description</th>
+                            <th>System Amount</th>
+                            <th>Statement Amount</th>
+                            <th>Status</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>2024-03-05</td>
+                            <td>Monthly service fee</td>
+                            <td class="amount-negative">-$25.00</td>
+                            <td class="amount-negative">-$25.00</td>
+                            <td><span class="match-status status-matched"><i class="fas fa-check-circle"></i> Matched</span></td>
+                            <td><button class="btn btn-sm btn-outline-success">✓</button></td>
+                        </tr>
+                        <tr>
+                            <td>2024-03-03</td>
+                            <td>Wire transfer - ABC Corp</td>
+                            <td class="amount-positive">+$5,000.00</td>
+                            <td class="amount-positive">+$5,000.00</td>
+                            <td><span class="match-status status-unmatched"><i class="fas fa-exclamation-circle"></i> Unmatched</span></td>
+                            <td>
+                                <button class="btn btn-sm btn-success" onclick="matchTransaction()">
+                                    <i class="fas fa-check"></i>
+                                </button>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>2024-03-01</td>
+                            <td>Interest payment</td>
+                            <td>-</td>
+                            <td class="amount-positive">+$178.50</td>
+                            <td><span class="match-status status-partial"><i class="fas fa-clock"></i> Missing</span></td>
+                            <td>
+                                <button class="btn btn-sm btn-warning" onclick="createTransaction()">
+                                    <i class="fas fa-plus"></i>
+                                </button>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Reconciliation Actions -->
+            <div class="reconciliation-actions">
+                <button class="btn btn-outline" onclick="saveProgress()">
+                    <i class="fas fa-save"></i> Save Progress
+                </button>
+                <button class="btn btn-success btn-lg" onclick="completeReconciliation()">
+                    <i class="fas fa-check-circle"></i> Complete Reconciliation
+                </button>
+            </div>
+        </main>
+    </div>
+
+    <script>
+        function uploadStatement() {
+            TAAGC.ui.showToast('Upload statement feature coming soon', 'info');
+        }
+
+        function startReconciliation() {
+            TAAGC.ui.showToast('Starting reconciliation...', 'info');
+        }
+
+        function matchTransaction() {
+            TAAGC.ui.showToast('Transaction matched', 'success');
+        }
+
+        function addTransaction() {
+            TAAGC.ui.showToast('Adding transaction to system', 'info');
+        }
+
+        function matchManually() {
+            TAAGC.ui.showToast('Manual matching', 'info');
+        }
+
+        function createTransaction() {
+            TAAGC.ui.showToast('Creating new transaction', 'info');
+        }
+
+        function saveProgress() {
+            TAAGC.ui.showToast('Progress saved', 'success');
+        }
+
+        function completeReconciliation() {
+            TAAGC.ui.confirm('Complete reconciliation and lock period?', () => {
+                TAAGC.ui.showToast('Reconciliation completed', 'success');
+            });
+        }
+
+        function exportReconciliation() {
+            TAAGC.ui.showToast('Exporting reconciliation report...', 'info');
+        }
+    </script>
+</body>
+</html>
