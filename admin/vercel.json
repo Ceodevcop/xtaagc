@@ -1,0 +1,248 @@
+{
+  "name": "taagc-admin",
+  "version": 2,
+  "alias": ["admin.taagc.website"],
+  "regions": ["iad1"],
+  "builds": [
+    {
+      "src": "*.html",
+      "use": "@vercel/static"
+    },
+    {
+      "src": "assets/**/*",
+      "use": "@vercel/static"
+    },
+    {
+      "src": "users/**/*.html",
+      "use": "@vercel/static"
+    },
+    {
+      "src": "admins/**/*.html",
+      "use": "@vercel/static"
+    },
+    {
+      "src": "staff/**/*.html",
+      "use": "@vercel/static"
+    },
+    {
+      "src": "investments/**/*.html",
+      "use": "@vercel/static"
+    },
+    {
+      "src": "transactions/**/*.html",
+      "use": "@vercel/static"
+    },
+    {
+      "src": "banks/**/*.html",
+      "use": "@vercel/static"
+    },
+    {
+      "src": "agencies/**/*.html",
+      "use": "@vercel/static"
+    },
+    {
+      "src": "events/**/*.html",
+      "use": "@vercel/static"
+    }
+  ],
+  "routes": [
+    {
+      "src": "/",
+      "dest": "/index.html"
+    },
+    {
+      "src": "/dashboard",
+      "dest": "/dashboard.html"
+    },
+    {
+      "src": "/profile",
+      "dest": "/profile.html"
+    },
+    {
+      "src": "/login",
+      "dest": "/index.html"
+    },
+    {
+      "src": "/users",
+      "dest": "/users/index.html"
+    },
+    {
+      "src": "/users/create",
+      "dest": "/users/create.html"
+    },
+    {
+      "src": "/users/edit",
+      "dest": "/users/edit.html"
+    },
+    {
+      "src": "/users/view",
+      "dest": "/users/view.html"
+    },
+    {
+      "src": "/admins",
+      "dest": "/admins/index.html"
+    },
+    {
+      "src": "/admins/create",
+      "dest": "/admins/create.html"
+    },
+    {
+      "src": "/staff",
+      "dest": "/staff/index.html"
+    },
+    {
+      "src": "/staff/schedule",
+      "dest": "/staff/schedule.html"
+    },
+    {
+      "src": "/staff/attendance",
+      "dest": "/staff/attendance.html"
+    },
+    {
+      "src": "/staff/leave",
+      "dest": "/staff/leave.html"
+    },
+    {
+      "src": "/staff/performance",
+      "dest": "/staff/performance.html"
+    },
+    {
+      "src": "/staff/payroll",
+      "dest": "/staff/payroll.html"
+    },
+    {
+      "src": "/investments",
+      "dest": "/investments/index.html"
+    },
+    {
+      "src": "/investments/create",
+      "dest": "/investments/create.html"
+    },
+    {
+      "src": "/transactions",
+      "dest": "/transactions/index.html"
+    },
+    {
+      "src": "/transactions/deposits",
+      "dest": "/transactions/deposits.html"
+    },
+    {
+      "src": "/transactions/withdrawals",
+      "dest": "/transactions/withdrawals.html"
+    },
+    {
+      "src": "/banks",
+      "dest": "/banks/index.html"
+    },
+    {
+      "src": "/banks/accounts",
+      "dest": "/banks/accounts.html"
+    },
+    {
+      "src": "/banks/transactions",
+      "dest": "/banks/transactions.html"
+    },
+    {
+      "src": "/banks/reconciliation",
+      "dest": "/banks/reconciliation.html"
+    },
+    {
+      "src": "/agencies",
+      "dest": "/agencies/index.html"
+    },
+    {
+      "src": "/agencies/contracts",
+      "dest": "/agencies/contracts.html"
+    },
+    {
+      "src": "/agencies/commissions",
+      "dest": "/agencies/commissions.html"
+    },
+    {
+      "src": "/agencies/payments",
+      "dest": "/agencies/payments.html"
+    },
+    {
+      "src": "/events",
+      "dest": "/events/index.html"
+    },
+    {
+      "src": "/events/calendar",
+      "dest": "/events/calendar.html"
+    },
+    {
+      "src": "/events/registrations",
+      "dest": "/events/registrations.html"
+    },
+    {
+      "src": "/events/attendees",
+      "dest": "/events/attendees.html"
+    },
+    {
+      "src": "/events/feedback",
+      "dest": "/events/feedback.html"
+    },
+    {
+      "src": "/events/speakers",
+      "dest": "/events/speakers.html"
+    },
+    {
+      "src": "/events/sponsors",
+      "dest": "/events/sponsors.html"
+    },
+    {
+      "src": "/events/venues",
+      "dest": "/events/venues.html"
+    },
+    {
+      "src": "/assets/(.*)",
+      "dest": "/assets/$1"
+    },
+    {
+      "src": "/(.*)",
+      "dest": "/$1"
+    }
+  ],
+  "headers": [
+    {
+      "source": "/(.*)",
+      "headers": [
+        {
+          "key": "X-Content-Type-Options",
+          "value": "nosniff"
+        },
+        {
+          "key": "X-Frame-Options",
+          "value": "DENY"
+        },
+        {
+          "key": "X-XSS-Protection",
+          "value": "1; mode=block"
+        },
+        {
+          "key": "Referrer-Policy",
+          "value": "strict-origin-when-cross-origin"
+        },
+        {
+          "key": "Permissions-Policy",
+          "value": "camera=(), microphone=(), geolocation=()"
+        }
+      ]
+    },
+    {
+      "source": "/assets/(.*)",
+      "headers": [
+        {
+          "key": "Cache-Control",
+          "value": "public, max-age=31536000, immutable"
+        }
+      ]
+    }
+  ],
+  "cleanUrls": true,
+  "trailingSlash": false,
+  "github": {
+    "enabled": true,
+    "silent": true
+  }
+}
