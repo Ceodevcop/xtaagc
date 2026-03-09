@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Approve Investment - TAAGC Admin</title>
+    
+    <!-- Fonts & Icons -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Assets -->
+    <link rel="stylesheet" href="/assets/css/admin.css">
+    <script src="/assets/js/admin.js" defer></script>
+    
+    <style>
+        .approval-container {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        
+        .review-card {
+            background: var(--white);
+            border-radius: var(--radius-lg);
+            padding: var(--space-xl);
+            border: 1px solid #e2e8f0;
+            margin-bottom: var(--space-xl);
+        }
+        
+        .checklist-item {
+            display: flex;
+            align-items: center;
+            gap: var(--space-md);
+            padding: var(--space-md);
+            border-bottom: 1px solid #e2e8f0;
+        }
+        
+        .checklist-item:last-child {
+            border-bottom: none;
+        }
+        
+        .checklist-status {
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .status-pending {
+            background: rgba(245,158,11,0.1);
+            color: var(--warning);
+        }
+        
+        .status-approved {
+            background: rgba(16,185,129,0.1);
+            color: var(--success);
+        }
+        
+        .status-rejected {
+            background: rgba(229,62,62,0.1);
+            color: var(--danger);
+        }
+        
+        .signature-box {
+            border: 2px dashed var(--accent);
+            border-radius: var(--radius-lg);
+            padding: var(--space-xl);
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .signature-box:hover {
+            background: rgba(193,154,107,0.05);
+        }
+        
+        .approval-actions {
+            display: flex;
+            gap: var(--space-md);
+            justify-content: center;
+            margin-top: var(--space-xl);
+        }
+    </style>
+</head>
+<body>
+    <div class="admin-container">
+        <!-- Sidebar -->
+        <aside class="sidebar">...</aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <div class="top-bar">
+                <div class="page-title">
+                    <h1><i class="fas fa-check-circle" style="color: var(--accent);"></i> Approve Investment</h1>
+                    <p>Review and approve investment opportunity</p>
+                </div>
+                <div class="top-bar-actions">
+                    <button class="btn btn-outline" onclick="location.href='/investments/index.html'">
+                        <i class="fas fa-arrow-left"></i> Back
+                    </button>
+                    <button class="logout-btn" id="logoutBtn"><i class="fas fa-sign-out-alt"></i></button>
+                </div>
+            </div>
+
+            <div class="approval-container">
+                <!-- Investment Summary -->
+                <div class="review-card">
+                    <h3 style="margin-bottom: var(--space-lg);">Investment Summary</h3>
+                    
+                    <div class="grid-2">
+                        <div>
+                            <div class="info-row">
+                                <span class="info-label">Name:</span>
+                                <span class="info-value">Real Estate Fund Alpha</span>
+                            </div>
+                            <div class="info-row">
+                                <span class="info-label">Amount:</span>
+                                <span class="info-value">$2,500,000</span>
+                            </div>
+                            <div class="info-row">
+                                <span class="info-label">ROI:</span>
+                                <span class="info-value">18.5%</span>
+                            </div>
+                        </div>
+                        <div>
+                            <div class="info-row">
+                                <span class="info-label">Submitted By:</span>
+                                <span class="info-value">John Smith</span>
+                            </div>
+                            <div class="info-row">
+                                <span class="info-label">Date:</span>
+                                <span class="info-value">Mar 9, 2024</span>
+                            </div>
+                            <div class="info-row">
+                                <span class="info-label">Risk Level:</span>
+                                <span class="info-value">Medium</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Approval Checklist -->
+                <div class="review-card">
+                    <h3 style="margin-bottom: var(--space-lg);">Approval Checklist</h3>
+                    
+                    <div class="checklist-item">
+                        <div class="checklist-status status-approved">
+                            <i class="fas fa-check"></i>
+                        </div>
+                        <div style="flex: 1;">
+                            <strong>Financial Documents</strong>
+                            <br>
+                            <small>All financial projections and statements verified</small>
+                        </div>
+                        <span class="badge badge-success">Verified</span>
+                    </div>
+                    
+                    <div class="checklist-item">
+                        <div class="checklist-status status-approved">
+                            <i class="fas fa-check"></i>
+                        </div>
+                        <div style="flex: 1;">
+                            <strong>Legal Compliance</strong>
+                            <br>
+                            <small>Legal documents reviewed and compliant</small>
+                        </div>
+                        <span class="badge badge-success">Compliant</span>
+                    </div>
+                    
+                    <div class="checklist-item">
+                        <div class="checklist-status status-pending">
+                            <i class="fas fa-clock"></i>
+                        </div>
+                        <div style="flex: 1;">
+                            <strong>Risk Assessment</strong>
+                            <br>
+                            <small>Risk analysis pending final review</small>
+                        </div>
+                        <span class="badge badge-warning">In Progress</span>
+                    </div>
+                    
+                    <div class="checklist-item">
+                        <div class="checklist-status status-pending">
+                            <i class="fas fa-clock"></i>
+                        </div>
+                        <div style="flex: 1;">
+                            <strong>Market Analysis</strong>
+                            <br>
+                            <small>Market research validation required</small>
+                        </div>
+                        <span class="badge badge-warning">Pending</span>
+                    </div>
+                </div>
+
+                <!-- Approval Notes -->
+                <div class="review-card">
+                    <h3 style="margin-bottom: var(--space-lg);">Approval Notes</h3>
+                    
+                    <div class="form-group">
+                        <label>Comments / Notes</label>
+                        <textarea class="form-control" rows="4" placeholder="Add any notes about this approval..."></textarea>
+                    </div>
+                </div>
+
+                <!-- Digital Signature -->
+                <div class="review-card">
+                    <h3 style="margin-bottom: var(--space-lg);">Digital Signature</h3>
+                    
+                    <div class="signature-box" onclick="openSignaturePad()">
+                        <i class="fas fa-pen" style="font-size: 32px; color: var(--accent); margin-bottom: var(--space-md);"></i>
+                        <h4>Click to Sign</h4>
+                        <p style="color: var(--light);">Authorized approver signature required</p>
+                    </div>
+                </div>
+
+                <!-- Actions -->
+                <div class="approval-actions">
+                    <button class="btn btn-success btn-lg" onclick="approveInvestment()">
+                        <i class="fas fa-check-circle"></i> Approve Investment
+                    </button>
+                    <button class="btn btn-danger btn-lg" onclick="rejectInvestment()">
+                        <i class="fas fa-times-circle"></i> Reject
+                    </button>
+                    <button class="btn btn-outline btn-lg" onclick="requestChanges()">
+                        <i class="fas fa-undo"></i> Request Changes
+                    </button>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script>
+        function approveInvestment() {
+            TAAGC.ui.confirm('Are you sure you want to approve this investment?', () => {
+                TAAGC.ui.showToast('Investment approved successfully!', 'success');
+                setTimeout(() => location.href = '/investments/index.html', 1500);
+            });
+        }
+
+        function rejectInvestment() {
+            TAAGC.ui.confirm('Reject this investment?', () => {
+                TAAGC.ui.showToast('Investment rejected', 'warning');
+                setTimeout(() => location.href = '/investments/index.html', 1500);
+            });
+        }
+
+        function requestChanges() {
+            TAAGC.ui.showToast('Change request sent to submitter', 'info');
+        }
+
+        function openSignaturePad() {
+            TAAGC.ui.showToast('Signature pad coming soon', 'info');
+        }
+    </script>
+</body>
+</html>
