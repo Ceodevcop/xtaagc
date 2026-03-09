@@ -1,0 +1,619 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Training & Development - TAAGC Admin</title>
+    
+    <!-- Fonts & Icons -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Assets -->
+    <link rel="stylesheet" href="/assets/css/admin.css">
+    <script src="/assets/js/admin.js" defer></script>
+    
+    <style>
+        .training-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: var(--space-xl);
+        }
+        
+        .training-stats {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: var(--space-lg);
+            margin-bottom: var(--space-xl);
+        }
+        
+        .stat-card {
+            background: var(--white);
+            border-radius: var(--radius-lg);
+            padding: var(--space-lg);
+            border: 1px solid #e2e8f0;
+        }
+        
+        .stat-icon {
+            width: 48px;
+            height: 48px;
+            background: rgba(193,154,107,0.1);
+            border-radius: var(--radius-md);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--accent);
+            font-size: 20px;
+            margin-bottom: var(--space-md);
+        }
+        
+        .stat-value {
+            font-size: 28px;
+            font-weight: 700;
+            color: var(--primary);
+        }
+        
+        .stat-label {
+            color: var(--light);
+            font-size: 13px;
+            margin-top: var(--space-xs);
+        }
+        
+        .training-tabs {
+            display: flex;
+            gap: var(--space-sm);
+            border-bottom: 2px solid #e2e8f0;
+            margin-bottom: var(--space-xl);
+        }
+        
+        .training-tab {
+            padding: var(--space-md) var(--space-lg);
+            cursor: pointer;
+            font-weight: 600;
+            color: var(--light);
+            border-bottom: 2px solid transparent;
+            margin-bottom: -2px;
+        }
+        
+        .training-tab.active {
+            color: var(--accent);
+            border-bottom-color: var(--accent);
+        }
+        
+        .courses-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+            gap: var(--space-lg);
+        }
+        
+        .course-card {
+            background: var(--white);
+            border-radius: var(--radius-lg);
+            border: 1px solid #e2e8f0;
+            overflow: hidden;
+            transition: all 0.3s;
+        }
+        
+        .course-card:hover {
+            transform: translateY(-5px);
+            box-shadow: var(--shadow-lg);
+            border-color: var(--accent);
+        }
+        
+        .course-image {
+            height: 160px;
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .course-badge {
+            position: absolute;
+            top: var(--space-md);
+            right: var(--space-md);
+            padding: 4px 12px;
+            background: var(--accent);
+            color: white;
+            border-radius: 20px;
+            font-size: 11px;
+            font-weight: 600;
+        }
+        
+        .course-content {
+            padding: var(--space-lg);
+        }
+        
+        .course-title {
+            font-size: 18px;
+            font-weight: 700;
+            color: var(--primary);
+            margin-bottom: var(--space-xs);
+        }
+        
+        .course-provider {
+            color: var(--light);
+            font-size: 13px;
+            margin-bottom: var(--space-md);
+        }
+        
+        .course-meta {
+            display: flex;
+            gap: var(--space-md);
+            margin-bottom: var(--space-md);
+            padding-bottom: var(--space-md);
+            border-bottom: 1px solid #e2e8f0;
+        }
+        
+        .meta-item {
+            flex: 1;
+            text-align: center;
+        }
+        
+        .meta-value {
+            font-size: 16px;
+            font-weight: 700;
+            color: var(--accent);
+        }
+        
+        .meta-label {
+            font-size: 11px;
+            color: var(--light);
+        }
+        
+        .progress-text {
+            display: flex;
+            justify-content: space-between;
+            font-size: 12px;
+            margin-bottom: 4px;
+        }
+        
+        .progress-bar {
+            height: 6px;
+            background: #e2e8f0;
+            border-radius: 3px;
+            overflow: hidden;
+            margin-bottom: var(--space-md);
+        }
+        
+        .progress-fill {
+            height: 100%;
+            background: var(--accent);
+            border-radius: 3px;
+        }
+        
+        .course-footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: var(--space-md);
+        }
+        
+        .enrollment-count {
+            color: var(--light);
+            font-size: 12px;
+        }
+        
+        .certification-badge {
+            display: inline-block;
+            padding: 4px 8px;
+            background: rgba(16,185,129,0.1);
+            color: var(--success);
+            border-radius: 20px;
+            font-size: 11px;
+            font-weight: 600;
+        }
+        
+        .filters {
+            background: var(--white);
+            border-radius: var(--radius-lg);
+            padding: var(--space-lg);
+            margin-bottom: var(--space-xl);
+            border: 1px solid #e2e8f0;
+        }
+        
+        .filter-row {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: var(--space-md);
+            margin-bottom: var(--space-md);
+        }
+        
+        .staff-training-list {
+            background: var(--white);
+            border-radius: var(--radius-lg);
+            padding: var(--space-lg);
+            border: 1px solid #e2e8f0;
+        }
+        
+        .training-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: var(--space-md);
+            border-bottom: 1px solid #e2e8f0;
+        }
+        
+        .training-item:last-child {
+            border-bottom: none;
+        }
+        
+        .training-info {
+            display: flex;
+            align-items: center;
+            gap: var(--space-md);
+        }
+        
+        .staff-avatar-small {
+            width: 40px;
+            height: 40px;
+            background: var(--accent);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+        }
+    </style>
+</head>
+<body>
+    <div class="admin-container">
+        <!-- Sidebar -->
+        <aside class="sidebar">...</aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <div class="top-bar">
+                <div class="page-title">
+                    <h1><i class="fas fa-graduation-cap" style="color: var(--accent);"></i> Training & Development</h1>
+                    <p>Manage employee training and certifications</p>
+                </div>
+                <div class="top-bar-actions">
+                    <button class="btn btn-primary" onclick="addCourse()">
+                        <i class="fas fa-plus"></i> Add Course
+                    </button>
+                    <button class="btn btn-outline" onclick="assignTraining()">
+                        <i class="fas fa-user-plus"></i> Assign Training
+                    </button>
+                    <button class="logout-btn" id="logoutBtn"><i class="fas fa-sign-out-alt"></i></button>
+                </div>
+            </div>
+
+            <!-- Training Stats -->
+            <div class="training-stats">
+                <div class="stat-card">
+                    <div class="stat-icon"><i class="fas fa-book-open"></i></div>
+                    <div class="stat-value">24</div>
+                    <div class="stat-label">Active Courses</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon"><i class="fas fa-user-graduate"></i></div>
+                    <div class="stat-value">156</div>
+                    <div class="stat-label">Enrolled Staff</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon"><i class="fas fa-check-circle"></i></div>
+                    <div class="stat-value">89</div>
+                    <div class="stat-label">Completed</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon"><i class="fas fa-certificate"></i></div>
+                    <div class="stat-value">45</div>
+                    <div class="stat-label">Certifications</div>
+                </div>
+            </div>
+
+            <!-- Filters -->
+            <div class="filters">
+                <div class="filter-row">
+                    <div class="form-group">
+                        <label>Category</label>
+                        <select class="form-control">
+                            <option>All Categories</option>
+                            <option>Leadership</option>
+                            <option>Technical</option>
+                            <option>Soft Skills</option>
+                            <option>Compliance</option>
+                            <option>Certification</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>Status</label>
+                        <select class="form-control">
+                            <option>All Status</option>
+                            <option>Active</option>
+                            <option>Upcoming</option>
+                            <option>Completed</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>Department</label>
+                        <select class="form-control">
+                            <option>All Departments</option>
+                            <option>Management</option>
+                            <option>Operations</option>
+                            <option>Finance</option>
+                            <option>Marketing</option>
+                            <option>IT</option>
+                            <option>HR</option>
+                        </select>
+                    </div>
+                </div>
+                
+                <div class="flex-between">
+                    <button class="btn btn-primary">Apply Filters</button>
+                    <button class="btn btn-outline">Reset</button>
+                </div>
+            </div>
+
+            <!-- Training Tabs -->
+            <div class="training-tabs">
+                <div class="training-tab active" onclick="showTrainingTab('courses')">Available Courses</div>
+                <div class="training-tab" onclick="showTrainingTab('assigned')">Assigned Training</div>
+                <div class="training-tab" onclick="showTrainingTab('completed')">Completed</div>
+                <div class="training-tab" onclick="showTrainingTab('certifications')">Certifications</div>
+            </div>
+
+            <!-- Courses Grid -->
+            <div id="coursesTab">
+                <div class="courses-grid">
+                    <div class="course-card">
+                        <div class="course-image">
+                            <span class="course-badge">New</span>
+                        </div>
+                        <div class="course-content">
+                            <div class="course-title">Advanced Leadership Program</div>
+                            <div class="course-provider">Harvard Business School Online</div>
+                            
+                            <div class="course-meta">
+                                <div class="meta-item">
+                                    <div class="meta-value">6</div>
+                                    <div class="meta-label">Weeks</div>
+                                </div>
+                                <div class="meta-item">
+                                    <div class="meta-value">4</div>
+                                    <div class="meta-label">Hours/Week</div>
+                                </div>
+                                <div class="meta-item">
+                                    <div class="meta-value">$1,200</div>
+                                    <div class="meta-label">Cost</div>
+                                </div>
+                            </div>
+                            
+                            <div class="progress-text">
+                                <span>Enrolled: 12</span>
+                                <span>Max: 25</span>
+                            </div>
+                            <div class="progress-bar">
+                                <div class="progress-fill" style="width: 48%;"></div>
+                            </div>
+                            
+                            <div class="course-footer">
+                                <span class="enrollment-count">Starts Apr 1, 2024</span>
+                                <button class="btn btn-sm btn-accent">Enroll</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="course-card">
+                        <div class="course-image">
+                            <span class="course-badge">Popular</span>
+                        </div>
+                        <div class="course-content">
+                            <div class="course-title">Data Analytics Certification</div>
+                            <div class="course-provider">Google Career Certificates</div>
+                            
+                            <div class="course-meta">
+                                <div class="meta-item">
+                                    <div class="meta-value">8</div>
+                                    <div class="meta-label">Weeks</div>
+                                </div>
+                                <div class="meta-item">
+                                    <div class="meta-value">5</div>
+                                    <div class="meta-label">Hours/Week</div>
+                                </div>
+                                <div class="meta-item">
+                                    <div class="meta-value">$800</div>
+                                    <div class="meta-label">Cost</div>
+                                </div>
+                            </div>
+                            
+                            <div class="progress-text">
+                                <span>Enrolled: 18</span>
+                                <span>Max: 30</span>
+                            </div>
+                            <div class="progress-bar">
+                                <div class="progress-fill" style="width: 60%;"></div>
+                            </div>
+                            
+                            <div class="course-footer">
+                                <span class="enrollment-count">In Progress</span>
+                                <span class="certification-badge">Certification</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="course-card">
+                        <div class="course-image"></div>
+                        <div class="course-content">
+                            <div class="course-title">Project Management Professional (PMP)</div>
+                            <div class="course-provider">PMI</div>
+                            
+                            <div class="course-meta">
+                                <div class="meta-item">
+                                    <div class="meta-value">12</div>
+                                    <div class="meta-label">Weeks</div>
+                                </div>
+                                <div class="meta-item">
+                                    <div class="meta-value">4</div>
+                                    <div class="meta-label">Hours/Week</div>
+                                </div>
+                                <div class="meta-item">
+                                    <div class="meta-value">$1,500</div>
+                                    <div class="meta-label">Cost</div>
+                                </div>
+                            </div>
+                            
+                            <div class="progress-text">
+                                <span>Enrolled: 8</span>
+                                <span>Max: 20</span>
+                            </div>
+                            <div class="progress-bar">
+                                <div class="progress-fill" style="width: 40%;"></div>
+                            </div>
+                            
+                            <div class="course-footer">
+                                <span class="enrollment-count">Starts May 15, 2024</span>
+                                <button class="btn btn-sm btn-accent">Enroll</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Assigned Training Tab -->
+            <div id="assignedTab" style="display: none;">
+                <div class="staff-training-list">
+                    <h3 style="margin-bottom: var(--space-lg);">Currently Assigned Training</h3>
+                    
+                    <div class="training-item">
+                        <div class="training-info">
+                            <div class="staff-avatar-small">JD</div>
+                            <div>
+                                <strong>John Doe</strong>
+                                <br>
+                                <small>Operations Manager</small>
+                            </div>
+                        </div>
+                        <div style="flex: 1; margin: 0 var(--space-lg);">
+                            <div>Advanced Leadership Program</div>
+                            <div class="progress-bar" style="width: 200px;">
+                                <div class="progress-fill" style="width: 45%;"></div>
+                            </div>
+                        </div>
+                        <span class="badge badge-warning">In Progress</span>
+                    </div>
+                    
+                    <div class="training-item">
+                        <div class="training-info">
+                            <div class="staff-avatar-small">SJ</div>
+                            <div>
+                                <strong>Sarah Johnson</strong>
+                                <br>
+                                <small>Marketing Director</small>
+                            </div>
+                        </div>
+                        <div style="flex: 1; margin: 0 var(--space-lg);">
+                            <div>Digital Marketing Certification</div>
+                            <div class="progress-bar" style="width: 200px;">
+                                <div class="progress-fill" style="width: 80%;"></div>
+                            </div>
+                        </div>
+                        <span class="badge badge-info">80% Complete</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Completed Tab -->
+            <div id="completedTab" style="display: none;">
+                <div class="staff-training-list">
+                    <h3 style="margin-bottom: var(--space-lg);">Completed Training</h3>
+                    
+                    <div class="training-item">
+                        <div class="training-info">
+                            <div class="staff-avatar-small">MC</div>
+                            <div>
+                                <strong>Michael Chen</strong>
+                                <br>
+                                <small>IT Manager</small>
+                            </div>
+                        </div>
+                        <div style="flex: 1; margin: 0 var(--space-lg);">
+                            <div>AWS Cloud Practitioner</div>
+                            <small>Completed: Mar 5, 2024</small>
+                        </div>
+                        <span class="badge badge-success">Certified</span>
+                    </div>
+                    
+                    <div class="training-item">
+                        <div class="training-info">
+                            <div class="staff-avatar-small">ED</div>
+                            <div>
+                                <strong>Emma Davis</strong>
+                                <br>
+                                <small>Financial Analyst</small>
+                            </div>
+                        </div>
+                        <div style="flex: 1; margin: 0 var(--space-lg);">
+                            <div>Financial Modeling</div>
+                            <small>Completed: Feb 28, 2024</small>
+                        </div>
+                        <span class="badge badge-success">Completed</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Certifications Tab -->
+            <div id="certificationsTab" style="display: none;">
+                <div class="staff-training-list">
+                    <h3 style="margin-bottom: var(--space-lg);">Active Certifications</h3>
+                    
+                    <div class="training-item">
+                        <div class="training-info">
+                            <div class="staff-avatar-small">RW</div>
+                            <div>
+                                <strong>Robert Wilson</strong>
+                                <br>
+                                <small>CEO</small>
+                            </div>
+                        </div>
+                        <div style="flex: 1; margin: 0 var(--space-lg);">
+                            <div>PMP Certification</div>
+                            <small>Expires: Dec 2025</small>
+                        </div>
+                        <span class="badge badge-success">Active</span>
+                    </div>
+                    
+                    <div class="training-item">
+                        <div class="training-info">
+                            <div class="staff-avatar-small">LB</div>
+                            <div>
+                                <strong>Lisa Brown</strong>
+                                <br>
+                                <small>HR Director</small>
+                            </div>
+                        </div>
+                        <div style="flex: 1; margin: 0 var(--space-lg);">
+                            <div>SHRM-SCP</div>
+                            <small>Expires: Jun 2026</small>
+                        </div>
+                        <span class="badge badge-success">Active</span>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script>
+        function showTrainingTab(tab) {
+            document.querySelectorAll('.training-tab').forEach(t => t.classList.remove('active'));
+            event.target.classList.add('active');
+            
+            document.getElementById('coursesTab').style.display = tab === 'courses' ? 'block' : 'none';
+            document.getElementById('assignedTab').style.display = tab === 'assigned' ? 'block' : 'none';
+            document.getElementById('completedTab').style.display = tab === 'completed' ? 'block' : 'none';
+            document.getElementById('certificationsTab').style.display = tab === 'certifications' ? 'block' : 'none';
+        }
+
+        function addCourse() {
+            TAAGC.ui.showToast('Add new course', 'info');
+        }
+
+        function assignTraining() {
+            TAAGC.ui.showToast('Assign training to staff', 'info');
+        }
+    </script>
+</body>
+</html>
