@@ -1,0 +1,561 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Create Event - TAAGC Admin</title>
+    
+    <!-- Fonts & Icons -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Assets -->
+    <link rel="stylesheet" href="/assets/css/admin.css">
+    <script src="/assets/js/admin.js" defer></script>
+    
+    <style>
+        .create-form {
+            max-width: 900px;
+            margin: 0 auto;
+        }
+        
+        .form-section {
+            background: var(--white);
+            border-radius: var(--radius-lg);
+            padding: var(--space-xl);
+            margin-bottom: var(--space-xl);
+            border: 1px solid #e2e8f0;
+        }
+        
+        .section-title {
+            color: var(--primary);
+            margin-bottom: var(--space-lg);
+            padding-bottom: var(--space-sm);
+            border-bottom: 2px solid var(--accent);
+            display: flex;
+            align-items: center;
+            gap: var(--space-sm);
+        }
+        
+        .image-upload {
+            border: 2px dashed #e2e8f0;
+            border-radius: var(--radius-lg);
+            padding: var(--space-xl);
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s;
+            margin-bottom: var(--space-lg);
+        }
+        
+        .image-upload:hover {
+            border-color: var(--accent);
+            background: rgba(193,154,107,0.05);
+        }
+        
+        .image-upload i {
+            font-size: 48px;
+            color: var(--accent);
+            margin-bottom: var(--space-md);
+        }
+        
+        .datetime-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: var(--space-md);
+        }
+        
+        .ticket-type {
+            background: var(--bg);
+            border-radius: var(--radius-md);
+            padding: var(--space-md);
+            margin-bottom: var(--space-sm);
+            display: flex;
+            align-items: center;
+            gap: var(--space-md);
+        }
+        
+        .ticket-fields {
+            flex: 1;
+            display: grid;
+            grid-template-columns: 2fr 1fr 1fr 1fr;
+            gap: var(--space-sm);
+        }
+        
+        .add-ticket {
+            border: 2px dashed var(--accent);
+            border-radius: var(--radius-md);
+            padding: var(--space-md);
+            text-align: center;
+            cursor: pointer;
+            color: var(--accent);
+            transition: all 0.3s;
+            margin-top: var(--space-sm);
+        }
+        
+        .add-ticket:hover {
+            background: rgba(193,154,107,0.05);
+        }
+        
+        .schedule-item {
+            display: flex;
+            align-items: center;
+            gap: var(--space-md);
+            padding: var(--space-sm);
+            background: var(--bg);
+            border-radius: var(--radius-md);
+            margin-bottom: var(--space-sm);
+        }
+        
+        .schedule-time {
+            width: 100px;
+        }
+        
+        .speaker-select {
+            display: flex;
+            align-items: center;
+            gap: var(--space-md);
+            padding: var(--space-sm);
+            border: 1px solid #e2e8f0;
+            border-radius: var(--radius-md);
+            margin-bottom: var(--space-sm);
+        }
+        
+        .speaker-avatar {
+            width: 40px;
+            height: 40px;
+            background: var(--accent);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+        }
+    </style>
+</head>
+<body>
+    <div class="admin-container">
+        <!-- Sidebar -->
+        <aside class="sidebar">...</aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <div class="top-bar">
+                <div class="page-title">
+                    <h1><i class="fas fa-plus-circle" style="color: var(--accent);"></i> Create New Event</h1>
+                    <p>Schedule and configure a new event</p>
+                </div>
+                <div class="top-bar-actions">
+                    <button class="btn btn-outline" onclick="location.href='/events/index.html'">
+                        <i class="fas fa-arrow-left"></i> Back to Events
+                    </button>
+                    <button class="logout-btn" id="logoutBtn"><i class="fas fa-sign-out-alt"></i></button>
+                </div>
+            </div>
+
+            <div class="create-form">
+                <form id="createEventForm" onsubmit="handleSubmit(event)">
+                    <!-- Basic Information -->
+                    <div class="form-section">
+                        <h3 class="section-title"><i class="fas fa-info-circle"></i> Basic Information</h3>
+                        
+                        <div class="image-upload" onclick="uploadImage()">
+                            <i class="fas fa-cloud-upload-alt"></i>
+                            <h4>Upload Event Cover Image</h4>
+                            <p style="color: var(--light);">Click to upload or drag and drop</p>
+                            <small style="color: var(--lighter);">Recommended size: 1200x600px (16:9)</small>
+                        </div>
+                        
+                        <div class="grid-2">
+                            <div class="form-group">
+                                <label class="field-required">Event Title</label>
+                                <input type="text" class="form-control" required placeholder="e.g., Global Investment Summit 2024">
+                            </div>
+                            
+                            <div class="form-group">
+                                <label class="field-required">Event Type</label>
+                                <select class="form-control" required>
+                                    <option value="">Select Type</option>
+                                    <option value="conference">Conference</option>
+                                    <option value="webinar">Webinar</option>
+                                    <option value="workshop">Workshop</option>
+                                    <option value="networking">Networking</option>
+                                    <option value="training">Training</option>
+                                    <option value="meeting">Meeting</option>
+                                </select>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label class="field-required">Event Category</label>
+                                <select class="form-control" required>
+                                    <option value="">Select Category</option>
+                                    <option value="investment">Investment</option>
+                                    <option value="finance">Finance</option>
+                                    <option value="crypto">Crypto</option>
+                                    <option value="realestate">Real Estate</option>
+                                    <option value="technology">Technology</option>
+                                    <option value="networking">Networking</option>
+                                </select>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label>Event Format</label>
+                                <select class="form-control">
+                                    <option value="inperson">In-Person</option>
+                                    <option value="virtual">Virtual</option>
+                                    <option value="hybrid">Hybrid</option>
+                                </select>
+                            </div>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label>Short Description</label>
+                            <input type="text" class="form-control" placeholder="Brief overview of the event">
+                        </div>
+                        
+                        <div class="form-group">
+                            <label>Full Description</label>
+                            <textarea class="form-control" rows="6" placeholder="Detailed event description, agenda, etc."></textarea>
+                        </div>
+                    </div>
+
+                    <!-- Date & Location -->
+                    <div class="form-section">
+                        <h3 class="section-title"><i class="fas fa-calendar-alt"></i> Date & Location</h3>
+                        
+                        <div class="datetime-row">
+                            <div class="form-group">
+                                <label class="field-required">Start Date & Time</label>
+                                <input type="datetime-local" class="form-control" required>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label class="field-required">End Date & Time</label>
+                                <input type="datetime-local" class="form-control" required>
+                            </div>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label class="field-required">Venue/Location</label>
+                            <input type="text" class="form-control" required placeholder="e.g., New York Convention Center / Online">
+                        </div>
+                        
+                        <div class="form-group">
+                            <label>Address</label>
+                            <input type="text" class="form-control" placeholder="Street address (for in-person events)">
+                        </div>
+                        
+                        <div class="grid-2">
+                            <div class="form-group">
+                                <label>City</label>
+                                <input type="text" class="form-control">
+                            </div>
+                            
+                            <div class="form-group">
+                                <label>Country</label>
+                                <select class="form-control">
+                                    <option>United States</option>
+                                    <option>United Kingdom</option>
+                                    <option>Canada</option>
+                                    <option>Singapore</option>
+                                </select>
+                            </div>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label>Online Meeting Link</label>
+                            <input type="url" class="form-control" placeholder="https://zoom.us/... (for virtual events)">
+                        </div>
+                    </div>
+
+                    <!-- Tickets & Pricing -->
+                    <div class="form-section">
+                        <h3 class="section-title"><i class="fas fa-ticket-alt"></i> Tickets & Pricing</h3>
+                        
+                        <div id="ticketsContainer">
+                            <div class="ticket-type">
+                                <div class="ticket-fields">
+                                    <input type="text" class="form-control" placeholder="Ticket Type" value="Early Bird">
+                                    <input type="number" class="form-control" placeholder="Price" value="299">
+                                    <input type="number" class="form-control" placeholder="Quantity" value="100">
+                                    <input type="number" class="form-control" placeholder="Sold" value="45" readonly>
+                                </div>
+                                <button type="button" class="btn btn-sm btn-danger" onclick="removeTicket(this)">
+                                    <i class="fas fa-trash"></i>
+                                </button>
+                            </div>
+                            
+                            <div class="ticket-type">
+                                <div class="ticket-fields">
+                                    <input type="text" class="form-control" placeholder="Ticket Type" value="Regular">
+                                    <input type="number" class="form-control" placeholder="Price" value="399">
+                                    <input type="number" class="form-control" placeholder="Quantity" value="200">
+                                    <input type="number" class="form-control" placeholder="Sold" value="0" readonly>
+                                </div>
+                                <button type="button" class="btn btn-sm btn-danger" onclick="removeTicket(this)">
+                                    <i class="fas fa-trash"></i>
+                                </button>
+                            </div>
+                        </div>
+                        
+                        <div class="add-ticket" onclick="addTicket()">
+                            <i class="fas fa-plus"></i> Add Ticket Type
+                        </div>
+                    </div>
+
+                    <!-- Speakers -->
+                    <div class="form-section">
+                        <h3 class="section-title"><i class="fas fa-microphone"></i> Speakers</h3>
+                        
+                        <div id="speakersContainer">
+                            <div class="speaker-select">
+                                <div class="speaker-avatar">JD</div>
+                                <div style="flex: 1;">
+                                    <strong>John Doe</strong>
+                                    <br>
+                                    <small>CEO, Investment Corp</small>
+                                </div>
+                                <select class="form-control" style="width: 200px;">
+                                    <option>Keynote Speaker</option>
+                                    <option>Panelist</option>
+                                    <option>Moderator</option>
+                                    <option>Workshop Leader</option>
+                                </select>
+                                <button type="button" class="btn btn-sm btn-danger" onclick="removeSpeaker(this)">
+                                    <i class="fas fa-times"></i>
+                                </button>
+                            </div>
+                        </div>
+                        
+                        <button type="button" class="btn btn-outline" onclick="addSpeaker()" style="margin-top: var(--space-sm);">
+                            <i class="fas fa-user-plus"></i> Add Speaker
+                        </button>
+                    </div>
+
+                    <!-- Schedule -->
+                    <div class="form-section">
+                        <h3 class="section-title"><i class="fas fa-clock"></i> Event Schedule</h3>
+                        
+                        <div id="scheduleContainer">
+                            <div class="schedule-item">
+                                <input type="time" class="form-control schedule-time" value="09:00">
+                                <input type="text" class="form-control" placeholder="Session title" value="Registration & Welcome Coffee">
+                                <input type="text" class="form-control" placeholder="Speaker(s)" value="Sarah Johnson">
+                                <button type="button" class="btn btn-sm btn-danger" onclick="removeSchedule(this)">
+                                    <i class="fas fa-trash"></i>
+                                </button>
+                            </div>
+                            
+                            <div class="schedule-item">
+                                <input type="time" class="form-control schedule-time" value="10:00">
+                                <input type="text" class="form-control" placeholder="Session title" value="Keynote: Future of Investment">
+                                <input type="text" class="form-control" placeholder="Speaker(s)" value="John Doe">
+                                <button type="button" class="btn btn-sm btn-danger" onclick="removeSchedule(this)">
+                                    <i class="fas fa-trash"></i>
+                                </button>
+                            </div>
+                        </div>
+                        
+                        <button type="button" class="btn btn-outline" onclick="addScheduleItem()" style="margin-top: var(--space-sm);">
+                            <i class="fas fa-plus"></i> Add Schedule Item
+                        </button>
+                    </div>
+
+                    <!-- Sponsors -->
+                    <div class="form-section">
+                        <h3 class="section-title"><i class="fas fa-handshake"></i> Sponsors</h3>
+                        
+                        <div class="grid-2">
+                            <div class="form-group">
+                                <label>Platinum Sponsors</label>
+                                <input type="text" class="form-control" placeholder="Comma separated names">
+                            </div>
+                            
+                            <div class="form-group">
+                                <label>Gold Sponsors</label>
+                                <input type="text" class="form-control" placeholder="Comma separated names">
+                            </div>
+                            
+                            <div class="form-group">
+                                <label>Silver Sponsors</label>
+                                <input type="text" class="form-control" placeholder="Comma separated names">
+                            </div>
+                            
+                            <div class="form-group">
+                                <label>Media Partners</label>
+                                <input type="text" class="form-control" placeholder="Comma separated names">
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Settings -->
+                    <div class="form-section">
+                        <h3 class="section-title"><i class="fas fa-cog"></i> Settings</h3>
+                        
+                        <div class="grid-2">
+                            <div class="form-group">
+                                <label>Capacity</label>
+                                <input type="number" class="form-control" value="300">
+                            </div>
+                            
+                            <div class="form-group">
+                                <label>Registration Deadline</label>
+                                <input type="datetime-local" class="form-control">
+                            </div>
+                            
+                            <div class="form-group">
+                                <label>Status</label>
+                                <select class="form-control">
+                                    <option value="draft">Draft</option>
+                                    <option value="published">Published</option>
+                                    <option value="private">Private</option>
+                                </select>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label>Visibility</label>
+                                <select class="form-control">
+                                    <option>Public</option>
+                                    <option>Private</option>
+                                    <option>Invite Only</option>
+                                </select>
+                            </div>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label class="checkbox">
+                                <input type="checkbox" checked>
+                                <span>Allow waitlist when full</span>
+                            </label>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label class="checkbox">
+                                <input type="checkbox">
+                                <span>Send reminder emails 24h before</span>
+                            </label>
+                        </div>
+                    </div>
+
+                    <!-- Form Actions -->
+                    <div class="flex gap-2" style="justify-content: flex-end;">
+                        <button type="button" class="btn btn-outline" onclick="location.href='/events/index.html'">
+                            Cancel
+                        </button>
+                        <button type="submit" class="btn btn-primary" id="submitBtn">
+                            <i class="fas fa-save"></i> Create Event
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </main>
+    </div>
+
+    <script>
+        let ticketCount = 2;
+        let speakerCount = 1;
+        let scheduleCount = 2;
+
+        function uploadImage() {
+            TAAGC.ui.showToast('Image upload feature coming soon', 'info');
+        }
+
+        function addTicket() {
+            ticketCount++;
+            const container = document.getElementById('ticketsContainer');
+            const newTicket = document.createElement('div');
+            newTicket.className = 'ticket-type';
+            newTicket.innerHTML = `
+                <div class="ticket-fields">
+                    <input type="text" class="form-control" placeholder="Ticket Type" value="General Admission">
+                    <input type="number" class="form-control" placeholder="Price" value="499">
+                    <input type="number" class="form-control" placeholder="Quantity" value="150">
+                    <input type="number" class="form-control" placeholder="Sold" value="0" readonly>
+                </div>
+                <button type="button" class="btn btn-sm btn-danger" onclick="removeTicket(this)">
+                    <i class="fas fa-trash"></i>
+                </button>
+            `;
+            container.appendChild(newTicket);
+        }
+
+        function removeTicket(btn) {
+            if (document.querySelectorAll('.ticket-type').length > 1) {
+                btn.closest('.ticket-type').remove();
+            } else {
+                TAAGC.ui.showToast('At least one ticket type is required', 'warning');
+            }
+        }
+
+        function addSpeaker() {
+            speakerCount++;
+            const container = document.getElementById('speakersContainer');
+            const newSpeaker = document.createElement('div');
+            newSpeaker.className = 'speaker-select';
+            newSpeaker.innerHTML = `
+                <div class="speaker-avatar">SP</div>
+                <div style="flex: 1;">
+                    <input type="text" class="form-control" placeholder="Speaker name">
+                </div>
+                <select class="form-control" style="width: 200px;">
+                    <option>Speaker</option>
+                    <option>Keynote Speaker</option>
+                    <option>Panelist</option>
+                    <option>Moderator</option>
+                </select>
+                <button type="button" class="btn btn-sm btn-danger" onclick="removeSpeaker(this)">
+                    <i class="fas fa-times"></i>
+                </button>
+            `;
+            container.appendChild(newSpeaker);
+        }
+
+        function removeSpeaker(btn) {
+            btn.closest('.speaker-select').remove();
+        }
+
+        function addScheduleItem() {
+            scheduleCount++;
+            const container = document.getElementById('scheduleContainer');
+            const newItem = document.createElement('div');
+            newItem.className = 'schedule-item';
+            newItem.innerHTML = `
+                <input type="time" class="form-control schedule-time" value="12:00">
+                <input type="text" class="form-control" placeholder="Session title">
+                <input type="text" class="form-control" placeholder="Speaker(s)">
+                <button type="button" class="btn btn-sm btn-danger" onclick="removeSchedule(this)">
+                    <i class="fas fa-trash"></i>
+                </button>
+            `;
+            container.appendChild(newItem);
+        }
+
+        function removeSchedule(btn) {
+            btn.closest('.schedule-item').remove();
+        }
+
+        async function handleSubmit(event) {
+            event.preventDefault();
+            
+            const submitBtn = document.getElementById('submitBtn');
+            submitBtn.innerHTML = '<span class="spinner"></span> Creating...';
+            submitBtn.disabled = true;
+            
+            try {
+                // Simulate API call
+                await new Promise(resolve => setTimeout(resolve, 1500));
+                
+                TAAGC.ui.showToast('Event created successfully!', 'success');
+                
+                setTimeout(() => {
+                    location.href = '/events/index.html';
+                }, 1500);
+                
+            } catch (error) {
+                TAAGC.ui.showToast('Error creating event', 'error');
+                submitBtn.innerHTML = '<i class="fas fa-save"></i> Create Event';
+                submitBtn.disabled = false;
+            }
+        }
+    </script>
+</body>
+</html>
