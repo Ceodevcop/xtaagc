@@ -1,0 +1,534 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Venue Management - TAAGC Admin</title>
+    
+    <!-- Fonts & Icons -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Assets -->
+    <link rel="stylesheet" href="/assets/css/admin.css">
+    <script src="/assets/js/admin.js" defer></script>
+    
+    <style>
+        .venues-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: var(--space-xl);
+        }
+        
+        .venue-stats {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: var(--space-lg);
+            margin-bottom: var(--space-xl);
+        }
+        
+        .venues-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+            gap: var(--space-lg);
+        }
+        
+        .venue-card {
+            background: var(--white);
+            border-radius: var(--radius-lg);
+            border: 1px solid #e2e8f0;
+            overflow: hidden;
+            transition: all 0.3s;
+        }
+        
+        .venue-card:hover {
+            transform: translateY(-5px);
+            box-shadow: var(--shadow-lg);
+            border-color: var(--accent);
+        }
+        
+        .venue-image {
+            height: 180px;
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .venue-badge {
+            position: absolute;
+            top: var(--space-md);
+            right: var(--space-md);
+            padding: 4px 12px;
+            background: var(--accent);
+            color: white;
+            border-radius: 20px;
+            font-size: 11px;
+            font-weight: 600;
+        }
+        
+        .venue-content {
+            padding: var(--space-lg);
+        }
+        
+        .venue-name {
+            font-size: 20px;
+            font-weight: 700;
+            color: var(--primary);
+            margin-bottom: 4px;
+        }
+        
+        .venue-location {
+            color: var(--light);
+            font-size: 13px;
+            margin-bottom: var(--space-md);
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+        
+        .venue-amenities {
+            display: flex;
+            flex-wrap: wrap;
+            gap: var(--space-xs);
+            margin-bottom: var(--space-md);
+        }
+        
+        .amenity-tag {
+            padding: 2px 8px;
+            background: var(--bg);
+            border-radius: 12px;
+            font-size: 10px;
+            color: var(--light);
+        }
+        
+        .venue-stats-row {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: var(--space-md);
+            padding: var(--space-sm) 0;
+            border-top: 1px solid #e2e8f0;
+            border-bottom: 1px solid #e2e8f0;
+        }
+        
+        .venue-stat {
+            text-align: center;
+        }
+        
+        .venue-stat-value {
+            font-size: 18px;
+            font-weight: 700;
+            color: var(--primary);
+        }
+        
+        .venue-stat-label {
+            font-size: 11px;
+            color: var(--light);
+        }
+        
+        .venue-contact {
+            background: var(--bg);
+            border-radius: var(--radius-md);
+            padding: var(--space-sm);
+            margin-bottom: var(--space-md);
+            font-size: 13px;
+        }
+        
+        .venue-footer {
+            padding: var(--space-lg);
+            background: var(--bg);
+            border-top: 1px solid #e2e8f0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .availability-badge {
+            display: inline-block;
+            padding: 4px 8px;
+            border-radius: 20px;
+            font-size: 11px;
+            font-weight: 600;
+        }
+        
+        .availability-high {
+            background: rgba(16,185,129,0.1);
+            color: var(--success);
+        }
+        
+        .availability-medium {
+            background: rgba(245,158,11,0.1);
+            color: var(--warning);
+        }
+        
+        .availability-low {
+            background: rgba(229,62,62,0.1);
+            color: var(--danger);
+        }
+        
+        .filters {
+            background: var(--white);
+            border-radius: var(--radius-lg);
+            padding: var(--space-lg);
+            margin-bottom: var(--space-xl);
+            border: 1px solid #e2e8f0;
+        }
+        
+        .filter-row {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: var(--space-md);
+            margin-bottom: var(--space-md);
+        }
+        
+        .capacity-indicator {
+            display: inline-block;
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            margin-right: 4px;
+        }
+        
+        .cap-high { background: var(--success); }
+        .cap-medium { background: var(--warning); }
+        .cap-low { background: var(--danger); }
+    </style>
+</head>
+<body>
+    <div class="admin-container">
+        <!-- Sidebar -->
+        <aside class="sidebar">...</aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <div class="top-bar">
+                <div class="page-title">
+                    <h1><i class="fas fa-map-marker-alt" style="color: var(--accent);"></i> Venue Management</h1>
+                    <p>Manage event venues and facilities</p>
+                </div>
+                <div class="top-bar-actions">
+                    <button class="btn btn-primary" onclick="addVenue()">
+                        <i class="fas fa-plus"></i> Add Venue
+                    </button>
+                    <button class="btn btn-outline" onclick="exportVenues()">
+                        <i class="fas fa-download"></i> Export
+                    </button>
+                    <button class="logout-btn" id="logoutBtn"><i class="fas fa-sign-out-alt"></i></button>
+                </div>
+            </div>
+
+            <!-- Venue Stats -->
+            <div class="venue-stats">
+                <div class="stat-card">
+                    <div class="stat-value">12</div>
+                    <div class="stat-label">Total Venues</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value">8</div>
+                    <div class="stat-label">Active</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value">4</div>
+                    <div class="stat-label">Under Maintenance</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value">3</div>
+                    <div class="stat-label">New This Month</div>
+                </div>
+            </div>
+
+            <!-- Filters -->
+            <div class="filters">
+                <div class="filter-row">
+                    <div class="form-group">
+                        <label>City</label>
+                        <select class="form-control">
+                            <option>All Cities</option>
+                            <option>New York</option>
+                            <option>Chicago</option>
+                            <option>San Francisco</option>
+                            <option>Miami</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>Capacity</label>
+                        <select class="form-control">
+                            <option>Any Capacity</option>
+                            <option>Small (< 100)</option>
+                            <option>Medium (100-500)</option>
+                            <option>Large (500-1000)</option>
+                            <option>X-Large (> 1000)</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>Amenities</label>
+                        <select class="form-control">
+                            <option>All Amenities</option>
+                            <option>WiFi</option>
+                            <option>Parking</option>
+                            <option>Catering</option>
+                            <option>AV Equipment</option>
+                        </select>
+                    </div>
+                </div>
+                
+                <div class="flex-between">
+                    <button class="btn btn-primary">Apply Filters</button>
+                    <button class="btn btn-outline">Reset</button>
+                </div>
+            </div>
+
+            <!-- Venues Grid -->
+            <div class="venues-grid">
+                <div class="venue-card">
+                    <div class="venue-image">
+                        <span class="venue-badge">Featured</span>
+                    </div>
+                    <div class="venue-content">
+                        <div class="venue-name">Grand Convention Center</div>
+                        <div class="venue-location">
+                            <i class="fas fa-map-marker-alt"></i> New York, NY
+                        </div>
+                        
+                        <div class="venue-amenities">
+                            <span class="amenity-tag">WiFi</span>
+                            <span class="amenity-tag">Parking</span>
+                            <span class="amenity-tag">Catering</span>
+                            <span class="amenity-tag">AV Equipment</span>
+                            <span class="amenity-tag">Stage</span>
+                        </div>
+                        
+                        <div class="venue-stats-row">
+                            <div class="venue-stat">
+                                <div class="venue-stat-value">2,500</div>
+                                <div class="venue-stat-label">Max Capacity</div>
+                            </div>
+                            <div class="venue-stat">
+                                <div class="venue-stat-value">12</div>
+                                <div class="venue-stat-label">Breakout Rooms</div>
+                            </div>
+                            <div class="venue-stat">
+                                <div class="venue-stat-value">$15K</div>
+                                <div class="venue-stat-label">Avg Cost</div>
+                            </div>
+                        </div>
+                        
+                        <div class="venue-contact">
+                            <div><strong>Contact:</strong> Sarah Johnson</div>
+                            <div><strong>Email:</strong> venues@grandcenter.com</div>
+                            <div><strong>Phone:</strong> +1-212-555-0123</div>
+                        </div>
+                        
+                        <div class="flex-between">
+                            <span class="availability-badge availability-high">
+                                <span class="capacity-indicator cap-high"></span> High Availability
+                            </span>
+                            <span class="badge badge-success">Active</span>
+                        </div>
+                    </div>
+                    <div class="venue-footer">
+                        <span>12 events hosted</span>
+                        <div>
+                            <button class="btn btn-sm btn-outline" onclick="viewVenue('gcc')">
+                                <i class="fas fa-eye"></i>
+                            </button>
+                            <button class="btn btn-sm btn-outline-accent" onclick="editVenue('gcc')">
+                                <i class="fas fa-edit"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="venue-card">
+                    <div class="venue-image"></div>
+                    <div class="venue-content">
+                        <div class="venue-name">Waterfront Conference Center</div>
+                        <div class="venue-location">
+                            <i class="fas fa-map-marker-alt"></i> Chicago, IL
+                        </div>
+                        
+                        <div class="venue-amenities">
+                            <span class="amenity-tag">WiFi</span>
+                            <span class="amenity-tag">Parking</span>
+                            <span class="amenity-tag">Catering</span>
+                            <span class="amenity-tag">Water View</span>
+                        </div>
+                        
+                        <div class="venue-stats-row">
+                            <div class="venue-stat">
+                                <div class="venue-stat-value">1,800</div>
+                                <div class="venue-stat-label">Max Capacity</div>
+                            </div>
+                            <div class="venue-stat">
+                                <div class="venue-stat-value">8</div>
+                                <div class="venue-stat-label">Breakout Rooms</div>
+                            </div>
+                            <div class="venue-stat">
+                                <div class="venue-stat-value">$12K</div>
+                                <div class="venue-stat-label">Avg Cost</div>
+                            </div>
+                        </div>
+                        
+                        <div class="venue-contact">
+                            <div><strong>Contact:</strong> Michael Chen</div>
+                            <div><strong>Email:</strong> m.chen@waterfront.com</div>
+                            <div><strong>Phone:</strong> +1-312-555-0456</div>
+                        </div>
+                        
+                        <div class="flex-between">
+                            <span class="availability-badge availability-medium">
+                                <span class="capacity-indicator cap-medium"></span> Medium Availability
+                            </span>
+                            <span class="badge badge-success">Active</span>
+                        </div>
+                    </div>
+                    <div class="venue-footer">
+                        <span>8 events hosted</span>
+                        <div>
+                            <button class="btn btn-sm btn-outline"><i class="fas fa-eye"></i></button>
+                            <button class="btn btn-sm btn-outline-accent"><i class="fas fa-edit"></i></button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="venue-card">
+                    <div class="venue-image"></div>
+                    <div class="venue-content">
+                        <div class="venue-name">Financial District Hotel & Suites</div>
+                        <div class="venue-location">
+                            <i class="fas fa-map-marker-alt"></i> New York, NY
+                        </div>
+                        
+                        <div class="venue-amenities">
+                            <span class="amenity-tag">WiFi</span>
+                            <span class="amenity-tag">Hotel</span>
+                            <span class="amenity-tag">Restaurant</span>
+                            <span class="amenity-tag">Spa</span>
+                        </div>
+                        
+                        <div class="venue-stats-row">
+                            <div class="venue-stat">
+                                <div class="venue-stat-value">500</div>
+                                <div class="venue-stat-label">Max Capacity</div>
+                            </div>
+                            <div class="venue-stat">
+                                <div class="venue-stat-value">6</div>
+                                <div class="venue-stat-label">Meeting Rooms</div>
+                            </div>
+                            <div class="venue-stat">
+                                <div class="venue-stat-value">$8K</div>
+                                <div class="venue-stat-label">Avg Cost</div>
+                            </div>
+                        </div>
+                        
+                        <div class="venue-contact">
+                            <div><strong>Contact:</strong> Emma Davis</div>
+                            <div><strong>Email:</strong> e.davis@findistricthotel.com</div>
+                            <div><strong>Phone:</strong> +1-212-555-0789</div>
+                        </div>
+                        
+                        <div class="flex-between">
+                            <span class="availability-badge availability-high">
+                                <span class="capacity-indicator cap-high"></span> High Availability
+                            </span>
+                            <span class="badge badge-success">Active</span>
+                        </div>
+                    </div>
+                    <div class="venue-footer">
+                        <span>5 events hosted</span>
+                        <div>
+                            <button class="btn btn-sm btn-outline"><i class="fas fa-eye"></i></button>
+                            <button class="btn btn-sm btn-outline-accent"><i class="fas fa-edit"></i></button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="venue-card">
+                    <div class="venue-image"></div>
+                    <div class="venue-content">
+                        <div class="venue-name">Tech Hub Conference Center</div>
+                        <div class="venue-location">
+                            <i class="fas fa-map-marker-alt"></i> San Francisco, CA
+                        </div>
+                        
+                        <div class="venue-amenities">
+                            <span class="amenity-tag">WiFi</span>
+                            <span class="amenity-tag">Tech Equipment</span>
+                            <span class="amenity-tag">Streaming</span>
+                            <span class="amenity-tag">Green Room</span>
+                        </div>
+                        
+                        <div class="venue-stats-row">
+                            <div class="venue-stat">
+                                <div class="venue-stat-value">800</div>
+                                <div class="venue-stat-label">Max Capacity</div>
+                            </div>
+                            <div class="venue-stat">
+                                <div class="venue-stat-value">10</div>
+                                <div class="venue-stat-label">Breakout Rooms</div>
+                            </div>
+                            <div class="venue-stat">
+                                <div class="venue-stat-value">$10K</div>
+                                <div class="venue-stat-label">Avg Cost</div>
+                            </div>
+                        </div>
+                        
+                        <div class="venue-contact">
+                            <div><strong>Contact:</strong> David Lee</div>
+                            <div><strong>Email:</strong> d.lee@techhub.com</div>
+                            <div><strong>Phone:</strong> +1-415-555-0234</div>
+                        </div>
+                        
+                        <div class="flex-between">
+                            <span class="availability-badge availability-low">
+                                <span class="capacity-indicator cap-low"></span> Low Availability
+                            </span>
+                            <span class="badge badge-warning">Maintenance</span>
+                        </div>
+                    </div>
+                    <div class="venue-footer">
+                        <span>15 events hosted</span>
+                        <div>
+                            <button class="btn btn-sm btn-outline"><i class="fas fa-eye"></i></button>
+                            <button class="btn btn-sm btn-outline-accent"><i class="fas fa-edit"></i></button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Pagination -->
+            <div class="flex-center" style="margin-top: var(--space-xl);">
+                <div class="pagination">
+                    <button class="page-link"><i class="fas fa-chevron-left"></i></button>
+                    <button class="page-link active">1</button>
+                    <button class="page-link">2</button>
+                    <button class="page-link">3</button>
+                    <span class="page-link">...</span>
+                    <button class="page-link">5</button>
+                    <button class="page-link"><i class="fas fa-chevron-right"></i></button>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script>
+        function addVenue() {
+            TAAGC.ui.showToast('Add new venue', 'info');
+        }
+
+        function exportVenues() {
+            TAAGC.ui.showToast('Exporting venues...', 'info');
+        }
+
+        function viewVenue(id) {
+            TAAGC.ui.showToast(`Viewing venue ${id}`, 'info');
+        }
+
+        function editVenue(id) {
+            TAAGC.ui.showToast(`Editing venue ${id}`, 'info');
+        }
+    </script>
+</body>
+</html>
