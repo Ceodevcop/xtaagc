@@ -1,0 +1,314 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Event Sponsors - TAAGC Admin</title>
+    
+    <!-- Fonts & Icons -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Assets -->
+    <link rel="stylesheet" href="/assets/css/admin.css">
+    <script src="/assets/js/admin.js" defer></script>
+    
+    <style>
+        .sponsors-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: var(--space-xl);
+        }
+        
+        .sponsor-levels {
+            display: flex;
+            gap: var(--space-md);
+            margin-bottom: var(--space-xl);
+        }
+        
+        .level-tab {
+            padding: var(--space-sm) var(--space-xl);
+            background: var(--white);
+            border: 1px solid #e2e8f0;
+            border-radius: 30px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .level-tab:hover {
+            border-color: var(--accent);
+        }
+        
+        .level-tab.active {
+            background: var(--accent);
+            color: white;
+            border-color: var(--accent);
+        }
+        
+        .sponsors-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: var(--space-lg);
+        }
+        
+        .sponsor-card {
+            background: var(--white);
+            border-radius: var(--radius-lg);
+            border: 1px solid #e2e8f0;
+            overflow: hidden;
+            transition: all 0.3s;
+        }
+        
+        .sponsor-card:hover {
+            transform: translateY(-5px);
+            box-shadow: var(--shadow-lg);
+            border-color: var(--accent);
+        }
+        
+        .sponsor-header {
+            height: 120px;
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 36px;
+        }
+        
+        .sponsor-body {
+            padding: var(--space-lg);
+        }
+        
+        .sponsor-name {
+            font-size: 20px;
+            font-weight: 700;
+            color: var(--primary);
+            margin-bottom: 4px;
+        }
+        
+        .sponsor-level {
+            display: inline-block;
+            padding: 2px 12px;
+            border-radius: 20px;
+            font-size: 11px;
+            font-weight: 600;
+            margin-bottom: var(--space-sm);
+        }
+        
+        .level-platinum {
+            background: linear-gradient(135deg, #8b5cf6, #6d28d9);
+            color: white;
+        }
+        
+        .level-gold {
+            background: linear-gradient(135deg, #f59e0b, #d97706);
+            color: white;
+        }
+        
+        .level-silver {
+            background: linear-gradient(135deg, #94a3b8, #64748b);
+            color: white;
+        }
+        
+        .level-bronze {
+            background: linear-gradient(135deg, #b45309, #92400e);
+            color: white;
+        }
+        
+        .sponsor-desc {
+            color: var(--light);
+            font-size: 13px;
+            margin-bottom: var(--space-sm);
+        }
+        
+        .sponsor-contact {
+            background: var(--bg);
+            border-radius: var(--radius-md);
+            padding: var(--space-sm);
+            margin: var(--space-sm) 0;
+            font-size: 13px;
+        }
+        
+        .sponsor-footer {
+            padding: var(--space-lg);
+            background: var(--bg);
+            border-top: 1px solid #e2e8f0;
+            display: flex;
+            justify-content: space-between;
+        }
+        
+        .amount {
+            font-size: 18px;
+            font-weight: 700;
+            color: var(--accent);
+        }
+    </style>
+</head>
+<body>
+    <div class="admin-container">
+        <!-- Sidebar -->
+        <aside class="sidebar">...</aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <div class="top-bar">
+                <div class="page-title">
+                    <h1><i class="fas fa-handshake" style="color: var(--accent);"></i> Event Sponsors</h1>
+                    <p>Manage sponsors and partnerships</p>
+                </div>
+                <div class="top-bar-actions">
+                    <button class="btn btn-primary" onclick="addSponsor()">
+                        <i class="fas fa-plus"></i> Add Sponsor
+                    </button>
+                    <button class="btn btn-outline" onclick="exportSponsors()">
+                        <i class="fas fa-download"></i> Export
+                    </button>
+                    <button class="logout-btn" id="logoutBtn"><i class="fas fa-sign-out-alt"></i></button>
+                </div>
+            </div>
+
+            <!-- Event Selector -->
+            <div class="sponsors-header">
+                <select class="form-control" style="width: 300px;">
+                    <option>Global Investment Summit 2024</option>
+                    <option>Investment Analysis Workshop</option>
+                    <option>Crypto Investment Strategies</option>
+                </select>
+                
+                <div class="flex gap-2">
+                    <span class="badge badge-accent">12 Sponsors</span>
+                    <span class="badge badge-success">$45K Raised</span>
+                </div>
+            </div>
+
+            <!-- Sponsor Levels -->
+            <div class="sponsor-levels">
+                <span class="level-tab active">All Sponsors</span>
+                <span class="level-tab">Platinum</span>
+                <span class="level-tab">Gold</span>
+                <span class="level-tab">Silver</span>
+                <span class="level-tab">Bronze</span>
+                <span class="level-tab">Media Partners</span>
+            </div>
+
+            <!-- Sponsors Grid -->
+            <div class="sponsors-grid">
+                <div class="sponsor-card">
+                    <div class="sponsor-header">🏦</div>
+                    <div class="sponsor-body">
+                        <span class="sponsor-level level-platinum">Platinum</span>
+                        <div class="sponsor-name">Global Bank</div>
+                        <div class="sponsor-desc">Leading international bank with presence in 50+ countries</div>
+                        
+                        <div class="sponsor-contact">
+                            <div><strong>Contact:</strong> John Smith</div>
+                            <div><strong>Email:</strong> j.smith@globalbank.com</div>
+                            <div><strong>Contribution:</strong> <span class="amount">$15,000</span></div>
+                        </div>
+                        
+                        <div><span class="badge badge-info">Keynote Stage</span> <span class="badge badge-info">Networking Lounge</span></div>
+                    </div>
+                    <div class="sponsor-footer">
+                        <span>Since Mar 1, 2024</span>
+                        <button class="btn btn-sm btn-outline"><i class="fas fa-edit"></i></button>
+                    </div>
+                </div>
+
+                <div class="sponsor-card">
+                    <div class="sponsor-header">📈</div>
+                    <div class="sponsor-body">
+                        <span class="sponsor-level level-gold">Gold</span>
+                        <div class="sponsor-name">InvestCorp</div>
+                        <div class="sponsor-desc">Investment management firm with $50B AUM</div>
+                        
+                        <div class="sponsor-contact">
+                            <div><strong>Contact:</strong> Sarah Wilson</div>
+                            <div><strong>Email:</strong> s.wilson@investcorp.com</div>
+                            <div><strong>Contribution:</strong> <span class="amount">$10,000</span></div>
+                        </div>
+                        
+                        <div><span class="badge badge-info">Workshop Sponsor</span></div>
+                    </div>
+                    <div class="sponsor-footer">
+                        <span>Since Mar 5, 2024</span>
+                        <button class="btn btn-sm btn-outline"><i class="fas fa-edit"></i></button>
+                    </div>
+                </div>
+
+                <div class="sponsor-card">
+                    <div class="sponsor-header">💰</div>
+                    <div class="sponsor-body">
+                        <span class="sponsor-level level-gold">Gold</span>
+                        <div class="sponsor-name">Capital Ventures</div>
+                        <div class="sponsor-desc">Venture capital firm focused on fintech</div>
+                        
+                        <div class="sponsor-contact">
+                            <div><strong>Contact:</strong> Michael Chen</div>
+                            <div><strong>Email:</strong> m.chen@capitalventures.com</div>
+                            <div><strong>Contribution:</strong> <span class="amount">$10,000</span></div>
+                        </div>
+                        
+                        <div><span class="badge badge-info">Startup Pitch Sponsor</span></div>
+                    </div>
+                    <div class="sponsor-footer">
+                        <span>Since Feb 28, 2024</span>
+                        <button class="btn btn-sm btn-outline"><i class="fas fa-edit"></i></button>
+                    </div>
+                </div>
+
+                <div class="sponsor-card">
+                    <div class="sponsor-header">📊</div>
+                    <div class="sponsor-body">
+                        <span class="sponsor-level level-silver">Silver</span>
+                        <div class="sponsor-name">Market Insights</div>
+                        <div class="sponsor-desc">Financial data and analytics provider</div>
+                        
+                        <div class="sponsor-contact">
+                            <div><strong>Contact:</strong> Emma Davis</div>
+                            <div><strong>Email:</strong> e.davis@marketinsights.com</div>
+                            <div><strong>Contribution:</strong> <span class="amount">$5,000</span></div>
+                        </div>
+                    </div>
+                    <div class="sponsor-footer">
+                        <span>Since Mar 8, 2024</span>
+                        <button class="btn btn-sm btn-outline"><i class="fas fa-edit"></i></button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Summary -->
+            <div class="card" style="margin-top: var(--space-xl);">
+                <div class="card-header">
+                    <h2>Sponsorship Summary</h2>
+                </div>
+                
+                <div class="grid-3">
+                    <div>
+                        <div class="stat-value">$45,000</div>
+                        <div class="stat-label">Total Contributions</div>
+                    </div>
+                    <div>
+                        <div class="stat-value">12</div>
+                        <div class="stat-label">Total Sponsors</div>
+                    </div>
+                    <div>
+                        <div class="stat-value">$15,000</div>
+                        <div class="stat-label">Top Contribution</div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script>
+        function addSponsor() {
+            TAAGC.ui.showToast('Add new sponsor', 'info');
+        }
+
+        function exportSponsors() {
+            TAAGC.ui.showToast('Exporting sponsors...', 'info');
+        }
+    </script>
+</body>
+</html>
