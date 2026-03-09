@@ -1,0 +1,476 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Event Registrations - TAAGC Admin</title>
+    
+    <!-- Fonts & Icons -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Assets -->
+    <link rel="stylesheet" href="/assets/css/admin.css">
+    <script src="/assets/js/admin.js" defer></script>
+    
+    <style>
+        .registrations-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: var(--space-xl);
+        }
+        
+        .event-selector {
+            display: flex;
+            gap: var(--space-md);
+            align-items: center;
+            background: var(--white);
+            padding: var(--space-sm) var(--space-lg);
+            border-radius: var(--radius-lg);
+            border: 1px solid #e2e8f0;
+        }
+        
+        .stats-cards {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: var(--space-lg);
+            margin-bottom: var(--space-xl);
+        }
+        
+        .stat-card {
+            background: var(--white);
+            border-radius: var(--radius-lg);
+            padding: var(--space-lg);
+            border: 1px solid #e2e8f0;
+        }
+        
+        .stat-icon {
+            width: 48px;
+            height: 48px;
+            background: rgba(193,154,107,0.1);
+            border-radius: var(--radius-md);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--accent);
+            font-size: 20px;
+            margin-bottom: var(--space-md);
+        }
+        
+        .stat-value {
+            font-size: 28px;
+            font-weight: 700;
+            color: var(--primary);
+            margin-bottom: var(--space-xs);
+        }
+        
+        .stat-label {
+            color: var(--light);
+            font-size: 13px;
+        }
+        
+        .filters {
+            background: var(--white);
+            border-radius: var(--radius-lg);
+            padding: var(--space-lg);
+            margin-bottom: var(--space-xl);
+            border: 1px solid #e2e8f0;
+        }
+        
+        .filter-row {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: var(--space-md);
+            margin-bottom: var(--space-md);
+        }
+        
+        .registrations-table {
+            background: var(--white);
+            border-radius: var(--radius-lg);
+            padding: var(--space-lg);
+            border: 1px solid #e2e8f0);
+        }
+        
+        .registration-status {
+            display: inline-block;
+            padding: 4px 8px;
+            border-radius: 20px;
+            font-size: 11px;
+            font-weight: 600;
+        }
+        
+        .status-confirmed {
+            background: rgba(16,185,129,0.1);
+            color: var(--success);
+        }
+        
+        .status-pending {
+            background: rgba(245,158,11,0.1);
+            color: var(--warning);
+        }
+        
+        .status-cancelled {
+            background: rgba(229,62,62,0.1);
+            color: var(--danger);
+        }
+        
+        .status-waitlist {
+            background: rgba(59,130,246,0.1);
+            color: var(--info);
+        }
+        
+        .check-in-badge {
+            display: inline-block;
+            padding: 2px 8px;
+            border-radius: 12px;
+            font-size: 10px;
+        }
+        
+        .check-in-yes {
+            background: rgba(16,185,129,0.1);
+            color: var(--success);
+        }
+        
+        .check-in-no {
+            background: rgba(100,116,139,0.1);
+            color: var(--light);
+        }
+        
+        .bulk-actions {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            background: var(--primary);
+            color: white;
+            padding: var(--space-md) var(--space-lg);
+            border-radius: 50px;
+            box-shadow: var(--shadow-xl);
+            display: none;
+            align-items: center;
+            gap: var(--space-md);
+            z-index: 1000;
+        }
+        
+        .bulk-actions.active {
+            display: flex;
+        }
+        
+        .ticket-badge {
+            background: var(--accent);
+            color: white;
+            padding: 2px 8px;
+            border-radius: 12px;
+            font-size: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="admin-container">
+        <!-- Sidebar -->
+        <aside class="sidebar">...</aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <div class="top-bar">
+                <div class="page-title">
+                    <h1><i class="fas fa-user-plus" style="color: var(--accent);"></i> Event Registrations</h1>
+                    <p>Manage attendee registrations</p>
+                </div>
+                <div class="top-bar-actions">
+                    <button class="btn btn-primary" onclick="addRegistration()">
+                        <i class="fas fa-plus"></i> Add Registration
+                    </button>
+                    <button class="btn btn-outline" onclick="exportRegistrations()">
+                        <i class="fas fa-download"></i> Export
+                    </button>
+                    <button class="logout-btn" id="logoutBtn"><i class="fas fa-sign-out-alt"></i></button>
+                </div>
+            </div>
+
+            <!-- Event Selector -->
+            <div class="registrations-header">
+                <div class="event-selector">
+                    <label>Event:</label>
+                    <select class="form-control" style="width: 300px;">
+                        <option>Global Investment Summit 2024</option>
+                        <option>Investment Analysis Workshop</option>
+                        <option>Crypto Investment Strategies</option>
+                        <option>Investor Networking Mixer</option>
+                    </select>
+                </div>
+                
+                <div class="flex gap-2">
+                    <span class="badge badge-success">234 Registered</span>
+                    <span class="badge badge-warning">12 Pending</span>
+                    <span class="badge badge-info">8 Waitlist</span>
+                </div>
+            </div>
+
+            <!-- Stats Cards -->
+            <div class="stats-cards">
+                <div class="stat-card">
+                    <div class="stat-icon"><i class="fas fa-check-circle"></i></div>
+                    <div class="stat-value">156</div>
+                    <div class="stat-label">Checked In</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon"><i class="fas fa-clock"></i></div>
+                    <div class="stat-value">78</div>
+                    <div class="stat-label">Not Checked In</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon"><i class="fas fa-ticket-alt"></i></div>
+                    <div class="stat-value">$89K</div>
+                    <div class="stat-label">Revenue</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon"><i class="fas fa-users"></i></div>
+                    <div class="stat-value">45</div>
+                    <div class="stat-label">VIP Attendees</div>
+                </div>
+            </div>
+
+            <!-- Filters -->
+            <div class="filters">
+                <div class="filter-row">
+                    <div class="form-group">
+                        <label>Search</label>
+                        <input type="text" class="form-control" placeholder="Name, email, ticket #">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>Status</label>
+                        <select class="form-control">
+                            <option>All Status</option>
+                            <option>Confirmed</option>
+                            <option>Pending</option>
+                            <option>Cancelled</option>
+                            <option>Waitlist</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>Ticket Type</label>
+                        <select class="form-control">
+                            <option>All Tickets</option>
+                            <option>Early Bird</option>
+                            <option>Regular</option>
+                            <option>VIP</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>Check-in</label>
+                        <select class="form-control">
+                            <option>All</option>
+                            <option>Checked In</option>
+                            <option>Not Checked In</option>
+                        </select>
+                    </div>
+                </div>
+                
+                <div class="flex-between">
+                    <button class="btn btn-primary">Apply Filters</button>
+                    <button class="btn btn-outline">Reset</button>
+                </div>
+            </div>
+
+            <!-- Registrations Table -->
+            <div class="registrations-table">
+                <table>
+                    <thead>
+                        <tr>
+                            <th width="30"><input type="checkbox" id="selectAll"></th>
+                            <th>Reg ID</th>
+                            <th>Attendee</th>
+                            <th>Ticket Type</th>
+                            <th>Price</th>
+                            <th>Status</th>
+                            <th>Checked In</th>
+                            <th>Registration Date</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><input type="checkbox" class="reg-checkbox"></td>
+                            <td><code>REG001</code></td>
+                            <td>
+                                <div class="flex gap-2">
+                                    <div class="user-avatar" style="width: 32px; height: 32px;">JD</div>
+                                    <div>
+                                        <div>John Doe</div>
+                                        <small>john.doe@email.com</small>
+                                    </div>
+                                </div>
+                            </td>
+                            <td><span class="ticket-badge">VIP</span></td>
+                            <td>$899</td>
+                            <td><span class="registration-status status-confirmed">Confirmed</span></td>
+                            <td><span class="check-in-badge check-in-yes">✓ Checked In</span></td>
+                            <td>Mar 1, 2024</td>
+                            <td>
+                                <button class="btn btn-sm btn-outline" onclick="viewRegistration('REG001')">
+                                    <i class="fas fa-eye"></i>
+                                </button>
+                                <button class="btn btn-sm btn-outline-accent" onclick="editRegistration('REG001')">
+                                    <i class="fas fa-edit"></i>
+                                </button>
+                            </td>
+                        </tr>
+                        
+                        <tr>
+                            <td><input type="checkbox" class="reg-checkbox"></td>
+                            <td><code>REG002</code></td>
+                            <td>
+                                <div class="flex gap-2">
+                                    <div class="user-avatar" style="width: 32px; height: 32px;">SJ</div>
+                                    <div>
+                                        <div>Sarah Johnson</div>
+                                        <small>sarah.j@email.com</small>
+                                    </div>
+                                </div>
+                            </td>
+                            <td><span class="ticket-badge">Early Bird</span></td>
+                            <td>$299</td>
+                            <td><span class="registration-status status-confirmed">Confirmed</span></td>
+                            <td><span class="check-in-badge check-in-no">Not Checked In</span></td>
+                            <td>Mar 3, 2024</td>
+                            <td>
+                                <button class="btn btn-sm btn-outline"><i class="fas fa-eye"></i></button>
+                                <button class="btn btn-sm btn-outline-accent"><i class="fas fa-edit"></i></button>
+                            </td>
+                        </tr>
+                        
+                        <tr>
+                            <td><input type="checkbox" class="reg-checkbox"></td>
+                            <td><code>REG003</code></td>
+                            <td>
+                                <div class="flex gap-2">
+                                    <div class="user-avatar" style="width: 32px; height: 32px;">MC</div>
+                                    <div>
+                                        <div>Michael Chen</div>
+                                        <small>michael.c@email.com</small>
+                                    </div>
+                                </div>
+                            </td>
+                            <td><span class="ticket-badge">Regular</span></td>
+                            <td>$399</td>
+                            <td><span class="registration-status status-pending">Pending</span></td>
+                            <td><span class="check-in-badge check-in-no">Not Checked In</span></td>
+                            <td>Mar 5, 2024</td>
+                            <td>
+                                <button class="btn btn-sm btn-outline"><i class="fas fa-eye"></i></button>
+                                <button class="btn btn-sm btn-outline-accent"><i class="fas fa-edit"></i></button>
+                            </td>
+                        </tr>
+                        
+                        <tr>
+                            <td><input type="checkbox" class="reg-checkbox"></td>
+                            <td><code>REG004</code></td>
+                            <td>
+                                <div class="flex gap-2">
+                                    <div class="user-avatar" style="width: 32px; height: 32px;">ED</div>
+                                    <div>
+                                        <div>Emma Davis</div>
+                                        <small>emma.d@email.com</small>
+                                    </div>
+                                </div>
+                            </td>
+                            <td><span class="ticket-badge">VIP</span></td>
+                            <td>$899</td>
+                            <td><span class="registration-status status-waitlist">Waitlist</span></td>
+                            <td><span class="check-in-badge check-in-no">Not Checked In</span></td>
+                            <td>Mar 6, 2024</td>
+                            <td>
+                                <button class="btn btn-sm btn-outline"><i class="fas fa-eye"></i></button>
+                                <button class="btn btn-sm btn-outline-accent"><i class="fas fa-edit"></i></button>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+                
+                <!-- Pagination -->
+                <div class="flex-center" style="margin-top: var(--space-xl);">
+                    <div class="pagination">
+                        <button class="page-link"><i class="fas fa-chevron-left"></i></button>
+                        <button class="page-link active">1</button>
+                        <button class="page-link">2</button>
+                        <button class="page-link">3</button>
+                        <button class="page-link">4</button>
+                        <button class="page-link">5</button>
+                        <span class="page-link">...</span>
+                        <button class="page-link">8</button>
+                        <button class="page-link"><i class="fas fa-chevron-right"></i></button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Bulk Actions -->
+            <div class="bulk-actions" id="bulkActions">
+                <span><span id="selectedCount">0</span> selected</span>
+                <div class="flex gap-2">
+                    <button class="btn btn-sm btn-success" onclick="bulkCheckIn()">
+                        <i class="fas fa-check"></i> Check In
+                    </button>
+                    <button class="btn btn-sm btn-warning" onclick="bulkConfirm()">
+                        <i class="fas fa-check-circle"></i> Confirm
+                    </button>
+                    <button class="btn btn-sm btn-outline" onclick="cancelBulk()">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script>
+        function addRegistration() {
+            TAAGC.ui.showToast('Add new registration', 'info');
+        }
+
+        function exportRegistrations() {
+            TAAGC.ui.showToast('Exporting registrations...', 'info');
+        }
+
+        function viewRegistration(id) {
+            TAAGC.ui.showToast(`Viewing registration ${id}`, 'info');
+        }
+
+        function editRegistration(id) {
+            TAAGC.ui.showToast(`Editing registration ${id}`, 'info');
+        }
+
+        // Bulk actions
+        document.getElementById('selectAll').addEventListener('change', function(e) {
+            document.querySelectorAll('.reg-checkbox').forEach(cb => {
+                cb.checked = e.target.checked;
+            });
+            updateSelectedCount();
+        });
+
+        function updateSelectedCount() {
+            const count = document.querySelectorAll('.reg-checkbox:checked').length;
+            document.getElementById('selectedCount').textContent = count;
+            document.getElementById('bulkActions').classList.toggle('active', count > 0);
+        }
+
+        function bulkCheckIn() {
+            TAAGC.ui.showToast('Checked in selected attendees', 'success');
+            cancelBulk();
+        }
+
+        function bulkConfirm() {
+            TAAGC.ui.showToast('Confirmed selected registrations', 'success');
+            cancelBulk();
+        }
+
+        function cancelBulk() {
+            document.querySelectorAll('.reg-checkbox').forEach(cb => cb.checked = false);
+            document.getElementById('selectAll').checked = false;
+            document.getElementById('bulkActions').classList.remove('active');
+        }
+    </script>
+</body>
+</html>
