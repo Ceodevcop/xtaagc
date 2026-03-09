@@ -1,0 +1,466 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Connect Bank - TAAGC Admin</title>
+    
+    <!-- Fonts & Icons -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Assets -->
+    <link rel="stylesheet" href="/assets/css/admin.css">
+    <script src="/assets/js/admin.js" defer></script>
+    
+    <style>
+        .connection-wizard {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        
+        .wizard-steps {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: var(--space-xl);
+            position: relative;
+        }
+        
+        .wizard-steps::before {
+            content: '';
+            position: absolute;
+            top: 15px;
+            left: 0;
+            width: 100%;
+            height: 2px;
+            background: #e2e8f0;
+            z-index: 1;
+        }
+        
+        .wizard-step {
+            position: relative;
+            z-index: 2;
+            background: var(--white);
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: 2px solid #e2e8f0;
+            font-weight: 600;
+            color: var(--light);
+        }
+        
+        .wizard-step.active {
+            border-color: var(--accent);
+            background: var(--accent);
+            color: white;
+        }
+        
+        .wizard-step.completed {
+            border-color: var(--success);
+            background: var(--success);
+            color: white;
+        }
+        
+        .step-label {
+            position: absolute;
+            top: 45px;
+            font-size: 12px;
+            color: var(--light);
+            white-space: nowrap;
+        }
+        
+        .connection-methods {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: var(--space-lg);
+            margin-bottom: var(--space-xl);
+        }
+        
+        .method-card {
+            border: 2px solid #e2e8f0;
+            border-radius: var(--radius-lg);
+            padding: var(--space-xl);
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .method-card:hover {
+            border-color: var(--accent);
+            transform: translateY(-5px);
+            box-shadow: var(--shadow-lg);
+        }
+        
+        .method-card.selected {
+            border-color: var(--accent);
+            background: rgba(193,154,107,0.05);
+        }
+        
+        .method-icon {
+            font-size: 48px;
+            color: var(--accent);
+            margin-bottom: var(--space-md);
+        }
+        
+        .method-name {
+            font-size: 18px;
+            font-weight: 600;
+            color: var(--primary);
+            margin-bottom: var(--space-xs);
+        }
+        
+        .method-desc {
+            color: var(--light);
+            font-size: 13px;
+        }
+        
+        .test-connection {
+            background: var(--bg);
+            border-radius: var(--radius-lg);
+            padding: var(--space-lg);
+            margin: var(--space-lg) 0;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        
+        .test-status {
+            display: flex;
+            align-items: center;
+            gap: var(--space-sm);
+        }
+        
+        .test-success {
+            color: var(--success);
+        }
+        
+        .test-failed {
+            color: var(--danger);
+        }
+        
+        .api-docs-link {
+            display: inline-flex;
+            align-items: center;
+            gap: var(--space-xs);
+            color: var(--accent);
+            text-decoration: none;
+        }
+        
+        .credentials-form {
+            background: var(--white);
+            border-radius: var(--radius-lg);
+            padding: var(--space-xl);
+            border: 1px solid #e2e8f0;
+        }
+        
+        .field-hint {
+            font-size: 11px;
+            color: var(--light);
+            margin-top: 4px;
+        }
+        
+        .field-required::after {
+            content: '*';
+            color: var(--danger);
+            margin-left: 4px;
+        }
+    </style>
+</head>
+<body>
+    <div class="admin-container">
+        <!-- Sidebar -->
+        <aside class="sidebar">...</aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <div class="top-bar">
+                <div class="page-title">
+                    <h1><i class="fas fa-plug" style="color: var(--accent);"></i> Connect New Bank</h1>
+                    <p>Establish connection with financial institution</p>
+                </div>
+                <div class="top-bar-actions">
+                    <button class="btn btn-outline" onclick="location.href='/banks/index.html'">
+                        <i class="fas fa-arrow-left"></i> Back to Banks
+                    </button>
+                    <button class="logout-btn" id="logoutBtn"><i class="fas fa-sign-out-alt"></i></button>
+                </div>
+            </div>
+
+            <div class="connection-wizard">
+                <!-- Wizard Steps -->
+                <div class="wizard-steps">
+                    <div class="wizard-step active" id="step1">1</div>
+                    <div class="wizard-step" id="step2">2</div>
+                    <div class="wizard-step" id="step3">3</div>
+                    <span class="step-label" style="left: -5px;">Connection Type</span>
+                    <span class="step-label" style="left: 38%;">Credentials</span>
+                    <span class="step-label" style="right: -5px;">Verify & Connect</span>
+                </div>
+
+                <!-- Step 1: Connection Method -->
+                <div id="step1Content">
+                    <h3 style="margin-bottom: var(--space-lg);">Select Connection Method</h3>
+                    
+                    <div class="connection-methods">
+                        <div class="method-card" onclick="selectMethod('api')">
+                            <div class="method-icon"><i class="fas fa-code"></i></div>
+                            <div class="method-name">API Direct</div>
+                            <div class="method-desc">Direct API integration with real-time sync</div>
+                        </div>
+                        
+                        <div class="method-card" onclick="selectMethod('swift')">
+                            <div class="method-icon"><i class="fas fa-globe"></i></div>
+                            <div class="method-name">SWIFT/MT940</div>
+                            <div class="method-desc">SWIFT file upload and processing</div>
+                        </div>
+                        
+                        <div class="method-card" onclick="selectMethod('manual')">
+                            <div class="method-icon"><i class="fas fa-file-invoice"></i></div>
+                            <div class="method-name">Manual Upload</div>
+                            <div class="method-desc">CSV/Excel file upload for reconciliation</div>
+                        </div>
+                    </div>
+
+                    <div class="flex gap-2" style="justify-content: flex-end;">
+                        <button class="btn btn-primary" onclick="nextStep(2)">
+                            Next Step <i class="fas fa-arrow-right"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Step 2: Bank Details & Credentials -->
+                <div id="step2Content" style="display: none;">
+                    <div class="credentials-form">
+                        <h3 style="margin-bottom: var(--space-lg);">Bank Information</h3>
+                        
+                        <div class="grid-2">
+                            <div class="form-group">
+                                <label class="field-required">Bank Name</label>
+                                <input type="text" class="form-control" placeholder="e.g., Chase Bank">
+                            </div>
+                            
+                            <div class="form-group">
+                                <label class="field-required">Bank Type</label>
+                                <select class="form-control">
+                                    <option value="commercial">Commercial Bank</option>
+                                    <option value="investment">Investment Bank</option>
+                                    <option value="central">Central Bank</option>
+                                    <option value="digital">Digital Bank</option>
+                                </select>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label class="field-required">SWIFT/BIC Code</label>
+                                <input type="text" class="form-control" placeholder="e.g., CHASUS33">
+                                <div class="field-hint">8 or 11 characters SWIFT code</div>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label class="field-required">Routing/ABA Number</label>
+                                <input type="text" class="form-control" placeholder="e.g., 021000021">
+                            </div>
+                            
+                            <div class="form-group">
+                                <label class="field-required">Country</label>
+                                <select class="form-control">
+                                    <option value="US">United States</option>
+                                    <option value="UK">United Kingdom</option>
+                                    <option value="SG">Singapore</option>
+                                    <option value="AE">UAE</option>
+                                </select>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label>Currency</label>
+                                <select class="form-control">
+                                    <option value="USD">USD ($)</option>
+                                    <option value="EUR">EUR (€)</option>
+                                    <option value="GBP">GBP (£)</option>
+                                    <option value="SGD">SGD (S$)</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <h3 style="margin: var(--space-xl) 0 var(--space-lg);">API Credentials</h3>
+                        
+                        <div class="grid-2">
+                            <div class="form-group">
+                                <label class="field-required">API Key</label>
+                                <input type="text" class="form-control" placeholder="Enter API key">
+                            </div>
+                            
+                            <div class="form-group">
+                                <label class="field-required">API Secret</label>
+                                <input type="password" class="form-control" placeholder="Enter API secret">
+                            </div>
+                            
+                            <div class="form-group">
+                                <label>API Endpoint</label>
+                                <input type="text" class="form-control" placeholder="https://api.bank.com/v1">
+                            </div>
+                            
+                            <div class="form-group">
+                                <label>API Version</label>
+                                <input type="text" class="form-control" placeholder="v1">
+                            </div>
+                        </div>
+
+                        <div class="test-connection">
+                            <div class="test-status">
+                                <i class="fas fa-circle" style="color: var(--light);"></i>
+                                <span>Connection not tested</span>
+                            </div>
+                            <button class="btn btn-outline" onclick="testConnection()">
+                                <i class="fas fa-vial"></i> Test Connection
+                            </button>
+                        </div>
+
+                        <div class="flex gap-2" style="justify-content: space-between; margin-top: var(--space-lg);">
+                            <button class="btn btn-outline" onclick="prevStep(1)">
+                                <i class="fas fa-arrow-left"></i> Previous
+                            </button>
+                            <button class="btn btn-primary" onclick="nextStep(3)">
+                                Next Step <i class="fas fa-arrow-right"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Step 3: Verify & Connect -->
+                <div id="step3Content" style="display: none;">
+                    <div class="credentials-form">
+                        <h3 style="margin-bottom: var(--space-lg);">Review & Connect</h3>
+                        
+                        <div class="info-section" style="margin-bottom: var(--space-lg);">
+                            <h4>Bank Details</h4>
+                            <div class="info-row">
+                                <span class="info-label">Bank Name:</span>
+                                <span class="info-value">Chase Bank</span>
+                            </div>
+                            <div class="info-row">
+                                <span class="info-label">SWIFT Code:</span>
+                                <span class="info-value">CHASUS33</span>
+                            </div>
+                            <div class="info-row">
+                                <span class="info-label">Routing:</span>
+                                <span class="info-value">021000021</span>
+                            </div>
+                            <div class="info-row">
+                                <span class="info-label">Country:</span>
+                                <span class="info-value">United States</span>
+                            </div>
+                        </div>
+
+                        <div class="info-section" style="margin-bottom: var(--space-lg);">
+                            <h4>Connection Settings</h4>
+                            <div class="info-row">
+                                <span class="info-label">Method:</span>
+                                <span class="info-value">API Direct</span>
+                            </div>
+                            <div class="info-row">
+                                <span class="info-label">Sync Frequency:</span>
+                                <span class="info-value">Real-time</span>
+                            </div>
+                            <div class="info-row">
+                                <span class="info-label">Auto Reconciliation:</span>
+                                <span class="info-value">Enabled</span>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="checkbox">
+                                <input type="checkbox" id="termsAgree">
+                                <span>I confirm that I have the authority to connect this bank account</span>
+                            </label>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="checkbox">
+                                <input type="checkbox" id="syncAgree">
+                                <span>Enable automatic daily synchronization</span>
+                            </label>
+                        </div>
+
+                        <div class="flex gap-2" style="justify-content: space-between; margin-top: var(--space-xl);">
+                            <button class="btn btn-outline" onclick="prevStep(2)">
+                                <i class="fas fa-arrow-left"></i> Previous
+                            </button>
+                            <button class="btn btn-success" onclick="connectBank()">
+                                <i class="fas fa-plug"></i> Connect Bank
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script>
+        let currentStep = 1;
+        let selectedMethod = 'api';
+
+        function selectMethod(method) {
+            selectedMethod = method;
+            document.querySelectorAll('.method-card').forEach(c => c.classList.remove('selected'));
+            event.currentTarget.classList.add('selected');
+        }
+
+        function nextStep(step) {
+            document.getElementById(`step${currentStep}Content`).style.display = 'none';
+            document.getElementById(`step${step}Content`).style.display = 'block';
+            
+            document.getElementById(`step${currentStep}`).classList.remove('active');
+            document.getElementById(`step${step}`).classList.add('active');
+            
+            if (step > currentStep) {
+                for (let i = currentStep; i < step; i++) {
+                    document.getElementById(`step${i}`).classList.add('completed');
+                }
+            }
+            
+            currentStep = step;
+        }
+
+        function prevStep(step) {
+            document.getElementById(`step${currentStep}Content`).style.display = 'none';
+            document.getElementById(`step${step}Content`).style.display = 'block';
+            
+            document.getElementById(`step${currentStep}`).classList.remove('active');
+            document.getElementById(`step${step}`).classList.add('active');
+            
+            for (let i = step + 1; i <= 3; i++) {
+                document.getElementById(`step${i}`).classList.remove('completed');
+            }
+            
+            currentStep = step;
+        }
+
+        function testConnection() {
+            TAAGC.ui.showToast('Testing connection...', 'info');
+            setTimeout(() => {
+                const statusDiv = document.querySelector('.test-status');
+                statusDiv.innerHTML = '<i class="fas fa-check-circle test-success"></i> <span>Connection successful</span>';
+                TAAGC.ui.showToast('Connection test successful', 'success');
+            }, 2000);
+        }
+
+        function connectBank() {
+            const termsAgree = document.getElementById('termsAgree').checked;
+            
+            if (!termsAgree) {
+                TAAGC.ui.showToast('Please agree to the terms', 'error');
+                return;
+            }
+            
+            TAAGC.ui.showToast('Connecting bank...', 'info');
+            setTimeout(() => {
+                TAAGC.ui.showToast('Bank connected successfully!', 'success');
+                setTimeout(() => location.href = '/banks/index.html', 1500);
+            }, 2000);
+        }
+    </script>
+</body>
+</html>
