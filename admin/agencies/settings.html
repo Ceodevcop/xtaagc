@@ -1,0 +1,500 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Agency Settings - TAAGC Admin</title>
+    
+    <!-- Fonts & Icons -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Assets -->
+    <link rel="stylesheet" href="/assets/css/admin.css">
+    <script src="/assets/js/admin.js" defer></script>
+    
+    <style>
+        .settings-container {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        
+        .settings-section {
+            background: var(--white);
+            border-radius: var(--radius-lg);
+            padding: var(--space-xl);
+            margin-bottom: var(--space-xl);
+            border: 1px solid #e2e8f0;
+        }
+        
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: var(--space-lg);
+            padding-bottom: var(--space-md);
+            border-bottom: 2px solid var(--accent);
+        }
+        
+        .notification-preferences {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: var(--space-md);
+        }
+        
+        .preference-item {
+            padding: var(--space-sm);
+            border-radius: var(--radius-md);
+            background: var(--bg);
+        }
+        
+        .integration-card {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: var(--space-md);
+            border: 1px solid #e2e8f0;
+            border-radius: var(--radius-md);
+            margin-bottom: var(--space-sm);
+        }
+        
+        .integration-icon {
+            width: 40px;
+            height: 40px;
+            background: rgba(193,154,107,0.1);
+            border-radius: var(--radius-md);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--accent);
+        }
+        
+        .toggle-switch {
+            position: relative;
+            display: inline-block;
+            width: 50px;
+            height: 24px;
+        }
+        
+        .toggle-switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+        
+        .toggle-slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: #e2e8f0;
+            transition: .3s;
+            border-radius: 24px;
+        }
+        
+        .toggle-slider:before {
+            position: absolute;
+            content: "";
+            height: 20px;
+            width: 20px;
+            left: 2px;
+            bottom: 2px;
+            background-color: white;
+            transition: .3s;
+            border-radius: 50%;
+        }
+        
+        input:checked + .toggle-slider {
+            background-color: var(--accent);
+        }
+        
+        input:checked + .toggle-slider:before {
+            transform: translateX(26px);
+        }
+        
+        .danger-zone {
+            border: 2px solid var(--danger);
+            background: rgba(229,62,62,0.05);
+        }
+        
+        .danger-zone .section-header {
+            border-bottom-color: var(--danger);
+        }
+        
+        .danger-zone .section-header h3 {
+            color: var(--danger);
+        }
+        
+        .api-field {
+            display: flex;
+            align-items: center;
+            gap: var(--space-sm);
+            margin-bottom: var(--space-sm);
+        }
+        
+        .api-field code {
+            flex: 1;
+            padding: var(--space-sm) var(--space-md);
+            background: var(--bg);
+            border-radius: var(--radius-md);
+            font-size: 13px;
+        }
+    </style>
+</head>
+<body>
+    <div class="admin-container">
+        <!-- Sidebar -->
+        <aside class="sidebar">...</aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <div class="top-bar">
+                <div class="page-title">
+                    <h1><i class="fas fa-cog" style="color: var(--accent);"></i> Agency Settings</h1>
+                    <p>Configure global agency management settings</p>
+                </div>
+                <div class="top-bar-actions">
+                    <button class="btn btn-primary" onclick="saveSettings()">
+                        <i class="fas fa-save"></i> Save Changes
+                    </button>
+                    <button class="logout-btn" id="logoutBtn"><i class="fas fa-sign-out-alt"></i></button>
+                </div>
+            </div>
+
+            <div class="settings-container">
+                <!-- General Settings -->
+                <div class="settings-section">
+                    <div class="section-header">
+                        <h3><i class="fas fa-sliders-h"></i> General Settings</h3>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>Default Commission Rate</label>
+                        <div class="flex gap-2">
+                            <input type="number" class="form-control" value="12" step="0.5" min="0" max="100" style="width: 100px;">
+                            <span>%</span>
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>Payment Terms</label>
+                        <select class="form-control">
+                            <option>Net 15</option>
+                            <option selected>Net 30</option>
+                            <option>Net 45</option>
+                            <option>Net 60</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>Minimum Payout Amount</label>
+                        <input type="number" class="form-control" value="1000" step="100" style="width: 200px;">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>Currency</label>
+                        <select class="form-control" style="width: 200px;">
+                            <option value="USD">USD ($)</option>
+                            <option value="EUR">EUR (€)</option>
+                            <option value="GBP">GBP (£)</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- Tier Settings -->
+                <div class="settings-section">
+                    <div class="section-header">
+                        <h3><i class="fas fa-layer-group"></i> Tier Configuration</h3>
+                    </div>
+                    
+                    <div class="grid-2">
+                        <div class="form-group">
+                            <label>Platinum Tier Threshold</label>
+                            <input type="number" class="form-control" value="1000000" step="100000">
+                            <small>Minimum annual revenue</small>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label>Platinum Commission</label>
+                            <input type="number" class="form-control" value="18" step="0.5">
+                        </div>
+                        
+                        <div class="form-group">
+                            <label>Gold Tier Threshold</label>
+                            <input type="number" class="form-control" value="500000" step="100000">
+                        </div>
+                        
+                        <div class="form-group">
+                            <label>Gold Commission</label>
+                            <input type="number" class="form-control" value="14" step="0.5">
+                        </div>
+                        
+                        <div class="form-group">
+                            <label>Silver Tier Threshold</label>
+                            <input type="number" class="form-control" value="250000" step="50000">
+                        </div>
+                        
+                        <div class="form-group">
+                            <label>Silver Commission</label>
+                            <input type="number" class="form-control" value="10" step="0.5">
+                        </div>
+                        
+                        <div class="form-group">
+                            <label>Bronze Tier Threshold</label>
+                            <input type="number" class="form-control" value="100000" step="25000">
+                        </div>
+                        
+                        <div class="form-group">
+                            <label>Bronze Commission</label>
+                            <input type="number" class="form-control" value="6" step="0.5">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Notification Settings -->
+                <div class="settings-section">
+                    <div class="section-header">
+                        <h3><i class="fas fa-bell"></i> Notification Preferences</h3>
+                    </div>
+                    
+                    <div class="notification-preferences">
+                        <div class="preference-item">
+                            <div class="flex-between">
+                                <span>New agency registration</span>
+                                <label class="toggle-switch">
+                                    <input type="checkbox" checked>
+                                    <span class="toggle-slider"></span>
+                                </label>
+                            </div>
+                        </div>
+                        
+                        <div class="preference-item">
+                            <div class="flex-between">
+                                <span>Contract expiration</span>
+                                <label class="toggle-switch">
+                                    <input type="checkbox" checked>
+                                    <span class="toggle-slider"></span>
+                                </label>
+                            </div>
+                        </div>
+                        
+                        <div class="preference-item">
+                            <div class="flex-between">
+                                <span>Commission payouts</span>
+                                <label class="toggle-switch">
+                                    <input type="checkbox" checked>
+                                    <span class="toggle-slider"></span>
+                                </label>
+                            </div>
+                        </div>
+                        
+                        <div class="preference-item">
+                            <div class="flex-between">
+                                <span>Performance alerts</span>
+                                <label class="toggle-switch">
+                                    <input type="checkbox" checked>
+                                    <span class="toggle-slider"></span>
+                                </label>
+                            </div>
+                        </div>
+                        
+                        <div class="preference-item">
+                            <div class="flex-between">
+                                <span>Report generation</span>
+                                <label class="toggle-switch">
+                                    <input type="checkbox">
+                                    <span class="toggle-slider"></span>
+                                </label>
+                            </div>
+                        </div>
+                        
+                        <div class="preference-item">
+                            <div class="flex-between">
+                                <span>API usage alerts</span>
+                                <label class="toggle-switch">
+                                    <input type="checkbox">
+                                    <span class="toggle-slider"></span>
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="form-group" style="margin-top: var(--space-lg);">
+                        <label>Notification Email</label>
+                        <input type="email" class="form-control" value="partners@taagc.com">
+                    </div>
+                </div>
+
+                <!-- Integration Settings -->
+                <div class="settings-section">
+                    <div class="section-header">
+                        <h3><i class="fas fa-plug"></i> Integrations</h3>
+                    </div>
+                    
+                    <div class="integration-card">
+                        <div class="flex gap-2">
+                            <div class="integration-icon"><i class="fab fa-salesforce"></i></div>
+                            <div>
+                                <strong>Salesforce Integration</strong>
+                                <div style="font-size: 12px; color: var(--light);">Sync agency data with Salesforce</div>
+                            </div>
+                        </div>
+                        <label class="toggle-switch">
+                            <input type="checkbox">
+                            <span class="toggle-slider"></span>
+                        </label>
+                    </div>
+                    
+                    <div class="integration-card">
+                        <div class="flex gap-2">
+                            <div class="integration-icon"><i class="fab fa-hubspot"></i></div>
+                            <div>
+                                <strong>HubSpot Integration</strong>
+                                <div style="font-size: 12px; color: var(--light);">Sync contacts and deals</div>
+                            </div>
+                        </div>
+                        <label class="toggle-switch">
+                            <input type="checkbox" checked>
+                            <span class="toggle-slider"></span>
+                        </label>
+                    </div>
+                    
+                    <div class="integration-card">
+                        <div class="flex gap-2">
+                            <div class="integration-icon"><i class="fas fa-envelope"></i></div>
+                            <div>
+                                <strong>Mailchimp Integration</strong>
+                                <div style="font-size: 12px; color: var(--light);">Email marketing automation</div>
+                            </div>
+                        </div>
+                        <label class="toggle-switch">
+                            <input type="checkbox">
+                            <span class="toggle-slider"></span>
+                        </label>
+                    </div>
+                    
+                    <div class="integration-card">
+                        <div class="flex gap-2">
+                            <div class="integration-icon"><i class="fas fa-slack"></i></div>
+                            <div>
+                                <strong>Slack Notifications</strong>
+                                <div style="font-size: 12px; color: var(--light);">Send alerts to Slack channel</div>
+                            </div>
+                        </div>
+                        <label class="toggle-switch">
+                            <input type="checkbox" checked>
+                            <span class="toggle-slider"></span>
+                        </label>
+                    </div>
+                </div>
+
+                <!-- API Settings -->
+                <div class="settings-section">
+                    <div class="section-header">
+                        <h3><i class="fas fa-code"></i> API Configuration</h3>
+                    </div>
+                    
+                    <div class="api-field">
+                        <code>taagc_api_key_1234567890abcdef</code>
+                        <button class="btn btn-sm btn-outline" onclick="copyApiKey()">
+                            <i class="fas fa-copy"></i>
+                        </button>
+                        <button class="btn btn-sm btn-outline" onclick="regenerateKey()">
+                            <i class="fas fa-sync-alt"></i>
+                        </button>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>API Rate Limit (requests/minute)</label>
+                        <input type="number" class="form-control" value="1000">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>Webhook URL</label>
+                        <input type="url" class="form-control" value="https://api.taagc.com/webhooks/agencies">
+                    </div>
+                </div>
+
+                <!-- Danger Zone -->
+                <div class="settings-section danger-zone">
+                    <div class="section-header">
+                        <h3><i class="fas fa-exclamation-triangle"></i> Danger Zone</h3>
+                    </div>
+                    
+                    <div class="flex-between" style="margin-bottom: var(--space-lg);">
+                        <div>
+                            <strong>Archive Inactive Agencies</strong>
+                            <p style="color: var(--light); font-size: 13px;">Move agencies inactive for 90+ days to archive</p>
+                        </div>
+                        <button class="btn btn-warning" onclick="archiveAgencies()">
+                            <i class="fas fa-archive"></i> Archive
+                        </button>
+                    </div>
+                    
+                    <div class="flex-between" style="margin-bottom: var(--space-lg);">
+                        <div>
+                            <strong>Reset All Commission Data</strong>
+                            <p style="color: var(--light); font-size: 13px;">Clear all commission history (irreversible)</p>
+                        </div>
+                        <button class="btn btn-danger" onclick="resetCommissions()">
+                            <i class="fas fa-undo"></i> Reset
+                        </button>
+                    </div>
+                    
+                    <div class="flex-between">
+                        <div>
+                            <strong>Delete All Agency Data</strong>
+                            <p style="color: var(--light); font-size: 13px;">Permanently remove all agencies and related data</p>
+                        </div>
+                        <button class="btn btn-danger" onclick="deleteAllAgencies()">
+                            <i class="fas fa-trash"></i> Delete All
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script>
+        function saveSettings() {
+            TAAGC.ui.showToast('Settings saved successfully', 'success');
+        }
+
+        function copyApiKey() {
+            navigator.clipboard.writeText('taagc_api_key_1234567890abcdef');
+            TAAGC.ui.showToast('API key copied', 'success');
+        }
+
+        function regenerateKey() {
+            TAAGC.ui.confirm('Regenerate API key?', () => {
+                TAAGC.ui.showToast('New API key generated', 'success');
+            });
+        }
+
+        function archiveAgencies() {
+            TAAGC.ui.confirm('Archive inactive agencies?', () => {
+                TAAGC.ui.showToast('Agencies archived', 'success');
+            });
+        }
+
+        function resetCommissions() {
+            TAAGC.ui.confirm('Reset all commission data? This cannot be undone!', () => {
+                TAAGC.ui.showToast('Commission data reset', 'warning');
+            });
+        }
+
+        function deleteAllAgencies() {
+            if (!TAAGC.auth.isSuperAdmin()) {
+                TAAGC.ui.showToast('Only super admins can delete all agencies', 'error');
+                return;
+            }
+            
+            TAAGC.ui.confirm('Delete ALL agencies? This action is permanent!', () => {
+                TAAGC.ui.showToast('All agencies deleted', 'danger');
+            });
+        }
+    </script>
+</body>
+</html>
