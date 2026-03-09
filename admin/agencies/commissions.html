@@ -1,0 +1,459 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Agency Contracts - TAAGC Admin</title>
+    
+    <!-- Fonts & Icons -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Assets -->
+    <link rel="stylesheet" href="/assets/css/admin.css">
+    <script src="/assets/js/admin.js" defer></script>
+    
+    <style>
+        .contracts-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: var(--space-xl);
+        }
+        
+        .contract-tabs {
+            display: flex;
+            gap: var(--space-sm);
+            border-bottom: 2px solid #e2e8f0;
+            margin-bottom: var(--space-xl);
+        }
+        
+        .contract-tab {
+            padding: var(--space-md) var(--space-lg);
+            cursor: pointer;
+            font-weight: 600;
+            color: var(--light);
+            border-bottom: 2px solid transparent;
+            margin-bottom: -2px;
+        }
+        
+        .contract-tab.active {
+            color: var(--accent);
+            border-bottom-color: var(--accent);
+        }
+        
+        .contract-card {
+            background: var(--white);
+            border-radius: var(--radius-lg);
+            border: 1px solid #e2e8f0;
+            margin-bottom: var(--space-lg);
+            overflow: hidden;
+            transition: all 0.3s;
+        }
+        
+        .contract-card:hover {
+            box-shadow: var(--shadow-lg);
+            border-color: var(--accent);
+        }
+        
+        .contract-header {
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+            color: white;
+            padding: var(--space-lg);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .contract-agency {
+            font-size: 18px;
+            font-weight: 700;
+        }
+        
+        .contract-type {
+            padding: 4px 12px;
+            background: rgba(255,255,255,0.2);
+            border-radius: 20px;
+            font-size: 11px;
+        }
+        
+        .contract-body {
+            padding: var(--space-lg);
+        }
+        
+        .contract-dates {
+            display: flex;
+            gap: var(--space-xl);
+            margin-bottom: var(--space-lg);
+            padding-bottom: var(--space-lg);
+            border-bottom: 1px solid #e2e8f0;
+        }
+        
+        .contract-date {
+            flex: 1;
+        }
+        
+        .date-label {
+            font-size: 11px;
+            color: var(--light);
+            margin-bottom: 4px;
+        }
+        
+        .date-value {
+            font-weight: 600;
+            color: var(--dark);
+        }
+        
+        .date-value.expiring {
+            color: var(--danger);
+        }
+        
+        .contract-terms {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: var(--space-md);
+            margin-bottom: var(--space-lg);
+        }
+        
+        .term-item {
+            text-align: center;
+            padding: var(--space-sm);
+            background: var(--bg);
+            border-radius: var(--radius-md);
+        }
+        
+        .term-label {
+            font-size: 11px;
+            color: var(--light);
+        }
+        
+        .term-value {
+            font-size: 18px;
+            font-weight: 700;
+            color: var(--primary);
+        }
+        
+        .contract-documents {
+            background: var(--bg);
+            border-radius: var(--radius-md);
+            padding: var(--space-md);
+            margin-top: var(--space-md);
+        }
+        
+        .document-link {
+            display: flex;
+            align-items: center;
+            gap: var(--space-sm);
+            padding: var(--space-xs) 0;
+            color: var(--accent);
+            text-decoration: none;
+        }
+        
+        .document-link:hover {
+            text-decoration: underline;
+        }
+        
+        .renewal-notice {
+            background: rgba(245,158,11,0.1);
+            border: 1px solid var(--warning);
+            color: var(--warning);
+            padding: var(--space-sm) var(--space-md);
+            border-radius: var(--radius-md);
+            margin-top: var(--space-sm);
+            font-size: 13px;
+        }
+        
+        .contract-actions {
+            display: flex;
+            gap: var(--space-sm);
+            justify-content: flex-end;
+            padding: var(--space-lg);
+            background: var(--bg);
+            border-top: 1px solid #e2e8f0;
+        }
+        
+        .upload-area {
+            border: 2px dashed #e2e8f0;
+            border-radius: var(--radius-lg);
+            padding: var(--space-xl);
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s;
+            margin-bottom: var(--space-xl);
+        }
+        
+        .upload-area:hover {
+            border-color: var(--accent);
+            background: rgba(193,154,107,0.05);
+        }
+        
+        .upload-area i {
+            font-size: 48px;
+            color: var(--accent);
+            margin-bottom: var(--space-md);
+        }
+        
+        .expiry-badge {
+            display: inline-block;
+            padding: 2px 8px;
+            border-radius: 12px;
+            font-size: 10px;
+            margin-left: var(--space-sm);
+        }
+        
+        .expiry-soon {
+            background: rgba(245,158,11,0.1);
+            color: var(--warning);
+        }
+        
+        .expiry-overdue {
+            background: rgba(229,62,62,0.1);
+            color: var(--danger);
+        }
+    </style>
+</head>
+<body>
+    <div class="admin-container">
+        <!-- Sidebar -->
+        <aside class="sidebar">...</aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <div class="top-bar">
+                <div class="page-title">
+                    <h1><i class="fas fa-file-contract" style="color: var(--accent);"></i> Agency Contracts</h1>
+                    <p>Manage all partner agreements and contracts</p>
+                </div>
+                <div class="top-bar-actions">
+                    <button class="btn btn-primary" onclick="uploadContract()">
+                        <i class="fas fa-upload"></i> Upload Contract
+                    </button>
+                    <button class="btn btn-outline" onclick="exportContracts()">
+                        <i class="fas fa-download"></i> Export
+                    </button>
+                    <button class="logout-btn" id="logoutBtn"><i class="fas fa-sign-out-alt"></i></button>
+                </div>
+            </div>
+
+            <!-- Upload Area -->
+            <div class="upload-area" onclick="uploadContract()">
+                <i class="fas fa-cloud-upload-alt"></i>
+                <h3>Upload New Contract</h3>
+                <p style="color: var(--light);">Click to upload or drag and drop contract PDF</p>
+                <small style="color: var(--lighter);">Supported formats: PDF, DOCX (Max 10MB)</small>
+            </div>
+
+            <!-- Contract Tabs -->
+            <div class="contract-tabs">
+                <div class="contract-tab active" onclick="showContractTab('active')">Active (8)</div>
+                <div class="contract-tab" onclick="showContractTab('expiring')">Expiring Soon (3)</div>
+                <div class="contract-tab" onclick="showContractTab('draft')">Draft (2)</div>
+                <div class="contract-tab" onclick="showContractTab('expired')">Expired (4)</div>
+                <div class="contract-tab" onclick="showContractTab('all')">All Contracts</div>
+            </div>
+
+            <!-- Contracts List -->
+            <div id="contractsList">
+                <!-- Contract cards will be loaded here -->
+            </div>
+        </main>
+    </div>
+
+    <script>
+        function generateMockContracts() {
+            const contracts = [
+                {
+                    id: 'ct_1001',
+                    agency: 'Global Marketing Solutions',
+                    type: 'exclusive',
+                    startDate: '2024-01-15',
+                    endDate: '2025-01-14',
+                    value: 1250000,
+                    commission: 15,
+                    status: 'active',
+                    document: 'contract_global_marketing.pdf',
+                    autoRenew: true,
+                    terms: 'Exclusive marketing rights in North America'
+                },
+                {
+                    id: 'ct_1002',
+                    agency: 'TechPartners Inc',
+                    type: 'non-exclusive',
+                    startDate: '2023-03-20',
+                    endDate: '2024-03-19',
+                    value: 890000,
+                    commission: 12,
+                    status: 'expiring',
+                    document: 'contract_techpartners.pdf',
+                    autoRenew: false,
+                    terms: 'Technology partnership agreement'
+                },
+                {
+                    id: 'ct_1003',
+                    agency: 'Asia Pacific Consulting',
+                    type: 'exclusive',
+                    startDate: '2022-11-05',
+                    endDate: '2024-11-04',
+                    value: 2100000,
+                    commission: 18,
+                    status: 'active',
+                    document: 'contract_ap_consulting.pdf',
+                    autoRenew: true,
+                    terms: 'Exclusive consulting rights in Asia Pacific'
+                }
+            ];
+            
+            return contracts;
+        }
+
+        function loadContracts() {
+            const contracts = generateMockContracts();
+            const list = document.getElementById('contractsList');
+            
+            list.innerHTML = contracts.map(contract => {
+                const today = new Date();
+                const endDate = new Date(contract.endDate);
+                const daysUntilExpiry = Math.ceil((endDate - today) / (1000 * 60 * 60 * 24));
+                
+                let expiryClass = '';
+                let expiryText = '';
+                
+                if (daysUntilExpiry < 0) {
+                    expiryClass = 'expiry-overdue';
+                    expiryText = 'Expired';
+                } else if (daysUntilExpiry < 30) {
+                    expiryClass = 'expiry-soon';
+                    expiryText = `${daysUntilExpiry} days left`;
+                }
+                
+                return `
+                    <div class="contract-card">
+                        <div class="contract-header">
+                            <div>
+                                <div class="contract-agency">${contract.agency}</div>
+                                <div style="opacity: 0.8; font-size: 12px;">Contract ID: ${contract.id}</div>
+                            </div>
+                            <span class="contract-type">${contract.type.replace('-', ' ')}</span>
+                        </div>
+                        
+                        <div class="contract-body">
+                            <div class="contract-dates">
+                                <div class="contract-date">
+                                    <div class="date-label">Start Date</div>
+                                    <div class="date-value">${TAAGC.data.formatDate(contract.startDate)}</div>
+                                </div>
+                                <div class="contract-date">
+                                    <div class="date-label">End Date</div>
+                                    <div class="date-value ${expiryClass}">
+                                        ${TAAGC.data.formatDate(contract.endDate)}
+                                        ${expiryText ? `<span class="expiry-badge ${expiryClass}">${expiryText}</span>` : ''}
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="contract-terms">
+                                <div class="term-item">
+                                    <div class="term-label">Contract Value</div>
+                                    <div class="term-value">$${(contract.value/1000000).toFixed(1)}M</div>
+                                </div>
+                                <div class="term-item">
+                                    <div class="term-label">Commission</div>
+                                    <div class="term-value">${contract.commission}%</div>
+                                </div>
+                                <div class="term-item">
+                                    <div class="term-label">Auto-Renew</div>
+                                    <div class="term-value">${contract.autoRenew ? 'Yes' : 'No'}</div>
+                                </div>
+                            </div>
+                            
+                            <p style="color: var(--light); margin-bottom: var(--space-md);">${contract.terms}</p>
+                            
+                            <div class="contract-documents">
+                                <div class="flex-between">
+                                    <span><i class="fas fa-file-pdf" style="color: var(--accent);"></i> ${contract.document}</span>
+                                    <div class="flex gap-2">
+                                        <a href="#" class="document-link" onclick="viewDocument('${contract.document}')">
+                                            <i class="fas fa-eye"></i> View
+                                        </a>
+                                        <a href="#" class="document-link" onclick="downloadDocument('${contract.document}')">
+                                            <i class="fas fa-download"></i> Download
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            ${daysUntilExpiry < 30 && daysUntilExpiry > 0 ? `
+                                <div class="renewal-notice">
+                                    <i class="fas fa-exclamation-triangle"></i>
+                                    Contract expires in ${daysUntilExpiry} days. Consider renewal.
+                                </div>
+                            ` : ''}
+                        </div>
+                        
+                        <div class="contract-actions">
+                            <button class="btn btn-sm btn-outline-accent" onclick="renewContract('${contract.id}')">
+                                <i class="fas fa-sync-alt"></i> Renew
+                            </button>
+                            <button class="btn btn-sm btn-outline" onclick="editContract('${contract.id}')">
+                                <i class="fas fa-edit"></i> Edit
+                            </button>
+                            <button class="btn btn-sm btn-outline" onclick="amendContract('${contract.id}')">
+                                <i class="fas fa-pen"></i> Amend
+                            </button>
+                            ${TAAGC.auth.isSuperAdmin() ? `
+                                <button class="btn btn-sm btn-outline-danger" onclick="terminateContract('${contract.id}')">
+                                    <i class="fas fa-ban"></i> Terminate
+                                </button>
+                            ` : ''}
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        function showContractTab(tab) {
+            document.querySelectorAll('.contract-tab').forEach(t => t.classList.remove('active'));
+            event.target.classList.add('active');
+            TAAGC.ui.showToast(`Showing ${tab} contracts`, 'info');
+        }
+
+        function uploadContract() {
+            TAAGC.ui.showToast('Upload contract feature coming soon', 'info');
+        }
+
+        function viewDocument(filename) {
+            TAAGC.ui.showToast(`Viewing ${filename}`, 'info');
+        }
+
+        function downloadDocument(filename) {
+            TAAGC.ui.showToast(`Downloading ${filename}`, 'info');
+        }
+
+        function renewContract(id) {
+            TAAGC.ui.confirm('Renew this contract?', () => {
+                TAAGC.ui.showToast('Contract renewed successfully', 'success');
+            });
+        }
+
+        function editContract(id) {
+            TAAGC.ui.showToast(`Editing contract ${id}`, 'info');
+        }
+
+        function amendContract(id) {
+            TAAGC.ui.showToast('Contract amendment feature coming soon', 'info');
+        }
+
+        function terminateContract(id) {
+            TAAGC.ui.confirm('Are you sure you want to terminate this contract?', () => {
+                TAAGC.ui.showToast('Contract terminated', 'warning');
+            });
+        }
+
+        function exportContracts() {
+            TAAGC.ui.showToast('Exporting contracts...', 'info');
+        }
+
+        loadContracts();
+    </script>
+</body>
+</html>
