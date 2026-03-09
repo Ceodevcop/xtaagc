@@ -1,0 +1,596 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard - TAAGC Admin</title>
+    
+    <!-- Fonts & Icons -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Firebase SDK (required for token exchange) -->
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
+    
+    <!-- ✅ CORRECT PATHS - Assets folder at root level -->
+    <link rel="stylesheet" href="/assets/css/admin.css">
+    <script src="/assets/js/admin.js" defer></script>
+    
+    <style>
+        /* Any page-specific styles can go here */
+        .welcome-card {
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+            color: white;
+            padding: var(--space-xl);
+            border-radius: var(--radius-lg);
+            margin-bottom: var(--space-xl);
+        }
+        
+        .quick-action-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: var(--space-md);
+            margin-top: var(--space-lg);
+        }
+        
+        .quick-action-card {
+            background: var(--white);
+            border: 1px solid #e2e8f0;
+            border-radius: var(--radius-lg);
+            padding: var(--space-lg);
+            text-align: center;
+            transition: all 0.3s;
+            cursor: pointer;
+            text-decoration: none;
+            color: var(--dark);
+        }
+        
+        .quick-action-card:hover {
+            transform: translateY(-5px);
+            border-color: var(--accent);
+            box-shadow: var(--shadow-lg);
+        }
+        
+        .quick-action-card i {
+            font-size: 32px;
+            color: var(--accent);
+            margin-bottom: var(--space-md);
+        }
+        
+        .quick-action-card h4 {
+            color: var(--primary);
+            margin-bottom: var(--space-xs);
+        }
+        
+        .quick-action-card p {
+            color: var(--light);
+            font-size: 12px;
+        }
+    </style>
+</head>
+<body>
+    <div class="admin-container">
+        <!-- ===== SIDEBAR ===== -->
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <div class="logo-icon">TA</div>
+                <h2><span>TAAGC</span> ADMIN</h2>
+            </div>
+
+            <div class="user-info">
+                <div class="user-avatar" data-user-avatar>A</div>
+                <div data-user-field="name">Loading...</div>
+                <div style="font-size: 12px; opacity: 0.7;" data-user-field="email"></div>
+                <span class="user-role" data-user-field="role"></span>
+            </div>
+
+            <nav class="nav-menu">
+                <div class="nav-section">MAIN</div>
+                <!-- 🔥 FIXED: Dashboard link now points to the folder -->
+                <a href="/dashboard/" class="nav-item active">
+                    <i class="fas fa-tachometer-alt"></i> Dashboard
+                </a>
+                <a href="/users/" class="nav-item">
+                    <i class="fas fa-users"></i> Users
+                </a>
+                <a href="/investments/" class="nav-item">
+                    <i class="fas fa-chart-line"></i> Investments
+                </a>
+                <a href="/transactions/" class="nav-item">
+                    <i class="fas fa-exchange-alt"></i> Transactions
+                </a>
+
+                <div class="nav-divider"></div>
+                <div class="nav-section">FINANCIAL</div>
+                <a href="/banks/" class="nav-item">
+                    <i class="fas fa-university"></i> Banks
+                </a>
+                <a href="/agencies/" class="nav-item">
+                    <i class="fas fa-building"></i> Agencies
+                </a>
+                <a href="/projects/" class="nav-item">
+                    <i class="fas fa-briefcase"></i> Projects
+                </a>
+
+                <div class="nav-divider"></div>
+                <div class="nav-section">OPERATIONS</div>
+                <a href="/staff/" class="nav-item">
+                    <i class="fas fa-user-tie"></i> Staff
+                </a>
+                <a href="/events/" class="nav-item">
+                    <i class="fas fa-calendar"></i> Events
+                </a>
+                <a href="/support/" class="nav-item">
+                    <i class="fas fa-headset"></i> Support
+                </a>
+
+                <!-- 🔥 CEO ONLY Sections -->
+                <div class="nav-divider super-admin-only"></div>
+                <div class="nav-section super-admin-only">CEO ONLY</div>
+                <a href="/admins/" class="nav-item super-admin-only">
+                    <i class="fas fa-user-shield"></i> Manage Admins
+                </a>
+                <a href="/security/dashboard.html" class="nav-item super-admin-only">
+                    <i class="fas fa-shield-alt"></i> Security
+                </a>
+                <a href="/settings/general.html" class="nav-item super-admin-only">
+                    <i class="fas fa-cog"></i> Settings
+                </a>
+                <a href="/logs/system.html" class="nav-item super-admin-only">
+                    <i class="fas fa-history"></i> System Logs
+                </a>
+                <a href="/api/index.html" class="nav-item super-admin-only">
+                    <i class="fas fa-code"></i> API Management
+                </a>
+                <a href="/compliance/kyc.html" class="nav-item super-admin-only">
+                    <i class="fas fa-gavel"></i> Compliance
+                </a>
+                <a href="/maintenance/mode.html" class="nav-item super-admin-only">
+                    <i class="fas fa-tools"></i> Maintenance
+                </a>
+            </nav>
+        </aside>
+
+        <!-- ===== MAIN CONTENT ===== -->
+        <main class="main-content">
+            <div class="top-bar">
+                <div class="page-title">
+                    <h1>Dashboard</h1>
+                    <p id="welcomeMessage">Welcome back, loading...</p>
+                </div>
+                
+                <div class="top-bar-actions">
+                    <div class="notification-badge" id="notificationBell">
+                        <i class="fas fa-bell"></i>
+                        <span class="badge-count" id="notificationCount">0</span>
+                    </div>
+                    <button class="btn btn-outline" id="toggleSidebar">
+                        <i class="fas fa-bars"></i>
+                    </button>
+                    <button class="logout-btn" id="logoutBtn">
+                        <i class="fas fa-sign-out-alt"></i> Logout
+                    </button>
+                </div>
+            </div>
+
+            <!-- Welcome Card -->
+            <div class="welcome-card">
+                <h2>Welcome to TAAGC Admin Panel</h2>
+                <p style="opacity: 0.9; margin-top: var(--space-sm);">Manage your entire platform from one central dashboard</p>
+            </div>
+
+            <!-- Stats Grid -->
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-icon"><i class="fas fa-users"></i></div>
+                    <div class="stat-value" id="totalUsers">0</div>
+                    <div class="stat-label">Total Users</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon"><i class="fas fa-chart-line"></i></div>
+                    <div class="stat-value" id="totalInvestments">$0</div>
+                    <div class="stat-label">Total Investments</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon"><i class="fas fa-university"></i></div>
+                    <div class="stat-value" id="totalBanks">0</div>
+                    <div class="stat-label">Connected Banks</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon"><i class="fas fa-building"></i></div>
+                    <div class="stat-value" id="totalAgencies">0</div>
+                    <div class="stat-label">Active Agencies</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon"><i class="fas fa-exchange-alt"></i></div>
+                    <div class="stat-value" id="todayTransactions">0</div>
+                    <div class="stat-label">Today's Transactions</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon"><i class="fas fa-clock"></i></div>
+                    <div class="stat-value" id="pendingApprovals">0</div>
+                    <div class="stat-label">Pending Approvals</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon"><i class="fas fa-check-circle"></i></div>
+                    <div class="stat-value" id="completedProjects">0</div>
+                    <div class="stat-label">Completed Projects</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon"><i class="fas fa-headset"></i></div>
+                    <div class="stat-value" id="openTickets">0</div>
+                    <div class="stat-label">Open Tickets</div>
+                </div>
+            </div>
+
+            <!-- Quick Actions -->
+            <div class="card">
+                <div class="card-header">
+                    <h2><i class="fas fa-bolt"></i> Quick Actions</h2>
+                </div>
+                
+                <div class="quick-action-grid">
+                    <!-- 🔥 FIXED: All links now point to folder structures with trailing slashes -->
+                    <a href="/users/create.html" class="quick-action-card">
+                        <i class="fas fa-user-plus"></i>
+                        <h4>Add User</h4>
+                        <p>Create new user account</p>
+                    </a>
+                    
+                    <a href="/investments/create.html" class="quick-action-card">
+                        <i class="fas fa-plus-circle"></i>
+                        <h4>New Investment</h4>
+                        <p>Create investment opportunity</p>
+                    </a>
+                    
+                    <a href="/banks/create.html" class="quick-action-card">
+                        <i class="fas fa-university"></i>
+                        <h4>Connect Bank</h4>
+                        <p>Add new bank connection</p>
+                    </a>
+                    
+                    <a href="/agencies/create.html" class="quick-action-card">
+                        <i class="fas fa-building"></i>
+                        <h4>Add Agency</h4>
+                        <p>Register new partner agency</p>
+                    </a>
+                    
+                    <a href="/transactions/deposits.html" class="quick-action-card">
+                        <i class="fas fa-arrow-down"></i>
+                        <h4>Process Deposit</h4>
+                        <p>Handle incoming funds</p>
+                    </a>
+                    
+                    <a href="/transactions/withdrawals.html" class="quick-action-card">
+                        <i class="fas fa-arrow-up"></i>
+                        <h4>Process Withdrawal</h4>
+                        <p>Handle outgoing funds</p>
+                    </a>
+                    
+                    <a href="/projects/create.html" class="quick-action-card">
+                        <i class="fas fa-briefcase"></i>
+                        <h4>New Project</h4>
+                        <p>Start new investment project</p>
+                    </a>
+                    
+                    <a href="/events/create.html" class="quick-action-card">
+                        <i class="fas fa-calendar-plus"></i>
+                        <h4>Create Event</h4>
+                        <p>Schedule new event</p>
+                    </a>
+                    
+                    <!-- CEO Only Quick Actions -->
+                    <a href="/admins/create.html" class="quick-action-card super-admin-only">
+                        <i class="fas fa-user-shield"></i>
+                        <h4>Add Admin</h4>
+                        <p>Create new administrator</p>
+                    </a>
+                    
+                    <a href="/api/keys.html" class="quick-action-card super-admin-only">
+                        <i class="fas fa-key"></i>
+                        <h4>API Keys</h4>
+                        <p>Manage API access</p>
+                    </a>
+                    
+                    <a href="/maintenance/backups.html" class="quick-action-card super-admin-only">
+                        <i class="fas fa-database"></i>
+                        <h4>Backup</h4>
+                        <p>System backup</p>
+                    </a>
+                    
+                    <a href="/security/audit.html" class="quick-action-card super-admin-only">
+                        <i class="fas fa-history"></i>
+                        <h4>Audit Logs</h4>
+                        <p>View security logs</p>
+                    </a>
+                </div>
+            </div>
+
+            <!-- Recent Activity & Transactions -->
+            <div class="grid-2">
+                <!-- Recent Activity -->
+                <div class="card">
+                    <div class="card-header">
+                        <h2><i class="fas fa-clock"></i> Recent Activity</h2>
+                        <button class="btn btn-sm btn-outline" onclick="refreshActivity()">
+                            <i class="fas fa-sync-alt"></i> Refresh
+                        </button>
+                    </div>
+                    <div class="table-container">
+                        <table id="activityTable">
+                            <thead>
+                                <tr>
+                                    <th>User</th>
+                                    <th>Action</th>
+                                    <th>Time</th>
+                                </tr>
+                            </thead>
+                            <tbody id="activityBody">
+                                <tr><td colspan="3" class="text-center">Loading...</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- Recent Transactions -->
+                <div class="card">
+                    <div class="card-header">
+                        <h2><i class="fas fa-exchange-alt"></i> Recent Transactions</h2>
+                        <a href="/transactions/" class="btn btn-sm btn-outline">View All</a>
+                    </div>
+                    <div class="table-container">
+                        <table id="transactionsTable">
+                            <thead>
+                                <tr>
+                                    <th>ID</th>
+                                    <th>Amount</th>
+                                    <th>Status</th>
+                                    <th>Time</th>
+                                </tr>
+                            </thead>
+                            <tbody id="transactionsBody">
+                                <tr><td colspan="4" class="text-center">Loading...</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Bank & Agency Status -->
+            <div class="grid-2">
+                <!-- Bank Status -->
+                <div class="card">
+                    <div class="card-header">
+                        <h2><i class="fas fa-university"></i> Bank Connections</h2>
+                        <a href="/banks/" class="btn btn-sm btn-outline">Manage</a>
+                    </div>
+                    <div class="table-container">
+                        <table id="banksStatusTable">
+                            <thead>
+                                <tr>
+                                    <th>Bank</th>
+                                    <th>Status</th>
+                                    <th>Last Sync</th>
+                                </tr>
+                            </thead>
+                            <tbody id="banksStatusBody">
+                                <tr><td colspan="3" class="text-center">Loading...</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- Agency Status -->
+                <div class="card">
+                    <div class="card-header">
+                        <h2><i class="fas fa-building"></i> Agency Status</h2>
+                        <a href="/agencies/" class="btn btn-sm btn-outline">Manage</a>
+                    </div>
+                    <div class="table-container">
+                        <table id="agenciesStatusTable">
+                            <thead>
+                                <tr>
+                                    <th>Agency</th>
+                                    <th>API Status</th>
+                                    <th>Commission</th>
+                                </tr>
+                            </thead>
+                            <tbody id="agenciesStatusBody">
+                                <tr><td colspan="3" class="text-center">Loading...</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- System Health (CEO Only) -->
+            <div class="card super-admin-only">
+                <div class="card-header">
+                    <h2><i class="fas fa-heartbeat"></i> System Health</h2>
+                    <span class="badge badge-success">All Systems Operational</span>
+                </div>
+                <div class="grid-4">
+                    <div>
+                        <div class="flex-between">
+                            <span>CPU Usage</span>
+                            <span>45%</span>
+                        </div>
+                        <div class="progress"><div class="progress-bar" style="width: 45%;"></div></div>
+                    </div>
+                    <div>
+                        <div class="flex-between">
+                            <span>Memory</span>
+                            <span>62%</span>
+                        </div>
+                        <div class="progress"><div class="progress-bar" style="width: 62%;"></div></div>
+                    </div>
+                    <div>
+                        <div class="flex-between">
+                            <span>Disk</span>
+                            <span>78%</span>
+                        </div>
+                        <div class="progress"><div class="progress-bar" style="width: 78%;"></div></div>
+                    </div>
+                    <div>
+                        <div class="flex-between">
+                            <span>API Response</span>
+                            <span>124ms</span>
+                        </div>
+                        <div class="progress"><div class="progress-bar" style="width: 30%;"></div></div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script>
+        // ============================================
+        // DASHBOARD DATA LOADING
+        // ============================================
+        document.addEventListener('DOMContentLoaded', async () => {
+            console.log('Dashboard loading...');
+            
+            // 🔥 FIXED: Use async authentication check
+            const isAuthed = await TAAGC.auth.requireAuth(true);
+            if (!isAuthed) {
+                console.log('Not authenticated, redirecting...');
+                return; // requireAuth already redirects
+            }
+            
+            console.log('Authentication verified');
+            
+            // Load user data
+            TAAGC.auth.updateUI();
+            
+            // Load all dashboard data
+            try {
+                await Promise.all([
+                    loadStats(),
+                    loadActivity(),
+                    loadTransactions(),
+                    loadBanksStatus(),
+                    loadAgenciesStatus()
+                ]);
+                console.log('Dashboard data loaded');
+            } catch (error) {
+                console.error('Error loading dashboard data:', error);
+                TAAGC.ui.showToast('Error loading dashboard data', 'error');
+            }
+            
+            // Start real-time updates
+            startRealtimeUpdates();
+        });
+
+        async function loadStats() {
+            try {
+                // In production, replace with actual API calls
+                // const response = await TAAGC.api.get('/dashboard/stats');
+                
+                // Simulated data
+                document.getElementById('totalUsers').textContent = '1,234';
+                document.getElementById('totalInvestments').textContent = '$2.5M';
+                document.getElementById('totalBanks').textContent = '5';
+                document.getElementById('totalAgencies').textContent = '12';
+                document.getElementById('todayTransactions').textContent = '156';
+                document.getElementById('pendingApprovals').textContent = '23';
+                document.getElementById('completedProjects').textContent = '8';
+                document.getElementById('openTickets').textContent = '7';
+                document.getElementById('notificationCount').textContent = '3';
+                
+            } catch (error) {
+                console.error('Error loading stats:', error);
+                TAAGC.ui.showToast('Error loading stats', 'error');
+            }
+        }
+
+        async function loadActivity() {
+            const activities = [
+                { user: 'John Doe', action: 'New investment of $5,000', time: '5 minutes ago' },
+                { user: 'Jane Smith', action: 'Bank connected: Chase', time: '15 minutes ago' },
+                { user: 'Mike Johnson', action: 'Agency registered: ABC Partners', time: '25 minutes ago' },
+                { user: 'Sarah Wilson', action: 'Withdrawal processed: $2,500', time: '1 hour ago' },
+                { user: 'Robert Brown', action: 'New user registered', time: '2 hours ago' }
+            ];
+
+            const tbody = document.getElementById('activityBody');
+            tbody.innerHTML = activities.map(a => `
+                <tr>
+                    <td>${a.user}</td>
+                    <td>${a.action}</td>
+                    <td>${a.time}</td>
+                </tr>
+            `).join('');
+        }
+
+        async function loadTransactions() {
+            const transactions = [
+                { id: 'TXN001', amount: '$5,000', status: 'completed', time: '10 min ago' },
+                { id: 'TXN002', amount: '$2,500', status: 'pending', time: '25 min ago' },
+                { id: 'TXN003', amount: '$10,000', status: 'completed', time: '1 hour ago' },
+                { id: 'TXN004', amount: '$1,200', status: 'processing', time: '2 hours ago' }
+            ];
+
+            const tbody = document.getElementById('transactionsBody');
+            tbody.innerHTML = transactions.map(t => `
+                <tr>
+                    <td><code>${t.id}</code></td>
+                    <td><strong>${t.amount}</strong></td>
+                    <td><span class="badge badge-${t.status === 'completed' ? 'success' : t.status === 'pending' ? 'warning' : 'info'}">${t.status}</span></td>
+                    <td>${t.time}</td>
+                </tr>
+            `).join('');
+        }
+
+        async function loadBanksStatus() {
+            const banks = [
+                { name: 'Chase Bank', status: 'connected', lastSync: '2 min ago' },
+                { name: 'Bank of America', status: 'connected', lastSync: '15 min ago' },
+                { name: 'Wells Fargo', status: 'disconnected', lastSync: '1 day ago' }
+            ];
+
+            const tbody = document.getElementById('banksStatusBody');
+            tbody.innerHTML = banks.map(b => `
+                <tr>
+                    <td>${b.name}</td>
+                    <td><span class="api-status ${b.status}"><i class="fas fa-circle"></i> ${b.status}</span></td>
+                    <td>${b.lastSync}</td>
+                </tr>
+            `).join('');
+        }
+
+        async function loadAgenciesStatus() {
+            const agencies = [
+                { name: 'ABC Partners', apiStatus: 'active', commission: '15%' },
+                { name: 'XYZ Global', apiStatus: 'active', commission: '12%' },
+                { name: '123 Solutions', apiStatus: 'inactive', commission: '10%' }
+            ];
+
+            const tbody = document.getElementById('agenciesStatusBody');
+            tbody.innerHTML = agencies.map(a => `
+                <tr>
+                    <td>${a.name}</td>
+                    <td><span class="badge badge-${a.apiStatus === 'active' ? 'success' : 'warning'}">${a.apiStatus}</span></td>
+                    <td>${a.commission}</td>
+                </tr>
+            `).join('');
+        }
+
+        function refreshActivity() {
+            loadActivity();
+            TAAGC.ui.showToast('Activity refreshed', 'success');
+        }
+
+        function startRealtimeUpdates() {
+            // Refresh stats every 30 seconds
+            setInterval(loadStats, 30000);
+            setInterval(loadTransactions, 30000);
+        }
+
+        // Notification click handler
+        document.getElementById('notificationBell')?.addEventListener('click', () => {
+            TAAGC.ui.showToast('You have 3 unread notifications', 'info');
+        });
+    </script>
+</body>
+</html>
