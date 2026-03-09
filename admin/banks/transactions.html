@@ -1,0 +1,565 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bank Transactions - TAAGC Admin</title>
+    
+    <!-- Fonts & Icons -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Assets -->
+    <link rel="stylesheet" href="/assets/css/admin.css">
+    <script src="/assets/js/admin.js" defer></script>
+    
+    <style>
+        .transaction-filters {
+            background: var(--white);
+            border-radius: var(--radius-lg);
+            padding: var(--space-lg);
+            margin-bottom: var(--space-xl);
+            border: 1px solid #e2e8f0;
+        }
+        
+        .filter-row {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: var(--space-md);
+            margin-bottom: var(--space-md);
+        }
+        
+        .bank-selector {
+            display: flex;
+            gap: var(--space-sm);
+            margin-bottom: var(--space-xl);
+            flex-wrap: wrap;
+        }
+        
+        .bank-chip {
+            padding: var(--space-xs) var(--space-lg);
+            background: var(--white);
+            border: 1px solid #e2e8f0;
+            border-radius: 30px;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-size: 13px;
+        }
+        
+        .bank-chip:hover {
+            border-color: var(--accent);
+        }
+        
+        .bank-chip.active {
+            background: var(--accent);
+            color: white;
+            border-color: var(--accent);
+        }
+        
+        .balance-summary {
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+            color: white;
+            padding: var(--space-xl);
+            border-radius: var(--radius-lg);
+            margin-bottom: var(--space-xl);
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: var(--space-xl);
+        }
+        
+        .balance-item {
+            text-align: center;
+        }
+        
+        .balance-label {
+            font-size: 13px;
+            opacity: 0.8;
+            margin-bottom: var(--space-xs);
+        }
+        
+        .balance-amount {
+            font-size: 28px;
+            font-weight: 700;
+        }
+        
+        .balance-change {
+            font-size: 13px;
+            margin-top: var(--space-xs);
+        }
+        
+        .change-positive { color: var(--success); }
+        .change-negative { color: var(--danger); }
+        
+        .transaction-type-badge {
+            display: inline-block;
+            padding: 2px 8px;
+            border-radius: 12px;
+            font-size: 10px;
+            font-weight: 600;
+        }
+        
+        .type-credit {
+            background: rgba(16,185,129,0.1);
+            color: var(--success);
+        }
+        
+        .type-debit {
+            background: rgba(229,62,62,0.1);
+            color: var(--danger);
+        }
+        
+        .type-transfer {
+            background: rgba(59,130,246,0.1);
+            color: var(--info);
+        }
+        
+        .type-fee {
+            background: rgba(245,158,11,0.1);
+            color: var(--warning);
+        }
+        
+        .category-tag {
+            display: inline-block;
+            padding: 2px 8px;
+            background: var(--bg);
+            border-radius: 12px;
+            font-size: 10px;
+            color: var(--light);
+        }
+        
+        .matching-status {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            padding: 2px 8px;
+            border-radius: 12px;
+            font-size: 10px;
+        }
+        
+        .matched {
+            background: rgba(16,185,129,0.1);
+            color: var(--success);
+        }
+        
+        .unmatched {
+            background: rgba(229,62,62,0.1);
+            color: var(--danger);
+        }
+        
+        .pending-match {
+            background: rgba(245,158,11,0.1);
+            color: var(--warning);
+        }
+        
+        .transaction-details {
+            background: var(--bg);
+            border-radius: var(--radius-lg);
+            padding: var(--space-lg);
+            margin-top: var(--space-sm);
+            display: none;
+        }
+        
+        .transaction-row.expanded .transaction-details {
+            display: block;
+        }
+        
+        .quick-match {
+            display: flex;
+            gap: var(--space-sm);
+            align-items: center;
+            margin-top: var(--space-sm);
+        }
+        
+        .bulk-actions {
+            background: var(--primary);
+            color: white;
+            padding: var(--space-md) var(--space-lg);
+            border-radius: 50px;
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            display: none;
+            gap: var(--space-md);
+            z-index: 1000;
+            box-shadow: var(--shadow-xl);
+        }
+        
+        .bulk-actions.active {
+            display: flex;
+        }
+    </style>
+</head>
+<body>
+    <div class="admin-container">
+        <!-- Sidebar -->
+        <aside class="sidebar">...</aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <div class="top-bar">
+                <div class="page-title">
+                    <h1><i class="fas fa-exchange-alt" style="color: var(--accent);"></i> Bank Transactions</h1>
+                    <p>View and reconcile bank transactions</p>
+                </div>
+                <div class="top-bar-actions">
+                    <button class="btn btn-primary" onclick="syncTransactions()">
+                        <i class="fas fa-sync-alt"></i> Sync Transactions
+                    </button>
+                    <button class="btn btn-outline" onclick="exportTransactions()">
+                        <i class="fas fa-download"></i> Export
+                    </button>
+                    <button class="logout-btn" id="logoutBtn"><i class="fas fa-sign-out-alt"></i></button>
+                </div>
+            </div>
+
+            <!-- Bank Selector -->
+            <div class="bank-selector">
+                <span class="bank-chip active" onclick="selectBank('all')">All Banks</span>
+                <span class="bank-chip" onclick="selectBank('chase')">Chase Bank</span>
+                <span class="bank-chip" onclick="selectBank('bofa')">Bank of America</span>
+                <span class="bank-chip" onclick="selectBank('wells')">Wells Fargo</span>
+                <span class="bank-chip" onclick="selectBank('hsbc')">HSBC</span>
+            </div>
+
+            <!-- Balance Summary -->
+            <div class="balance-summary">
+                <div class="balance-item">
+                    <div class="balance-label">Opening Balance</div>
+                    <div class="balance-amount" id="openingBalance">$1,234,567</div>
+                    <div class="balance-change">As of Mar 1, 2024</div>
+                </div>
+                <div class="balance-item">
+                    <div class="balance-label">Closing Balance</div>
+                    <div class="balance-amount" id="closingBalance">$1,245,678</div>
+                    <div class="balance-change change-positive">+$11,111</div>
+                </div>
+                <div class="balance-item">
+                    <div class="balance-label">Net Change</div>
+                    <div class="balance-amount" id="netChange">+$11,111</div>
+                    <div class="balance-change">124 transactions</div>
+                </div>
+            </div>
+
+            <!-- Filters -->
+            <div class="transaction-filters">
+                <div class="filter-row">
+                    <div class="form-group">
+                        <label>Date Range</label>
+                        <div class="flex gap-2">
+                            <input type="date" class="form-control" value="2024-03-01">
+                            <input type="date" class="form-control" value="2024-03-09">
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>Transaction Type</label>
+                        <select class="form-control">
+                            <option>All Types</option>
+                            <option>Credits</option>
+                            <option>Debits</option>
+                            <option>Transfers</option>
+                            <option>Fees</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>Amount Range</label>
+                        <div class="flex gap-2">
+                            <input type="number" class="form-control" placeholder="Min" value="0">
+                            <input type="number" class="form-control" placeholder="Max" value="100000">
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>Status</label>
+                        <select class="form-control">
+                            <option>All</option>
+                            <option>Matched</option>
+                            <option>Unmatched</option>
+                            <option>Pending</option>
+                        </select>
+                    </div>
+                </div>
+                
+                <div class="filter-row">
+                    <div class="form-group" style="flex: 1;">
+                        <label>Search</label>
+                        <input type="text" class="form-control" placeholder="Search by description, reference, or amount...">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>Category</label>
+                        <select class="form-control">
+                            <option>All Categories</option>
+                            <option>Income</option>
+                            <option>Expenses</option>
+                            <option>Transfers</option>
+                            <option>Fees</option>
+                            <option>Interest</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>Account</label>
+                        <select class="form-control">
+                            <option>All Accounts</option>
+                            <option>Chase •••• 1234</option>
+                            <option>Chase •••• 5678</option>
+                            <option>BOA •••• 9012</option>
+                        </select>
+                    </div>
+                </div>
+                
+                <div class="flex-between">
+                    <div class="flex gap-2">
+                        <button class="btn btn-primary">Apply Filters</button>
+                        <button class="btn btn-outline">Reset</button>
+                    </div>
+                    <div class="flex gap-2">
+                        <span class="badge badge-info">124 transactions</span>
+                        <span class="badge badge-warning">8 unmatched</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Transactions Table -->
+            <div class="card">
+                <table>
+                    <thead>
+                        <tr>
+                            <th width="30"><input type="checkbox" id="selectAll"></th>
+                            <th>Date</th>
+                            <th>Description</th>
+                            <th>Account</th>
+                            <th>Category</th>
+                            <th>Amount</th>
+                            <th>Balance</th>
+                            <th>Status</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="transactionsBody">
+                        <!-- Transaction rows will be loaded here -->
+                    </tbody>
+                </table>
+                
+                <!-- Pagination -->
+                <div class="flex-center" style="margin-top: var(--space-xl);">
+                    <div class="pagination">
+                        <button class="page-link"><i class="fas fa-chevron-left"></i></button>
+                        <button class="page-link active">1</button>
+                        <button class="page-link">2</button>
+                        <button class="page-link">3</button>
+                        <button class="page-link">4</button>
+                        <button class="page-link">5</button>
+                        <span class="page-link">...</span>
+                        <button class="page-link">12</button>
+                        <button class="page-link"><i class="fas fa-chevron-right"></i></button>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Bulk Actions -->
+    <div class="bulk-actions" id="bulkActions">
+        <span><span id="selectedCount">0</span> selected</span>
+        <div class="flex gap-2">
+            <button class="btn btn-sm btn-success" onclick="bulkMatch()">Match</button>
+            <button class="btn btn-sm btn-warning" onclick="bulkCategorize()">Categorize</button>
+            <button class="btn btn-sm btn-outline" onclick="cancelBulk()">Cancel</button>
+        </div>
+    </div>
+
+    <script>
+        function generateMockTransactions() {
+            const transactions = [];
+            const descriptions = [
+                'Wire transfer from client',
+                'Monthly service fee',
+                'Interest payment',
+                'Transfer to savings',
+                'ACH payment received',
+                'Credit card payment',
+                'ATM withdrawal',
+                'Check deposit',
+                'Direct deposit payroll',
+                'Transfer from investment account'
+            ];
+            
+            const categories = ['Income', 'Expense', 'Transfer', 'Fee', 'Interest'];
+            const accounts = ['Chase •••• 1234', 'Chase •••• 5678', 'BOA •••• 9012'];
+            
+            let balance = 1245000;
+            
+            for (let i = 0; i < 20; i++) {
+                const date = new Date();
+                date.setDate(date.getDate() - i);
+                
+                const amount = Math.floor(Math.random() * 5000) + 100;
+                const isCredit = Math.random() > 0.4;
+                const transactionAmount = isCredit ? amount : -amount;
+                balance += transactionAmount;
+                
+                const status = Math.random();
+                let statusBadge = '';
+                if (status < 0.7) statusBadge = '<span class="matching-status matched"><i class="fas fa-check-circle"></i> Matched</span>';
+                else if (status < 0.9) statusBadge = '<span class="matching-status unmatched"><i class="fas fa-exclamation-circle"></i> Unmatched</span>';
+                else statusBadge = '<span class="matching-status pending-match"><i class="fas fa-clock"></i> Pending</span>';
+                
+                const type = isCredit ? 'credit' : 'debit';
+                const typeClass = type === 'credit' ? 'type-credit' : 'type-debit';
+                
+                transactions.push(`
+                    <tr class="transaction-row" onclick="toggleDetails('txn${i}')">
+                        <td><input type="checkbox" class="transaction-checkbox" onclick="event.stopPropagation()"></td>
+                        <td>${date.toISOString().split('T')[0]}</td>
+                        <td>
+                            <div>${descriptions[Math.floor(Math.random() * descriptions.length)]}</div>
+                            <small style="color: var(--light);">Ref: TXN${10000 + i}</small>
+                        </td>
+                        <td>${accounts[Math.floor(Math.random() * accounts.length)]}</td>
+                        <td><span class="category-tag">${categories[Math.floor(Math.random() * categories.length)]}</span></td>
+                        <td class="${isCredit ? 'amount-positive' : 'amount-negative'}">${isCredit ? '+' : '-'}$${amount.toLocaleString()}.00</td>
+                        <td>$${balance.toLocaleString()}.00</td>
+                        <td>${statusBadge}</td>
+                        <td>
+                            <button class="btn btn-sm btn-outline" onclick="event.stopPropagation(); matchTransaction()">
+                                <i class="fas fa-link"></i>
+                            </button>
+                            <button class="btn btn-sm btn-outline-accent" onclick="event.stopPropagation(); viewDetails()">
+                                <i class="fas fa-eye"></i>
+                            </button>
+                        </td>
+                    </tr>
+                    <tr class="transaction-details-row" id="details-txn${i}" style="display: none;">
+                        <td colspan="9">
+                            <div class="transaction-details">
+                                <div class="grid-3">
+                                    <div>
+                                        <strong>Transaction Details</strong>
+                                        <div class="info-row">
+                                            <span class="info-label">Transaction ID:</span>
+                                            <span class="info-value">TXN${10000 + i}</span>
+                                        </div>
+                                        <div class="info-row">
+                                            <span class="info-label">Date:</span>
+                                            <span class="info-value">${date.toISOString().split('T')[0]}</span>
+                                        </div>
+                                        <div class="info-row">
+                                            <span class="info-label">Amount:</span>
+                                            <span class="info-value ${isCredit ? 'amount-positive' : 'amount-negative'}">${isCredit ? '+' : '-'}$${amount.toLocaleString()}.00</span>
+                                        </div>
+                                    </div>
+                                    <div>
+                                        <strong>Bank Information</strong>
+                                        <div class="info-row">
+                                            <span class="info-label">Bank:</span>
+                                            <span class="info-value">Chase Bank</span>
+                                        </div>
+                                        <div class="info-row">
+                                            <span class="info-label">Account:</span>
+                                            <span class="info-value">${accounts[Math.floor(Math.random() * accounts.length)]}</span>
+                                        </div>
+                                        <div class="info-row">
+                                            <span class="info-label">Type:</span>
+                                            <span class="info-value">${isCredit ? 'Credit' : 'Debit'}</span>
+                                        </div>
+                                    </div>
+                                    <div>
+                                        <strong>Matching</strong>
+                                        <div class="quick-match">
+                                            <select class="form-control" style="flex: 1;">
+                                                <option>Select transaction to match</option>
+                                                <option>INV-2024-001 - $5,000</option>
+                                                <option>INV-2024-002 - $2,500</option>
+                                                <option>INV-2024-003 - $1,000</option>
+                                            </select>
+                                            <button class="btn btn-sm btn-success">Match</button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </td>
+                    </tr>
+                `);
+            }
+            
+            return transactions.join('');
+        }
+
+        function loadTransactions() {
+            document.getElementById('transactionsBody').innerHTML = generateMockTransactions();
+        }
+
+        function toggleDetails(id) {
+            const detailsRow = document.getElementById(`details-${id}`);
+            const row = event.currentTarget;
+            
+            if (detailsRow.style.display === 'none') {
+                detailsRow.style.display = 'table-row';
+                row.classList.add('expanded');
+            } else {
+                detailsRow.style.display = 'none';
+                row.classList.remove('expanded');
+            }
+        }
+
+        function selectBank(bank) {
+            document.querySelectorAll('.bank-chip').forEach(chip => chip.classList.remove('active'));
+            event.target.classList.add('active');
+            TAAGC.ui.showToast(`Showing ${bank} transactions`, 'info');
+        }
+
+        function syncTransactions() {
+            TAAGC.ui.showToast('Syncing bank transactions...', 'info');
+            setTimeout(() => {
+                TAAGC.ui.showToast('Sync completed', 'success');
+            }, 2000);
+        }
+
+        function exportTransactions() {
+            TAAGC.ui.showToast('Exporting transactions...', 'info');
+        }
+
+        function matchTransaction() {
+            TAAGC.ui.showToast('Transaction matched', 'success');
+        }
+
+        function viewDetails() {
+            TAAGC.ui.showToast('Viewing transaction details', 'info');
+        }
+
+        // Bulk actions
+        document.getElementById('selectAll').addEventListener('change', function(e) {
+            document.querySelectorAll('.transaction-checkbox').forEach(cb => {
+                cb.checked = e.target.checked;
+            });
+            updateSelectedCount();
+        });
+
+        function updateSelectedCount() {
+            const count = document.querySelectorAll('.transaction-checkbox:checked').length;
+            document.getElementById('selectedCount').textContent = count;
+            document.getElementById('bulkActions').classList.toggle('active', count > 0);
+        }
+
+        function bulkMatch() {
+            TAAGC.ui.showToast('Matching selected transactions', 'success');
+            cancelBulk();
+        }
+
+        function bulkCategorize() {
+            TAAGC.ui.showToast('Categorizing selected transactions', 'info');
+        }
+
+        function cancelBulk() {
+            document.querySelectorAll('.transaction-checkbox').forEach(cb => cb.checked = false);
+            document.getElementById('selectAll').checked = false;
+            document.getElementById('bulkActions').classList.remove('active');
+        }
+
+        loadTransactions();
+    </script>
+</body>
+</html>
