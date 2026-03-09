@@ -1,0 +1,268 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Page Creator - TAAGC (CEO)</title>
+    
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- CodeMirror for code editing -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/codemirror.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/theme/monokai.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/codemirror.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/mode/xml/xml.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/mode/javascript/javascript.min.js"></script>
+    
+    <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
+    
+    <link rel="stylesheet" href="/assets/css/admin.css">
+    <script src="/assets/js/admin.js"></script>
+    
+    <style>
+        .CodeMirror {
+            height: 400px;
+            border: 2px solid #e2e8f0;
+            border-radius: 8px;
+            font-family: 'Monaco', monospace;
+            font-size: 14px;
+        }
+    </style>
+</head>
+<body class="super-admin">
+    <div class="admin-container">
+        <aside class="admin-sidebar">...</aside>
+
+        <main class="admin-main">
+            <div class="admin-topbar">
+                <div class="admin-page-title">
+                    <h1><i class="fas fa-magic"></i> Page Creator</h1>
+                    <p>Create new admin pages instantly</p>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="grid-2" style="margin-bottom: 30px;">
+                    <div class="form-group">
+                        <label>Page Name</label>
+                        <input type="text" class="form-control" id="pageName" placeholder="e.g., custom-reports">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>Template</label>
+                        <select class="form-control" id="pageTemplate">
+                            <option value="blank">Blank Page</option>
+                            <option value="table">Table View</option>
+                            <option value="form">Form View</option>
+                            <option value="analytics">Analytics Dashboard</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label>Page Title</label>
+                    <input type="text" class="form-control" id="pageTitle" placeholder="Page Title">
+                </div>
+
+                <div class="form-group">
+                    <label>HTML Content</label>
+                    <textarea id="htmlEditor"></textarea>
+                </div>
+
+                <div class="form-group">
+                    <label>JavaScript (optional)</label>
+                    <textarea id="jsEditor"></textarea>
+                </div>
+
+                <div class="flex gap-2">
+                    <button class="btn btn-primary" onclick="createPage()">
+                        <i class="fas fa-save"></i> Create Page
+                    </button>
+                    <button class="btn btn-outline" onclick="previewPage()">
+                        <i class="fas fa-eye"></i> Preview
+                    </button>
+                </div>
+            </div>
+
+            <!-- Existing Pages -->
+            <div class="card" style="margin-top: 30px;">
+                <h3>Your Custom Pages</h3>
+                <div id="customPages"></div>
+            </div>
+        </main>
+    </div>
+
+    <script>
+        let htmlEditor, jsEditor;
+
+        document.addEventListener('DOMContentLoaded', function() {
+            if (!TAAGC.Auth.isSuperAdmin()) {
+                location.href = '/admin/dashboard.html';
+                return;
+            }
+
+            // Initialize editors
+            htmlEditor = CodeMirror.fromTextArea(document.getElementById('htmlEditor'), {
+                mode: 'xml',
+                theme: 'monokai',
+                lineNumbers: true,
+                autoCloseTags: true
+            });
+
+            jsEditor = CodeMirror.fromTextArea(document.getElementById('jsEditor'), {
+                mode: 'javascript',
+                theme: 'monokai',
+                lineNumbers: true
+            });
+
+            // Set default template
+            loadTemplate('blank');
+            
+            // Load existing pages
+            loadCustomPages();
+        });
+
+        function loadTemplate(type) {
+            const templates = {
+                blank: `<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>{{PAGE_TITLE}}</title>
+    <link rel="stylesheet" href="/assets/css/admin.css">
+</head>
+<body>
+    <div class="admin-container">
+        <div class="admin-main">
+            <div class="admin-topbar">
+                <h1>{{PAGE_TITLE}}</h1>
+            </div>
+            <div class="card">
+                <!-- Your content here -->
+            </div>
+        </div>
+    </div>
+    <script src="/assets/js/admin.js"><\/script>
+</body>
+</html>`,
+                
+                table: `<!DOCTYPE html>
+<html>
+<head>
+    <title>{{PAGE_TITLE}}</title>
+    <link rel="stylesheet" href="/assets/css/admin.css">
+</head>
+<body>
+    <div class="admin-container">
+        <div class="admin-main">
+            <div class="admin-topbar">
+                <h1>{{PAGE_TITLE}}</h1>
+            </div>
+            <div class="card">
+                <div class="table-container">
+                    <table id="dataTable">
+                        <thead>
+                            <tr>
+                                <th>Column 1</th>
+                                <th>Column 2</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody></tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script src="/assets/js/admin.js"><\/script>
+    <script>
+        // Initialize table
+        new TAAGC.Table('dataTable', {
+            columns: [
+                { field: 'col1', label: 'Column 1' },
+                { field: 'col2', label: 'Column 2' }
+            ]
+        });
+    <\/script>
+</body>
+</html>`
+            };
+
+            htmlEditor.setValue(templates[type] || templates.blank);
+        }
+
+        async function createPage() {
+            const pageName = document.getElementById('pageName').value;
+            const pageTitle = document.getElementById('pageTitle').value;
+            
+            if (!pageName || !pageTitle) {
+                TAAGC.UI.showToast('Page name and title required', 'error');
+                return;
+            }
+
+            let html = htmlEditor.getValue();
+            html = html.replace(/{{PAGE_TITLE}}/g, pageTitle);
+
+            try {
+                await TAAGC.API.post('/admin/pages/create', {
+                    name: pageName,
+                    title: pageTitle,
+                    html: html,
+                    js: jsEditor.getValue()
+                });
+                
+                TAAGC.UI.showToast('Page created successfully!', 'success');
+                loadCustomPages();
+                
+            } catch (error) {
+                TAAGC.UI.showToast('Error creating page', 'error');
+            }
+        }
+
+        async function loadCustomPages() {
+            try {
+                const data = await TAAGC.API.get('/admin/pages');
+                const container = document.getElementById('customPages');
+                
+                container.innerHTML = data.pages.map(page => `
+                    <div class="flex-between" style="padding: 10px; border-bottom: 1px solid #e2e8f0;">
+                        <div>
+                            <strong>${page.title}</strong>
+                            <br>
+                            <small>/admin/pages/${page.name}</small>
+                        </div>
+                        <div class="flex gap-1">
+                            <button class="btn btn-sm btn-outline" onclick="window.open('/admin/pages/${page.name}')">
+                                <i class="fas fa-external-link-alt"></i>
+                            </button>
+                            <button class="btn btn-sm btn-outline-danger" onclick="deletePage('${page.name}')">
+                                <i class="fas fa-trash"></i>
+                            </button>
+                        </div>
+                    </div>
+                `).join('');
+                
+            } catch (error) {
+                console.error('Error loading pages:', error);
+            }
+        }
+
+        function deletePage(name) {
+            TAAGC.UI.confirm('Delete this page?', async () => {
+                await TAAGC.API.delete(`/admin/pages/${name}`);
+                TAAGC.UI.showToast('Page deleted', 'success');
+                loadCustomPages();
+            });
+        }
+
+        function previewPage() {
+            const html = htmlEditor.getValue();
+            const win = window.open('', '_blank');
+            win.document.write(html);
+        }
+    </script>
+</body>
+</html>
