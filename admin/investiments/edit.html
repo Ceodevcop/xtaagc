@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Edit Investment - TAAGC Admin</title>
+    
+    <!-- Fonts & Icons -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Assets -->
+    <link rel="stylesheet" href="/assets/css/admin.css">
+    <script src="/assets/js/admin.js" defer></script>
+    
+    <style>
+        .form-section {
+            background: var(--white);
+            border-radius: var(--radius-lg);
+            padding: var(--space-xl);
+            margin-bottom: var(--space-xl);
+            border: 1px solid #e2e8f0;
+        }
+        
+        .section-title {
+            color: var(--primary);
+            margin-bottom: var(--space-lg);
+            padding-bottom: var(--space-sm);
+            border-bottom: 2px solid var(--accent);
+        }
+        
+        .image-preview {
+            width: 100%;
+            height: 200px;
+            background: var(--bg);
+            border-radius: var(--radius-lg);
+            border: 2px dashed #e2e8f0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--light);
+            cursor: pointer;
+            transition: all 0.3s;
+            background-size: cover;
+            background-position: center;
+        }
+        
+        .image-preview:hover {
+            border-color: var(--accent);
+            color: var(--accent);
+        }
+        
+        .milestone-item {
+            background: var(--bg);
+            border-radius: var(--radius-md);
+            padding: var(--space-md);
+            margin-bottom: var(--space-md);
+            display: flex;
+            gap: var(--space-md);
+            align-items: center;
+        }
+        
+        .milestone-fields {
+            flex: 1;
+            display: grid;
+            grid-template-columns: 2fr 1fr 100px;
+            gap: var(--space-md);
+        }
+    </style>
+</head>
+<body>
+    <div class="admin-container">
+        <!-- Sidebar -->
+        <aside class="sidebar">...</aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <div class="top-bar">
+                <div class="page-title">
+                    <h1><i class="fas fa-edit" style="color: var(--accent);"></i> Edit Investment</h1>
+                    <p>Update investment information</p>
+                </div>
+                <div class="top-bar-actions">
+                    <button class="btn btn-outline" onclick="location.href='/investments/index.html'">
+                        <i class="fas fa-arrow-left"></i> Back
+                    </button>
+                    <button class="logout-btn" id="logoutBtn"><i class="fas fa-sign-out-alt"></i></button>
+                </div>
+            </div>
+
+            <form id="editInvestmentForm" onsubmit="handleSubmit(event)">
+                <!-- Same form structure as create.html but pre-filled with investment data -->
+                <!-- Include all sections from create.html with values pre-populated -->
+            </form>
+        </main>
+    </div>
+</body>
+</html>
