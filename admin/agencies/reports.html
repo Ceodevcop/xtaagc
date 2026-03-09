@@ -1,0 +1,455 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Agency Reports - TAAGC Admin</title>
+    
+    <!-- Fonts & Icons -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Assets -->
+    <link rel="stylesheet" href="/assets/css/admin.css">
+    <script src="/assets/js/admin.js" defer></script>
+    
+    <style>
+        .reports-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: var(--space-xl);
+        }
+        
+        .report-templates {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: var(--space-lg);
+            margin-bottom: var(--space-xl);
+        }
+        
+        .template-card {
+            background: var(--white);
+            border-radius: var(--radius-lg);
+            padding: var(--space-lg);
+            border: 1px solid #e2e8f0;
+            transition: all 0.3s;
+            cursor: pointer;
+        }
+        
+        .template-card:hover {
+            transform: translateY(-5px);
+            box-shadow: var(--shadow-lg);
+            border-color: var(--accent);
+        }
+        
+        .template-icon {
+            width: 60px;
+            height: 60px;
+            background: rgba(193,154,107,0.1);
+            border-radius: var(--radius-md);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--accent);
+            font-size: 24px;
+            margin-bottom: var(--space-md);
+        }
+        
+        .template-name {
+            font-size: 18px;
+            font-weight: 700;
+            color: var(--primary);
+            margin-bottom: var(--space-xs);
+        }
+        
+        .template-desc {
+            color: var(--light);
+            font-size: 13px;
+            margin-bottom: var(--space-md);
+        }
+        
+        .template-meta {
+            display: flex;
+            justify-content: space-between;
+            color: var(--lighter);
+            font-size: 12px;
+        }
+        
+        .scheduled-reports {
+            background: var(--white);
+            border-radius: var(--radius-lg);
+            padding: var(--space-lg);
+            border: 1px solid #e2e8f0;
+            margin-bottom: var(--space-xl);
+        }
+        
+        .schedule-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: var(--space-md);
+            border-bottom: 1px solid #e2e8f0;
+        }
+        
+        .schedule-item:last-child {
+            border-bottom: none;
+        }
+        
+        .schedule-info {
+            display: flex;
+            align-items: center;
+            gap: var(--space-lg);
+        }
+        
+        .schedule-frequency {
+            padding: 2px 8px;
+            background: var(--bg);
+            border-radius: 12px;
+            font-size: 11px;
+        }
+        
+        .schedule-active {
+            background: rgba(16,185,129,0.1);
+            color: var(--success);
+        }
+        
+        .report-history {
+            background: var(--white);
+            border-radius: var(--radius-lg);
+            padding: var(--space-lg);
+            border: 1px solid #e2e8f0;
+        }
+        
+        .report-file {
+            display: flex;
+            align-items: center;
+            gap: var(--space-sm);
+            padding: var(--space-xs) 0;
+        }
+        
+        .report-file i {
+            color: var(--accent);
+        }
+        
+        .generate-panel {
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+            color: white;
+            border-radius: var(--radius-lg);
+            padding: var(--space-xl);
+            margin-bottom: var(--space-xl);
+        }
+        
+        .generate-options {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: var(--space-md);
+            margin: var(--space-lg) 0;
+        }
+        
+        .generate-option {
+            background: rgba(255,255,255,0.1);
+            border-radius: var(--radius-md);
+            padding: var(--space-md);
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .generate-option:hover {
+            background: rgba(255,255,255,0.2);
+        }
+        
+        .generate-option.selected {
+            background: var(--accent);
+        }
+    </style>
+</head>
+<body>
+    <div class="admin-container">
+        <!-- Sidebar -->
+        <aside class="sidebar">...</aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <div class="top-bar">
+                <div class="page-title">
+                    <h1><i class="fas fa-file-alt" style="color: var(--accent);"></i> Agency Reports</h1>
+                    <p>Generate and schedule comprehensive reports</p>
+                </div>
+                <div class="top-bar-actions">
+                    <button class="btn btn-primary" onclick="generateCustomReport()">
+                        <i class="fas fa-plus"></i> New Report
+                    </button>
+                    <button class="logout-btn" id="logoutBtn"><i class="fas fa-sign-out-alt"></i></button>
+                </div>
+            </div>
+
+            <!-- Quick Generate Panel -->
+            <div class="generate-panel">
+                <h3 style="color: white; margin-bottom: var(--space-sm);">Quick Report Generator</h3>
+                <p style="opacity: 0.9;">Select parameters to generate a custom report</p>
+                
+                <div class="generate-options">
+                    <div class="generate-option selected" onclick="selectReportType('performance')">
+                        <div><i class="fas fa-chart-line"></i> Performance Report</div>
+                        <small style="opacity: 0.8;">Agency KPIs and metrics</small>
+                    </div>
+                    <div class="generate-option" onclick="selectReportType('financial')">
+                        <div><i class="fas fa-dollar-sign"></i> Financial Report</div>
+                        <small style="opacity: 0.8;">Revenue, commissions, payments</small>
+                    </div>
+                    <div class="generate-option" onclick="selectReportType('activity')">
+                        <div><i class="fas fa-history"></i> Activity Report</div>
+                        <small style="opacity: 0.8;">Client acquisition, tasks</small>
+                    </div>
+                    <div class="generate-option" onclick="selectReportType('comparison')">
+                        <div><i class="fas fa-scale-balanced"></i> Comparison Report</div>
+                        <small style="opacity: 0.8;">Agency vs agency comparison</small>
+                    </div>
+                </div>
+                
+                <div class="grid-3" style="margin: var(--space-lg) 0;">
+                    <div class="form-group">
+                        <label style="color: white;">Date Range</label>
+                        <select class="form-control">
+                            <option>Last 30 days</option>
+                            <option>Last quarter</option>
+                            <option>Year to date</option>
+                            <option>Custom range</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label style="color: white;">Agencies</label>
+                        <select class="form-control">
+                            <option>All Agencies</option>
+                            <option>Top 10 only</option>
+                            <option>Select specific</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label style="color: white;">Format</label>
+                        <select class="form-control">
+                            <option>PDF</option>
+                            <option>Excel</option>
+                            <option>CSV</option>
+                            <option>HTML</option>
+                        </select>
+                    </div>
+                </div>
+                
+                <div class="flex gap-2">
+                    <button class="btn btn-accent" onclick="generateReport()">
+                        <i class="fas fa-file"></i> Generate Report
+                    </button>
+                    <button class="btn btn-outline" style="border-color: white; color: white;" onclick="scheduleReport()">
+                        <i class="fas fa-clock"></i> Schedule
+                    </button>
+                </div>
+            </div>
+
+            <!-- Report Templates -->
+            <h3 style="margin-bottom: var(--space-lg);">Report Templates</h3>
+            <div class="report-templates">
+                <div class="template-card" onclick="useTemplate('monthly-performance')">
+                    <div class="template-icon"><i class="fas fa-chart-line"></i></div>
+                    <div class="template-name">Monthly Performance</div>
+                    <div class="template-desc">Complete agency performance metrics including revenue, clients, and growth trends</div>
+                    <div class="template-meta">
+                        <span>Last run: Mar 1, 2024</span>
+                        <span><i class="fas fa-download"></i> 234 downloads</span>
+                    </div>
+                </div>
+                
+                <div class="template-card" onclick="useTemplate('commission-summary')">
+                    <div class="template-icon"><i class="fas fa-percent"></i></div>
+                    <div class="template-name">Commission Summary</div>
+                    <div class="template-desc">Detailed commission breakdown by agency, including pending and paid amounts</div>
+                    <div class="template-meta">
+                        <span>Last run: Mar 5, 2024</span>
+                        <span><i class="fas fa-download"></i> 156 downloads</span>
+                    </div>
+                </div>
+                
+                <div class="template-card" onclick="useTemplate('client-acquisition')">
+                    <div class="template-icon"><i class="fas fa-users"></i></div>
+                    <div class="template-name">Client Acquisition</div>
+                    <div class="template-desc">Track client acquisition rates, conversion metrics, and source analysis</div>
+                    <div class="template-meta">
+                        <span>Last run: Mar 3, 2024</span>
+                        <span><i class="fas fa-download"></i> 89 downloads</span>
+                    </div>
+                </div>
+                
+                <div class="template-card" onclick="useTemplate('financial-summary')">
+                    <div class="template-icon"><i class="fas fa-dollar-sign"></i></div>
+                    <div class="template-name">Financial Summary</div>
+                    <div class="template-desc">Revenue, expenses, commissions, and payment history</div>
+                    <div class="template-meta">
+                        <span>Last run: Mar 7, 2024</span>
+                        <span><i class="fas fa-download"></i> 178 downloads</span>
+                    </div>
+                </div>
+                
+                <div class="template-card" onclick="useTemplate('agency-rankings')">
+                    <div class="template-icon"><i class="fas fa-trophy"></i></div>
+                    <div class="template-name">Agency Rankings</div>
+                    <div class="template-desc">Comparative rankings by performance, growth, and quality metrics</div>
+                    <div class="template-meta">
+                        <span>Last run: Mar 2, 2024</span>
+                        <span><i class="fas fa-download"></i> 145 downloads</span>
+                    </div>
+                </div>
+                
+                <div class="template-card" onclick="useTemplate('custom')">
+                    <div class="template-icon"><i class="fas fa-plus-circle"></i></div>
+                    <div class="template-name">Custom Report</div>
+                    <div class="template-desc">Build your own report with custom metrics and filters</div>
+                    <div class="template-meta">
+                        <span>Create your own</span>
+                        <span><i class="fas fa-arrow-right"></i> Start</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Scheduled Reports -->
+            <div class="scheduled-reports">
+                <div class="flex-between" style="margin-bottom: var(--space-lg);">
+                    <h3><i class="fas fa-clock"></i> Scheduled Reports</h3>
+                    <button class="btn btn-sm btn-outline" onclick="addSchedule()">
+                        <i class="fas fa-plus"></i> Add Schedule
+                    </button>
+                </div>
+                
+                <div class="schedule-item">
+                    <div class="schedule-info">
+                        <i class="fas fa-file-pdf" style="color: var(--accent); font-size: 20px;"></i>
+                        <div>
+                            <strong>Monthly Performance Report</strong>
+                            <div class="schedule-frequency">Every 1st of month</div>
+                        </div>
+                    </div>
+                    <div class="flex gap-2">
+                        <span class="schedule-active">Active</span>
+                        <span>Next: Apr 1, 2024</span>
+                        <button class="btn btn-sm btn-outline" onclick="editSchedule('monthly')">
+                            <i class="fas fa-edit"></i>
+                        </button>
+                    </div>
+                </div>
+                
+                <div class="schedule-item">
+                    <div class="schedule-info">
+                        <i class="fas fa-file-excel" style="color: var(--accent); font-size: 20px;"></i>
+                        <div>
+                            <strong>Weekly Commission Summary</strong>
+                            <div class="schedule-frequency">Every Monday</div>
+                        </div>
+                    </div>
+                    <div class="flex gap-2">
+                        <span class="schedule-active">Active</span>
+                        <span>Next: Mar 11, 2024</span>
+                        <button class="btn btn-sm btn-outline" onclick="editSchedule('weekly')">
+                            <i class="fas fa-edit"></i>
+                        </button>
+                    </div>
+                </div>
+                
+                <div class="schedule-item">
+                    <div class="schedule-info">
+                        <i class="fas fa-file-csv" style="color: var(--accent); font-size: 20px;"></i>
+                        <div>
+                            <strong>Daily Activity Log</strong>
+                            <div class="schedule-frequency">Daily at 23:00</div>
+                        </div>
+                    </div>
+                    <div class="flex gap-2">
+                        <span class="schedule-active">Active</span>
+                        <span>Next: Today</span>
+                        <button class="btn btn-sm btn-outline" onclick="editSchedule('daily')">
+                            <i class="fas fa-edit"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Recent Reports -->
+            <div class="report-history">
+                <h3 style="margin-bottom: var(--space-lg);">Recently Generated Reports</h3>
+                
+                <div class="report-file">
+                    <i class="fas fa-file-pdf fa-lg"></i>
+                    <div style="flex: 1;">
+                        <div><strong>March 2024 - Agency Performance Report</strong></div>
+                        <div style="font-size: 12px; color: var(--light);">Generated: Mar 9, 2024 • 2.4 MB</div>
+                    </div>
+                    <button class="btn btn-sm btn-outline" onclick="downloadReport('mar2024')">
+                        <i class="fas fa-download"></i> Download
+                    </button>
+                </div>
+                
+                <div class="report-file">
+                    <i class="fas fa-file-excel fa-lg"></i>
+                    <div style="flex: 1;">
+                        <div><strong>Q1 2024 - Commission Summary</strong></div>
+                        <div style="font-size: 12px; color: var(--light);">Generated: Mar 5, 2024 • 1.8 MB</div>
+                    </div>
+                    <button class="btn btn-sm btn-outline" onclick="downloadReport('q1-2024')">
+                        <i class="fas fa-download"></i> Download
+                    </button>
+                </div>
+                
+                <div class="report-file">
+                    <i class="fas fa-file-csv fa-lg"></i>
+                    <div style="flex: 1;">
+                        <div><strong>February 2024 - Client Acquisition Data</strong></div>
+                        <div style="font-size: 12px; color: var(--light);">Generated: Mar 1, 2024 • 567 KB</div>
+                    </div>
+                    <button class="btn btn-sm btn-outline" onclick="downloadReport('feb2024')">
+                        <i class="fas fa-download"></i> Download
+                    </button>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script>
+        function selectReportType(type) {
+            document.querySelectorAll('.generate-option').forEach(opt => opt.classList.remove('selected'));
+            event.target.closest('.generate-option').classList.add('selected');
+        }
+
+        function generateReport() {
+            TAAGC.ui.showToast('Generating report...', 'info');
+            setTimeout(() => {
+                TAAGC.ui.showToast('Report generated successfully', 'success');
+            }, 2000);
+        }
+
+        function generateCustomReport() {
+            TAAGC.ui.showToast('Custom report builder', 'info');
+        }
+
+        function scheduleReport() {
+            TAAGC.ui.showToast('Schedule report feature', 'info');
+        }
+
+        function useTemplate(template) {
+            TAAGC.ui.showToast(`Loading ${template} template...`, 'info');
+        }
+
+        function addSchedule() {
+            TAAGC.ui.showToast('Add schedule feature', 'info');
+        }
+
+        function editSchedule(schedule) {
+            TAAGC.ui.showToast(`Editing ${schedule} schedule`, 'info');
+        }
+
+        function downloadReport(report) {
+            TAAGC.ui.showToast(`Downloading ${report}...`, 'info');
+        }
+    </script>
+</body>
+</html>
