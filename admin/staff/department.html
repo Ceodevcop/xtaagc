@@ -1,0 +1,617 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Departments - TAAGC Admin</title>
+    
+    <!-- Fonts & Icons -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Assets -->
+    <link rel="stylesheet" href="/assets/css/admin.css">
+    <script src="/assets/js/admin.js" defer></script>
+    
+    <style>
+        .dept-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: var(--space-xl);
+        }
+        
+        .dept-stats {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: var(--space-lg);
+            margin-bottom: var(--space-xl);
+        }
+        
+        .org-chart {
+            background: var(--white);
+            border-radius: var(--radius-lg);
+            padding: var(--space-xl);
+            border: 1px solid #e2e8f0;
+            margin-bottom: var(--space-xl);
+            overflow-x: auto;
+        }
+        
+        .chart-container {
+            min-width: 800px;
+            padding: var(--space-lg);
+        }
+        
+        .chart-level {
+            display: flex;
+            justify-content: center;
+            gap: var(--space-xl);
+            margin-bottom: var(--space-xl);
+            position: relative;
+        }
+        
+        .chart-level::after {
+            content: '';
+            position: absolute;
+            bottom: -20px;
+            left: 0;
+            width: 100%;
+            height: 2px;
+            background: linear-gradient(90deg, transparent, var(--accent), transparent);
+        }
+        
+        .chart-level:last-child::after {
+            display: none;
+        }
+        
+        .dept-node {
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+            color: white;
+            padding: var(--space-md) var(--space-lg);
+            border-radius: var(--radius-lg);
+            min-width: 200px;
+            text-align: center;
+            position: relative;
+        }
+        
+        .dept-node.ceo {
+            background: linear-gradient(135deg, #c19a6b, #b38b5f);
+        }
+        
+        .node-title {
+            font-weight: 600;
+            margin-bottom: 4px;
+        }
+        
+        .node-name {
+            font-size: 13px;
+            opacity: 0.9;
+        }
+        
+        .node-staff {
+            font-size: 11px;
+            opacity: 0.8;
+            margin-top: 4px;
+        }
+        
+        .dept-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+            gap: var(--space-lg);
+        }
+        
+        .dept-card {
+            background: var(--white);
+            border-radius: var(--radius-lg);
+            border: 1px solid #e2e8f0;
+            overflow: hidden;
+            transition: all 0.3s;
+        }
+        
+        .dept-card:hover {
+            transform: translateY(-5px);
+            box-shadow: var(--shadow-lg);
+            border-color: var(--accent);
+        }
+        
+        .dept-header {
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+            color: white;
+            padding: var(--space-lg);
+        }
+        
+        .dept-icon {
+            width: 50px;
+            height: 50px;
+            background: rgba(255,255,255,0.2);
+            border-radius: var(--radius-md);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            margin-bottom: var(--space-md);
+        }
+        
+        .dept-name {
+            font-size: 20px;
+            font-weight: 700;
+            margin-bottom: 4px;
+        }
+        
+        .dept-manager {
+            font-size: 13px;
+            opacity: 0.9;
+        }
+        
+        .dept-body {
+            padding: var(--space-lg);
+        }
+        
+        .dept-stats-row {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: var(--space-md);
+            padding-bottom: var(--space-md);
+            border-bottom: 1px solid #e2e8f0;
+        }
+        
+        .dept-stat {
+            text-align: center;
+        }
+        
+        .dept-stat-value {
+            font-size: 20px;
+            font-weight: 700;
+            color: var(--primary);
+        }
+        
+        .dept-stat-label {
+            font-size: 11px;
+            color: var(--light);
+        }
+        
+        .staff-list {
+            max-height: 200px;
+            overflow-y: auto;
+        }
+        
+        .staff-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: var(--space-xs) 0;
+            border-bottom: 1px dashed #e2e8f0;
+        }
+        
+        .staff-item:last-child {
+            border-bottom: none;
+        }
+        
+        .staff-info {
+            display: flex;
+            align-items: center;
+            gap: var(--space-sm);
+        }
+        
+        .staff-avatar-mini {
+            width: 28px;
+            height: 28px;
+            background: var(--accent);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 12px;
+        }
+        
+        .staff-position {
+            font-size: 11px;
+            color: var(--light);
+        }
+        
+        .dept-footer {
+            padding: var(--space-lg);
+            background: var(--bg);
+            border-top: 1px solid #e2e8f0;
+            display: flex;
+            justify-content: space-between;
+        }
+        
+        .budget-info {
+            display: flex;
+            align-items: center;
+            gap: var(--space-xs);
+            font-size: 13px;
+        }
+        
+        .budget-value {
+            font-weight: 700;
+            color: var(--primary);
+        }
+    </style>
+</head>
+<body>
+    <div class="admin-container">
+        <!-- Sidebar -->
+        <aside class="sidebar">...</aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <div class="top-bar">
+                <div class="page-title">
+                    <h1><i class="fas fa-sitemap" style="color: var(--accent);"></i> Department Management</h1>
+                    <p>Manage organizational structure and teams</p>
+                </div>
+                <div class="top-bar-actions">
+                    <button class="btn btn-primary" onclick="addDepartment()">
+                        <i class="fas fa-plus"></i> New Department
+                    </button>
+                    <button class="btn btn-outline" onclick="exportDepts()">
+                        <i class="fas fa-download"></i> Export
+                    </button>
+                    <button class="logout-btn" id="logoutBtn"><i class="fas fa-sign-out-alt"></i></button>
+                </div>
+            </div>
+
+            <!-- Department Stats -->
+            <div class="dept-stats">
+                <div class="stat-card">
+                    <div class="stat-icon"><i class="fas fa-sitemap"></i></div>
+                    <div class="stat-value">8</div>
+                    <div class="stat-label">Departments</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon"><i class="fas fa-user-tie"></i></div>
+                    <div class="stat-value">124</div>
+                    <div class="stat-label">Total Staff</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon"><i class="fas fa-chart-line"></i></div>
+                    <div class="stat-value">$8.5M</div>
+                    <div class="stat-label">Total Budget</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon"><i class="fas fa-user-plus"></i></div>
+                    <div class="stat-value">12</div>
+                    <div class="stat-label">Open Positions</div>
+                </div>
+            </div>
+
+            <!-- Organization Chart -->
+            <div class="org-chart">
+                <h3 style="margin-bottom: var(--space-lg);">Organization Structure</h3>
+                <div class="chart-container">
+                    <div class="chart-level">
+                        <div class="dept-node ceo">
+                            <div class="node-title">Chief Executive Officer</div>
+                            <div class="node-name">Robert Wilson</div>
+                            <div class="node-staff">Executive Office</div>
+                        </div>
+                    </div>
+                    
+                    <div class="chart-level">
+                        <div class="dept-node">
+                            <div class="node-title">COO</div>
+                            <div class="node-name">Sarah Johnson</div>
+                            <div class="node-staff">Operations</div>
+                        </div>
+                        <div class="dept-node">
+                            <div class="node-title">CFO</div>
+                            <div class="node-name">Michael Chen</div>
+                            <div class="node-staff">Finance</div>
+                        </div>
+                        <div class="dept-node">
+                            <div class="node-title">CMO</div>
+                            <div class="node-name">Emma Davis</div>
+                            <div class="node-staff">Marketing</div>
+                        </div>
+                    </div>
+                    
+                    <div class="chart-level">
+                        <div class="dept-node">
+                            <div class="node-title">Operations Mgr</div>
+                            <div class="node-name">John Smith</div>
+                        </div>
+                        <div class="dept-node">
+                            <div class="node-title">Finance Mgr</div>
+                            <div class="node-name">Lisa Brown</div>
+                        </div>
+                        <div class="dept-node">
+                            <div class="node-title">Marketing Mgr</div>
+                            <div class="node-name">David Lee</div>
+                        </div>
+                        <div class="dept-node">
+                            <div class="node-title">HR Director</div>
+                            <div class="node-name">Maria Garcia</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Departments Grid -->
+            <div class="dept-grid">
+                <div class="dept-card">
+                    <div class="dept-header">
+                        <div class="dept-icon"><i class="fas fa-users"></i></div>
+                        <div class="dept-name">Executive Office</div>
+                        <div class="dept-manager">Robert Wilson (CEO)</div>
+                    </div>
+                    <div class="dept-body">
+                        <div class="dept-stats-row">
+                            <div class="dept-stat">
+                                <div class="dept-stat-value">5</div>
+                                <div class="dept-stat-label">Staff</div>
+                            </div>
+                            <div class="dept-stat">
+                                <div class="dept-stat-value">$1.2M</div>
+                                <div class="dept-stat-label">Budget</div>
+                            </div>
+                            <div class="dept-stat">
+                                <div class="dept-stat-value">0</div>
+                                <div class="dept-stat-label">Openings</div>
+                            </div>
+                        </div>
+                        
+                        <div class="staff-list">
+                            <div class="staff-item">
+                                <div class="staff-info">
+                                    <div class="staff-avatar-mini">RW</div>
+                                    <div>
+                                        <div>Robert Wilson</div>
+                                        <div class="staff-position">CEO</div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="staff-item">
+                                <div class="staff-info">
+                                    <div class="staff-avatar-mini">SJ</div>
+                                    <div>
+                                        <div>Sarah Johnson</div>
+                                        <div class="staff-position">COO</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="dept-footer">
+                        <span class="budget-info">
+                            <i class="fas fa-calendar"></i> Q2 Budget
+                        </span>
+                        <span class="budget-value">$300K</span>
+                    </div>
+                </div>
+
+                <div class="dept-card">
+                    <div class="dept-header">
+                        <div class="dept-icon"><i class="fas fa-cogs"></i></div>
+                        <div class="dept-name">Operations</div>
+                        <div class="dept-manager">John Smith (Manager)</div>
+                    </div>
+                    <div class="dept-body">
+                        <div class="dept-stats-row">
+                            <div class="dept-stat">
+                                <div class="dept-stat-value">32</div>
+                                <div class="dept-stat-label">Staff</div>
+                            </div>
+                            <div class="dept-stat">
+                                <div class="dept-stat-value">$2.8M</div>
+                                <div class="dept-stat-label">Budget</div>
+                            </div>
+                            <div class="dept-stat">
+                                <div class="dept-stat-value">3</div>
+                                <div class="dept-stat-label">Openings</div>
+                            </div>
+                        </div>
+                        
+                        <div class="staff-list">
+                            <div class="staff-item">
+                                <div class="staff-info">
+                                    <div class="staff-avatar-mini">JS</div>
+                                    <div>
+                                        <div>John Smith</div>
+                                        <div class="staff-position">Manager</div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="staff-item">
+                                <div class="staff-info">
+                                    <div class="staff-avatar-mini">MJ</div>
+                                    <div>
+                                        <div>Mary Jones</div>
+                                        <div class="staff-position">Supervisor</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="dept-footer">
+                        <span class="budget-info">
+                            <i class="fas fa-users"></i> 3 open positions
+                        </span>
+                        <span class="budget-value">$700K</span>
+                    </div>
+                </div>
+
+                <div class="dept-card">
+                    <div class="dept-header">
+                        <div class="dept-icon"><i class="fas fa-chart-pie"></i></div>
+                        <div class="dept-name">Finance</div>
+                        <div class="dept-manager">Lisa Brown (Director)</div>
+                    </div>
+                    <div class="dept-body">
+                        <div class="dept-stats-row">
+                            <div class="dept-stat">
+                                <div class="dept-stat-value">18</div>
+                                <div class="dept-stat-label">Staff</div>
+                            </div>
+                            <div class="dept-stat">
+                                <div class="dept-stat-value">$1.5M</div>
+                                <div class="dept-stat-label">Budget</div>
+                            </div>
+                            <div class="dept-stat">
+                                <div class="dept-stat-value">2</div>
+                                <div class="dept-stat-label">Openings</div>
+                            </div>
+                        </div>
+                        
+                        <div class="staff-list">
+                            <div class="staff-item">
+                                <div class="staff-info">
+                                    <div class="staff-avatar-mini">LB</div>
+                                    <div>
+                                        <div>Lisa Brown</div>
+                                        <div class="staff-position">Director</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="dept-footer">
+                        <span class="budget-info">
+                            <i class="fas fa-calculator"></i> Q2 Planning
+                        </span>
+                        <span class="budget-value">$375K</span>
+                    </div>
+                </div>
+
+                <div class="dept-card">
+                    <div class="dept-header">
+                        <div class="dept-icon"><i class="fas fa-chart-line"></i></div>
+                        <div class="dept-name">Marketing</div>
+                        <div class="dept-manager">David Lee (Manager)</div>
+                    </div>
+                    <div class="dept-body">
+                        <div class="dept-stats-row">
+                            <div class="dept-stat">
+                                <div class="dept-stat-value">15</div>
+                                <div class="dept-stat-label">Staff</div>
+                            </div>
+                            <div class="dept-stat">
+                                <div class="dept-stat-value">$1.2M</div>
+                                <div class="dept-stat-label">Budget</div>
+                            </div>
+                            <div class="dept-stat">
+                                <div class="dept-stat-value">4</div>
+                                <div class="dept-stat-label">Openings</div>
+                            </div>
+                        </div>
+                        
+                        <div class="staff-list">
+                            <div class="staff-item">
+                                <div class="staff-info">
+                                    <div class="staff-avatar-mini">DL</div>
+                                    <div>
+                                        <div>David Lee</div>
+                                        <div class="staff-position">Manager</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="dept-footer">
+                        <span class="budget-info">
+                            <i class="fas fa-bullhorn"></i> Campaign Budget
+                        </span>
+                        <span class="budget-value">$300K</span>
+                    </div>
+                </div>
+
+                <div class="dept-card">
+                    <div class="dept-header">
+                        <div class="dept-icon"><i class="fas fa-code"></i></div>
+                        <div class="dept-name">Information Technology</div>
+                        <div class="dept-manager">Michael Chen (CTO)</div>
+                    </div>
+                    <div class="dept-body">
+                        <div class="dept-stats-row">
+                            <div class="dept-stat">
+                                <div class="dept-stat-value">28</div>
+                                <div class="dept-stat-label">Staff</div>
+                            </div>
+                            <div class="dept-stat">
+                                <div class="dept-stat-value">$2.2M</div>
+                                <div class="dept-stat-label">Budget</div>
+                            </div>
+                            <div class="dept-stat">
+                                <div class="dept-stat-value">5</div>
+                                <div class="dept-stat-label">Openings</div>
+                            </div>
+                        </div>
+                        
+                        <div class="staff-list">
+                            <div class="staff-item">
+                                <div class="staff-info">
+                                    <div class="staff-avatar-mini">MC</div>
+                                    <div>
+                                        <div>Michael Chen</div>
+                                        <div class="staff-position">CTO</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="dept-footer">
+                        <span class="budget-info">
+                            <i class="fas fa-cloud"></i> Infrastructure
+                        </span>
+                        <span class="budget-value">$550K</span>
+                    </div>
+                </div>
+
+                <div class="dept-card">
+                    <div class="dept-header">
+                        <div class="dept-icon"><i class="fas fa-users"></i></div>
+                        <div class="dept-name">Human Resources</div>
+                        <div class="dept-manager">Maria Garcia (Director)</div>
+                    </div>
+                    <div class="dept-body">
+                        <div class="dept-stats-row">
+                            <div class="dept-stat">
+                                <div class="dept-stat-value">9</div>
+                                <div class="dept-stat-label">Staff</div>
+                            </div>
+                            <div class="dept-stat">
+                                <div class="dept-stat-value">$0.8M</div>
+                                <div class="dept-stat-label">Budget</div>
+                            </div>
+                            <div class="dept-stat">
+                                <div class="dept-stat-value">2</div>
+                                <div class="dept-stat-label">Openings</div>
+                            </div>
+                        </div>
+                        
+                        <div class="staff-list">
+                            <div class="staff-item">
+                                <div class="staff-info">
+                                    <div class="staff-avatar-mini">MG</div>
+                                    <div>
+                                        <div>Maria Garcia</div>
+                                        <div class="staff-position">Director</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="dept-footer">
+                        <span class="budget-info">
+                            <i class="fas fa-graduation-cap"></i> Training
+                        </span>
+                        <span class="budget-value">$200K</span>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script>
+        function addDepartment() {
+            TAAGC.ui.showToast('Add new department', 'info');
+        }
+
+        function exportDepts() {
+            TAAGC.ui.showToast('Exporting department data...', 'info');
+        }
+    </script>
+</body>
+</html>
