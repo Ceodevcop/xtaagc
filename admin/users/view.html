@@ -1,0 +1,1012 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>View User - TAAGC Admin</title>
+    
+    <!-- Fonts & Icons -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Assets -->
+    <link rel="stylesheet" href="/assets/css/admin.css">
+    <script src="/assets/js/admin.js" defer></script>
+    
+    <style>
+        .profile-header {
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+            color: white;
+            padding: var(--space-xl);
+            border-radius: var(--radius-lg);
+            margin-bottom: var(--space-xl);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .profile-header::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -10%;
+            width: 50%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 70%);
+            animation: float 6s ease-in-out infinite;
+        }
+        
+        .profile-avatar-large {
+            width: 120px;
+            height: 120px;
+            background: var(--accent);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 48px;
+            font-weight: 700;
+            color: white;
+            border: 4px solid rgba(255,255,255,0.3);
+            margin-bottom: var(--space-lg);
+        }
+        
+        .profile-stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: var(--space-md);
+            margin: var(--space-xl) 0;
+        }
+        
+        .profile-stat-card {
+            background: var(--white);
+            padding: var(--space-lg);
+            border-radius: var(--radius-lg);
+            text-align: center;
+            box-shadow: var(--shadow-md);
+        }
+        
+        .profile-stat-value {
+            font-size: 28px;
+            font-weight: 700;
+            color: var(--primary);
+            margin-bottom: var(--space-xs);
+        }
+        
+        .profile-stat-label {
+            color: var(--light);
+            font-size: 13px;
+        }
+        
+        .info-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: var(--space-lg);
+        }
+        
+        .info-section {
+            background: var(--white);
+            border-radius: var(--radius-lg);
+            padding: var(--space-lg);
+            box-shadow: var(--shadow-md);
+        }
+        
+        .info-section h3 {
+            color: var(--primary);
+            margin-bottom: var(--space-lg);
+            padding-bottom: var(--space-sm);
+            border-bottom: 2px solid var(--accent);
+            display: flex;
+            align-items: center;
+            gap: var(--space-sm);
+        }
+        
+        .info-row {
+            display: flex;
+            padding: var(--space-sm) 0;
+            border-bottom: 1px solid #e2e8f0;
+        }
+        
+        .info-row:last-child {
+            border-bottom: none;
+        }
+        
+        .info-label {
+            width: 120px;
+            color: var(--light);
+            font-weight: 500;
+        }
+        
+        .info-value {
+            flex: 1;
+            color: var(--dark);
+            font-weight: 500;
+        }
+        
+        .activity-timeline {
+            position: relative;
+            padding-left: var(--space-xl);
+        }
+        
+        .activity-item {
+            position: relative;
+            padding-bottom: var(--space-lg);
+            border-left: 2px solid var(--accent);
+            padding-left: var(--space-lg);
+            margin-left: var(--space-md);
+        }
+        
+        .activity-item::before {
+            content: '';
+            position: absolute;
+            left: -9px;
+            top: 0;
+            width: 16px;
+            height: 16px;
+            border-radius: 50%;
+            background: var(--accent);
+            border: 3px solid var(--white);
+            box-shadow: var(--shadow-sm);
+        }
+        
+        .activity-time {
+            font-size: 12px;
+            color: var(--light);
+            margin-bottom: var(--space-xs);
+        }
+        
+        .activity-title {
+            font-weight: 600;
+            color: var(--dark);
+            margin-bottom: var(--space-xs);
+        }
+        
+        .activity-description {
+            color: var(--light);
+            font-size: 13px;
+        }
+        
+        .action-buttons {
+            position: sticky;
+            bottom: 30px;
+            right: 30px;
+            display: flex;
+            gap: var(--space-md);
+            justify-content: flex-end;
+            margin-top: var(--space-xl);
+        }
+        
+        .badge-verified {
+            background: rgba(16,185,129,0.1);
+            color: var(--success);
+            border: 1px solid var(--success);
+            padding: 2px 8px;
+            border-radius: 20px;
+            font-size: 11px;
+            margin-left: var(--space-sm);
+        }
+        
+        .badge-unverified {
+            background: rgba(245,158,11,0.1);
+            color: var(--warning);
+            border: 1px solid var(--warning);
+            padding: 2px 8px;
+            border-radius: 20px;
+            font-size: 11px;
+            margin-left: var(--space-sm);
+        }
+        
+        .document-card {
+            background: var(--bg);
+            border: 2px dashed #e2e8f0;
+            border-radius: var(--radius-md);
+            padding: var(--space-md);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: var(--space-sm);
+        }
+        
+        .document-card:hover {
+            border-color: var(--accent);
+            background: rgba(193,154,107,0.05);
+        }
+    </style>
+</head>
+<body>
+    <div class="admin-container">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <div class="logo-icon">TA</div>
+                <h2><span>TAAGC</span> ADMIN</h2>
+            </div>
+
+            <div class="user-info">
+                <div class="user-avatar" data-user-avatar>A</div>
+                <div data-user-field="name">Loading...</div>
+                <div style="font-size: 12px; opacity: 0.7;" data-user-field="email"></div>
+                <span class="user-role" data-user-field="role"></span>
+            </div>
+
+            <nav class="nav-menu">
+                <div class="nav-section">MAIN</div>
+                <a href="/dashboard.html" class="nav-item"><i class="fas fa-tachometer-alt"></i> Dashboard</a>
+                <a href="/users/index.html" class="nav-item active"><i class="fas fa-users"></i> Users</a>
+                <a href="/investments/index.html" class="nav-item"><i class="fas fa-chart-line"></i> Investments</a>
+                <a href="/banks/index.html" class="nav-item"><i class="fas fa-university"></i> Banks</a>
+                <a href="/agencies/index.html" class="nav-item"><i class="fas fa-building"></i> Agencies</a>
+            </nav>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <div class="top-bar">
+                <div class="page-title">
+                    <h1><i class="fas fa-user-circle" style="color: var(--accent);"></i> User Profile</h1>
+                    <p>View detailed user information and activity</p>
+                </div>
+                <div class="top-bar-actions">
+                    <button class="btn btn-outline" onclick="location.href='/users/index.html'">
+                        <i class="fas fa-arrow-left"></i> Back to Users
+                    </button>
+                    <button class="logout-btn" id="logoutBtn"><i class="fas fa-sign-out-alt"></i></button>
+                </div>
+            </div>
+
+            <!-- User ID from URL -->
+            <div id="userId" style="display: none;">{{id}}</div>
+
+            <!-- Profile Header -->
+            <div class="profile-header" id="profileHeader">
+                <div style="position: relative; z-index: 2;">
+                    <div class="profile-avatar-large" id="userAvatarLarge">JD</div>
+                    <h1 style="font-size: 32px; margin-bottom: var(--space-xs);" id="userFullName">John Doe</h1>
+                    <div class="flex gap-2" style="align-items: center;">
+                        <span class="badge" id="userRoleBadge">Investor</span>
+                        <span class="badge" id="userStatusBadge">Active</span>
+                        <span id="emailVerifiedBadge"></span>
+                    </div>
+                    <p style="opacity: 0.9; margin-top: var(--space-sm);" id="userEmail">john.doe@example.com</p>
+                    <p style="opacity: 0.7; font-size: 14px;" id="userMemberSince">Member since Jan 15, 2024</p>
+                </div>
+            </div>
+
+            <!-- Stats -->
+            <div class="profile-stats">
+                <div class="profile-stat-card">
+                    <div class="profile-stat-value" id="statInvestments">12</div>
+                    <div class="profile-stat-label">Total Investments</div>
+                </div>
+                <div class="profile-stat-card">
+                    <div class="profile-stat-value" id="statValue">$124,500</div>
+                    <div class="profile-stat-label">Investment Value</div>
+                </div>
+                <div class="profile-stat-card">
+                    <div class="profile-stat-value" id="statReturns">$18,675</div>
+                    <div class="profile-stat-label">Total Returns</div>
+                </div>
+                <div class="profile-stat-card">
+                    <div class="profile-stat-value" id="statTransactions">34</div>
+                    <div class="profile-stat-label">Transactions</div>
+                </div>
+            </div>
+
+            <!-- Tabs -->
+            <div class="tabs" style="margin-bottom: var(--space-xl);">
+                <div class="tab active" onclick="showTab('overview')">Overview</div>
+                <div class="tab" onclick="showTab('investments')">Investments</div>
+                <div class="tab" onclick="showTab('transactions')">Transactions</div>
+                <div class="tab" onclick="showTab('documents')">Documents</div>
+                <div class="tab" onclick="showTab('activity')">Activity Log</div>
+            </div>
+
+            <!-- Overview Tab -->
+            <div id="overviewTab">
+                <div class="info-grid">
+                    <!-- Personal Information -->
+                    <div class="info-section">
+                        <h3><i class="fas fa-user"></i> Personal Information</h3>
+                        <div class="info-row">
+                            <span class="info-label">Full Name</span>
+                            <span class="info-value" id="personalFullName">John Doe</span>
+                        </div>
+                        <div class="info-row">
+                            <span class="info-label">Email</span>
+                            <span class="info-value" id="personalEmail">john@example.com</span>
+                        </div>
+                        <div class="info-row">
+                            <span class="info-label">Phone</span>
+                            <span class="info-value" id="personalPhone">+1 (555) 123-4567</span>
+                        </div>
+                        <div class="info-row">
+                            <span class="info-label">Date of Birth</span>
+                            <span class="info-value" id="personalDob">1985-06-15</span>
+                        </div>
+                        <div class="info-row">
+                            <span class="info-label">Gender</span>
+                            <span class="info-value" id="personalGender">Male</span>
+                        </div>
+                        <div class="info-row">
+                            <span class="info-label">Nationality</span>
+                            <span class="info-value" id="personalNationality">United States</span>
+                        </div>
+                    </div>
+
+                    <!-- Address Information -->
+                    <div class="info-section">
+                        <h3><i class="fas fa-map-marker-alt"></i> Address</h3>
+                        <div class="info-row">
+                            <span class="info-label">Street</span>
+                            <span class="info-value" id="addressStreet">123 Main St</span>
+                        </div>
+                        <div class="info-row">
+                            <span class="info-label">City</span>
+                            <span class="info-value" id="addressCity">New York</span>
+                        </div>
+                        <div class="info-row">
+                            <span class="info-label">State</span>
+                            <span class="info-value" id="addressState">NY</span>
+                        </div>
+                        <div class="info-row">
+                            <span class="info-label">ZIP Code</span>
+                            <span class="info-value" id="addressZip">10001</span>
+                        </div>
+                        <div class="info-row">
+                            <span class="info-label">Country</span>
+                            <span class="info-value" id="addressCountry">USA</span>
+                        </div>
+                    </div>
+
+                    <!-- Account Information -->
+                    <div class="info-section">
+                        <h3><i class="fas fa-cog"></i> Account Information</h3>
+                        <div class="info-row">
+                            <span class="info-label">User ID</span>
+                            <span class="info-value"><code id="accountUserId">usr_12345</code></span>
+                        </div>
+                        <div class="info-row">
+                            <span class="info-label">Role</span>
+                            <span class="info-value" id="accountRole">Investor</span>
+                        </div>
+                        <div class="info-row">
+                            <span class="info-label">Status</span>
+                            <span class="info-value" id="accountStatus">Active</span>
+                        </div>
+                        <div class="info-row">
+                            <span class="info-label">2FA Enabled</span>
+                            <span class="info-value" id="account2fa">Yes</span>
+                        </div>
+                        <div class="info-row">
+                            <span class="info-label">Email Verified</span>
+                            <span class="info-value" id="accountEmailVerified">Yes</span>
+                        </div>
+                        <div class="info-row">
+                            <span class="info-label">Last Login</span>
+                            <span class="info-value" id="accountLastLogin">2 hours ago</span>
+                        </div>
+                        <div class="info-row">
+                            <span class="info-label">Last IP</span>
+                            <span class="info-value" id="accountLastIp">192.168.1.100</span>
+                        </div>
+                        <div class="info-row">
+                            <span class="info-label">Member Since</span>
+                            <span class="info-value" id="accountMemberSince">Jan 15, 2024</span>
+                        </div>
+                    </div>
+
+                    <!-- Bank Information -->
+                    <div class="info-section">
+                        <h3><i class="fas fa-university"></i> Bank Information</h3>
+                        <div class="info-row">
+                            <span class="info-label">Bank Name</span>
+                            <span class="info-value" id="bankName">Chase Bank</span>
+                        </div>
+                        <div class="info-row">
+                            <span class="info-label">Account Holder</span>
+                            <span class="info-value" id="bankHolder">John Doe</span>
+                        </div>
+                        <div class="info-row">
+                            <span class="info-label">Account Number</span>
+                            <span class="info-value" id="bankAccount">••••••••1234</span>
+                        </div>
+                        <div class="info-row">
+                            <span class="info-label">Routing Number</span>
+                            <span class="info-value" id="bankRouting">021000021</span>
+                        </div>
+                        <div class="info-row">
+                            <span class="info-label">Account Type</span>
+                            <span class="info-value" id="bankType">Checking</span>
+                        </div>
+                        <div class="info-row">
+                            <span class="info-label">Verified</span>
+                            <span class="info-value" id="bankVerified">Yes</span>
+                        </div>
+                    </div>
+
+                    <!-- KYC Information -->
+                    <div class="info-section">
+                        <h3><i class="fas fa-id-card"></i> KYC Information</h3>
+                        <div class="info-row">
+                            <span class="info-label">ID Type</span>
+                            <span class="info-value" id="kycType">Passport</span>
+                        </div>
+                        <div class="info-row">
+                            <span class="info-label">ID Number</span>
+                            <span class="info-value" id="kycNumber">••••••••9876</span>
+                        </div>
+                        <div class="info-row">
+                            <span class="info-label">Issue Date</span>
+                            <span class="info-value" id="kycIssue">Jan 01, 2020</span>
+                        </div>
+                        <div class="info-row">
+                            <span class="info-label">Expiry Date</span>
+                            <span class="info-value" id="kycExpiry">Jan 01, 2030</span>
+                        </div>
+                        <div class="info-row">
+                            <span class="info-label">Country</span>
+                            <span class="info-value" id="kycCountry">USA</span>
+                        </div>
+                        <div class="info-row">
+                            <span class="info-label">Verification Status</span>
+                            <span class="info-value" id="kycStatus">Verified</span>
+                        </div>
+                    </div>
+
+                    <!-- Preferences -->
+                    <div class="info-section">
+                        <h3><i class="fas fa-bell"></i> Preferences</h3>
+                        <div class="info-row">
+                            <span class="info-label">Language</span>
+                            <span class="info-value" id="prefLanguage">English</span>
+                        </div>
+                        <div class="info-row">
+                            <span class="info-label">Timezone</span>
+                            <span class="info-value" id="prefTimezone">America/New_York</span>
+                        </div>
+                        <div class="info-row">
+                            <span class="info-label">Currency</span>
+                            <span class="info-value" id="prefCurrency">USD ($)</span>
+                        </div>
+                        <div class="info-row">
+                            <span class="info-label">Email Notifications</span>
+                            <span class="info-value" id="prefEmail">Yes</span>
+                        </div>
+                        <div class="info-row">
+                            <span class="info-label">SMS Notifications</span>
+                            <span class="info-value" id="prefSms">No</span>
+                        </div>
+                        <div class="info-row">
+                            <span class="info-label">Marketing Emails</span>
+                            <span class="info-value" id="prefMarketing">Yes</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Investments Tab -->
+            <div id="investmentsTab" style="display: none;">
+                <div class="card">
+                    <div class="card-header">
+                        <h2><i class="fas fa-chart-line"></i> Investment Portfolio</h2>
+                        <button class="btn btn-sm btn-primary" onclick="exportInvestments()">
+                            <i class="fas fa-download"></i> Export
+                        </button>
+                    </div>
+                    <div class="table-container">
+                        <table id="investmentsTable">
+                            <thead>
+                                <tr>
+                                    <th>Project</th>
+                                    <th>Amount</th>
+                                    <th>Date</th>
+                                    <th>Status</th>
+                                    <th>Returns</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="investmentsBody">
+                                <tr><td colspan="6" class="text-center">Loading investments...</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Transactions Tab -->
+            <div id="transactionsTab" style="display: none;">
+                <div class="card">
+                    <div class="card-header">
+                        <h2><i class="fas fa-exchange-alt"></i> Transaction History</h2>
+                        <div class="flex gap-2">
+                            <select id="transactionFilter" class="form-control" style="width: 150px;">
+                                <option value="">All Types</option>
+                                <option value="deposit">Deposits</option>
+                                <option value="withdrawal">Withdrawals</option>
+                                <option value="investment">Investments</option>
+                                <option value="return">Returns</option>
+                            </select>
+                            <button class="btn btn-sm btn-outline" onclick="exportTransactions()">
+                                <i class="fas fa-download"></i> Export
+                            </button>
+                        </div>
+                    </div>
+                    <div class="table-container">
+                        <table id="transactionsTable">
+                            <thead>
+                                <tr>
+                                    <th>ID</th>
+                                    <th>Type</th>
+                                    <th>Amount</th>
+                                    <th>Date</th>
+                                    <th>Status</th>
+                                    <th>Description</th>
+                                </tr>
+                            </thead>
+                            <tbody id="transactionsBody">
+                                <tr><td colspan="6" class="text-center">Loading transactions...</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Documents Tab -->
+            <div id="documentsTab" style="display: none;">
+                <div class="card">
+                    <div class="card-header">
+                        <h2><i class="fas fa-file-alt"></i> KYC Documents</h2>
+                        <button class="btn btn-sm btn-primary" onclick="uploadDocument()">
+                            <i class="fas fa-upload"></i> Upload Document
+                        </button>
+                    </div>
+                    
+                    <div class="grid-2">
+                        <div>
+                            <h4 style="margin-bottom: var(--space-md);">Identity Documents</h4>
+                            <div class="document-card">
+                                <div class="flex gap-2">
+                                    <i class="fas fa-id-card" style="color: var(--accent); font-size: 24px;"></i>
+                                    <div>
+                                        <strong>Passport.pdf</strong>
+                                        <br>
+                                        <small>Uploaded: Jan 15, 2024</small>
+                                    </div>
+                                </div>
+                                <div class="flex gap-1">
+                                    <button class="btn btn-sm btn-outline" onclick="viewDocument('passport')">
+                                        <i class="fas fa-eye"></i>
+                                    </button>
+                                    <button class="btn btn-sm btn-outline-accent" onclick="downloadDocument('passport')">
+                                        <i class="fas fa-download"></i>
+                                    </button>
+                                </div>
+                            </div>
+                            
+                            <div class="document-card">
+                                <div class="flex gap-2">
+                                    <i class="fas fa-id-card" style="color: var(--accent); font-size: 24px;"></i>
+                                    <div>
+                                        <strong>DriversLicense.jpg</strong>
+                                        <br>
+                                        <small>Uploaded: Jan 15, 2024</small>
+                                    </div>
+                                </div>
+                                <div class="flex gap-1">
+                                    <button class="btn btn-sm btn-outline" onclick="viewDocument('license')">
+                                        <i class="fas fa-eye"></i>
+                                    </button>
+                                    <button class="btn btn-sm btn-outline-accent" onclick="downloadDocument('license')">
+                                        <i class="fas fa-download"></i>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div>
+                            <h4 style="margin-bottom: var(--space-md);">Address Proof</h4>
+                            <div class="document-card">
+                                <div class="flex gap-2">
+                                    <i class="fas fa-file-invoice" style="color: var(--accent); font-size: 24px;"></i>
+                                    <div>
+                                        <strong>UtilityBill.pdf</strong>
+                                        <br>
+                                        <small>Uploaded: Jan 15, 2024</small>
+                                    </div>
+                                </div>
+                                <div class="flex gap-1">
+                                    <button class="btn btn-sm btn-outline" onclick="viewDocument('bill')">
+                                        <i class="fas fa-eye"></i>
+                                    </button>
+                                    <button class="btn btn-sm btn-outline-accent" onclick="downloadDocument('bill')">
+                                        <i class="fas fa-download"></i>
+                                    </button>
+                                </div>
+                            </div>
+                            
+                            <div class="document-card">
+                                <div class="flex gap-2">
+                                    <i class="fas fa-file-invoice" style="color: var(--accent); font-size: 24px;"></i>
+                                    <div>
+                                        <strong>BankStatement.pdf</strong>
+                                        <br>
+                                        <small>Uploaded: Jan 15, 2024</small>
+                                    </div>
+                                </div>
+                                <div class="flex gap-1">
+                                    <button class="btn btn-sm btn-outline" onclick="viewDocument('statement')">
+                                        <i class="fas fa-eye"></i>
+                                    </button>
+                                    <button class="btn btn-sm btn-outline-accent" onclick="downloadDocument('statement')">
+                                        <i class="fas fa-download"></i>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Activity Tab -->
+            <div id="activityTab" style="display: none;">
+                <div class="card">
+                    <div class="card-header">
+                        <h2><i class="fas fa-history"></i> Activity Timeline</h2>
+                        <div class="flex gap-2">
+                            <select id="activityFilter" class="form-control" style="width: 150px;">
+                                <option value="">All Activities</option>
+                                <option value="login">Logins</option>
+                                <option value="investment">Investments</option>
+                                <option value="transaction">Transactions</option>
+                                <option value="profile">Profile Updates</option>
+                            </select>
+                        </div>
+                    </div>
+                    
+                    <div class="activity-timeline" id="activityTimeline">
+                        <!-- Activity items will be inserted here -->
+                    </div>
+                </div>
+            </div>
+
+            <!-- Action Buttons -->
+            <div class="action-buttons">
+                <button class="btn btn-primary" onclick="editUser()">
+                    <i class="fas fa-edit"></i> Edit User
+                </button>
+                <button class="btn btn-outline" onclick="sendMessage()">
+                    <i class="fas fa-envelope"></i> Send Message
+                </button>
+                <button class="btn btn-outline-accent" onclick="resetPassword()">
+                    <i class="fas fa-key"></i> Reset Password
+                </button>
+                <button class="btn btn-outline-danger" onclick="suspendUser()">
+                    <i class="fas fa-ban"></i> Suspend
+                </button>
+                <button class="btn btn-danger" onclick="deleteUser()">
+                    <i class="fas fa-trash"></i> Delete
+                </button>
+            </div>
+        </main>
+    </div>
+
+    <script>
+        // Get user ID from URL
+        const urlParams = new URLSearchParams(window.location.search);
+        const userId = urlParams.get('id') || 'usr_12345';
+        
+        // Mock user data (replace with API call)
+        const userData = {
+            id: userId,
+            fullName: 'John Doe',
+            email: 'john.doe@example.com',
+            phone: '+1 (555) 123-4567',
+            role: 'investor',
+            status: 'active',
+            emailVerified: true,
+            twoFactorEnabled: true,
+            createdAt: '2024-01-15T10:30:00Z',
+            lastLogin: '2024-03-09T14:22:00Z',
+            lastIp: '192.168.1.100',
+            profile: {
+                firstName: 'John',
+                lastName: 'Doe',
+                dob: '1985-06-15',
+                gender: 'Male',
+                nationality: 'United States'
+            },
+            address: {
+                street: '123 Main St',
+                city: 'New York',
+                state: 'NY',
+                zip: '10001',
+                country: 'USA'
+            },
+            bank: {
+                name: 'Chase Bank',
+                holder: 'John Doe',
+                account: '••••••••1234',
+                routing: '021000021',
+                type: 'Checking',
+                verified: true
+            },
+            kyc: {
+                type: 'Passport',
+                number: '••••••••9876',
+                issueDate: '2020-01-01',
+                expiryDate: '2030-01-01',
+                country: 'USA',
+                status: 'verified'
+            },
+            preferences: {
+                language: 'en',
+                timezone: 'America/New_York',
+                currency: 'USD',
+                notifications: {
+                    email: true,
+                    sms: false,
+                    marketing: true
+                }
+            },
+            stats: {
+                investments: 12,
+                investmentValue: 124500,
+                returns: 18675,
+                transactions: 34
+            }
+        };
+
+        document.addEventListener('DOMContentLoaded', () => {
+            if (!TAAGC.auth.isAuthenticated()) {
+                window.location.href = '/';
+                return;
+            }
+            
+            TAAGC.auth.updateUI();
+            loadUserData();
+            loadInvestments();
+            loadTransactions();
+            loadActivity();
+        });
+
+        function loadUserData() {
+            // Update profile header
+            document.getElementById('userFullName').textContent = userData.fullName;
+            document.getElementById('userEmail').textContent = userData.email;
+            document.getElementById('userAvatarLarge').textContent = 
+                userData.fullName.split(' ').map(n => n[0]).join('');
+            
+            // Role badge
+            const roleBadge = document.getElementById('userRoleBadge');
+            roleBadge.textContent = userData.role.replace('_', ' ');
+            roleBadge.className = `badge ${
+                userData.role === 'super_admin' ? 'badge-danger' :
+                userData.role === 'admin' ? 'badge-warning' :
+                userData.role === 'investor' ? 'badge-success' :
+                userData.role === 'staff' ? 'badge-purple' : 'badge-info'
+            }`;
+            
+            // Status badge
+            const statusBadge = document.getElementById('userStatusBadge');
+            statusBadge.textContent = userData.status;
+            statusBadge.className = `badge ${
+                userData.status === 'active' ? 'badge-success' :
+                userData.status === 'pending' ? 'badge-warning' :
+                userData.status === 'suspended' ? 'badge-danger' : 'badge-info'
+            }`;
+            
+            // Email verified badge
+            const verifiedBadge = document.getElementById('emailVerifiedBadge');
+            verifiedBadge.innerHTML = userData.emailVerified ? 
+                '<span class="badge-verified"><i class="fas fa-check-circle"></i> Email Verified</span>' :
+                '<span class="badge-unverified"><i class="fas fa-exclamation-circle"></i> Email Unverified</span>';
+            
+            document.getElementById('userMemberSince').textContent = 
+                `Member since ${TAAGC.data.formatDate(userData.createdAt)}`;
+            
+            // Stats
+            document.getElementById('statInvestments').textContent = userData.stats.investments;
+            document.getElementById('statValue').textContent = TAAGC.data.formatCurrency(userData.stats.investmentValue);
+            document.getElementById('statReturns').textContent = TAAGC.data.formatCurrency(userData.stats.returns);
+            document.getElementById('statTransactions').textContent = userData.stats.transactions;
+            
+            // Personal Info
+            document.getElementById('personalFullName').textContent = userData.fullName;
+            document.getElementById('personalEmail').textContent = userData.email;
+            document.getElementById('personalPhone').textContent = userData.phone;
+            document.getElementById('personalDob').textContent = TAAGC.data.formatDate(userData.profile.dob);
+            document.getElementById('personalGender').textContent = userData.profile.gender;
+            document.getElementById('personalNationality').textContent = userData.profile.nationality;
+            
+            // Address
+            document.getElementById('addressStreet').textContent = userData.address.street;
+            document.getElementById('addressCity').textContent = userData.address.city;
+            document.getElementById('addressState').textContent = userData.address.state;
+            document.getElementById('addressZip').textContent = userData.address.zip;
+            document.getElementById('addressCountry').textContent = userData.address.country;
+            
+            // Account
+            document.getElementById('accountUserId').textContent = userData.id;
+            document.getElementById('accountRole').textContent = userData.role.replace('_', ' ');
+            document.getElementById('accountStatus').textContent = userData.status;
+            document.getElementById('account2fa').textContent = userData.twoFactorEnabled ? 'Yes' : 'No';
+            document.getElementById('accountEmailVerified').textContent = userData.emailVerified ? 'Yes' : 'No';
+            document.getElementById('accountLastLogin').textContent = TAAGC.data.timeAgo(userData.lastLogin);
+            document.getElementById('accountLastIp').textContent = userData.lastIp;
+            document.getElementById('accountMemberSince').textContent = TAAGC.data.formatDate(userData.createdAt);
+            
+            // Bank
+            document.getElementById('bankName').textContent = userData.bank.name;
+            document.getElementById('bankHolder').textContent = userData.bank.holder;
+            document.getElementById('bankAccount').textContent = userData.bank.account;
+            document.getElementById('bankRouting').textContent = userData.bank.routing;
+            document.getElementById('bankType').textContent = userData.bank.type;
+            document.getElementById('bankVerified').textContent = userData.bank.verified ? 'Yes' : 'No';
+            
+            // KYC
+            document.getElementById('kycType').textContent = userData.kyc.type;
+            document.getElementById('kycNumber').textContent = userData.kyc.number;
+            document.getElementById('kycIssue').textContent = TAAGC.data.formatDate(userData.kyc.issueDate);
+            document.getElementById('kycExpiry').textContent = TAAGC.data.formatDate(userData.kyc.expiryDate);
+            document.getElementById('kycCountry').textContent = userData.kyc.country;
+            document.getElementById('kycStatus').textContent = userData.kyc.status;
+            
+            // Preferences
+            document.getElementById('prefLanguage').textContent = userData.preferences.language;
+            document.getElementById('prefTimezone').textContent = userData.preferences.timezone;
+            document.getElementById('prefCurrency').textContent = userData.preferences.currency;
+            document.getElementById('prefEmail').textContent = userData.preferences.notifications.email ? 'Yes' : 'No';
+            document.getElementById('prefSms').textContent = userData.preferences.notifications.sms ? 'Yes' : 'No';
+            document.getElementById('prefMarketing').textContent = userData.preferences.notifications.marketing ? 'Yes' : 'No';
+        }
+
+        function loadInvestments() {
+            const investments = [
+                { project: 'Real Estate Fund A', amount: 50000, date: '2024-02-15', status: 'active', returns: 3750 },
+                { project: 'Tech Growth Fund', amount: 25000, date: '2024-01-20', status: 'active', returns: 1250 },
+                { project: 'Green Energy Project', amount: 15000, date: '2023-12-10', status: 'completed', returns: 2250 },
+                { project: 'Infrastructure Bond', amount: 34500, date: '2023-11-05', status: 'active', returns: 1725 }
+            ];
+            
+            const tbody = document.getElementById('investmentsBody');
+            tbody.innerHTML = investments.map(inv => `
+                <tr>
+                    <td>${inv.project}</td>
+                    <td>${TAAGC.data.formatCurrency(inv.amount)}</td>
+                    <td>${TAAGC.data.formatDate(inv.date)}</td>
+                    <td><span class="badge badge-${inv.status === 'active' ? 'success' : 'info'}">${inv.status}</span></td>
+                    <td>${TAAGC.data.formatCurrency(inv.returns)}</td>
+                    <td>
+                        <button class="btn btn-sm btn-outline" onclick="viewInvestment('${inv.project}')">
+                            <i class="fas fa-eye"></i>
+                        </button>
+                    </td>
+                </tr>
+            `).join('');
+        }
+
+        function loadTransactions() {
+            const transactions = [
+                { id: 'TXN001', type: 'deposit', amount: 50000, date: '2024-02-15', status: 'completed', desc: 'Bank transfer' },
+                { id: 'TXN002', type: 'investment', amount: 25000, date: '2024-01-20', status: 'completed', desc: 'Tech Growth Fund' },
+                { id: 'TXN003', type: 'return', amount: 1250, date: '2024-01-25', status: 'completed', desc: 'Monthly returns' },
+                { id: 'TXN004', type: 'withdrawal', amount: 10000, date: '2024-01-10', status: 'pending', desc: 'Bank withdrawal' }
+            ];
+            
+            const tbody = document.getElementById('transactionsBody');
+            tbody.innerHTML = transactions.map(tx => `
+                <tr>
+                    <td><code>${tx.id}</code></td>
+                    <td><span class="badge badge-${tx.type === 'deposit' ? 'success' : tx.type === 'withdrawal' ? 'danger' : tx.type === 'investment' ? 'info' : 'warning'}">${tx.type}</span></td>
+                    <td>${TAAGC.data.formatCurrency(tx.amount)}</td>
+                    <td>${TAAGC.data.formatDate(tx.date)}</td>
+                    <td><span class="badge badge-${tx.status === 'completed' ? 'success' : 'warning'}">${tx.status}</span></td>
+                    <td>${tx.desc}</td>
+                </tr>
+            `).join('');
+        }
+
+        function loadActivity() {
+            const activities = [
+                { time: '2024-03-09T14:22:00Z', type: 'login', title: 'User logged in', description: 'IP: 192.168.1.100, Device: Chrome on Windows' },
+                { time: '2024-03-09T10:15:00Z', type: 'investment', title: 'Investment made', description: 'Invested $5,000 in Real Estate Fund A' },
+                { time: '2024-03-08T16:30:00Z', type: 'profile', title: 'Profile updated', description: 'Changed phone number' },
+                { time: '2024-03-07T09:45:00Z', type: 'transaction', title: 'Withdrawal requested', description: '$2,500 to bank account' },
+                { time: '2024-03-06T11:20:00Z', type: 'login', title: 'Failed login attempt', description: 'IP: 203.0.113.45' }
+            ];
+            
+            const timeline = document.getElementById('activityTimeline');
+            timeline.innerHTML = activities.map(act => `
+                <div class="activity-item">
+                    <div class="activity-time">${TAAGC.data.timeAgo(act.time)}</div>
+                    <div class="activity-title">${act.title}</div>
+                    <div class="activity-description">${act.description}</div>
+                </div>
+            `).join('');
+        }
+
+        function showTab(tabName) {
+            // Update tab styling
+            document.querySelectorAll('.tab').forEach(tab => tab.classList.remove('active'));
+            event.target.classList.add('active');
+            
+            // Hide all tabs
+            document.getElementById('overviewTab').style.display = 'none';
+            document.getElementById('investmentsTab').style.display = 'none';
+            document.getElementById('transactionsTab').style.display = 'none';
+            document.getElementById('documentsTab').style.display = 'none';
+            document.getElementById('activityTab').style.display = 'none';
+            
+            // Show selected tab
+            document.getElementById(`${tabName}Tab`).style.display = 'block';
+        }
+
+        function editUser() {
+            location.href = `/users/edit.html?id=${userId}`;
+        }
+
+        function sendMessage() {
+            location.href = `/messages/compose.html?to=${userId}`;
+        }
+
+        function resetPassword() {
+            TAAGC.ui.confirm('Send password reset email to this user?', async () => {
+                try {
+                    // await TAAGC.api.post(`/users/${userId}/reset-password`);
+                    TAAGC.ui.showToast('Password reset email sent', 'success');
+                } catch (error) {
+                    TAAGC.ui.showToast('Error sending reset email', 'error');
+                }
+            });
+        }
+
+        function suspendUser() {
+            TAAGC.ui.confirm('Suspend this user account? They will not be able to login.', async () => {
+                try {
+                    // await TAAGC.api.patch(`/users/${userId}/status`, { status: 'suspended' });
+                    TAAGC.ui.showToast('User suspended', 'success');
+                    setTimeout(() => location.reload(), 1500);
+                } catch (error) {
+                    TAAGC.ui.showToast('Error suspending user', 'error');
+                }
+            });
+        }
+
+        function deleteUser() {
+            if (!TAAGC.auth.isSuperAdmin()) {
+                TAAGC.ui.showToast('Only super admins can delete users', 'error');
+                return;
+            }
+            
+            TAAGC.ui.confirm('Permanently delete this user? This action cannot be undone!', async () => {
+                try {
+                    // await TAAGC.api.delete(`/users/${userId}`);
+                    TAAGC.ui.showToast('User deleted', 'success');
+                    setTimeout(() => location.href = '/users/index.html', 1500);
+                } catch (error) {
+                    TAAGC.ui.showToast('Error deleting user', 'error');
+                }
+            });
+        }
+
+        function exportInvestments() {
+            TAAGC.ui.showToast('Exporting investments...', 'info');
+        }
+
+        function exportTransactions() {
+            TAAGC.ui.showToast('Exporting transactions...', 'info');
+        }
+
+        function viewDocument(docId) {
+            TAAGC.ui.showToast('Opening document...', 'info');
+        }
+
+        function downloadDocument(docId) {
+            TAAGC.ui.showToast('Downloading document...', 'info');
+        }
+
+        function uploadDocument() {
+            TAAGC.ui.showToast('Upload feature coming soon', 'info');
+        }
+    </script>
+</body>
+</html>
