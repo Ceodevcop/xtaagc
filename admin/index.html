@@ -10,7 +10,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
     <!-- ONE CSS file -->
-    <link rel="stylesheet" href="/admin/assets/css/admin.css">
+    <link rel="stylesheet" href="/assets/css/admin.css">
     
     <style>
         /* Your beautiful styles remain exactly the same */
@@ -328,7 +328,7 @@
     </div>
 
     <!-- ONE JS file - Clean and secure -->
-    <script src="/admin/assets/js/admin.js"></script>
+    <script src="/assets/js/admin.js"></script>
     
     <script>
         // ============================================
@@ -436,7 +436,7 @@
                 showAlert(`Welcome back, ${data.user.fullName || 'Admin'}!`, 'success');
 
                 setTimeout(() => {
-                    window.location.href = '/admin/dashboard.html';
+                    window.location.href = '/dashboard/index.html';
                 }, 1500);
 
             } catch (error) {
@@ -448,7 +448,7 @@
 
         // Redirect if already logged in
         if (localStorage.getItem('adminToken') || sessionStorage.getItem('adminToken')) {
-            window.location.href = '/admin/dashboard.html';
+            window.location.href = '/dashboard/index.html';
         }
     </script>
 </body>
