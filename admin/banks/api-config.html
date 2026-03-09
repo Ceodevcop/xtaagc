@@ -1,0 +1,467 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bank API Configuration - TAAGC Admin</title>
+    
+    <!-- Fonts & Icons -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Assets -->
+    <link rel="stylesheet" href="/assets/css/admin.css">
+    <script src="/assets/js/admin.js" defer></script>
+    
+    <style>
+        .api-config-container {
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+        
+        .api-section {
+            background: var(--white);
+            border-radius: var(--radius-lg);
+            padding: var(--space-xl);
+            margin-bottom: var(--space-xl);
+            border: 1px solid #e2e8f0;
+        }
+        
+        .api-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: var(--space-lg);
+            padding-bottom: var(--space-md);
+            border-bottom: 2px solid var(--accent);
+        }
+        
+        .api-key-display {
+            background: var(--bg);
+            padding: var(--space-md);
+            border-radius: var(--radius-md);
+            font-family: monospace;
+            font-size: 14px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        
+        .api-key-value {
+            color: var(--dark);
+            letter-spacing: 2px;
+        }
+        
+        .endpoint-list {
+            list-style: none;
+        }
+        
+        .endpoint-item {
+            display: flex;
+            align-items: center;
+            padding: var(--space-sm) 0;
+            border-bottom: 1px solid #e2e8f0;
+        }
+        
+        .endpoint-method {
+            width: 80px;
+            padding: 2px 8px;
+            border-radius: 12px;
+            font-size: 11px;
+            font-weight: 600;
+            text-align: center;
+        }
+        
+        .method-get {
+            background: rgba(59,130,246,0.1);
+            color: var(--info);
+        }
+        
+        .method-post {
+            background: rgba(16,185,129,0.1);
+            color: var(--success);
+        }
+        
+        .method-put {
+            background: rgba(245,158,11,0.1);
+            color: var(--warning);
+        }
+        
+        .method-delete {
+            background: rgba(229,62,62,0.1);
+            color: var(--danger);
+        }
+        
+        .endpoint-path {
+            flex: 1;
+            font-family: monospace;
+            font-size: 13px;
+            margin: 0 var(--space-md);
+        }
+        
+        .endpoint-desc {
+            color: var(--light);
+            font-size: 12px;
+        }
+        
+        .webhook-item {
+            background: var(--bg);
+            border-radius: var(--radius-md);
+            padding: var(--space-md);
+            margin-bottom: var(--space-sm);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        
+        .webhook-url {
+            font-family: monospace;
+            font-size: 13px;
+        }
+        
+        .webhook-status {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            padding: 2px 8px;
+            border-radius: 12px;
+            font-size: 11px;
+        }
+        
+        .webhook-active {
+            background: rgba(16,185,129,0.1);
+            color: var(--success);
+        }
+        
+        .rate-limit-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: var(--space-sm) 0;
+            border-bottom: 1px solid #e2e8f0;
+        }
+        
+        .rate-limit-label {
+            font-weight: 600;
+            color: var(--dark);
+        }
+        
+        .rate-limit-value {
+            color: var(--light);
+        }
+        
+        .rate-limit-bar {
+            width: 200px;
+            height: 8px;
+            background: #e2e8f0;
+            border-radius: 4px;
+            overflow: hidden;
+        }
+        
+        .rate-limit-fill {
+            height: 100%;
+            background: var(--accent);
+            border-radius: 4px;
+        }
+        
+        .test-endpoint {
+            background: var(--bg);
+            border-radius: var(--radius-md);
+            padding: var(--space-md);
+            margin-top: var(--space-md);
+        }
+    </style>
+</head>
+<body class="super-admin">
+    <div class="admin-container">
+        <!-- Sidebar -->
+        <aside class="sidebar">...</aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <div class="top-bar">
+                <div class="page-title">
+                    <h1><i class="fas fa-code" style="color: var(--accent);"></i> Bank API Configuration</h1>
+                    <p>Manage API connections and endpoints (CEO Only)</p>
+                </div>
+                <div class="top-bar-actions">
+                    <button class="btn btn-outline" onclick="testAllEndpoints()">
+                        <i class="fas fa-vial"></i> Test All
+                    </button>
+                    <button class="btn btn-primary" onclick="saveConfig()">
+                        <i class="fas fa-save"></i> Save Changes
+                    </button>
+                    <button class="logout-btn" id="logoutBtn"><i class="fas fa-sign-out-alt"></i></button>
+                </div>
+            </div>
+
+            <div class="api-config-container">
+                <!-- API Keys -->
+                <div class="api-section">
+                    <div class="api-header">
+                        <h3><i class="fas fa-key"></i> API Keys</h3>
+                        <button class="btn btn-sm btn-outline" onclick="regenerateKey()">
+                            <i class="fas fa-undo"></i> Regenerate
+                        </button>
+                    </div>
+                    
+                    <div class="api-key-display">
+                        <span class="api-key-value">taagc_live_8x7w3r9t2y4u6i8o0p1q2w3e4r5t6y7u</span>
+                        <button class="btn btn-sm btn-outline" onclick="copyApiKey()">
+                            <i class="fas fa-copy"></i> Copy
+                        </button>
+                    </div>
+                    <p class="field-hint">Last rotated: March 1, 2024</p>
+                </div>
+
+                <!-- API Endpoints -->
+                <div class="api-section">
+                    <div class="api-header">
+                        <h3><i class="fas fa-link"></i> API Endpoints</h3>
+                        <button class="btn btn-sm btn-outline" onclick="addEndpoint()">
+                            <i class="fas fa-plus"></i> Add Endpoint
+                        </button>
+                    </div>
+                    
+                    <ul class="endpoint-list">
+                        <li class="endpoint-item">
+                            <span class="endpoint-method method-get">GET</span>
+                            <span class="endpoint-path">/api/banks</span>
+                            <span class="endpoint-desc">List all connected banks</span>
+                            <button class="btn btn-sm btn-outline" onclick="testEndpoint('banks')">
+                                <i class="fas fa-play"></i> Test
+                            </button>
+                        </li>
+                        <li class="endpoint-item">
+                            <span class="endpoint-method method-get">GET</span>
+                            <span class="endpoint-path">/api/banks/{id}</span>
+                            <span class="endpoint-desc">Get bank details</span>
+                            <button class="btn btn-sm btn-outline" onclick="testEndpoint('bank')">
+                                <i class="fas fa-play"></i> Test
+                            </button>
+                        </li>
+                        <li class="endpoint-item">
+                            <span class="endpoint-method method-post">POST</span>
+                            <span class="endpoint-path">/api/banks</span>
+                            <span class="endpoint-desc">Connect new bank</span>
+                            <button class="btn btn-sm btn-outline" onclick="testEndpoint('create')">
+                                <i class="fas fa-play"></i> Test
+                            </button>
+                        </li>
+                        <li class="endpoint-item">
+                            <span class="endpoint-method method-put">PUT</span>
+                            <span class="endpoint-path">/api/banks/{id}</span>
+                            <span class="endpoint-desc">Update bank</span>
+                            <button class="btn btn-sm btn-outline" onclick="testEndpoint('update')">
+                                <i class="fas fa-play"></i> Test
+                            </button>
+                        </li>
+                        <li class="endpoint-item">
+                            <span class="endpoint-method method-delete">DELETE</span>
+                            <span class="endpoint-path">/api/banks/{id}</span>
+                            <span class="endpoint-desc">Disconnect bank</span>
+                            <button class="btn btn-sm btn-outline" onclick="testEndpoint('delete')">
+                                <i class="fas fa-play"></i> Test
+                            </button>
+                        </li>
+                        <li class="endpoint-item">
+                            <span class="endpoint-method method-get">GET</span>
+                            <span class="endpoint-path">/api/banks/{id}/accounts</span>
+                            <span class="endpoint-desc">List bank accounts</span>
+                            <button class="btn btn-sm btn-outline" onclick="testEndpoint('accounts')">
+                                <i class="fas fa-play"></i> Test
+                            </button>
+                        </li>
+                        <li class="endpoint-item">
+                            <span class="endpoint-method method-get">GET</span>
+                            <span class="endpoint-path">/api/banks/{id}/transactions</span>
+                            <span class="endpoint-desc">Get transactions</span>
+                            <button class="btn btn-sm btn-outline" onclick="testEndpoint('transactions')">
+                                <i class="fas fa-play"></i> Test
+                            </button>
+                        </li>
+                        <li class="endpoint-item">
+                            <span class="endpoint-method method-post">POST</span>
+                            <span class="endpoint-path">/api/banks/{id}/sync</span>
+                            <span class="endpoint-desc">Sync bank data</span>
+                            <button class="btn btn-sm btn-outline" onclick="testEndpoint('sync')">
+                                <i class="fas fa-play"></i> Test
+                            </button>
+                        </li>
+                    </ul>
+                </div>
+
+                <!-- Webhooks -->
+                <div class="api-section">
+                    <div class="api-header">
+                        <h3><i class="fas fa-webhook"></i> Webhooks</h3>
+                        <button class="btn btn-sm btn-primary" onclick="addWebhook()">
+                            <i class="fas fa-plus"></i> Add Webhook
+                        </button>
+                    </div>
+                    
+                    <div class="webhook-item">
+                        <div>
+                            <div class="webhook-url">https://api.taagc.website/webhooks/bank-transactions</div>
+                            <div style="font-size: 12px; color: var(--light); margin-top: 4px;">Receives transaction updates</div>
+                        </div>
+                        <div class="flex gap-2">
+                            <span class="webhook-status webhook-active">
+                                <i class="fas fa-circle"></i> Active
+                            </span>
+                            <button class="btn btn-sm btn-outline" onclick="testWebhook('transactions')">
+                                <i class="fas fa-vial"></i> Test
+                            </button>
+                            <button class="btn btn-sm btn-outline-danger" onclick="deleteWebhook('transactions')">
+                                <i class="fas fa-trash"></i>
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <div class="webhook-item">
+                        <div>
+                            <div class="webhook-url">https://api.taagc.website/webhooks/bank-balance</div>
+                            <div style="font-size: 12px; color: var(--light); margin-top: 4px;">Daily balance reports</div>
+                        </div>
+                        <div class="flex gap-2">
+                            <span class="webhook-status webhook-active">
+                                <i class="fas fa-circle"></i> Active
+                            </span>
+                            <button class="btn btn-sm btn-outline" onclick="testWebhook('balance')">
+                                <i class="fas fa-vial"></i> Test
+                            </button>
+                            <button class="btn btn-sm btn-outline-danger" onclick="deleteWebhook('balance')">
+                                <i class="fas fa-trash"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Rate Limits -->
+                <div class="api-section">
+                    <div class="api-header">
+                        <h3><i class="fas fa-tachometer-alt"></i> Rate Limits</h3>
+                    </div>
+                    
+                    <div class="rate-limit-item">
+                        <span class="rate-limit-label">API Requests</span>
+                        <div class="flex gap-2">
+                            <span class="rate-limit-value">8,452 / 10,000</span>
+                            <div class="rate-limit-bar">
+                                <div class="rate-limit-fill" style="width: 84.5%;"></div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="rate-limit-item">
+                        <span class="rate-limit-label">Bank Syncs</span>
+                        <div class="flex gap-2">
+                            <span class="rate-limit-value">124 / 500</span>
+                            <div class="rate-limit-bar">
+                                <div class="rate-limit-fill" style="width: 24.8%;"></div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="rate-limit-item">
+                        <span class="rate-limit-label">Webhook Calls</span>
+                        <div class="flex gap-2">
+                            <span class="rate-limit-value">2,345 / 5,000</span>
+                            <div class="rate-limit-bar">
+                                <div class="rate-limit-fill" style="width: 46.9%;"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Test Console -->
+                <div class="api-section">
+                    <div class="api-header">
+                        <h3><i class="fas fa-terminal"></i> API Test Console</h3>
+                    </div>
+                    
+                    <div class="test-endpoint">
+                        <div class="flex gap-2" style="margin-bottom: var(--space-md);">
+                            <select class="form-control" style="width: 120px;">
+                                <option>GET</option>
+                                <option>POST</option>
+                                <option>PUT</option>
+                                <option>DELETE</option>
+                            </select>
+                            <input type="text" class="form-control" placeholder="/api/banks/123" value="/api/banks">
+                            <button class="btn btn-primary" onclick="runTest()">
+                                <i class="fas fa-play"></i> Send
+                            </button>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label>Request Body (JSON)</label>
+                            <textarea class="form-control" rows="4" placeholder='{"key": "value"}'></textarea>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label>Response</label>
+                            <pre class="form-control" style="background: var(--dark); color: var(--accent); padding: var(--space-md); font-family: monospace; min-height: 100px;">
+{
+  "success": true,
+  "data": []
+}
+                            </pre>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script>
+        function copyApiKey() {
+            navigator.clipboard.writeText('taagc_live_8x7w3r9t2y4u6i8o0p1q2w3e4r5t6y7u');
+            TAAGC.ui.showToast('API key copied to clipboard', 'success');
+        }
+
+        function regenerateKey() {
+            TAAGC.ui.confirm('Regenerate API key? Old key will stop working immediately.', () => {
+                TAAGC.ui.showToast('New API key generated', 'success');
+            });
+        }
+
+        function testEndpoint(endpoint) {
+            TAAGC.ui.showToast(`Testing ${endpoint} endpoint...`, 'info');
+            setTimeout(() => {
+                TAAGC.ui.showToast('Endpoint test successful', 'success');
+            }, 1500);
+        }
+
+        function testAllEndpoints() {
+            TAAGC.ui.showToast('Testing all endpoints...', 'info');
+        }
+
+        function addEndpoint() {
+            TAAGC.ui.showToast('Add endpoint feature coming soon', 'info');
+        }
+
+        function addWebhook() {
+            TAAGC.ui.showToast('Add webhook feature coming soon', 'info');
+        }
+
+        function testWebhook(type) {
+            TAAGC.ui.showToast(`Testing ${type} webhook...`, 'info');
+        }
+
+        function deleteWebhook(type) {
+            TAAGC.ui.confirm(`Delete ${type} webhook?`, () => {
+                TAAGC.ui.showToast('Webhook deleted', 'success');
+            });
+        }
+
+        function runTest() {
+            TAAGC.ui.showToast('Sending test request...', 'info');
+        }
+
+        function saveConfig() {
+            TAAGC.ui.showToast('Configuration saved', 'success');
+        }
+    </script>
+</body>
+</html>
