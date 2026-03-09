@@ -1,0 +1,858 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>View Bank - TAAGC Admin</title>
+    
+    <!-- Fonts & Icons -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Assets -->
+    <link rel="stylesheet" href="/assets/css/admin.css">
+    <script src="/assets/js/admin.js" defer></script>
+    
+    <style>
+        .bank-profile-header {
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+            color: white;
+            padding: var(--space-xl);
+            border-radius: var(--radius-lg);
+            margin-bottom: var(--space-xl);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .bank-profile-header::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -10%;
+            width: 50%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 70%);
+        }
+        
+        .bank-logo-large {
+            width: 80px;
+            height: 80px;
+            background: rgba(255,255,255,0.2);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 32px;
+            margin-bottom: var(--space-md);
+        }
+        
+        .bank-name-large {
+            font-size: 32px;
+            font-weight: 700;
+            margin-bottom: var(--space-xs);
+        }
+        
+        .bank-meta-large {
+            display: flex;
+            gap: var(--space-lg);
+            opacity: 0.9;
+            font-size: 14px;
+        }
+        
+        .bank-stats-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: var(--space-lg);
+            margin-bottom: var(--space-xl);
+        }
+        
+        .bank-stat-card {
+            background: var(--white);
+            padding: var(--space-lg);
+            border-radius: var(--radius-lg);
+            border: 1px solid #e2e8f0;
+            text-align: center;
+        }
+        
+        .bank-stat-value {
+            font-size: 28px;
+            font-weight: 700;
+            color: var(--primary);
+            margin-bottom: var(--space-xs);
+        }
+        
+        .bank-stat-label {
+            color: var(--light);
+            font-size: 13px;
+        }
+        
+        .info-tabs {
+            display: flex;
+            gap: var(--space-sm);
+            border-bottom: 2px solid #e2e8f0;
+            margin-bottom: var(--space-xl);
+        }
+        
+        .info-tab {
+            padding: var(--space-md) var(--space-lg);
+            cursor: pointer;
+            font-weight: 600;
+            color: var(--light);
+            border-bottom: 2px solid transparent;
+            margin-bottom: -2px;
+        }
+        
+        .info-tab.active {
+            color: var(--accent);
+            border-bottom-color: var(--accent);
+        }
+        
+        .info-section {
+            background: var(--white);
+            border-radius: var(--radius-lg);
+            padding: var(--space-xl);
+            border: 1px solid #e2e8f0;
+            margin-bottom: var(--space-xl);
+        }
+        
+        .info-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: var(--space-lg);
+        }
+        
+        .info-row {
+            display: flex;
+            padding: var(--space-sm) 0;
+            border-bottom: 1px solid #e2e8f0;
+        }
+        
+        .info-row:last-child {
+            border-bottom: none;
+        }
+        
+        .info-label {
+            width: 150px;
+            color: var(--light);
+            font-weight: 500;
+        }
+        
+        .info-value {
+            flex: 1;
+            color: var(--dark);
+            font-weight: 500;
+        }
+        
+        .account-card-mini {
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+            color: white;
+            border-radius: var(--radius-lg);
+            padding: var(--space-lg);
+            margin-bottom: var(--space-md);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .account-type-mini {
+            font-size: 13px;
+            opacity: 0.8;
+        }
+        
+        .account-number-mini {
+            font-family: monospace;
+            font-size: 16px;
+            margin: var(--space-xs) 0;
+        }
+        
+        .account-balance-mini {
+            font-size: 20px;
+            font-weight: 700;
+            color: var(--accent);
+        }
+        
+        .contact-person {
+            display: flex;
+            align-items: center;
+            gap: var(--space-md);
+            padding: var(--space-md);
+            background: var(--bg);
+            border-radius: var(--radius-md);
+            margin-bottom: var(--space-sm);
+        }
+        
+        .contact-avatar {
+            width: 40px;
+            height: 40px;
+            background: var(--accent);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+        }
+        
+        .activity-timeline-mini {
+            max-height: 400px;
+            overflow-y: auto;
+        }
+        
+        .activity-item-mini {
+            display: flex;
+            gap: var(--space-md);
+            padding: var(--space-sm) 0;
+            border-bottom: 1px solid #e2e8f0;
+        }
+        
+        .activity-icon {
+            width: 32px;
+            height: 32px;
+            background: rgba(193,154,107,0.1);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--accent);
+        }
+        
+        .activity-content {
+            flex: 1;
+        }
+        
+        .activity-title {
+            font-weight: 600;
+            color: var(--dark);
+        }
+        
+        .activity-time {
+            font-size: 11px;
+            color: var(--light);
+        }
+        
+        .action-buttons {
+            position: sticky;
+            bottom: 30px;
+            right: 30px;
+            display: flex;
+            gap: var(--space-md);
+            justify-content: flex-end;
+            margin-top: var(--space-xl);
+        }
+    </style>
+</head>
+<body>
+    <div class="admin-container">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <div class="logo-icon">TA</div>
+                <h2><span>TAAGC</span> ADMIN</h2>
+            </div>
+
+            <div class="user-info">
+                <div class="user-avatar" data-user-avatar>A</div>
+                <div data-user-field="name">Loading...</div>
+                <div style="font-size: 12px; opacity: 0.7;" data-user-field="email"></div>
+                <span class="user-role" data-user-field="role"></span>
+            </div>
+
+            <nav class="nav-menu">
+                <div class="nav-section">MAIN</div>
+                <a href="/dashboard.html" class="nav-item"><i class="fas fa-tachometer-alt"></i> Dashboard</a>
+                <a href="/users/index.html" class="nav-item"><i class="fas fa-users"></i> Users</a>
+                <a href="/investments/index.html" class="nav-item"><i class="fas fa-chart-line"></i> Investments</a>
+                <a href="/transactions/index.html" class="nav-item"><i class="fas fa-exchange-alt"></i> Transactions</a>
+                <a href="/banks/index.html" class="nav-item active"><i class="fas fa-university"></i> Banks</a>
+            </nav>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <div class="top-bar">
+                <div class="page-title">
+                    <h1><i class="fas fa-university" style="color: var(--accent);"></i> Bank Details</h1>
+                    <p>View complete bank information</p>
+                </div>
+                <div class="top-bar-actions">
+                    <button class="btn btn-outline" onclick="location.href='/banks/index.html'">
+                        <i class="fas fa-arrow-left"></i> Back to Banks
+                    </button>
+                    <button class="logout-btn" id="logoutBtn"><i class="fas fa-sign-out-alt"></i></button>
+                </div>
+            </div>
+
+            <!-- Bank ID from URL -->
+            <div id="bankId" style="display: none;">{{id}}</div>
+
+            <!-- Bank Profile Header -->
+            <div class="bank-profile-header" id="bankHeader">
+                <div style="position: relative; z-index: 2;">
+                    <div class="bank-logo-large" id="bankLogo">🏦</div>
+                    <div class="bank-name-large" id="bankName">Chase Bank</div>
+                    <div class="bank-meta-large">
+                        <span><i class="fas fa-map-marker-alt"></i> <span id="bankCountry">United States</span></span>
+                        <span><i class="fas fa-code"></i> SWIFT: <span id="bankSwift">CHASUS33</span></span>
+                        <span><i class="fas fa-route"></i> Routing: <span id="bankRouting">021000021</span></span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Bank Stats -->
+            <div class="bank-stats-grid">
+                <div class="bank-stat-card">
+                    <div class="bank-stat-value" id="statAccounts">8</div>
+                    <div class="bank-stat-label">Bank Accounts</div>
+                </div>
+                <div class="bank-stat-card">
+                    <div class="bank-stat-value" id="statBalance">$5.2M</div>
+                    <div class="bank-stat-label">Total Balance</div>
+                </div>
+                <div class="bank-stat-card">
+                    <div class="bank-stat-value" id="statTransactions">1,234</div>
+                    <div class="bank-stat-label">Transactions (30d)</div>
+                </div>
+                <div class="bank-stat-card">
+                    <div class="bank-stat-value" id="statSync">99.8%</div>
+                    <div class="bank-stat-label">Sync Health</div>
+                </div>
+            </div>
+
+            <!-- Tabs -->
+            <div class="info-tabs">
+                <div class="info-tab active" onclick="showTab('overview')">Overview</div>
+                <div class="info-tab" onclick="showTab('accounts')">Accounts</div>
+                <div class="info-tab" onclick="showTab('contacts')">Contacts</div>
+                <div class="info-tab" onclick="showTab('activity')">Activity Log</div>
+                <div class="info-tab" onclick="showTab('settings')">Settings</div>
+            </div>
+
+            <!-- Overview Tab -->
+            <div id="overviewTab">
+                <div class="info-grid">
+                    <!-- Bank Information -->
+                    <div class="info-section">
+                        <h3 style="margin-bottom: var(--space-lg);">Bank Information</h3>
+                        
+                        <div class="info-row">
+                            <span class="info-label">Bank Name</span>
+                            <span class="info-value" id="detailBankName">Chase Bank</span>
+                        </div>
+                        <div class="info-row">
+                            <span class="info-label">Bank Type</span>
+                            <span class="info-value" id="detailBankType">Commercial Bank</span>
+                        </div>
+                        <div class="info-row">
+                            <span class="info-label">Country</span>
+                            <span class="info-value" id="detailCountry">United States</span>
+                        </div>
+                        <div class="info-row">
+                            <span class="info-label">Currency</span>
+                            <span class="info-value" id="detailCurrency">USD ($)</span>
+                        </div>
+                        <div class="info-row">
+                            <span class="info-label">SWIFT/BIC</span>
+                            <span class="info-value"><code id="detailSwift">CHASUS33</code></span>
+                        </div>
+                        <div class="info-row">
+                            <span class="info-label">Routing Number</span>
+                            <span class="info-value"><code id="detailRouting">021000021</code></span>
+                        </div>
+                    </div>
+
+                    <!-- Connection Details -->
+                    <div class="info-section">
+                        <h3 style="margin-bottom: var(--space-lg);">Connection Details</h3>
+                        
+                        <div class="info-row">
+                            <span class="info-label">Connection Type</span>
+                            <span class="info-value" id="detailConnection">API Direct</span>
+                        </div>
+                        <div class="info-row">
+                            <span class="info-label">API Status</span>
+                            <span class="info-value" id="detailApiStatus">
+                                <span class="badge badge-success">Connected</span>
+                            </span>
+                        </div>
+                        <div class="info-row">
+                            <span class="info-label">Last Sync</span>
+                            <span class="info-value" id="detailLastSync">2024-03-09 10:30 AM</span>
+                        </div>
+                        <div class="info-row">
+                            <span class="info-label">Next Sync</span>
+                            <span class="info-value" id="detailNextSync">2024-03-10 10:30 AM</span>
+                        </div>
+                        <div class="info-row">
+                            <span class="info-label">Sync Frequency</span>
+                            <span class="info-value" id="detailFrequency">Daily</span>
+                        </div>
+                        <div class="info-row">
+                            <span class="info-label">API Version</span>
+                            <span class="info-value" id="detailApiVersion">v2</span>
+                        </div>
+                    </div>
+
+                    <!-- Address -->
+                    <div class="info-section">
+                        <h3 style="margin-bottom: var(--space-lg);">Address</h3>
+                        
+                        <div class="info-row">
+                            <span class="info-label">Street</span>
+                            <span class="info-value" id="detailStreet">270 Park Avenue</span>
+                        </div>
+                        <div class="info-row">
+                            <span class="info-label">City</span>
+                            <span class="info-value" id="detailCity">New York</span>
+                        </div>
+                        <div class="info-row">
+                            <span class="info-label">State/Province</span>
+                            <span class="info-value" id="detailState">NY</span>
+                        </div>
+                        <div class="info-row">
+                            <span class="info-label">ZIP/Postal</span>
+                            <span class="info-value" id="detailZip">10017</span>
+                        </div>
+                        <div class="info-row">
+                            <span class="info-label">Country</span>
+                            <span class="info-value" id="detailAddrCountry">USA</span>
+                        </div>
+                    </div>
+
+                    <!-- Contact -->
+                    <div class="info-section">
+                        <h3 style="margin-bottom: var(--space-lg);">Primary Contact</h3>
+                        
+                        <div class="info-row">
+                            <span class="info-label">Contact Name</span>
+                            <span class="info-value" id="detailContact">John Smith</span>
+                        </div>
+                        <div class="info-row">
+                            <span class="info-label">Title</span>
+                            <span class="info-value" id="detailTitle">Relationship Manager</span>
+                        </div>
+                        <div class="info-row">
+                            <span class="info-label">Email</span>
+                            <span class="info-value" id="detailEmail">john.smith@chase.com</span>
+                        </div>
+                        <div class="info-row">
+                            <span class="info-label">Phone</span>
+                            <span class="info-value" id="detailPhone">+1-212-270-6000</span>
+                        </div>
+                        <div class="info-row">
+                            <span class="info-label">Extension</span>
+                            <span class="info-value" id="detailExt">1234</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Recent Transactions -->
+                <div class="info-section">
+                    <div class="flex-between" style="margin-bottom: var(--space-lg);">
+                        <h3>Recent Transactions</h3>
+                        <a href="/banks/transactions.html?bank=chase" class="btn btn-sm btn-outline">View All</a>
+                    </div>
+                    
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Date</th>
+                                <th>Description</th>
+                                <th>Account</th>
+                                <th>Amount</th>
+                                <th>Status</th>
+                            </tr>
+                        </thead>
+                        <tbody id="recentTransactions">
+                            <tr>
+                                <td>2024-03-09</td>
+                                <td>Wire transfer from client</td>
+                                <td>•••• 1234</td>
+                                <td class="amount-positive">+$5,000.00</td>
+                                <td><span class="badge badge-success">Completed</span></td>
+                            </tr>
+                            <tr>
+                                <td>2024-03-08</td>
+                                <td>Monthly service fee</td>
+                                <td>•••• 1234</td>
+                                <td class="amount-negative">-$25.00</td>
+                                <td><span class="badge badge-success">Completed</span></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Accounts Tab -->
+            <div id="accountsTab" style="display: none;">
+                <div class="info-section">
+                    <div class="flex-between" style="margin-bottom: var(--space-lg);">
+                        <h3>Bank Accounts</h3>
+                        <button class="btn btn-sm btn-primary" onclick="addAccount()">
+                            <i class="fas fa-plus"></i> Add Account
+                        </button>
+                    </div>
+                    
+                    <div class="grid-2" id="accountsList">
+                        <!-- Account cards will be loaded here -->
+                    </div>
+                </div>
+            </div>
+
+            <!-- Contacts Tab -->
+            <div id="contactsTab" style="display: none;">
+                <div class="info-section">
+                    <div class="flex-between" style="margin-bottom: var(--space-lg);">
+                        <h3>Bank Contacts</h3>
+                        <button class="btn btn-sm btn-primary" onclick="addContact()">
+                            <i class="fas fa-user-plus"></i> Add Contact
+                        </button>
+                    </div>
+                    
+                    <div id="contactsList">
+                        <!-- Contacts will be loaded here -->
+                    </div>
+                </div>
+            </div>
+
+            <!-- Activity Tab -->
+            <div id="activityTab" style="display: none;">
+                <div class="info-section">
+                    <h3 style="margin-bottom: var(--space-lg);">Activity Log</h3>
+                    
+                    <div class="activity-timeline-mini" id="activityList">
+                        <!-- Activity items will be loaded here -->
+                    </div>
+                </div>
+            </div>
+
+            <!-- Settings Tab -->
+            <div id="settingsTab" style="display: none;">
+                <div class="info-section">
+                    <h3 style="margin-bottom: var(--space-lg);">Bank Settings</h3>
+                    
+                    <div class="form-group">
+                        <label class="checkbox">
+                            <input type="checkbox" id="autoSync" checked>
+                            <span>Enable automatic daily synchronization</span>
+                        </label>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="checkbox">
+                            <input type="checkbox" id="autoReconcile" checked>
+                            <span>Enable auto-reconciliation</span>
+                        </label>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="checkbox">
+                            <input type="checkbox" id="notifyOnSync">
+                            <span>Send notifications on sync completion</span>
+                        </label>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>Sync Time</label>
+                        <select class="form-control">
+                            <option>12:00 AM</option>
+                            <option>1:00 AM</option>
+                            <option>2:00 AM</option>
+                            <option selected>3:00 AM</option>
+                            <option>4:00 AM</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>Retention Period</label>
+                        <select class="form-control">
+                            <option>30 days</option>
+                            <option selected>90 days</option>
+                            <option>180 days</option>
+                            <option>1 year</option>
+                            <option>Forever</option>
+                        </select>
+                    </div>
+                    
+                    <button class="btn btn-primary" onclick="saveSettings()">
+                        <i class="fas fa-save"></i> Save Settings
+                    </button>
+                </div>
+                
+                <!-- Danger Zone -->
+                <div class="info-section" style="border-color: var(--danger);">
+                    <h3 style="color: var(--danger); margin-bottom: var(--space-lg);">Danger Zone</h3>
+                    
+                    <div class="flex-between" style="margin-bottom: var(--space-md);">
+                        <div>
+                            <strong>Disconnect Bank</strong>
+                            <p style="color: var(--light); font-size: 13px;">Remove bank connection and stop all syncs</p>
+                        </div>
+                        <button class="btn btn-danger" onclick="disconnectBank()">
+                            <i class="fas fa-unlink"></i> Disconnect
+                        </button>
+                    </div>
+                    
+                    <div class="flex-between">
+                        <div>
+                            <strong>Delete Bank</strong>
+                            <p style="color: var(--light); font-size: 13px;">Permanently delete all bank data</p>
+                        </div>
+                        <button class="btn btn-danger" onclick="deleteBank()">
+                            <i class="fas fa-trash"></i> Delete
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Action Buttons -->
+            <div class="action-buttons">
+                <button class="btn btn-primary" onclick="syncBank()">
+                    <i class="fas fa-sync-alt"></i> Sync Now
+                </button>
+                <button class="btn btn-outline-accent" onclick="editBank()">
+                    <i class="fas fa-edit"></i> Edit Bank
+                </button>
+                <button class="btn btn-outline" onclick="testConnection()">
+                    <i class="fas fa-vial"></i> Test Connection
+                </button>
+            </div>
+        </main>
+    </div>
+
+    <script>
+        // Get bank ID from URL
+        const urlParams = new URLSearchParams(window.location.search);
+        const bankId = urlParams.get('id') || 'bank_1';
+
+        // Mock bank data
+        const bankData = {
+            id: bankId,
+            name: 'Chase Bank',
+            type: 'Commercial Bank',
+            country: 'United States',
+            currency: 'USD',
+            swiftCode: 'CHASUS33',
+            routingNumber: '021000021',
+            connectionType: 'API Direct',
+            apiStatus: 'connected',
+            lastSync: '2024-03-09T10:30:00',
+            nextSync: '2024-03-10T10:30:00',
+            syncFrequency: 'Daily',
+            apiVersion: 'v2',
+            address: {
+                street: '270 Park Avenue',
+                city: 'New York',
+                state: 'NY',
+                zip: '10017',
+                country: 'USA'
+            },
+            contact: {
+                name: 'John Smith',
+                title: 'Relationship Manager',
+                email: 'john.smith@chase.com',
+                phone: '+1-212-270-6000',
+                ext: '1234'
+            },
+            stats: {
+                accounts: 8,
+                balance: 5245000,
+                transactions: 1234,
+                syncHealth: 99.8
+            },
+            accounts: [
+                { type: 'Business Checking', number: '••••••••1234', balance: 1250000, currency: 'USD' },
+                { type: 'Savings', number: '••••••••5678', balance: 3500000, currency: 'USD' },
+                { type: 'Money Market', number: '••••••••9012', balance: 495000, currency: 'USD' }
+            ],
+            contacts: [
+                { name: 'John Smith', role: 'Relationship Manager', email: 'john.smith@chase.com', phone: '+1-212-270-6000' },
+                { name: 'Jane Doe', role: 'Technical Support', email: 'jane.doe@chase.com', phone: '+1-212-270-6001' }
+            ],
+            activity: [
+                { action: 'Bank connected', timestamp: '2024-01-15T10:00:00', user: 'System' },
+                { action: 'First sync completed', timestamp: '2024-01-15T10:05:00', user: 'System' },
+                { action: 'API credentials updated', timestamp: '2024-02-01T14:30:00', user: 'Admin' },
+                { action: 'New account added', timestamp: '2024-02-15T09:20:00', user: 'Admin' }
+            ]
+        };
+
+        document.addEventListener('DOMContentLoaded', () => {
+            if (!TAAGC.auth.isAuthenticated()) {
+                window.location.href = '/';
+                return;
+            }
+            
+            TAAGC.auth.updateUI();
+            loadBankData();
+        });
+
+        function loadBankData() {
+            // Update header
+            document.getElementById('bankName').textContent = bankData.name;
+            document.getElementById('bankCountry').textContent = bankData.country;
+            document.getElementById('bankSwift').textContent = bankData.swiftCode;
+            document.getElementById('bankRouting').textContent = bankData.routingNumber;
+            
+            // Update stats
+            document.getElementById('statAccounts').textContent = bankData.stats.accounts;
+            document.getElementById('statBalance').textContent = TAAGC.data.formatCurrency(bankData.stats.balance);
+            document.getElementById('statTransactions').textContent = bankData.stats.transactions;
+            document.getElementById('statSync').textContent = bankData.stats.syncHealth + '%';
+            
+            // Update details
+            document.getElementById('detailBankName').textContent = bankData.name;
+            document.getElementById('detailBankType').textContent = bankData.type;
+            document.getElementById('detailCountry').textContent = bankData.country;
+            document.getElementById('detailCurrency').textContent = bankData.currency;
+            document.getElementById('detailSwift').textContent = bankData.swiftCode;
+            document.getElementById('detailRouting').textContent = bankData.routingNumber;
+            document.getElementById('detailConnection').textContent = bankData.connectionType;
+            document.getElementById('detailLastSync').textContent = new Date(bankData.lastSync).toLocaleString();
+            document.getElementById('detailNextSync').textContent = new Date(bankData.nextSync).toLocaleString();
+            document.getElementById('detailFrequency').textContent = bankData.syncFrequency;
+            document.getElementById('detailApiVersion').textContent = bankData.apiVersion;
+            
+            // Address
+            document.getElementById('detailStreet').textContent = bankData.address.street;
+            document.getElementById('detailCity').textContent = bankData.address.city;
+            document.getElementById('detailState').textContent = bankData.address.state;
+            document.getElementById('detailZip').textContent = bankData.address.zip;
+            document.getElementById('detailAddrCountry').textContent = bankData.address.country;
+            
+            // Contact
+            document.getElementById('detailContact').textContent = bankData.contact.name;
+            document.getElementById('detailTitle').textContent = bankData.contact.title;
+            document.getElementById('detailEmail').textContent = bankData.contact.email;
+            document.getElementById('detailPhone').textContent = bankData.contact.phone;
+            document.getElementById('detailExt').textContent = bankData.contact.ext;
+            
+            // Load accounts
+            loadAccounts();
+            
+            // Load contacts
+            loadContacts();
+            
+            // Load activity
+            loadActivity();
+        }
+
+        function loadAccounts() {
+            const container = document.getElementById('accountsList');
+            
+            container.innerHTML = bankData.accounts.map(acc => `
+                <div class="account-card-mini">
+                    <div class="account-type-mini">${acc.type}</div>
+                    <div class="account-number-mini">${acc.number}</div>
+                    <div class="account-balance-mini">${TAAGC.data.formatCurrency(acc.balance)} ${acc.currency}</div>
+                    <div style="margin-top: var(--space-sm);">
+                        <button class="btn btn-sm" style="background: rgba(255,255,255,0.2); color: white;" onclick="viewAccount('${acc.number}')">
+                            <i class="fas fa-eye"></i> View
+                        </button>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function loadContacts() {
+            const container = document.getElementById('contactsList');
+            
+            container.innerHTML = bankData.contacts.map(contact => `
+                <div class="contact-person">
+                    <div class="contact-avatar">${contact.name.charAt(0)}</div>
+                    <div style="flex: 1;">
+                        <div><strong>${contact.name}</strong> · ${contact.role}</div>
+                        <div style="font-size: 13px; color: var(--light);">
+                            <i class="fas fa-envelope"></i> ${contact.email} · 
+                            <i class="fas fa-phone"></i> ${contact.phone}
+                        </div>
+                    </div>
+                    <button class="btn btn-sm btn-outline" onclick="editContact('${contact.name}')">
+                        <i class="fas fa-edit"></i>
+                    </button>
+                </div>
+            `).join('');
+        }
+
+        function loadActivity() {
+            const container = document.getElementById('activityList');
+            
+            container.innerHTML = bankData.activity.map(item => `
+                <div class="activity-item-mini">
+                    <div class="activity-icon">
+                        <i class="fas fa-history"></i>
+                    </div>
+                    <div class="activity-content">
+                        <div class="activity-title">${item.action}</div>
+                        <div class="activity-time">${new Date(item.timestamp).toLocaleString()} by ${item.user}</div>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function showTab(tabName) {
+            document.querySelectorAll('.info-tab').forEach(tab => tab.classList.remove('active'));
+            event.target.classList.add('active');
+            
+            document.getElementById('overviewTab').style.display = tabName === 'overview' ? 'block' : 'none';
+            document.getElementById('accountsTab').style.display = tabName === 'accounts' ? 'block' : 'none';
+            document.getElementById('contactsTab').style.display = tabName === 'contacts' ? 'block' : 'none';
+            document.getElementById('activityTab').style.display = tabName === 'activity' ? 'block' : 'none';
+            document.getElementById('settingsTab').style.display = tabName === 'settings' ? 'block' : 'none';
+        }
+
+        function syncBank() {
+            TAAGC.ui.showToast('Syncing bank data...', 'info');
+            setTimeout(() => {
+                TAAGC.ui.showToast('Bank synced successfully', 'success');
+            }, 2000);
+        }
+
+        function editBank() {
+            location.href = `/banks/edit.html?id=${bankId}`;
+        }
+
+        function testConnection() {
+            TAAGC.ui.showToast('Testing connection...', 'info');
+            setTimeout(() => {
+                TAAGC.ui.showToast('Connection test successful', 'success');
+            }, 2000);
+        }
+
+        function addAccount() {
+            TAAGC.ui.showToast('Add account feature coming soon', 'info');
+        }
+
+        function addContact() {
+            TAAGC.ui.showToast('Add contact feature coming soon', 'info');
+        }
+
+        function viewAccount(accountNumber) {
+            TAAGC.ui.showToast(`Viewing account ${accountNumber}`, 'info');
+        }
+
+        function editContact(name) {
+            TAAGC.ui.showToast(`Editing ${name}`, 'info');
+        }
+
+        function saveSettings() {
+            TAAGC.ui.showToast('Settings saved', 'success');
+        }
+
+        function disconnectBank() {
+            TAAGC.ui.confirm('Disconnect this bank?', () => {
+                TAAGC.ui.showToast('Bank disconnected', 'success');
+            });
+        }
+
+        function deleteBank() {
+            if (!TAAGC.auth.isSuperAdmin()) {
+                TAAGC.ui.showToast('Only super admins can delete banks', 'error');
+                return;
+            }
+            
+            TAAGC.ui.confirm('Permanently delete this bank? This action cannot be undone!', () => {
+                TAAGC.ui.showToast('Bank deleted', 'success');
+                setTimeout(() => location.href = '/banks/index.html', 1500);
+            });
+        }
+    </script>
+</body>
+</html>
