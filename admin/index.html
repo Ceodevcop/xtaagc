@@ -436,7 +436,7 @@
                 showAlert(`Welcome back, ${data.user.fullName || 'Admin'}!`, 'success');
 
                 setTimeout(() => {
-                    window.location.href = '/dashboard/index.html';
+                    window.location.href = '/dashboard';
                 }, 1500);
 
             } catch (error) {
@@ -448,7 +448,7 @@
 
         // Redirect if already logged in
         if (localStorage.getItem('adminToken') || sessionStorage.getItem('adminToken')) {
-            window.location.href = '/dashboard/index.html';
+            window.location.href = '/dashboard';
         }
     </script>
 </body>
