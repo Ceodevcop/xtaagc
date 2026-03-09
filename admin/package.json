@@ -4,15 +4,7 @@
   "description": "TAAGC Global - Complete Admin Panel",
   "scripts": {
     "dev": "vercel dev",
-    "deploy": "vercel --prod",
-    "build": "echo 'No build step required'"
-  },
-  "dependencies": {
-    "chart.js": "^4.4.0",
-    "fullcalendar": "^6.1.10"
-  },
-  "devDependencies": {
-    "vercel": "^34.1.0"
+    "deploy": "vercel --prod"
   },
   "engines": {
     "node": "18.x"
