@@ -1,0 +1,803 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Agencies & Partners - TAAGC Admin</title>
+    
+    <!-- Fonts & Icons -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Assets -->
+    <link rel="stylesheet" href="/assets/css/admin.css">
+    <script src="/assets/js/admin.js" defer></script>
+    
+    <style>
+        .agency-filters {
+            background: var(--white);
+            border-radius: var(--radius-lg);
+            padding: var(--space-lg);
+            margin-bottom: var(--space-xl);
+            border: 1px solid #e2e8f0;
+        }
+        
+        .filter-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: var(--space-md);
+            margin-bottom: var(--space-md);
+        }
+        
+        .stats-cards {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: var(--space-lg);
+            margin-bottom: var(--space-xl);
+        }
+        
+        .stat-card {
+            background: var(--white);
+            padding: var(--space-lg);
+            border-radius: var(--radius-lg);
+            border: 1px solid #e2e8f0;
+        }
+        
+        .stat-icon {
+            width: 48px;
+            height: 48px;
+            background: rgba(193,154,107,0.1);
+            border-radius: var(--radius-md);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--accent);
+            font-size: 20px;
+            margin-bottom: var(--space-md);
+        }
+        
+        .stat-value {
+            font-size: 28px;
+            font-weight: 700;
+            color: var(--primary);
+            margin-bottom: var(--space-xs);
+        }
+        
+        .stat-label {
+            color: var(--light);
+            font-size: 13px;
+        }
+        
+        .agency-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+            gap: var(--space-lg);
+        }
+        
+        .agency-card {
+            background: var(--white);
+            border-radius: var(--radius-lg);
+            border: 1px solid #e2e8f0;
+            overflow: hidden;
+            transition: all 0.3s;
+            position: relative;
+        }
+        
+        .agency-card:hover {
+            transform: translateY(-5px);
+            box-shadow: var(--shadow-lg);
+            border-color: var(--accent);
+        }
+        
+        .agency-header {
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+            color: white;
+            padding: var(--space-lg);
+            position: relative;
+        }
+        
+        .agency-logo {
+            width: 60px;
+            height: 60px;
+            background: rgba(255,255,255,0.2);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            margin-bottom: var(--space-md);
+        }
+        
+        .agency-name {
+            font-size: 18px;
+            font-weight: 700;
+            margin-bottom: var(--space-xs);
+        }
+        
+        .agency-category {
+            font-size: 12px;
+            opacity: 0.8;
+        }
+        
+        .agency-body {
+            padding: var(--space-lg);
+        }
+        
+        .agency-stats {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: var(--space-md);
+            padding-bottom: var(--space-md);
+            border-bottom: 1px solid #e2e8f0;
+        }
+        
+        .agency-stat {
+            text-align: center;
+        }
+        
+        .agency-stat-value {
+            font-size: 18px;
+            font-weight: 700;
+            color: var(--primary);
+        }
+        
+        .agency-stat-label {
+            font-size: 11px;
+            color: var(--light);
+        }
+        
+        .agency-info-row {
+            display: flex;
+            margin-bottom: var(--space-xs);
+            font-size: 13px;
+        }
+        
+        .agency-info-icon {
+            width: 20px;
+            color: var(--accent);
+            margin-right: var(--space-xs);
+        }
+        
+        .agency-footer {
+            padding: var(--space-lg);
+            background: var(--bg);
+            border-top: 1px solid #e2e8f0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .status-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 11px;
+            font-weight: 600;
+        }
+        
+        .status-active {
+            background: rgba(16,185,129,0.1);
+            color: var(--success);
+            border: 1px solid var(--success);
+        }
+        
+        .status-inactive {
+            background: rgba(100,116,139,0.1);
+            color: var(--light);
+            border: 1px solid var(--light);
+        }
+        
+        .status-pending {
+            background: rgba(245,158,11,0.1);
+            color: var(--warning);
+            border: 1px solid var(--warning);
+        }
+        
+        .commission-badge {
+            background: var(--accent);
+            color: white;
+            padding: 2px 8px;
+            border-radius: 12px;
+            font-size: 11px;
+        }
+        
+        .quick-actions {
+            display: flex;
+            gap: var(--space-sm);
+            margin-top: var(--space-xl);
+        }
+        
+        .quick-action-btn {
+            flex: 1;
+            padding: var(--space-md);
+            background: var(--white);
+            border: 1px solid #e2e8f0;
+            border-radius: var(--radius-md);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: var(--space-sm);
+            color: var(--dark);
+            text-decoration: none;
+            transition: all 0.3s;
+        }
+        
+        .quick-action-btn:hover {
+            border-color: var(--accent);
+            color: var(--accent);
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-md);
+        }
+        
+        .tier-badge {
+            position: absolute;
+            top: var(--space-md);
+            right: var(--space-md);
+            padding: 4px 12px;
+            background: var(--accent);
+            color: white;
+            border-radius: 20px;
+            font-size: 11px;
+            font-weight: 600;
+        }
+        
+        .tier-platinum {
+            background: linear-gradient(135deg, #8b5cf6, #6d28d9);
+        }
+        
+        .tier-gold {
+            background: linear-gradient(135deg, #f59e0b, #d97706);
+        }
+        
+        .tier-silver {
+            background: linear-gradient(135deg, #94a3b8, #64748b);
+        }
+        
+        .tier-bronze {
+            background: linear-gradient(135deg, #b45309, #92400e);
+        }
+        
+        .rating-stars {
+            color: #ffd700;
+            font-size: 12px;
+        }
+    </style>
+</head>
+<body>
+    <div class="admin-container">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <div class="logo-icon">TA</div>
+                <h2><span>TAAGC</span> ADMIN</h2>
+            </div>
+
+            <div class="user-info">
+                <div class="user-avatar" data-user-avatar>A</div>
+                <div data-user-field="name">Loading...</div>
+                <div style="font-size: 12px; opacity: 0.7;" data-user-field="email"></div>
+                <span class="user-role" data-user-field="role"></span>
+            </div>
+
+            <nav class="nav-menu">
+                <div class="nav-section">MAIN</div>
+                <a href="/dashboard.html" class="nav-item"><i class="fas fa-tachometer-alt"></i> Dashboard</a>
+                <a href="/users/index.html" class="nav-item"><i class="fas fa-users"></i> Users</a>
+                <a href="/investments/index.html" class="nav-item"><i class="fas fa-chart-line"></i> Investments</a>
+                <a href="/transactions/index.html" class="nav-item"><i class="fas fa-exchange-alt"></i> Transactions</a>
+                <a href="/banks/index.html" class="nav-item"><i class="fas fa-university"></i> Banks</a>
+                <a href="/agencies/index.html" class="nav-item active"><i class="fas fa-building"></i> Agencies</a>
+                
+                <div class="nav-divider"></div>
+                <div class="nav-section">AGENCY MANAGEMENT</div>
+                <a href="/agencies/contracts.html" class="nav-item">
+                    <i class="fas fa-file-contract"></i> Contracts
+                </a>
+                <a href="/agencies/commissions.html" class="nav-item">
+                    <i class="fas fa-percent"></i> Commissions
+                </a>
+                <a href="/agencies/payments.html" class="nav-item">
+                    <i class="fas fa-money-bill"></i> Payments
+                </a>
+                <a href="/agencies/performance.html" class="nav-item">
+                    <i class="fas fa-chart-line"></i> Performance
+                </a>
+                <a href="/agencies/api-keys.html" class="nav-item">
+                    <i class="fas fa-key"></i> API Keys
+                </a>
+            </nav>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <div class="top-bar">
+                <div class="page-title">
+                    <h1><i class="fas fa-building" style="color: var(--accent);"></i> Agencies & Partners</h1>
+                    <p>Manage partner agencies and their relationships</p>
+                </div>
+                <div class="top-bar-actions">
+                    <button class="btn btn-primary" onclick="location.href='/agencies/create.html'">
+                        <i class="fas fa-plus"></i> Add Agency
+                    </button>
+                    <button class="btn btn-outline" onclick="exportAgencies()">
+                        <i class="fas fa-download"></i> Export
+                    </button>
+                    <button class="logout-btn" id="logoutBtn"><i class="fas fa-sign-out-alt"></i></button>
+                </div>
+            </div>
+
+            <!-- Quick Actions -->
+            <div class="quick-actions">
+                <a href="/agencies/contracts.html" class="quick-action-btn">
+                    <i class="fas fa-file-contract"></i>
+                    <span>Contracts</span>
+                </a>
+                <a href="/agencies/commissions.html" class="quick-action-btn">
+                    <i class="fas fa-percent"></i>
+                    <span>Commissions</span>
+                </a>
+                <a href="/agencies/payments.html" class="quick-action-btn">
+                    <i class="fas fa-money-bill"></i>
+                    <span>Payments</span>
+                </a>
+                <a href="/agencies/api-keys.html" class="quick-action-btn">
+                    <i class="fas fa-key"></i>
+                    <span>API Keys</span>
+                </a>
+            </div>
+
+            <!-- Stats Cards -->
+            <div class="stats-cards">
+                <div class="stat-card">
+                    <div class="stat-icon"><i class="fas fa-building"></i></div>
+                    <div class="stat-value" id="totalAgencies">24</div>
+                    <div class="stat-label">Total Agencies</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon"><i class="fas fa-check-circle"></i></div>
+                    <div class="stat-value" id="activeAgencies">18</div>
+                    <div class="stat-label">Active</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon"><i class="fas fa-dollar-sign"></i></div>
+                    <div class="stat-value" id="totalCommissions">$124K</div>
+                    <div class="stat-label">Commissions (MTD)</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon"><i class="fas fa-chart-line"></i></div>
+                    <div class="stat-value" id="avgPerformance">94%</div>
+                    <div class="stat-label">Avg Performance</div>
+                </div>
+            </div>
+
+            <!-- Filters -->
+            <div class="agency-filters">
+                <div class="filter-grid">
+                    <div class="form-group">
+                        <label><i class="fas fa-search"></i> Search</label>
+                        <input type="text" id="searchInput" class="form-control" placeholder="Agency name, contact, email...">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label><i class="fas fa-tag"></i> Category</label>
+                        <select id="categoryFilter" class="form-control">
+                            <option value="">All Categories</option>
+                            <option value="marketing">Marketing Agency</option>
+                            <option value="sales">Sales Partner</option>
+                            <option value="tech">Technology Partner</option>
+                            <option value="consulting">Consulting</option>
+                            <option value="referral">Referral Partner</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label><i class="fas fa-circle"></i> Status</label>
+                        <select id="statusFilter" class="form-control">
+                            <option value="">All Status</option>
+                            <option value="active">Active</option>
+                            <option value="inactive">Inactive</option>
+                            <option value="pending">Pending</option>
+                            <option value="suspended">Suspended</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label><i class="fas fa-layer-group"></i> Tier</label>
+                        <select id="tierFilter" class="form-control">
+                            <option value="">All Tiers</option>
+                            <option value="platinum">Platinum</option>
+                            <option value="gold">Gold</option>
+                            <option value="silver">Silver</option>
+                            <option value="bronze">Bronze</option>
+                        </select>
+                    </div>
+                </div>
+                
+                <div class="flex-between">
+                    <div class="flex gap-2">
+                        <button class="btn btn-primary" onclick="applyFilters()">
+                            <i class="fas fa-filter"></i> Apply Filters
+                        </button>
+                        <button class="btn btn-outline" onclick="resetFilters()">
+                            <i class="fas fa-undo"></i> Reset
+                        </button>
+                    </div>
+                    <div class="flex gap-2">
+                        <button class="btn btn-outline" onclick="bulkEmail()">
+                            <i class="fas fa-envelope"></i> Bulk Email
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Agencies Grid -->
+            <div class="agency-grid" id="agenciesGrid">
+                <!-- Agency cards will be loaded here -->
+            </div>
+
+            <!-- Pagination -->
+            <div class="flex-center" style="margin-top: var(--space-xl);">
+                <div class="pagination" id="pagination"></div>
+            </div>
+        </main>
+    </div>
+
+    <script>
+        let allAgencies = [];
+        let filteredAgencies = [];
+        let currentPage = 1;
+        const pageSize = 9;
+
+        document.addEventListener('DOMContentLoaded', () => {
+            if (!TAAGC.auth.isAuthenticated()) {
+                window.location.href = '/';
+                return;
+            }
+            
+            TAAGC.auth.updateUI();
+            loadAgencies();
+        });
+
+        function generateMockAgencies() {
+            return [
+                {
+                    id: 'ag_1001',
+                    name: 'Global Marketing Solutions',
+                    contact: 'Sarah Johnson',
+                    email: 'sarah@globalmarketing.com',
+                    phone: '+1-212-555-0123',
+                    category: 'marketing',
+                    tier: 'platinum',
+                    status: 'active',
+                    rating: 4.8,
+                    commission: 15,
+                    clients: 45,
+                    revenue: 1250000,
+                    performance: 98,
+                    joinDate: '2023-01-15',
+                    website: 'www.globalmarketing.com',
+                    country: 'USA'
+                },
+                {
+                    id: 'ag_1002',
+                    name: 'TechPartners Inc',
+                    contact: 'Mike Chen',
+                    email: 'mike@techpartners.com',
+                    phone: '+1-408-555-0456',
+                    category: 'tech',
+                    tier: 'gold',
+                    status: 'active',
+                    rating: 4.6,
+                    commission: 12,
+                    clients: 32,
+                    revenue: 890000,
+                    performance: 92,
+                    joinDate: '2023-03-20',
+                    website: 'www.techpartners.com',
+                    country: 'USA'
+                },
+                {
+                    id: 'ag_1003',
+                    name: 'SalesForce Partners',
+                    contact: 'Robert Wilson',
+                    email: 'robert@sfpartners.com',
+                    phone: '+44-20-7946-0123',
+                    category: 'sales',
+                    tier: 'silver',
+                    status: 'active',
+                    rating: 4.3,
+                    commission: 10,
+                    clients: 28,
+                    revenue: 675000,
+                    performance: 87,
+                    joinDate: '2023-06-10',
+                    website: 'www.sfpartners.co.uk',
+                    country: 'UK'
+                },
+                {
+                    id: 'ag_1004',
+                    name: 'Asia Pacific Consulting',
+                    contact: 'Li Wei',
+                    email: 'li@apconsulting.sg',
+                    phone: '+65-6789-0123',
+                    category: 'consulting',
+                    tier: 'platinum',
+                    status: 'active',
+                    rating: 4.9,
+                    commission: 18,
+                    clients: 52,
+                    revenue: 2100000,
+                    performance: 99,
+                    joinDate: '2022-11-05',
+                    website: 'www.apconsulting.sg',
+                    country: 'Singapore'
+                },
+                {
+                    id: 'ag_1005',
+                    name: 'Digital Marketing Pro',
+                    contact: 'Emma Davis',
+                    email: 'emma@dmp.com',
+                    phone: '+1-305-555-0789',
+                    category: 'marketing',
+                    tier: 'bronze',
+                    status: 'pending',
+                    rating: 3.9,
+                    commission: 8,
+                    clients: 12,
+                    revenue: 234000,
+                    performance: 76,
+                    joinDate: '2024-01-20',
+                    website: 'www.dmp.com',
+                    country: 'USA'
+                },
+                {
+                    id: 'ag_1006',
+                    name: 'European Investment Partners',
+                    contact: 'Hans Mueller',
+                    email: 'hans@eip.de',
+                    phone: '+49-89-1234-5678',
+                    category: 'referral',
+                    tier: 'gold',
+                    status: 'active',
+                    rating: 4.7,
+                    commission: 14,
+                    clients: 38,
+                    revenue: 1450000,
+                    performance: 95,
+                    joinDate: '2023-04-12',
+                    website: 'www.eip.de',
+                    country: 'Germany'
+                }
+            ];
+        }
+
+        function loadAgencies() {
+            allAgencies = generateMockAgencies();
+            filteredAgencies = [...allAgencies];
+            renderAgencies();
+            updateStats();
+        }
+
+        function renderAgencies() {
+            const start = (currentPage - 1) * pageSize;
+            const end = Math.min(start + pageSize, filteredAgencies.length);
+            const pageAgencies = filteredAgencies.slice(start, end);
+            
+            const grid = document.getElementById('agenciesGrid');
+            
+            if (pageAgencies.length === 0) {
+                grid.innerHTML = '<div class="empty-state" style="grid-column: 1/-1;">No agencies found</div>';
+                return;
+            }
+            
+            grid.innerHTML = pageAgencies.map(agency => {
+                const tierClass = `tier-${agency.tier}`;
+                const statusClass = `status-${agency.status}`;
+                
+                // Generate star rating
+                const fullStars = Math.floor(agency.rating);
+                const halfStar = agency.rating % 1 >= 0.5;
+                const stars = '★'.repeat(fullStars) + (halfStar ? '½' : '');
+                
+                return `
+                    <div class="agency-card">
+                        ${agency.tier ? `<div class="tier-badge tier-${agency.tier}">${agency.tier.toUpperCase()}</div>` : ''}
+                        
+                        <div class="agency-header">
+                            <div class="agency-logo">🏢</div>
+                            <div class="agency-name">${agency.name}</div>
+                            <div class="agency-category">${agency.category.replace('_', ' ')}</div>
+                        </div>
+                        
+                        <div class="agency-body">
+                            <div class="agency-stats">
+                                <div class="agency-stat">
+                                    <div class="agency-stat-value">${agency.clients}</div>
+                                    <div class="agency-stat-label">Clients</div>
+                                </div>
+                                <div class="agency-stat">
+                                    <div class="agency-stat-value">$${(agency.revenue/1000000).toFixed(1)}M</div>
+                                    <div class="agency-stat-label">Revenue</div>
+                                </div>
+                                <div class="agency-stat">
+                                    <div class="agency-stat-value">${agency.performance}%</div>
+                                    <div class="agency-stat-label">Perf</div>
+                                </div>
+                            </div>
+                            
+                            <div class="agency-info-row">
+                                <span class="agency-info-icon"><i class="fas fa-user"></i></span>
+                                <span>${agency.contact}</span>
+                            </div>
+                            
+                            <div class="agency-info-row">
+                                <span class="agency-info-icon"><i class="fas fa-envelope"></i></span>
+                                <span>${agency.email}</span>
+                            </div>
+                            
+                            <div class="agency-info-row">
+                                <span class="agency-info-icon"><i class="fas fa-phone"></i></span>
+                                <span>${agency.phone}</span>
+                            </div>
+                            
+                            <div class="agency-info-row">
+                                <span class="agency-info-icon"><i class="fas fa-globe"></i></span>
+                                <span>${agency.website}</span>
+                            </div>
+                            
+                            <div class="flex-between" style="margin-top: var(--space-sm);">
+                                <span class="rating-stars">${stars} (${agency.rating})</span>
+                                <span class="commission-badge">${agency.commission}% Commission</span>
+                            </div>
+                        </div>
+                        
+                        <div class="agency-footer">
+                            <span class="status-badge ${statusClass}">
+                                <i class="fas fa-circle"></i> ${agency.status}
+                            </span>
+                            
+                            <div class="flex gap-1">
+                                <button class="btn btn-sm btn-outline" onclick="viewAgency('${agency.id}')" title="View">
+                                    <i class="fas fa-eye"></i>
+                                </button>
+                                <button class="btn btn-sm btn-outline-accent" onclick="editAgency('${agency.id}')" title="Edit">
+                                    <i class="fas fa-edit"></i>
+                                </button>
+                                <button class="btn btn-sm btn-outline" onclick="manageCommissions('${agency.id}')" title="Commissions">
+                                    <i class="fas fa-percent"></i>
+                                </button>
+                                ${TAAGC.auth.isSuperAdmin() ? `
+                                    <button class="btn btn-sm btn-outline-danger" onclick="deleteAgency('${agency.id}')" title="Delete">
+                                        <i class="fas fa-trash"></i>
+                                    </button>
+                                ` : ''}
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+            
+            updatePagination();
+        }
+
+        function updateStats() {
+            const total = allAgencies.length;
+            const active = allAgencies.filter(a => a.status === 'active').length;
+            const totalCommissions = allAgencies.reduce((sum, a) => sum + (a.revenue * a.commission / 100), 0);
+            const avgPerformance = allAgencies.reduce((sum, a) => sum + a.performance, 0) / allAgencies.length;
+            
+            document.getElementById('totalAgencies').textContent = total;
+            document.getElementById('activeAgencies').textContent = active;
+            document.getElementById('totalCommissions').textContent = '$' + (totalCommissions/1000).toFixed(0) + 'K';
+            document.getElementById('avgPerformance').textContent = Math.round(avgPerformance) + '%';
+        }
+
+        function updatePagination() {
+            const totalPages = Math.ceil(filteredAgencies.length / pageSize);
+            const pagination = document.getElementById('pagination');
+            
+            if (totalPages <= 1) {
+                pagination.innerHTML = '';
+                return;
+            }
+            
+            let html = '';
+            
+            html += `<button class="page-link" onclick="goToPage(${currentPage - 1})" ${currentPage === 1 ? 'disabled' : ''}>
+                <i class="fas fa-chevron-left"></i>
+            </button>`;
+            
+            for (let i = 1; i <= totalPages; i++) {
+                if (i === 1 || i === totalPages || (i >= currentPage - 2 && i <= currentPage + 2)) {
+                    html += `<button class="page-link ${i === currentPage ? 'active' : ''}" onclick="goToPage(${i})">${i}</button>`;
+                } else if (i === currentPage - 3 || i === currentPage + 3) {
+                    html += `<span class="page-link">...</span>`;
+                }
+            }
+            
+            html += `<button class="page-link" onclick="goToPage(${currentPage + 1})" ${currentPage === totalPages ? 'disabled' : ''}>
+                <i class="fas fa-chevron-right"></i>
+            </button>`;
+            
+            pagination.innerHTML = html;
+        }
+
+        function goToPage(page) {
+            const totalPages = Math.ceil(filteredAgencies.length / pageSize);
+            if (page >= 1 && page <= totalPages) {
+                currentPage = page;
+                renderAgencies();
+            }
+        }
+
+        function applyFilters() {
+            const searchTerm = document.getElementById('searchInput').value.toLowerCase();
+            const category = document.getElementById('categoryFilter').value;
+            const status = document.getElementById('statusFilter').value;
+            const tier = document.getElementById('tierFilter').value;
+            
+            filteredAgencies = allAgencies.filter(agency => {
+                if (searchTerm && !agency.name.toLowerCase().includes(searchTerm) && 
+                    !agency.contact.toLowerCase().includes(searchTerm) &&
+                    !agency.email.toLowerCase().includes(searchTerm)) {
+                    return false;
+                }
+                
+                if (category && agency.category !== category) return false;
+                if (status && agency.status !== status) return false;
+                if (tier && agency.tier !== tier) return false;
+                
+                return true;
+            });
+            
+            currentPage = 1;
+            renderAgencies();
+        }
+
+        function resetFilters() {
+            document.getElementById('searchInput').value = '';
+            document.getElementById('categoryFilter').value = '';
+            document.getElementById('statusFilter').value = '';
+            document.getElementById('tierFilter').value = '';
+            
+            filteredAgencies = [...allAgencies];
+            currentPage = 1;
+            renderAgencies();
+        }
+
+        function viewAgency(id) {
+            location.href = `/agencies/view.html?id=${id}`;
+        }
+
+        function editAgency(id) {
+            location.href = `/agencies/edit.html?id=${id}`;
+        }
+
+        function manageCommissions(id) {
+            location.href = `/agencies/commissions.html?agency=${id}`;
+        }
+
+        function deleteAgency(id) {
+            if (!TAAGC.auth.isSuperAdmin()) {
+                TAAGC.ui.showToast('Only super admins can delete agencies', 'error');
+                return;
+            }
+            
+            TAAGC.ui.confirm('Are you sure you want to delete this agency?', () => {
+                TAAGC.ui.showToast('Agency deleted', 'success');
+                loadAgencies();
+            });
+        }
+
+        function exportAgencies() {
+            TAAGC.data.downloadCSV(allAgencies, 'agencies_export.csv');
+        }
+
+        function bulkEmail() {
+            TAAGC.ui.showToast('Bulk email feature coming soon', 'info');
+        }
+    </script>
+</body>
+</html>
