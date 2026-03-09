@@ -1,0 +1,831 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bank Reports - TAAGC Admin</title>
+    
+    <!-- Fonts & Icons -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Chart.js for analytics -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+    
+    <!-- Assets -->
+    <link rel="stylesheet" href="/assets/css/admin.css">
+    <script src="/assets/js/admin.js" defer></script>
+    
+    <style>
+        .report-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: var(--space-xl);
+            flex-wrap: wrap;
+            gap: var(--space-md);
+        }
+        
+        .report-filters {
+            background: var(--white);
+            border-radius: var(--radius-lg);
+            padding: var(--space-lg);
+            margin-bottom: var(--space-xl);
+            border: 1px solid #e2e8f0;
+        }
+        
+        .filter-row {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: var(--space-md);
+            margin-bottom: var(--space-md);
+        }
+        
+        .kpi-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: var(--space-lg);
+            margin-bottom: var(--space-xl);
+        }
+        
+        .kpi-card {
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+            color: white;
+            padding: var(--space-lg);
+            border-radius: var(--radius-lg);
+        }
+        
+        .kpi-value {
+            font-size: 32px;
+            font-weight: 700;
+            margin-bottom: var(--space-xs);
+        }
+        
+        .kpi-label {
+            opacity: 0.8;
+            font-size: 13px;
+        }
+        
+        .kpi-change {
+            font-size: 12px;
+            margin-top: var(--space-xs);
+        }
+        
+        .chart-container {
+            background: var(--white);
+            border-radius: var(--radius-lg);
+            padding: var(--space-lg);
+            border: 1px solid #e2e8f0;
+            margin-bottom: var(--space-xl);
+        }
+        
+        .chart-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: var(--space-lg);
+        }
+        
+        .chart-wrapper {
+            height: 400px;
+            position: relative;
+        }
+        
+        .report-tabs {
+            display: flex;
+            gap: var(--space-sm);
+            border-bottom: 2px solid #e2e8f0;
+            margin-bottom: var(--space-xl);
+            flex-wrap: wrap;
+        }
+        
+        .report-tab {
+            padding: var(--space-md) var(--space-lg);
+            cursor: pointer;
+            font-weight: 600;
+            color: var(--light);
+            border-bottom: 2px solid transparent;
+            margin-bottom: -2px;
+        }
+        
+        .report-tab.active {
+            color: var(--accent);
+            border-bottom-color: var(--accent);
+        }
+        
+        .data-table {
+            background: var(--white);
+            border-radius: var(--radius-lg);
+            padding: var(--space-lg);
+            border: 1px solid #e2e8f0;
+            overflow-x: auto;
+        }
+        
+        .export-options {
+            display: flex;
+            gap: var(--space-sm);
+            margin-left: auto;
+        }
+        
+        .export-btn {
+            padding: var(--space-sm) var(--space-md);
+            background: var(--bg);
+            border: 1px solid #e2e8f0;
+            border-radius: var(--radius-md);
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .export-btn:hover {
+            background: var(--accent);
+            color: white;
+            border-color: var(--accent);
+        }
+        
+        .summary-cards {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: var(--space-lg);
+            margin-bottom: var(--space-xl);
+        }
+        
+        .summary-card {
+            background: var(--white);
+            padding: var(--space-lg);
+            border-radius: var(--radius-lg);
+            border: 1px solid #e2e8f0;
+            text-align: center;
+        }
+        
+        .summary-value {
+            font-size: 24px;
+            font-weight: 700;
+            color: var(--primary);
+            margin-bottom: var(--space-xs);
+        }
+        
+        .summary-label {
+            color: var(--light);
+            font-size: 13px;
+        }
+        
+        .date-presets {
+            display: flex;
+            gap: var(--space-xs);
+            flex-wrap: wrap;
+        }
+        
+        .preset-btn {
+            padding: var(--space-xs) var(--space-md);
+            background: var(--bg);
+            border: 1px solid #e2e8f0;
+            border-radius: 20px;
+            font-size: 12px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .preset-btn:hover {
+            background: var(--accent);
+            color: white;
+            border-color: var(--accent);
+        }
+        
+        .preset-btn.active {
+            background: var(--accent);
+            color: white;
+            border-color: var(--accent);
+        }
+        
+        .bank-selector {
+            display: flex;
+            gap: var(--space-sm);
+            flex-wrap: wrap;
+            margin-bottom: var(--space-lg);
+        }
+        
+        .bank-option {
+            padding: var(--space-xs) var(--space-lg);
+            background: var(--white);
+            border: 1px solid #e2e8f0;
+            border-radius: 30px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .bank-option:hover {
+            border-color: var(--accent);
+        }
+        
+        .bank-option.active {
+            background: var(--accent);
+            color: white;
+            border-color: var(--accent);
+        }
+    </style>
+</head>
+<body>
+    <div class="admin-container">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <div class="logo-icon">TA</div>
+                <h2><span>TAAGC</span> ADMIN</h2>
+            </div>
+
+            <div class="user-info">
+                <div class="user-avatar" data-user-avatar>A</div>
+                <div data-user-field="name">Loading...</div>
+                <div style="font-size: 12px; opacity: 0.7;" data-user-field="email"></div>
+                <span class="user-role" data-user-field="role"></span>
+            </div>
+
+            <nav class="nav-menu">
+                <div class="nav-section">MAIN</div>
+                <a href="/dashboard.html" class="nav-item"><i class="fas fa-tachometer-alt"></i> Dashboard</a>
+                <a href="/users/index.html" class="nav-item"><i class="fas fa-users"></i> Users</a>
+                <a href="/investments/index.html" class="nav-item"><i class="fas fa-chart-line"></i> Investments</a>
+                <a href="/transactions/index.html" class="nav-item"><i class="fas fa-exchange-alt"></i> Transactions</a>
+                <a href="/banks/index.html" class="nav-item active"><i class="fas fa-university"></i> Banks</a>
+                
+                <div class="nav-divider"></div>
+                <div class="nav-section">BANK REPORTS</div>
+                <a href="/banks/reports.html" class="nav-item active">
+                    <i class="fas fa-chart-pie"></i> Analytics
+                </a>
+                <a href="/banks/audit.html" class="nav-item">
+                    <i class="fas fa-history"></i> Audit Logs
+                </a>
+                <a href="/banks/compliance.html" class="nav-item super-admin-only">
+                    <i class="fas fa-gavel"></i> Compliance
+                </a>
+            </nav>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <div class="top-bar">
+                <div class="page-title">
+                    <h1><i class="fas fa-chart-pie" style="color: var(--accent);"></i> Bank Analytics & Reports</h1>
+                    <p>Comprehensive financial analytics and reporting</p>
+                </div>
+                <div class="top-bar-actions">
+                    <div class="export-options">
+                        <button class="export-btn" onclick="exportReport('pdf')">
+                            <i class="fas fa-file-pdf"></i> PDF
+                        </button>
+                        <button class="export-btn" onclick="exportReport('excel')">
+                            <i class="fas fa-file-excel"></i> Excel
+                        </button>
+                        <button class="export-btn" onclick="exportReport('csv')">
+                            <i class="fas fa-file-csv"></i> CSV
+                        </button>
+                    </div>
+                    <button class="logout-btn" id="logoutBtn"><i class="fas fa-sign-out-alt"></i></button>
+                </div>
+            </div>
+
+            <!-- Bank Selector -->
+            <div class="bank-selector">
+                <span class="bank-option active" onclick="selectBank('all')">All Banks</span>
+                <span class="bank-option" onclick="selectBank('chase')">Chase Bank</span>
+                <span class="bank-option" onclick="selectBank('bofa')">Bank of America</span>
+                <span class="bank-option" onclick="selectBank('wells')">Wells Fargo</span>
+                <span class="bank-option" onclick="selectBank('hsbc')">HSBC</span>
+                <span class="bank-option" onclick="selectBank('dbs')">DBS Bank</span>
+            </div>
+
+            <!-- Date Presets -->
+            <div class="date-presets">
+                <span class="preset-btn" onclick="setDateRange('today')">Today</span>
+                <span class="preset-btn active" onclick="setDateRange('week')">This Week</span>
+                <span class="preset-btn" onclick="setDateRange('month')">This Month</span>
+                <span class="preset-btn" onclick="setDateRange('quarter')">This Quarter</span>
+                <span class="preset-btn" onclick="setDateRange('year')">This Year</span>
+                <span class="preset-btn" onclick="setDateRange('custom')">Custom Range</span>
+            </div>
+
+            <!-- Report Filters -->
+            <div class="report-filters">
+                <div class="filter-row">
+                    <div class="form-group">
+                        <label>Date Range</label>
+                        <div class="flex gap-2">
+                            <input type="date" class="form-control" value="2024-03-01">
+                            <input type="date" class="form-control" value="2024-03-09">
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>Report Type</label>
+                        <select class="form-control">
+                            <option>Balance Summary</option>
+                            <option>Transaction History</option>
+                            <option>Cash Flow Analysis</option>
+                            <option>Reconciliation Status</option>
+                            <option>Fee Analysis</option>
+                            <option>Interest Summary</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>Group By</label>
+                        <select class="form-control">
+                            <option>Daily</option>
+                            <option>Weekly</option>
+                            <option>Monthly</option>
+                            <option>Quarterly</option>
+                            <option>Yearly</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>Currency</label>
+                        <select class="form-control">
+                            <option>All Currencies</option>
+                            <option>USD</option>
+                            <option>EUR</option>
+                            <option>GBP</option>
+                            <option>SGD</option>
+                        </select>
+                    </div>
+                </div>
+                
+                <div class="flex-between">
+                    <div class="flex gap-2">
+                        <button class="btn btn-primary" onclick="generateReport()">
+                            <i class="fas fa-sync-alt"></i> Generate Report
+                        </button>
+                        <button class="btn btn-outline" onclick="resetFilters()">
+                            <i class="fas fa-undo"></i> Reset
+                        </button>
+                    </div>
+                    <div>
+                        <span class="badge badge-info">Last updated: Mar 9, 2024 10:30 AM</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- KPI Cards -->
+            <div class="kpi-grid">
+                <div class="kpi-card">
+                    <div class="kpi-value" id="totalBalance">$12.5M</div>
+                    <div class="kpi-label">Total Balance</div>
+                    <div class="kpi-change">↑ 5.2% from last month</div>
+                </div>
+                <div class="kpi-card">
+                    <div class="kpi-value" id="totalInflow">$2.3M</div>
+                    <div class="kpi-label">Total Inflow</div>
+                    <div class="kpi-change">↑ 12.3%</div>
+                </div>
+                <div class="kpi-card">
+                    <div class="kpi-value" id="totalOutflow">$1.8M</div>
+                    <div class="kpi-label">Total Outflow</div>
+                    <div class="kpi-change">↓ 3.1%</div>
+                </div>
+                <div class="kpi-card">
+                    <div class="kpi-value" id="netCashflow">+$0.5M</div>
+                    <div class="kpi-label">Net Cashflow</div>
+                    <div class="kpi-change">↑ 8.4%</div>
+                </div>
+            </div>
+
+            <!-- Report Tabs -->
+            <div class="report-tabs">
+                <div class="report-tab active" onclick="showReportTab('overview')">Overview</div>
+                <div class="report-tab" onclick="showReportTab('balance')">Balance History</div>
+                <div class="report-tab" onclick="showReportTab('transactions')">Transaction Analysis</div>
+                <div class="report-tab" onclick="showReportTab('cashflow')">Cash Flow</div>
+                <div class="report-tab" onclick="showReportTab('fees')">Fees & Interest</div>
+            </div>
+
+            <!-- Overview Tab -->
+            <div id="overviewTab">
+                <!-- Balance Distribution Chart -->
+                <div class="chart-container">
+                    <div class="chart-header">
+                        <h3>Balance Distribution by Bank</h3>
+                        <select class="form-control" style="width: 150px;">
+                            <option>All Accounts</option>
+                            <option>Checking</option>
+                            <option>Savings</option>
+                            <option>Investment</option>
+                        </select>
+                    </div>
+                    <div class="chart-wrapper">
+                        <canvas id="balanceChart"></canvas>
+                    </div>
+                </div>
+
+                <!-- Summary Cards -->
+                <div class="summary-cards">
+                    <div class="summary-card">
+                        <div class="summary-value">$5.2M</div>
+                        <div class="summary-label">Chase Bank</div>
+                        <small style="color: var(--light);">8 accounts</small>
+                    </div>
+                    <div class="summary-card">
+                        <div class="summary-value">$3.9M</div>
+                        <div class="summary-label">Bank of America</div>
+                        <small style="color: var(--light);">6 accounts</small>
+                    </div>
+                    <div class="summary-card">
+                        <div class="summary-value">$2.8M</div>
+                        <div class="summary-label">Wells Fargo</div>
+                        <small style="color: var(--light);">5 accounts</small>
+                    </div>
+                </div>
+
+                <!-- Recent Activity Table -->
+                <div class="data-table">
+                    <h3 style="margin-bottom: var(--space-lg);">Recent Transactions by Bank</h3>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Bank</th>
+                                <th>Account</th>
+                                <th>Transaction Count</th>
+                                <th>Total Volume</th>
+                                <th>Avg Transaction</th>
+                                <th>Last Sync</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>Chase Bank</td>
+                                <td>8 accounts</td>
+                                <td>1,234</td>
+                                <td>$2.1M</td>
+                                <td>$1,702</td>
+                                <td>2 min ago</td>
+                            </tr>
+                            <tr>
+                                <td>Bank of America</td>
+                                <td>6 accounts</td>
+                                <td>892</td>
+                                <td>$1.5M</td>
+                                <td>$1,682</td>
+                                <td>5 min ago</td>
+                            </tr>
+                            <tr>
+                                <td>Wells Fargo</td>
+                                <td>5 accounts</td>
+                                <td>567</td>
+                                <td>$0.9M</td>
+                                <td>$1,587</td>
+                                <td>12 min ago</td>
+                            </tr>
+                            <tr>
+                                <td>HSBC</td>
+                                <td>12 accounts</td>
+                                <td>2,345</td>
+                                <td>$3.2M</td>
+                                <td>$1,365</td>
+                                <td>8 min ago</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Balance History Tab -->
+            <div id="balanceTab" style="display: none;">
+                <div class="chart-container">
+                    <div class="chart-header">
+                        <h3>Balance History (Last 30 Days)</h3>
+                        <div class="flex gap-2">
+                            <select class="form-control" style="width: 150px;">
+                                <option>All Banks</option>
+                                <option>Chase Bank</option>
+                                <option>Bank of America</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="chart-wrapper">
+                        <canvas id="balanceHistoryChart"></canvas>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Transaction Analysis Tab -->
+            <div id="transactionsTab" style="display: none;">
+                <div class="grid-2">
+                    <div class="chart-container">
+                        <h3 style="margin-bottom: var(--space-lg);">Transaction Type Distribution</h3>
+                        <div class="chart-wrapper" style="height: 300px;">
+                            <canvas id="transactionTypeChart"></canvas>
+                        </div>
+                    </div>
+                    
+                    <div class="chart-container">
+                        <h3 style="margin-bottom: var(--space-lg);">Transaction Volume by Day</h3>
+                        <div class="chart-wrapper" style="height: 300px;">
+                            <canvas id="transactionVolumeChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Cash Flow Tab -->
+            <div id="cashflowTab" style="display: none;">
+                <div class="chart-container">
+                    <div class="chart-header">
+                        <h3>Cash Flow Analysis</h3>
+                        <div class="flex gap-2">
+                            <span class="badge badge-success">Inflow: $2.3M</span>
+                            <span class="badge badge-danger">Outflow: $1.8M</span>
+                            <span class="badge badge-info">Net: +$0.5M</span>
+                        </div>
+                    </div>
+                    <div class="chart-wrapper">
+                        <canvas id="cashflowChart"></canvas>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Fees & Interest Tab -->
+            <div id="feesTab" style="display: none;">
+                <div class="grid-2">
+                    <div class="chart-container">
+                        <h3 style="margin-bottom: var(--space-lg);">Fee Breakdown</h3>
+                        <div class="chart-wrapper" style="height: 300px;">
+                            <canvas id="feesChart"></canvas>
+                        </div>
+                    </div>
+                    
+                    <div class="chart-container">
+                        <h3 style="margin-bottom: var(--space-lg);">Interest Earned</h3>
+                        <div class="chart-wrapper" style="height: 300px;">
+                            <canvas id="interestChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="data-table">
+                    <h3 style="margin-bottom: var(--space-lg);">Fee Summary by Bank</h3>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Bank</th>
+                                <th>Monthly Fees</th>
+                                <th>Transaction Fees</th>
+                                <th>Wire Fees</th>
+                                <th>Total Fees</th>
+                                <th>Interest Earned</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>Chase Bank</td>
+                                <td>$25.00</td>
+                                <td>$45.50</td>
+                                <td>$30.00</td>
+                                <td>$100.50</td>
+                                <td class="amount-positive">+$1,245.67</td>
+                            </tr>
+                            <tr>
+                                <td>Bank of America</td>
+                                <td>$20.00</td>
+                                <td>$32.25</td>
+                                <td>$25.00</td>
+                                <td>$77.25</td>
+                                <td class="amount-positive">+$892.34</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script>
+        let balanceChart, balanceHistoryChart, transactionTypeChart, transactionVolumeChart, cashflowChart, feesChart, interestChart;
+
+        document.addEventListener('DOMContentLoaded', () => {
+            if (!TAAGC.auth.isAuthenticated()) {
+                window.location.href = '/';
+                return;
+            }
+            
+            TAAGC.auth.updateUI();
+            initializeCharts();
+        });
+
+        function initializeCharts() {
+            // Balance Distribution Chart
+            const balanceCtx = document.getElementById('balanceChart').getContext('2d');
+            balanceChart = new Chart(balanceCtx, {
+                type: 'doughnut',
+                data: {
+                    labels: ['Chase Bank', 'Bank of America', 'Wells Fargo', 'HSBC', 'DBS Bank'],
+                    datasets: [{
+                        data: [5.2, 3.9, 2.8, 6.7, 4.2],
+                        backgroundColor: ['#c19a6b', '#0a2540', '#10b981', '#3b82f6', '#8b5cf6'],
+                        borderWidth: 0
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            position: 'bottom'
+                        },
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    return ` ${context.label}: $${context.raw}M`;
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+
+            // Balance History Chart
+            const historyCtx = document.getElementById('balanceHistoryChart').getContext('2d');
+            balanceHistoryChart = new Chart(historyCtx, {
+                type: 'line',
+                data: {
+                    labels: ['Mar 1', 'Mar 2', 'Mar 3', 'Mar 4', 'Mar 5', 'Mar 6', 'Mar 7', 'Mar 8', 'Mar 9'],
+                    datasets: [{
+                        label: 'Total Balance',
+                        data: [12.1, 12.3, 12.5, 12.4, 12.6, 12.8, 12.7, 12.9, 13.1],
+                        borderColor: '#c19a6b',
+                        backgroundColor: 'rgba(193,154,107,0.1)',
+                        tension: 0.4,
+                        fill: true
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    return ` Balance: $${context.raw}M`;
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+
+            // Transaction Type Chart
+            const typeCtx = document.getElementById('transactionTypeChart').getContext('2d');
+            transactionTypeChart = new Chart(typeCtx, {
+                type: 'pie',
+                data: {
+                    labels: ['Deposits', 'Withdrawals', 'Transfers', 'Fees', 'Interest'],
+                    datasets: [{
+                        data: [45, 30, 15, 5, 5],
+                        backgroundColor: ['#10b981', '#e53e3e', '#3b82f6', '#f59e0b', '#8b5cf6'],
+                        borderWidth: 0
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            position: 'bottom'
+                        }
+                    }
+                }
+            });
+
+            // Transaction Volume Chart
+            const volumeCtx = document.getElementById('transactionVolumeChart').getContext('2d');
+            transactionVolumeChart = new Chart(volumeCtx, {
+                type: 'bar',
+                data: {
+                    labels: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
+                    datasets: [{
+                        label: 'Transaction Count',
+                        data: [145, 132, 158, 167, 189, 98, 76],
+                        backgroundColor: '#c19a6b',
+                        borderRadius: 6
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            display: false
+                        }
+                    }
+                }
+            });
+
+            // Cash Flow Chart
+            const cashflowCtx = document.getElementById('cashflowChart').getContext('2d');
+            cashflowChart = new Chart(cashflowCtx, {
+                type: 'line',
+                data: {
+                    labels: ['Week 1', 'Week 2', 'Week 3', 'Week 4'],
+                    datasets: [
+                        {
+                            label: 'Inflow',
+                            data: [0.8, 1.2, 1.5, 2.3],
+                            borderColor: '#10b981',
+                            backgroundColor: 'rgba(16,185,129,0.1)',
+                            tension: 0.4,
+                            fill: false
+                        },
+                        {
+                            label: 'Outflow',
+                            data: [0.6, 0.9, 1.1, 1.8],
+                            borderColor: '#e53e3e',
+                            backgroundColor: 'rgba(229,62,62,0.1)',
+                            tension: 0.4,
+                            fill: false
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false
+                }
+            });
+
+            // Fees Chart
+            const feesCtx = document.getElementById('feesChart').getContext('2d');
+            feesChart = new Chart(feesCtx, {
+                type: 'bar',
+                data: {
+                    labels: ['Monthly', 'Transaction', 'Wire', 'Overdraft', 'Other'],
+                    datasets: [{
+                        label: 'Fees ($)',
+                        data: [120, 245, 85, 45, 32],
+                        backgroundColor: '#f59e0b',
+                        borderRadius: 6
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false
+                }
+            });
+
+            // Interest Chart
+            const interestCtx = document.getElementById('interestChart').getContext('2d');
+            interestChart = new Chart(interestCtx, {
+                type: 'bar',
+                data: {
+                    labels: ['Chase', 'BOA', 'Wells', 'HSBC', 'DBS'],
+                    datasets: [{
+                        label: 'Interest Earned ($)',
+                        data: [1245, 892, 567, 2341, 1234],
+                        backgroundColor: '#10b981',
+                        borderRadius: 6
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false
+                }
+            });
+        }
+
+        function selectBank(bank) {
+            document.querySelectorAll('.bank-option').forEach(opt => opt.classList.remove('active'));
+            event.target.classList.add('active');
+            TAAGC.ui.showToast(`Showing reports for ${bank}`, 'info');
+        }
+
+        function setDateRange(range) {
+            document.querySelectorAll('.preset-btn').forEach(btn => btn.classList.remove('active'));
+            event.target.classList.add('active');
+            TAAGC.ui.showToast(`Date range set to ${range}`, 'info');
+        }
+
+        function showReportTab(tab) {
+            document.querySelectorAll('.report-tab').forEach(t => t.classList.remove('active'));
+            event.target.classList.add('active');
+            
+            document.getElementById('overviewTab').style.display = tab === 'overview' ? 'block' : 'none';
+            document.getElementById('balanceTab').style.display = tab === 'balance' ? 'block' : 'none';
+            document.getElementById('transactionsTab').style.display = tab === 'transactions' ? 'block' : 'none';
+            document.getElementById('cashflowTab').style.display = tab === 'cashflow' ? 'block' : 'none';
+            document.getElementById('feesTab').style.display = tab === 'fees' ? 'block' : 'none';
+        }
+
+        function generateReport() {
+            TAAGC.ui.showToast('Generating report...', 'info');
+            setTimeout(() => {
+                TAAGC.ui.showToast('Report generated successfully', 'success');
+            }, 2000);
+        }
+
+        function resetFilters() {
+            TAAGC.ui.showToast('Filters reset', 'info');
+        }
+
+        function exportReport(format) {
+            TAAGC.ui.showToast(`Exporting as ${format.toUpperCase()}...`, 'info');
+        }
+    </script>
+</body>
+</html>
