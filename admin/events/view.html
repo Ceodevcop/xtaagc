@@ -1,0 +1,773 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Event Details - TAAGC Admin</title>
+    
+    <!-- Fonts & Icons -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Assets -->
+    <link rel="stylesheet" href="/assets/css/admin.css">
+    <script src="/assets/js/admin.js" defer></script>
+    
+    <style>
+        .event-header {
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+            color: white;
+            padding: var(--space-xl);
+            border-radius: var(--radius-lg);
+            margin-bottom: var(--space-xl);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .event-header::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -10%;
+            width: 50%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 70%);
+        }
+        
+        .event-badge {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+            margin-right: var(--space-sm);
+        }
+        
+        .badge-upcoming {
+            background: rgba(16,185,129,0.2);
+            color: #10b981;
+        }
+        
+        .badge-ongoing {
+            background: rgba(245,158,11,0.2);
+            color: #f59e0b;
+        }
+        
+        .badge-completed {
+            background: rgba(100,116,139,0.2);
+            color: #94a3b8;
+        }
+        
+        .event-title-large {
+            font-size: 36px;
+            font-weight: 700;
+            margin: var(--space-md) 0 var(--space-xs);
+        }
+        
+        .event-meta-large {
+            display: flex;
+            gap: var(--space-xl);
+            margin: var(--space-lg) 0;
+            flex-wrap: wrap;
+        }
+        
+        .meta-item {
+            display: flex;
+            align-items: center;
+            gap: var(--space-sm);
+        }
+        
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: var(--space-lg);
+            margin-bottom: var(--space-xl);
+        }
+        
+        .stat-card {
+            background: var(--white);
+            border-radius: var(--radius-lg);
+            padding: var(--space-lg);
+            border: 1px solid #e2e8f0;
+            text-align: center;
+        }
+        
+        .stat-value {
+            font-size: 28px;
+            font-weight: 700;
+            color: var(--primary);
+            margin-bottom: var(--space-xs);
+        }
+        
+        .stat-label {
+            color: var(--light);
+            font-size: 13px;
+        }
+        
+        .event-tabs {
+            display: flex;
+            gap: var(--space-sm);
+            border-bottom: 2px solid #e2e8f0;
+            margin-bottom: var(--space-xl);
+            flex-wrap: wrap;
+        }
+        
+        .event-tab {
+            padding: var(--space-md) var(--space-lg);
+            cursor: pointer;
+            font-weight: 600;
+            color: var(--light);
+            border-bottom: 2px solid transparent;
+            margin-bottom: -2px;
+        }
+        
+        .event-tab.active {
+            color: var(--accent);
+            border-bottom-color: var(--accent);
+        }
+        
+        .info-section {
+            background: var(--white);
+            border-radius: var(--radius-lg);
+            padding: var(--space-xl);
+            border: 1px solid #e2e8f0;
+            margin-bottom: var(--space-xl);
+        }
+        
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: var(--space-lg);
+            padding-bottom: var(--space-md);
+            border-bottom: 2px solid var(--accent);
+        }
+        
+        .info-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: var(--space-lg);
+        }
+        
+        .info-row {
+            display: flex;
+            padding: var(--space-sm) 0;
+            border-bottom: 1px solid #e2e8f0;
+        }
+        
+        .info-row:last-child {
+            border-bottom: none;
+        }
+        
+        .info-label {
+            width: 140px;
+            color: var(--light);
+            font-weight: 500;
+        }
+        
+        .info-value {
+            flex: 1;
+            color: var(--dark);
+            font-weight: 500;
+        }
+        
+        .agenda-timeline {
+            position: relative;
+            padding-left: var(--space-xl);
+        }
+        
+        .agenda-item {
+            position: relative;
+            padding-bottom: var(--space-lg);
+            border-left: 2px solid var(--accent);
+            padding-left: var(--space-lg);
+        }
+        
+        .agenda-item::before {
+            content: '';
+            position: absolute;
+            left: -9px;
+            top: 0;
+            width: 16px;
+            height: 16px;
+            border-radius: 50%;
+            background: var(--accent);
+            border: 3px solid var(--white);
+        }
+        
+        .agenda-time {
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--accent);
+            margin-bottom: 4px;
+        }
+        
+        .agenda-title {
+            font-weight: 600;
+            color: var(--dark);
+            margin-bottom: 4px;
+        }
+        
+        .agenda-speaker {
+            color: var(--light);
+            font-size: 13px;
+        }
+        
+        .speaker-card {
+            display: flex;
+            align-items: center;
+            gap: var(--space-md);
+            padding: var(--space-md);
+            border: 1px solid #e2e8f0;
+            border-radius: var(--radius-md);
+            margin-bottom: var(--space-md);
+        }
+        
+        .speaker-avatar {
+            width: 60px;
+            height: 60px;
+            background: var(--accent);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 24px;
+        }
+        
+        .speaker-info {
+            flex: 1;
+        }
+        
+        .speaker-name {
+            font-size: 18px;
+            font-weight: 700;
+            color: var(--primary);
+        }
+        
+        .speaker-title {
+            color: var(--light);
+            font-size: 13px;
+        }
+        
+        .sponsor-logo {
+            width: 100px;
+            height: 60px;
+            background: var(--bg);
+            border: 1px solid #e2e8f0;
+            border-radius: var(--radius-md);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+            color: var(--light);
+        }
+        
+        .ticket-type {
+            background: var(--bg);
+            border-radius: var(--radius-md);
+            padding: var(--space-md);
+            margin-bottom: var(--space-sm);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        
+        .ticket-name {
+            font-weight: 600;
+            color: var(--primary);
+        }
+        
+        .ticket-price {
+            font-size: 20px;
+            font-weight: 700;
+            color: var(--accent);
+        }
+        
+        .ticket-stats {
+            display: flex;
+            gap: var(--space-xl);
+            color: var(--light);
+            font-size: 13px;
+        }
+        
+        .capacity-progress {
+            width: 200px;
+            height: 8px;
+            background: #e2e8f0;
+            border-radius: 4px;
+            overflow: hidden;
+        }
+        
+        .capacity-progress-fill {
+            height: 100%;
+            background: var(--accent);
+            border-radius: 4px;
+        }
+        
+        .action-buttons {
+            position: sticky;
+            bottom: 30px;
+            right: 30px;
+            display: flex;
+            gap: var(--space-md);
+            justify-content: flex-end;
+            margin-top: var(--space-xl);
+        }
+    </style>
+</head>
+<body>
+    <div class="admin-container">
+        <!-- Sidebar -->
+        <aside class="sidebar">...</aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <div class="top-bar">
+                <div class="page-title">
+                    <h1><i class="fas fa-calendar" style="color: var(--accent);"></i> Event Details</h1>
+                    <p>View complete event information</p>
+                </div>
+                <div class="top-bar-actions">
+                    <button class="btn btn-outline" onclick="location.href='/events/index.html'">
+                        <i class="fas fa-arrow-left"></i> Back to Events
+                    </button>
+                    <button class="logout-btn" id="logoutBtn"><i class="fas fa-sign-out-alt"></i></button>
+                </div>
+            </div>
+
+            <!-- Event Header -->
+            <div class="event-header">
+                <div style="position: relative; z-index: 2;">
+                    <div class="flex gap-2">
+                        <span class="event-badge badge-upcoming">Upcoming</span>
+                        <span class="event-badge" style="background: rgba(255,255,255,0.2);">Conference</span>
+                    </div>
+                    
+                    <div class="event-title-large">Global Investment Summit 2024</div>
+                    
+                    <div class="event-meta-large">
+                        <span class="meta-item"><i class="fas fa-calendar"></i> May 15-17, 2024</span>
+                        <span class="meta-item"><i class="fas fa-clock"></i> 9:00 AM - 6:00 PM</span>
+                        <span class="meta-item"><i class="fas fa-map-marker-alt"></i> New York Convention Center</span>
+                        <span class="meta-item"><i class="fas fa-users"></i> 234 registered</span>
+                    </div>
+                    
+                    <p style="max-width: 600px; opacity: 0.9;">
+                        Join industry leaders and investors for the premier investment conference of the year. Network with top professionals and discover emerging opportunities.
+                    </p>
+                </div>
+            </div>
+
+            <!-- Stats Cards -->
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-value">234</div>
+                    <div class="stat-label">Registered</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value">300</div>
+                    <div class="stat-label">Capacity</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value">78%</div>
+                    <div class="stat-label">Fill Rate</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value">$89K</div>
+                    <div class="stat-label">Revenue</div>
+                </div>
+            </div>
+
+            <!-- Event Tabs -->
+            <div class="event-tabs">
+                <div class="event-tab active" onclick="showTab('overview')">Overview</div>
+                <div class="event-tab" onclick="showTab('agenda')">Agenda</div>
+                <div class="event-tab" onclick="showTab('speakers')">Speakers</div>
+                <div class="event-tab" onclick="showTab('sponsors')">Sponsors</div>
+                <div class="event-tab" onclick="showTab('tickets')">Tickets</div>
+                <div class="event-tab" onclick="showTab('feedback')">Feedback</div>
+            </div>
+
+            <!-- Overview Tab -->
+            <div id="overviewTab">
+                <div class="info-grid">
+                    <!-- Event Details -->
+                    <div class="info-section">
+                        <h3 style="margin-bottom: var(--space-lg);"><i class="fas fa-info-circle"></i> Event Details</h3>
+                        
+                        <div class="info-row">
+                            <span class="info-label">Event ID</span>
+                            <span class="info-value">EVT-2024-001</span>
+                        </div>
+                        <div class="info-row">
+                            <span class="info-label">Type</span>
+                            <span class="info-value">Conference</span>
+                        </div>
+                        <div class="info-row">
+                            <span class="info-label">Category</span>
+                            <span class="info-value">Investment</span>
+                        </div>
+                        <div class="info-row">
+                            <span class="info-label">Format</span>
+                            <span class="info-value">In-Person</span>
+                        </div>
+                        <div class="info-row">
+                            <span class="info-label">Status</span>
+                            <span class="info-value"><span class="badge badge-success">Published</span></span>
+                        </div>
+                    </div>
+
+                    <!-- Date & Location -->
+                    <div class="info-section">
+                        <h3 style="margin-bottom: var(--space-lg);"><i class="fas fa-map-marker-alt"></i> Date & Location</h3>
+                        
+                        <div class="info-row">
+                            <span class="info-label">Start Date</span>
+                            <span class="info-value">May 15, 2024 - 9:00 AM</span>
+                        </div>
+                        <div class="info-row">
+                            <span class="info-label">End Date</span>
+                            <span class="info-value">May 17, 2024 - 6:00 PM</span>
+                        </div>
+                        <div class="info-row">
+                            <span class="info-label">Venue</span>
+                            <span class="info-value">New York Convention Center</span>
+                        </div>
+                        <div class="info-row">
+                            <span class="info-label">Address</span>
+                            <span class="info-value">655 W 34th St, New York, NY 10001</span>
+                        </div>
+                        <div class="info-row">
+                            <span class="info-label">Room</span>
+                            <span class="info-value">Grand Ballroom</span>
+                        </div>
+                    </div>
+
+                    <!-- Organizer -->
+                    <div class="info-section">
+                        <h3 style="margin-bottom: var(--space-lg);"><i class="fas fa-user-tie"></i> Organizer</h3>
+                        
+                        <div class="info-row">
+                            <span class="info-label">Organized By</span>
+                            <span class="info-value">TAAGC Events Team</span>
+                        </div>
+                        <div class="info-row">
+                            <span class="info-label">Contact Person</span>
+                            <span class="info-value">Sarah Johnson</span>
+                        </div>
+                        <div class="info-row">
+                            <span class="info-label">Email</span>
+                            <span class="info-value">sarah.j@taagc.com</span>
+                        </div>
+                        <div class="info-row">
+                            <span class="info-label">Phone</span>
+                            <span class="info-value">+1-212-555-0123</span>
+                        </div>
+                    </div>
+
+                    <!-- Registration Info -->
+                    <div class="info-section">
+                        <h3 style="margin-bottom: var(--space-lg);"><i class="fas fa-ticket-alt"></i> Registration Info</h3>
+                        
+                        <div class="info-row">
+                            <span class="info-label">Deadline</span>
+                            <span class="info-value">May 10, 2024</span>
+                        </div>
+                        <div class="info-row">
+                            <span class="info-label">Waitlist</span>
+                            <span class="info-value">Enabled (12 on waitlist)</span>
+                        </div>
+                        <div class="info-row">
+                            <span class="info-label">Refund Policy</span>
+                            <span class="info-value">Full refund until May 1</span>
+                        </div>
+                        <div class="info-row">
+                            <span class="info-label">Group Discount</span>
+                            <span class="info-value">10% for 5+ tickets</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Agenda Tab -->
+            <div id="agendaTab" style="display: none;">
+                <div class="info-section">
+                    <div class="section-header">
+                        <h3><i class="fas fa-clock"></i> Event Agenda</h3>
+                        <button class="btn btn-sm btn-outline" onclick="editAgenda()">
+                            <i class="fas fa-edit"></i> Edit Agenda
+                        </button>
+                    </div>
+                    
+                    <div class="agenda-timeline">
+                        <div class="agenda-item">
+                            <div class="agenda-time">Day 1 - May 15, 2024</div>
+                            <div class="agenda-time">09:00 - 10:00</div>
+                            <div class="agenda-title">Registration & Welcome Coffee</div>
+                        </div>
+                        
+                        <div class="agenda-item">
+                            <div class="agenda-time">10:00 - 11:30</div>
+                            <div class="agenda-title">Keynote: The Future of Global Investment</div>
+                            <div class="agenda-speaker">Robert Wilson, CEO</div>
+                        </div>
+                        
+                        <div class="agenda-item">
+                            <div class="agenda-time">11:30 - 13:00</div>
+                            <div class="agenda-title">Panel Discussion: Emerging Markets</div>
+                            <div class="agenda-speaker">Sarah Johnson, Michael Chen, Emma Davis</div>
+                        </div>
+                        
+                        <div class="agenda-item">
+                            <div class="agenda-time">13:00 - 14:00</div>
+                            <div class="agenda-title">Networking Lunch</div>
+                        </div>
+                        
+                        <div class="agenda-item">
+                            <div class="agenda-time">14:00 - 15:30</div>
+                            <div class="agenda-title">Workshop: Investment Strategies 2024</div>
+                            <div class="agenda-speaker">John Smith</div>
+                        </div>
+                        
+                        <div class="agenda-item">
+                            <div class="agenda-time">15:30 - 17:00</div>
+                            <div class="agenda-title">Startup Pitch Session</div>
+                        </div>
+                        
+                        <div class="agenda-item">
+                            <div class="agenda-time">17:00 - 19:00</div>
+                            <div class="agenda-title">Welcome Reception</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Speakers Tab -->
+            <div id="speakersTab" style="display: none;">
+                <div class="info-section">
+                    <div class="section-header">
+                        <h3><i class="fas fa-microphone"></i> Speakers</h3>
+                        <button class="btn btn-sm btn-primary" onclick="addSpeaker()">
+                            <i class="fas fa-plus"></i> Add Speaker
+                        </button>
+                    </div>
+                    
+                    <div class="grid-2">
+                        <div class="speaker-card">
+                            <div class="speaker-avatar">RW</div>
+                            <div class="speaker-info">
+                                <div class="speaker-name">Robert Wilson</div>
+                                <div class="speaker-title">CEO, TAAGC Global</div>
+                                <div style="margin-top: 4px;">
+                                    <span class="badge badge-accent">Keynote</span>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="speaker-card">
+                            <div class="speaker-avatar">SJ</div>
+                            <div class="speaker-info">
+                                <div class="speaker-name">Sarah Johnson</div>
+                                <div class="speaker-title">Chief Investment Officer</div>
+                                <div style="margin-top: 4px;">
+                                    <span class="badge badge-accent">Panelist</span>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="speaker-card">
+                            <div class="speaker-avatar">MC</div>
+                            <div class="speaker-info">
+                                <div class="speaker-name">Michael Chen</div>
+                                <div class="speaker-title">Managing Partner, VC Fund</div>
+                                <div style="margin-top: 4px;">
+                                    <span class="badge badge-accent">Panelist</span>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="speaker-card">
+                            <div class="speaker-avatar">ED</div>
+                            <div class="speaker-info">
+                                <div class="speaker-name">Emma Davis</div>
+                                <div class="speaker-title">Economist</div>
+                                <div style="margin-top: 4px;">
+                                    <span class="badge badge-accent">Speaker</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Sponsors Tab -->
+            <div id="sponsorsTab" style="display: none;">
+                <div class="info-section">
+                    <div class="section-header">
+                        <h3><i class="fas fa-handshake"></i> Sponsors</h3>
+                        <button class="btn btn-sm btn-primary" onclick="addSponsor()">
+                            <i class="fas fa-plus"></i> Add Sponsor
+                        </button>
+                    </div>
+                    
+                    <h4 style="margin: var(--space-lg) 0 var(--space-md);">Platinum Sponsors</h4>
+                    <div class="grid-3">
+                        <div class="sponsor-logo">🏦 Global Bank</div>
+                        <div class="sponsor-logo">📈 InvestCorp</div>
+                        <div class="sponsor-logo">💰 Capital Ventures</div>
+                    </div>
+                    
+                    <h4 style="margin: var(--space-lg) 0 var(--space-md);">Gold Sponsors</h4>
+                    <div class="grid-3">
+                        <div class="sponsor-logo">💼 Wealth Partners</div>
+                        <div class="sponsor-logo">📊 Market Insights</div>
+                        <div class="sponsor-logo">🏛️ Private Equity Group</div>
+                    </div>
+                    
+                    <h4 style="margin: var(--space-lg) 0 var(--space-md);">Media Partners</h4>
+                    <div class="grid-3">
+                        <div class="sponsor-logo">📰 Finance Times</div>
+                        <div class="sponsor-logo">📺 InvestTV</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Tickets Tab -->
+            <div id="ticketsTab" style="display: none;">
+                <div class="info-section">
+                    <div class="section-header">
+                        <h3><i class="fas fa-ticket-alt"></i> Ticket Types</h3>
+                        <button class="btn btn-sm btn-primary" onclick="addTicket()">
+                            <i class="fas fa-plus"></i> Add Ticket
+                        </button>
+                    </div>
+                    
+                    <div class="ticket-type">
+                        <div>
+                            <div class="ticket-name">Early Bird</div>
+                            <div class="ticket-stats">
+                                <span>Sold: 45</span>
+                                <span>Available: 55</span>
+                                <span>Total: 100</span>
+                            </div>
+                        </div>
+                        <div class="ticket-price">$299</div>
+                    </div>
+                    
+                    <div class="ticket-type">
+                        <div>
+                            <div class="ticket-name">Regular</div>
+                            <div class="ticket-stats">
+                                <span>Sold: 156</span>
+                                <span>Available: 44</span>
+                                <span>Total: 200</span>
+                            </div>
+                        </div>
+                        <div class="ticket-price">$399</div>
+                    </div>
+                    
+                    <div class="ticket-type">
+                        <div>
+                            <div class="ticket-name">VIP</div>
+                            <div class="ticket-stats">
+                                <span>Sold: 33</span>
+                                <span>Available: 17</span>
+                                <span>Total: 50</span>
+                            </div>
+                        </div>
+                        <div class="ticket-price">$899</div>
+                    </div>
+                    
+                    <div class="capacity-progress" style="width: 100%; margin-top: var(--space-lg);">
+                        <div class="capacity-progress-fill" style="width: 78%;"></div>
+                    </div>
+                    <p style="text-align: right; margin-top: var(--space-xs);">Overall Capacity: 78% filled</p>
+                </div>
+            </div>
+
+            <!-- Feedback Tab -->
+            <div id="feedbackTab" style="display: none;">
+                <div class="info-section">
+                    <h3 style="margin-bottom: var(--space-lg);">Feedback Summary</h3>
+                    
+                    <div class="grid-2">
+                        <div class="stat-card">
+                            <div class="stat-value">4.8</div>
+                            <div class="stat-label">Average Rating</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-value">89</div>
+                            <div class="stat-label">Reviews</div>
+                        </div>
+                    </div>
+                    
+                    <div style="margin-top: var(--space-lg);">
+                        <div class="info-row">
+                            <span class="info-label">Content Quality</span>
+                            <span class="info-value">4.9/5</span>
+                        </div>
+                        <div class="info-row">
+                            <span class="info-label">Speakers</span>
+                            <span class="info-value">4.8/5</span>
+                        </div>
+                        <div class="info-row">
+                            <span class="info-label">Venue</span>
+                            <span class="info-value">4.7/5</span>
+                        </div>
+                        <div class="info-row">
+                            <span class="info-label">Organization</span>
+                            <span class="info-value">4.9/5</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Action Buttons -->
+            <div class="action-buttons">
+                <button class="btn btn-primary" onclick="editEvent()">
+                    <i class="fas fa-edit"></i> Edit Event
+                </button>
+                <button class="btn btn-success" onclick="viewRegistrations()">
+                    <i class="fas fa-users"></i> Registrations
+                </button>
+                <button class="btn btn-outline-accent" onclick="duplicateEvent()">
+                    <i class="fas fa-copy"></i> Duplicate
+                </button>
+                <button class="btn btn-outline" onclick="exportEvent()">
+                    <i class="fas fa-download"></i> Export
+                </button>
+            </div>
+        </main>
+    </div>
+
+    <script>
+        function showTab(tab) {
+            document.querySelectorAll('.event-tab').forEach(t => t.classList.remove('active'));
+            event.target.classList.add('active');
+            
+            document.getElementById('overviewTab').style.display = tab === 'overview' ? 'block' : 'none';
+            document.getElementById('agendaTab').style.display = tab === 'agenda' ? 'block' : 'none';
+            document.getElementById('speakersTab').style.display = tab === 'speakers' ? 'block' : 'none';
+            document.getElementById('sponsorsTab').style.display = tab === 'sponsors' ? 'block' : 'none';
+            document.getElementById('ticketsTab').style.display = tab === 'tickets' ? 'block' : 'none';
+            document.getElementById('feedbackTab').style.display = tab === 'feedback' ? 'block' : 'none';
+        }
+
+        function editEvent() {
+            location.href = '/events/edit.html?id=evt1';
+        }
+
+        function viewRegistrations() {
+            location.href = '/events/registrations.html?event=evt1';
+        }
+
+        function editAgenda() { TAAGC.ui.showToast('Edit agenda', 'info'); }
+        function addSpeaker() { TAAGC.ui.showToast('Add speaker', 'info'); }
+        function addSponsor() { TAAGC.ui.showToast('Add sponsor', 'info'); }
+        function addTicket() { TAAGC.ui.showToast('Add ticket', 'info'); }
+        function duplicateEvent() { TAAGC.ui.showToast('Duplicate event', 'info'); }
+        function exportEvent() { TAAGC.ui.showToast('Export event data', 'info'); }
+    </script>
+</body>
+</html>
