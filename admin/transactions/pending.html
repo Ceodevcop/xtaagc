@@ -1,0 +1,333 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pending Approvals - TAAGC Admin</title>
+    
+    <!-- Fonts & Icons -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Assets -->
+    <link rel="stylesheet" href="/assets/css/admin.css">
+    <script src="/assets/js/admin.js" defer></script>
+    
+    <style>
+        .pending-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(400px, 1fr));
+            gap: var(--space-lg);
+        }
+        
+        .pending-card {
+            background: var(--white);
+            border-radius: var(--radius-lg);
+            border: 1px solid #e2e8f0;
+            overflow: hidden;
+            transition: all 0.3s;
+        }
+        
+        .pending-card:hover {
+            transform: translateY(-5px);
+            box-shadow: var(--shadow-lg);
+            border-color: var(--accent);
+        }
+        
+        .pending-header {
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+            color: white;
+            padding: var(--space-md) var(--space-lg);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .pending-badge {
+            background: var(--warning);
+            color: var(--primary);
+            padding: 2px 8px;
+            border-radius: 12px;
+            font-size: 11px;
+            font-weight: 600;
+        }
+        
+        .pending-body {
+            padding: var(--space-lg);
+        }
+        
+        .pending-row {
+            display: flex;
+            justify-content: space-between;
+            padding: var(--space-sm) 0;
+            border-bottom: 1px solid #e2e8f0;
+        }
+        
+        .pending-row:last-child {
+            border-bottom: none;
+        }
+        
+        .pending-label {
+            color: var(--light);
+            font-weight: 500;
+        }
+        
+        .pending-value {
+            font-weight: 600;
+            color: var(--dark);
+        }
+        
+        .pending-actions {
+            display: flex;
+            gap: var(--space-sm);
+            padding: var(--space-lg);
+            background: var(--bg);
+            border-top: 1px solid #e2e8f0;
+        }
+        
+        .risk-indicator {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            display: inline-block;
+            margin-right: 4px;
+        }
+        
+        .risk-low { background: var(--success); }
+        .risk-medium { background: var(--warning); }
+        .risk-high { background: var(--danger); }
+        
+        .timer {
+            font-family: monospace;
+            font-size: 14px;
+            color: var(--warning);
+        }
+    </style>
+</head>
+<body>
+    <div class="admin-container">
+        <!-- Sidebar -->
+        <aside class="sidebar">...</aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <div class="top-bar">
+                <div class="page-title">
+                    <h1><i class="fas fa-clock" style="color: var(--accent);"></i> Pending Approvals</h1>
+                    <p>Review and approve pending transactions</p>
+                </div>
+                <div class="top-bar-actions">
+                    <button class="btn btn-primary" onclick="refreshPending()">
+                        <i class="fas fa-sync-alt"></i> Refresh
+                    </button>
+                    <button class="logout-btn" id="logoutBtn"><i class="fas fa-sign-out-alt"></i></button>
+                </div>
+            </div>
+
+            <!-- Summary Stats -->
+            <div class="stats-cards" style="grid-template-columns: repeat(4, 1fr);">
+                <div class="stat-card">
+                    <div class="stat-value" id="totalPending">24</div>
+                    <div class="stat-label">Total Pending</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value" id="pendingDeposits">12</div>
+                    <div class="stat-label">Deposits</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value" id="pendingWithdrawals">8</div>
+                    <div class="stat-label">Withdrawals</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value" id="pendingValue">$245,678</div>
+                    <div class="stat-label">Total Value</div>
+                </div>
+            </div>
+
+            <!-- Pending Items Grid -->
+            <div class="pending-grid" id="pendingGrid">
+                <!-- Pending cards will be loaded here -->
+            </div>
+        </main>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            if (!TAAGC.auth.isAuthenticated()) {
+                window.location.href = '/';
+                return;
+            }
+            
+            TAAGC.auth.updateUI();
+            loadPending();
+        });
+
+        function generateMockPending() {
+            const pending = [
+                {
+                    id: 'TXN12345',
+                    type: 'withdrawal',
+                    user: 'John Doe',
+                    amount: 25000,
+                    date: '2024-03-09T10:30:00',
+                    method: 'Bank Transfer',
+                    risk: 'low',
+                    flags: [],
+                    notes: 'Regular withdrawal request'
+                },
+                {
+                    id: 'TXN12346',
+                    type: 'deposit',
+                    user: 'Jane Smith',
+                    amount: 50000,
+                    date: '2024-03-09T09:15:00',
+                    method: 'Wire Transfer',
+                    risk: 'medium',
+                    flags: ['Large amount'],
+                    notes: 'First time depositor'
+                },
+                {
+                    id: 'TXN12347',
+                    type: 'withdrawal',
+                    user: 'Mike Johnson',
+                    amount: 75000,
+                    date: '2024-03-09T08:45:00',
+                    method: 'Crypto',
+                    risk: 'high',
+                    flags: ['Unusual pattern', 'New wallet'],
+                    notes: 'Multiple small deposits followed by large withdrawal'
+                },
+                {
+                    id: 'TXN12348',
+                    type: 'deposit',
+                    user: 'Sarah Wilson',
+                    amount: 10000,
+                    date: '2024-03-09T11:20:00',
+                    method: 'Credit Card',
+                    risk: 'low',
+                    flags: [],
+                    notes: 'Regular monthly deposit'
+                }
+            ];
+            
+            return pending;
+        }
+
+        function loadPending() {
+            const pending = generateMockPending();
+            const grid = document.getElementById('pendingGrid');
+            
+            grid.innerHTML = pending.map(item => {
+                const timeAgo = getTimeAgo(new Date(item.date));
+                const riskClass = `risk-${item.risk}`;
+                
+                return `
+                    <div class="pending-card">
+                        <div class="pending-header">
+                            <span><i class="fas ${item.type === 'deposit' ? 'fa-arrow-down' : 'fa-arrow-up'}"></i> ${item.type.toUpperCase()}</span>
+                            <span class="pending-badge">${timeAgo}</span>
+                        </div>
+                        
+                        <div class="pending-body">
+                            <div class="pending-row">
+                                <span class="pending-label">Transaction ID</span>
+                                <span class="pending-value"><code>${item.id}</code></span>
+                            </div>
+                            
+                            <div class="pending-row">
+                                <span class="pending-label">User</span>
+                                <span class="pending-value">${item.user}</span>
+                            </div>
+                            
+                            <div class="pending-row">
+                                <span class="pending-label">Amount</span>
+                                <span class="pending-value amount-${item.amount > 0 ? 'positive' : 'negative'}">
+                                    ${TAAGC.data.formatCurrency(item.amount)}
+                                </span>
+                            </div>
+                            
+                            <div class="pending-row">
+                                <span class="pending-label">Method</span>
+                                <span class="pending-value">${item.method}</span>
+                            </div>
+                            
+                            <div class="pending-row">
+                                <span class="pending-label">Risk Assessment</span>
+                                <span class="pending-value">
+                                    <span class="risk-indicator ${riskClass}"></span>
+                                    ${item.risk.toUpperCase()}
+                                </span>
+                            </div>
+                            
+                            ${item.flags.length > 0 ? `
+                                <div class="pending-row">
+                                    <span class="pending-label">Flags</span>
+                                    <span class="pending-value">
+                                        ${item.flags.map(flag => 
+                                            `<span class="badge badge-warning" style="margin-right: 4px;">${flag}</span>`
+                                        ).join('')}
+                                    </span>
+                                </div>
+                            ` : ''}
+                            
+                            <div class="pending-row">
+                                <span class="pending-label">Notes</span>
+                                <span class="pending-value">${item.notes}</span>
+                            </div>
+                        </div>
+                        
+                        <div class="pending-actions">
+                            <button class="btn btn-sm btn-success" onclick="approveTransaction('${item.id}')" style="flex: 1;">
+                                <i class="fas fa-check"></i> Approve
+                            </button>
+                            <button class="btn btn-sm btn-danger" onclick="rejectTransaction('${item.id}')" style="flex: 1;">
+                                <i class="fas fa-times"></i> Reject
+                            </button>
+                            <button class="btn btn-sm btn-outline" onclick="reviewTransaction('${item.id}')">
+                                <i class="fas fa-search"></i>
+                            </button>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        function getTimeAgo(date) {
+            const now = new Date();
+            const diffMs = now - date;
+            const diffMins = Math.floor(diffMs / 60000);
+            
+            if (diffMins < 60) {
+                return `${diffMins} min ago`;
+            } else if (diffMins < 1440) {
+                return `${Math.floor(diffMins / 60)} hours ago`;
+            } else {
+                return `${Math.floor(diffMins / 1440)} days ago`;
+            }
+        }
+
+        function approveTransaction(id) {
+            TAAGC.ui.confirm('Approve this transaction?', () => {
+                TAAGC.ui.showToast('Transaction approved', 'success');
+                loadPending();
+            });
+        }
+
+        function rejectTransaction(id) {
+            TAAGC.ui.confirm('Reject this transaction?', () => {
+                TAAGC.ui.showToast('Transaction rejected', 'warning');
+                loadPending();
+            });
+        }
+
+        function reviewTransaction(id) {
+            TAAGC.ui.showToast(`Reviewing transaction ${id}`, 'info');
+        }
+
+        function refreshPending() {
+            TAAGC.ui.showToast('Refreshing pending list...', 'info');
+            setTimeout(loadPending, 1000);
+        }
+    </script>
+</body>
+</html>
