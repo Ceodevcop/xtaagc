@@ -1,0 +1,374 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dispute Management - TAAGC Admin</title>
+    
+    <!-- Fonts & Icons -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Assets -->
+    <link rel="stylesheet" href="/assets/css/admin.css">
+    <script src="/assets/js/admin.js" defer></script>
+    
+    <style>
+        .dispute-tabs {
+            display: flex;
+            gap: var(--space-sm);
+            border-bottom: 2px solid #e2e8f0;
+            margin-bottom: var(--space-xl);
+        }
+        
+        .dispute-tab {
+            padding: var(--space-md) var(--space-lg);
+            cursor: pointer;
+            font-weight: 600;
+            color: var(--light);
+            border-bottom: 2px solid transparent;
+            margin-bottom: -2px;
+        }
+        
+        .dispute-tab.active {
+            color: var(--accent);
+            border-bottom-color: var(--accent);
+        }
+        
+        .dispute-card {
+            background: var(--white);
+            border-radius: var(--radius-lg);
+            border: 1px solid #e2e8f0;
+            margin-bottom: var(--space-lg);
+            overflow: hidden;
+        }
+        
+        .dispute-header {
+            background: var(--bg);
+            padding: var(--space-md) var(--space-lg);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid #e2e8f0;
+        }
+        
+        .dispute-id {
+            font-family: monospace;
+            font-weight: 600;
+        }
+        
+        .dispute-severity {
+            padding: 2px 8px;
+            border-radius: 12px;
+            font-size: 11px;
+            font-weight: 600;
+        }
+        
+        .severity-high {
+            background: rgba(229,62,62,0.1);
+            color: var(--danger);
+        }
+        
+        .severity-medium {
+            background: rgba(245,158,11,0.1);
+            color: var(--warning);
+        }
+        
+        .severity-low {
+            background: rgba(16,185,129,0.1);
+            color: var(--success);
+        }
+        
+        .dispute-body {
+            padding: var(--space-lg);
+        }
+        
+        .evidence-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: var(--space-md);
+            margin: var(--space-md) 0;
+        }
+        
+        .evidence-item {
+            border: 1px solid #e2e8f0;
+            border-radius: var(--radius-md);
+            padding: var(--space-sm);
+            text-align: center;
+            cursor: pointer;
+        }
+        
+        .evidence-item:hover {
+            border-color: var(--accent);
+        }
+        
+        .evidence-icon {
+            font-size: 24px;
+            color: var(--accent);
+            margin-bottom: var(--space-xs);
+        }
+        
+        .timeline {
+            position: relative;
+            padding-left: var(--space-xl);
+        }
+        
+        .timeline-item {
+            position: relative;
+            padding-bottom: var(--space-lg);
+            border-left: 2px solid var(--accent);
+            padding-left: var(--space-lg);
+        }
+        
+        .timeline-item::before {
+            content: '';
+            position: absolute;
+            left: -9px;
+            top: 0;
+            width: 16px;
+            height: 16px;
+            border-radius: 50%;
+            background: var(--accent);
+        }
+        
+        .timeline-date {
+            font-size: 11px;
+            color: var(--light);
+            margin-bottom: 4px;
+        }
+        
+        .timeline-action {
+            font-weight: 600;
+            color: var(--dark);
+        }
+        
+        .resolution-actions {
+            display: flex;
+            gap: var(--space-md);
+            margin-top: var(--space-lg);
+            padding-top: var(--space-lg);
+            border-top: 1px solid #e2e8f0;
+        }
+    </style>
+</head>
+<body>
+    <div class="admin-container">
+        <!-- Sidebar -->
+        <aside class="sidebar">...</aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <div class="top-bar">
+                <div class="page-title">
+                    <h1><i class="fas fa-exclamation-triangle" style="color: var(--accent);"></i> Dispute Management</h1>
+                    <p>Resolve transaction disputes and issues</p>
+                </div>
+                <div class="top-bar-actions">
+                    <button class="btn btn-outline" onclick="refreshDisputes()">
+                        <i class="fas fa-sync-alt"></i> Refresh
+                    </button>
+                    <button class="logout-btn" id="logoutBtn"><i class="fas fa-sign-out-alt"></i></button>
+                </div>
+            </div>
+
+            <!-- Stats -->
+            <div class="stats-cards" style="grid-template-columns: repeat(3, 1fr);">
+                <div class="stat-card">
+                    <div class="stat-value" id="openDisputes">8</div>
+                    <div class="stat-label">Open Disputes</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value" id="disputeValue">$156,780</div>
+                    <div class="stat-label">Total Value</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value" id="avgResolution">3.2</div>
+                    <div class="stat-label">Avg Resolution (days)</div>
+                </div>
+            </div>
+
+            <!-- Tabs -->
+            <div class="dispute-tabs">
+                <div class="dispute-tab active" onclick="showDisputeTab('open')">Open (8)</div>
+                <div class="dispute-tab" onclick="showDisputeTab('investigating')">Investigating (4)</div>
+                <div class="dispute-tab" onclick="showDisputeTab('resolved')">Resolved (12)</div>
+                <div class="dispute-tab" onclick="showDisputeTab('escalated')">Escalated (2)</div>
+            </div>
+
+            <!-- Disputes List -->
+            <div id="disputesList">
+                <!-- Dispute cards will be loaded here -->
+            </div>
+        </main>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            if (!TAAGC.auth.isAuthenticated()) {
+                window.location.href = '/';
+                return;
+            }
+            
+            TAAGC.auth.updateUI();
+            loadDisputes();
+        });
+
+        function generateMockDisputes() {
+            return [
+                {
+                    id: 'DSP001',
+                    transactionId: 'TXN12345',
+                    user: 'John Doe',
+                    amount: 25000,
+                    date: '2024-03-07',
+                    severity: 'high',
+                    status: 'open',
+                    reason: 'Unauthorized transaction',
+                    description: 'User claims they did not authorize this withdrawal',
+                    evidence: ['bank_statement.pdf', 'conversation.png'],
+                    timeline: [
+                        { date: '2024-03-07T10:00', action: 'Dispute opened by user' },
+                        { date: '2024-03-07T14:30', action: 'Assigned to support team' }
+                    ]
+                },
+                {
+                    id: 'DSP002',
+                    transactionId: 'TXN12346',
+                    user: 'Jane Smith',
+                    amount: 5000,
+                    date: '2024-03-08',
+                    severity: 'medium',
+                    status: 'investigating',
+                    reason: 'Amount mismatch',
+                    description: 'Deposit amount different from confirmation',
+                    evidence: ['receipt.pdf', 'screenshot.png'],
+                    timeline: [
+                        { date: '2024-03-08T09:15', action: 'Dispute opened' },
+                        { date: '2024-03-08T11:20', action: 'Evidence requested from user' },
+                        { date: '2024-03-08T16:45', action: 'Evidence received, under review' }
+                    ]
+                }
+            ];
+        }
+
+        function loadDisputes() {
+            const disputes = generateMockDisputes();
+            const list = document.getElementById('disputesList');
+            
+            list.innerHTML = disputes.map(dispute => `
+                <div class="dispute-card">
+                    <div class="dispute-header">
+                        <div class="flex gap-2">
+                            <span class="dispute-id">#${dispute.id}</span>
+                            <span class="badge badge-warning">${dispute.status}</span>
+                        </div>
+                        <span class="dispute-severity severity-${dispute.severity}">${dispute.severity.toUpperCase()}</span>
+                    </div>
+                    
+                    <div class="dispute-body">
+                        <div class="grid-2" style="margin-bottom: var(--space-md);">
+                            <div>
+                                <div class="pending-row">
+                                    <span class="pending-label">Transaction</span>
+                                    <span class="pending-value"><code>${dispute.transactionId}</code></span>
+                                </div>
+                                <div class="pending-row">
+                                    <span class="pending-label">User</span>
+                                    <span class="pending-value">${dispute.user}</span>
+                                </div>
+                                <div class="pending-row">
+                                    <span class="pending-label">Amount</span>
+                                    <span class="pending-value">${TAAGC.data.formatCurrency(dispute.amount)}</span>
+                                </div>
+                            </div>
+                            <div>
+                                <div class="pending-row">
+                                    <span class="pending-label">Date</span>
+                                    <span class="pending-value">${TAAGC.data.formatDate(dispute.date)}</span>
+                                </div>
+                                <div class="pending-row">
+                                    <span class="pending-label">Reason</span>
+                                    <span class="pending-value">${dispute.reason}</span>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <p style="background: var(--bg); padding: var(--space-md); border-radius: var(--radius-md); margin-bottom: var(--space-md);">
+                            ${dispute.description}
+                        </p>
+                        
+                        <h4 style="margin-bottom: var(--space-sm);">Evidence</h4>
+                        <div class="evidence-grid">
+                            ${dispute.evidence.map(file => `
+                                <div class="evidence-item" onclick="viewEvidence('${file}')">
+                                    <div class="evidence-icon"><i class="fas fa-file-pdf"></i></div>
+                                    <div>${file}</div>
+                                </div>
+                            `).join('')}
+                        </div>
+                        
+                        <h4 style="margin: var(--space-lg) 0 var(--space-sm);">Timeline</h4>
+                        <div class="timeline">
+                            ${dispute.timeline.map(item => `
+                                <div class="timeline-item">
+                                    <div class="timeline-date">${new Date(item.date).toLocaleString()}</div>
+                                    <div class="timeline-action">${item.action}</div>
+                                </div>
+                            `).join('')}
+                        </div>
+                        
+                        <div class="resolution-actions">
+                            <button class="btn btn-success" onclick="resolveDispute('${dispute.id}', 'refund')">
+                                <i class="fas fa-undo"></i> Refund User
+                            </button>
+                            <button class="btn btn-warning" onclick="resolveDispute('${dispute.id}', 'partial')">
+                                <i class="fas fa-adjust"></i> Partial Refund
+                            </button>
+                            <button class="btn btn-danger" onclick="resolveDispute('${dispute.id}', 'reject')">
+                                <i class="fas fa-times"></i> Reject Dispute
+                            </button>
+                            <button class="btn btn-outline" onclick="escalateDispute('${dispute.id}')">
+                                <i class="fas fa-arrow-up"></i> Escalate
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function showDisputeTab(tab) {
+            document.querySelectorAll('.dispute-tab').forEach(t => t.classList.remove('active'));
+            event.target.classList.add('active');
+            TAAGC.ui.showToast(`Showing ${tab} disputes`, 'info');
+        }
+
+        function viewEvidence(file) {
+            TAAGC.ui.showToast(`Opening ${file}...`, 'info');
+        }
+
+        function resolveDispute(id, type) {
+            const messages = {
+                refund: 'Process full refund?',
+                partial: 'Process partial refund?',
+                reject: 'Reject this dispute?'
+            };
+            
+            TAAGC.ui.confirm(messages[type], () => {
+                TAAGC.ui.showToast(`Dispute resolved: ${type}`, 'success');
+                loadDisputes();
+            });
+        }
+
+        function escalateDispute(id) {
+            TAAGC.ui.confirm('Escalate this dispute to management?', () => {
+                TAAGC.ui.showToast('Dispute escalated', 'warning');
+            });
+        }
+
+        function refreshDisputes() {
+            TAAGC.ui.showToast('Refreshing disputes...', 'info');
+            setTimeout(loadDisputes, 1000);
+        }
+    </script>
+</body>
+</html>
