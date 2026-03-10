@@ -703,7 +703,7 @@
                         const userData = userDoc.data();
                         
                         if (userData.role === 'super_admin') {
-                            window.location.href = '/ceo-dashboard.html';
+                            window.location.href = '/dashboard';
                         } else if (['admin'].includes(userData.role)) {
                             window.location.href = '/dashboard/';
                         }
