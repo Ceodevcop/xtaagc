@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+
+<title>TAAGC Platform Setup</title>
+
+<style>
+
+body{
+font-family:Arial;
+background:#f1f5f9;
+margin:0;
+padding:0;
+}
+
+.container{
+max-width:500px;
+margin:auto;
+margin-top:80px;
+background:white;
+padding:30px;
+border-radius:8px;
+box-shadow:0 10px 30px rgba(0,0,0,.1);
+}
+
+h1{
+color:#0a2540;
+margin-bottom:20px;
+}
+
+input{
+width:100%;
+padding:12px;
+margin-bottom:15px;
+border:1px solid #ddd;
+border-radius:6px;
+}
+
+button{
+width:100%;
+padding:12px;
+background:#0a2540;
+color:white;
+border:none;
+border-radius:6px;
+cursor:pointer;
+font-weight:bold;
+}
+
+button:hover{
+background:#1a3a4f;
+}
+
+.status{
+margin-top:10px;
+color:#10b981;
+}
+
+</style>
+
+</head>
+
+<body>
+
+<div class="container">
+
+<h1>TAAGC Platform Setup</h1>
+
+<input id="name" placeholder="Admin Name">
+<input id="email" placeholder="Admin Email">
+<input id="password" type="password" placeholder="Password">
+
+<button onclick="runSetup()">Initialize Platform</button>
+
+<p class="status" id="status"></p>
+
+</div>
+
+
+<!-- Firebase CDN -->
+<script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js"></script>
+
+<script>
+
+const firebaseConfig = {
+apiKey: "AIzaSyCOcCDPqRSlAMJJBEeNchTA1qO9tl9Nldw",
+authDomain: "xtaagc.firebaseapp.com",
+projectId: "xtaagc",
+storageBucket: "xtaagc.firebasestorage.app",
+messagingSenderId: "256073982437",
+appId: "1:256073982437:android:0c54368d54e260cba98f0c"
+}
+
+firebase.initializeApp(firebaseConfig)
+
+const auth = firebase.auth()
+const db = firebase.firestore()
+
+
+async function runSetup(){
+
+const name = document.getElementById("name").value
+const email = document.getElementById("email").value
+const password = document.getElementById("password").value
+
+const status = document.getElementById("status")
+
+if(!name || !email || !password){
+
+status.innerText="Please fill all fields"
+return
+
+}
+
+status.innerText="Checking system..."
+
+const setupDoc = await db.collection("system").doc("setup").get()
+
+if(setupDoc.exists){
+
+status.innerText="System already initialized"
+setTimeout(()=>{
+window.location="/dashboard"
+},1500)
+
+return
+
+}
+
+try{
+
+status.innerText="Creating admin..."
+
+const userCredential = await auth.createUserWithEmailAndPassword(email,password)
+
+const uid = userCredential.user.uid
+
+await db.collection("users").doc(uid).set({
+
+name:name,
+email:email,
+role:"super_admin",
+createdAt:new Date()
+
+})
+
+await db.collection("system").doc("setup").set({
+
+completed:true,
+createdAt:new Date(),
+createdBy:uid
+
+})
+
+status.innerText="Setup completed successfully"
+
+setTimeout(()=>{
+
+window.location="/dashboard"
+
+},2000)
+
+}catch(err){
+
+status.innerText=err.message
+
+}
+
+}
+
+</script>
+
+</body>
+</html>
