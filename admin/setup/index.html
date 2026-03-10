@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>TAAGC Platform Setup</title>
+
+<style>
+body{
+font-family:Arial;
+background:#f1f5f9;
+display:flex;
+justify-content:center;
+align-items:center;
+height:100vh;
+margin:0;
+}
+
+.card{
+background:white;
+padding:30px;
+width:400px;
+border-radius:8px;
+box-shadow:0 10px 30px rgba(0,0,0,.1);
+}
+
+input{
+width:100%;
+padding:12px;
+margin-top:10px;
+border:1px solid #ddd;
+border-radius:6px;
+}
+
+button{
+width:100%;
+padding:12px;
+margin-top:15px;
+background:#0a2540;
+color:white;
+border:none;
+border-radius:6px;
+font-weight:bold;
+cursor:pointer;
+}
+
+#status p{
+font-size:14px;
+margin:4px 0;
+}
+</style>
+</head>
+
+<body>
+
+<div class="card">
+
+<h2>TAAGC Platform Setup</h2>
+
+<input id="name" placeholder="CEO Name">
+<input id="email" placeholder="Admin Email">
+<input id="password" type="password" placeholder="Password">
+
+<button onclick="runSetup()">Initialize Platform</button>
+
+<div id="status"></div>
+
+</div>
+
+<script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
+
+<script>
+
+const firebaseConfig={
+apiKey:"AIzaSyCOcCDPqRSlAMJJBEeNchTA1qO9tl9Nldw",
+authDomain:"xtaagc.firebaseapp.com",
+projectId:"xtaagc",
+storageBucket:"xtaagc.firebasestorage.app",
+messagingSenderId:"256073982437",
+appId:"1:256073982437:android:0c54368d54e260cba98f0c"
+}
+
+firebase.initializeApp(firebaseConfig)
+
+const auth=firebase.auth()
+const db=firebase.firestore()
+
+async function runSetup(){
+
+const name=document.getElementById("name").value
+const email=document.getElementById("email").value
+const password=document.getElementById("password").value
+
+try{
+
+document.getElementById("status").innerHTML+="<p>⏳ Checking setup...</p>"
+
+const setup=await db.collection("system").doc("setup").get()
+
+if(setup.exists){
+
+alert("Platform already installed")
+window.location="/login"
+return
+
+}
+
+document.getElementById("status").innerHTML+="<p>⏳ Creating admin...</p>"
+
+const cred=await auth.createUserWithEmailAndPassword(email,password)
+
+const user=cred.user
+
+await user.sendEmailVerification()
+
+await db.collection("users").doc(user.uid).set({
+
+name:name,
+email:email,
+role:"super_admin",
+emailVerified:false,
+createdAt:new Date()
+
+})
+
+document.getElementById("status").innerHTML+="<p>⏳ Creating roles...</p>"
+
+await db.collection("roles").doc("super_admin").set({
+
+name:"Super Admin",
+permissions:["all"]
+
+})
+
+document.getElementById("status").innerHTML+="<p>⏳ Creating system config...</p>"
+
+await db.collection("system").doc("setup").set({
+
+installed:true,
+createdBy:user.uid,
+createdAt:new Date()
+
+})
+
+document.getElementById("status").innerHTML+="<p>✅ Setup completed</p>"
+
+window.location="/login"
+
+}catch(err){
+
+alert(err.message)
+
+}
+
+}
+
+</script>
+
+</body>
+</html>
