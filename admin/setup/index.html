@@ -1,0 +1,197 @@
+```html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>TAAGC Platform Setup</title>
+
+<style>
+body{
+font-family:Arial, sans-serif;
+background:#f1f5f9;
+margin:0;
+padding:0;
+}
+
+.container{
+max-width:500px;
+margin:80px auto;
+background:white;
+padding:30px;
+border-radius:8px;
+box-shadow:0 10px 30px rgba(0,0,0,.1);
+}
+
+h1{
+color:#0a2540;
+margin-bottom:20px;
+}
+
+input{
+width:100%;
+padding:12px;
+margin-bottom:15px;
+border:1px solid #ddd;
+border-radius:6px;
+}
+
+button{
+width:100%;
+padding:12px;
+background:#0a2540;
+color:white;
+border:none;
+border-radius:6px;
+cursor:pointer;
+font-weight:bold;
+}
+
+button:hover{
+background:#1a3a4f;
+}
+
+#checklist{
+margin-top:15px;
+}
+
+#checklist p{
+font-size:14px;
+margin:6px 0;
+color:#334155;
+}
+</style>
+
+</head>
+<body>
+
+<div class="container">
+
+<h1>TAAGC Platform Setup</h1>
+
+<input id="name" placeholder="Admin Name">
+<input id="email" placeholder="Admin Email">
+<input id="password" type="password" placeholder="Password">
+
+<button onclick="runSetup()">Initialize Platform</button>
+
+<div id="checklist">
+<p id="c1">⏳ Connecting Firebase...</p>
+<p id="c2">⏳ Checking Firestore...</p>
+<p id="c3">⏳ Checking Setup Status...</p>
+<p id="c4">⏳ Creating Super Admin...</p>
+<p id="c5">⏳ Saving System Config...</p>
+<p id="c6">⏳ Finalizing Platform...</p>
+</div>
+
+</div>
+
+
+<!-- Firebase -->
+<script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
+
+<script>
+
+const firebaseConfig={
+apiKey:"AIzaSyCOcCDPqRSlAMJJBEeNchTA1qO9tl9Nldw",
+authDomain:"xtaagc.firebaseapp.com",
+projectId:"xtaagc",
+storageBucket:"xtaagc.firebasestorage.app",
+messagingSenderId:"256073982437",
+appId:"1:256073982437:android:0c54368d54e260cba98f0c"
+}
+
+firebase.initializeApp(firebaseConfig)
+
+const auth=firebase.auth()
+const db=firebase.firestore()
+
+async function runSetup(){
+
+const name=document.getElementById("name").value
+const email=document.getElementById("email").value
+const password=document.getElementById("password").value
+
+if(!name||!email||!password){
+alert("Please fill all fields")
+return
+}
+
+try{
+
+document.getElementById("c1").innerHTML="⏳ Connecting Firebase..."
+await firebase.app()
+document.getElementById("c1").innerHTML="✅ Firebase Connected"
+
+
+document.getElementById("c2").innerHTML="⏳ Checking Firestore..."
+await db.collection("system").doc("test").get()
+document.getElementById("c2").innerHTML="✅ Firestore Ready"
+
+
+document.getElementById("c3").innerHTML="⏳ Checking Setup Status..."
+const setupDoc=await db.collection("system").doc("setup").get()
+
+if(setupDoc.exists){
+
+document.getElementById("c3").innerHTML="⚠️ Platform Already Installed"
+
+setTimeout(()=>{
+window.location="/admin"
+},2000)
+
+return
+}
+
+document.getElementById("c3").innerHTML="✅ Setup Not Found"
+
+
+document.getElementById("c4").innerHTML="⏳ Creating Super Admin..."
+
+const cred=await auth.createUserWithEmailAndPassword(email,password)
+const uid=cred.user.uid
+
+await db.collection("users").doc(uid).set({
+name:name,
+email:email,
+role:"super_admin",
+createdAt:new Date()
+})
+
+document.getElementById("c4").innerHTML="✅ Super Admin Created"
+
+
+document.getElementById("c5").innerHTML="⏳ Saving System Config..."
+
+await db.collection("system").doc("setup").set({
+completed:true,
+createdAt:new Date(),
+createdBy:uid
+})
+
+document.getElementById("c5").innerHTML="✅ System Config Saved"
+
+
+document.getElementById("c6").innerHTML="⏳ Finalizing Platform..."
+
+setTimeout(()=>{
+document.getElementById("c6").innerHTML="✅ TAAGC Platform Ready"
+},1000)
+
+setTimeout(()=>{
+window.location="/admin"
+},2500)
+
+}catch(err){
+alert(err.message)
+}
+
+}
+
+</script>
+
+</body>
+</html>
+```
