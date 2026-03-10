@@ -1,60 +1,46 @@
 {
   "version": 2,
-  "name": "taagc-platform",
-  "regions": ["iad1"],
-  
-  "functions": {
-    "api/index.js": {
-      "runtime": "nodejs24.x",
-      "maxDuration": 30,
-      "memory": 1024
-    }
-  },
 
   "routes": [
     {
-      "src": "/api/(.*)",
-      "dest": "/api/index.js",
-      "methods": ["GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"]
+      "src": "/setup",
+      "dest": "/admin/setup/index.html"
     },
     {
-      "src": "/admin/(.*)",
-      "dest": "/admin/$1"
+      "src": "/dashboard",
+      "dest": "/admin/dashboard/index.html"
+    },
+    {
+      "src": "/assets/(.*)",
+      "dest": "/assets/$1"
     },
     {
       "src": "/(.*)",
-      "dest": "/public/$1"
+      "dest": "/$1"
     }
   ],
 
   "headers": [
     {
-      "source": "/api/(.*)",
+      "source": "/(.*)",
       "headers": [
         {
-          "key": "Access-Control-Allow-Origin",
-          "value": "*"
+          "key": "X-Frame-Options",
+          "value": "SAMEORIGIN"
         },
         {
-          "key": "Access-Control-Allow-Methods",
-          "value": "GET, POST, PUT, DELETE, PATCH, OPTIONS"
+          "key": "X-Content-Type-Options",
+          "value": "nosniff"
         },
         {
-          "key": "Access-Control-Allow-Headers",
-          "value": "Content-Type, Authorization"
+          "key": "X-XSS-Protection",
+          "value": "1; mode=block"
+        },
+        {
+          "key": "Strict-Transport-Security",
+          "value": "max-age=63072000; includeSubDomains"
         }
       ]
     }
-  ],
-
-  "env": {
-    "NODE_ENV": "production",
-    "FIREBASE_PROJECT_ID": "xtaagc",
-    "FIREBASE_CLIENT_EMAIL": "firebase-adminsdk@xtaagc.iam.gserviceaccount.com",
-    "FIREBASE_PRIVATE_KEY": "@firebase-private-key",
-    "CORS_ORIGIN": "https://admin.taagc.website,https://taagc.website"
-  },
-
-  "cleanUrls": true,
-  "trailingSlash": false
+  ]
 }
