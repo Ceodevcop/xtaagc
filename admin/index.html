@@ -1,0 +1,106 @@
+```html
+<!DOCTYPE html>
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>TAAGC Admin Login</title>
+
+<style>
+
+body{
+font-family:Arial;
+background:#f1f5f9;
+display:flex;
+justify-content:center;
+align-items:center;
+height:100vh;
+}
+
+.card{
+background:white;
+padding:30px;
+width:350px;
+border-radius:8px;
+box-shadow:0 10px 30px rgba(0,0,0,.1);
+}
+
+h2{
+color:#0a2540;
+}
+
+input{
+width:100%;
+padding:12px;
+margin-top:10px;
+border:1px solid #ddd;
+border-radius:6px;
+}
+
+button{
+width:100%;
+padding:12px;
+margin-top:15px;
+background:#0a2540;
+color:white;
+border:none;
+border-radius:6px;
+cursor:pointer;
+}
+
+</style>
+
+</head>
+<body>
+
+<div class="card">
+
+<h2>Admin Login</h2>
+
+<input id="email" placeholder="Email">
+<input id="password" type="password" placeholder="Password">
+
+<button onclick="login()">Login</button>
+
+</div>
+
+<script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-auth-compat.js"></script>
+
+<script>
+
+const firebaseConfig={
+apiKey:"AIzaSyCOcCDPqRSlAMJJBEeNchTA1qO9tl9Nldw",
+authDomain:"xtaagc.firebaseapp.com",
+projectId:"xtaagc",
+storageBucket:"xtaagc.firebasestorage.app",
+messagingSenderId:"256073982437",
+appId:"1:256073982437:android:0c54368d54e260cba98f0c"
+}
+
+firebase.initializeApp(firebaseConfig)
+
+const auth=firebase.auth()
+
+async function login(){
+
+const email=document.getElementById("email").value
+const password=document.getElementById("password").value
+
+try{
+
+await auth.signInWithEmailAndPassword(email,password)
+
+window.location="/admin/dashboard"
+
+}catch(err){
+
+alert(err.message)
+
+}
+
+}
+
+</script>
+
+</body>
+</html>
