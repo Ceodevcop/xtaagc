@@ -101,7 +101,7 @@ const setup=await db.collection("system").doc("setup").get()
 if(setup.exists){
 
 alert("Platform already installed")
-window.location="/login"
+window.location="/"
 return
 
 }
