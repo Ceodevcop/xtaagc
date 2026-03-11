@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Staff Profile - TAAGC</title>
+    
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
+    
+    <link rel="stylesheet" href="/assets/css/staff.css">
+</head>
+<body>
+    <div class="staff-container">
+        <aside class="sidebar">...</aside>
+
+        <main class="main-content">
+            <div class="top-bar">
+                <h1>My Profile</h1>
+                <button class="btn btn-primary" onclick="editProfile()">Edit Profile</button>
+            </div>
+
+            <div class="profile-card" style="background: white; border-radius: 16px; padding: 30px;">
+                <div style="display: flex; align-items: center; gap: 30px; margin-bottom: 30px;">
+                    <div class="staff-avatar" style="width: 100px; height: 100px; font-size: 40px;" id="profileAvatar">S</div>
+                    <div>
+                        <h2 id="profileName">Loading...</h2>
+                        <p id="profileService" class="service-number-small"></p>
+                        <span id="profileDept" class="department-badge"></span>
+                    </div>
+                </div>
+
+                <div class="profile-details" style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 20px;">
+                    <div>
+                        <label>Email</label>
+                        <p id="profileEmail">-</p>
+                    </div>
+                    <div>
+                        <label>Phone</label>
+                        <p id="profilePhone">-</p>
+                    </div>
+                    <div>
+                        <label>Department</label>
+                        <p id="profileDepartment">-</p>
+                    </div>
+                    <div>
+                        <label>Employee ID</label>
+                        <p id="profileEmpId">-</p>
+                    </div>
+                    <div>
+                        <label>Join Date</label>
+                        <p id="profileJoinDate">-</p>
+                    </div>
+                    <div>
+                        <label>Last Login</label>
+                        <p id="profileLastLogin">-</p>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script>
+        // Firebase and profile loading code
+        auth.onAuthStateChanged(async (user) => {
+            if (!user) {
+                window.location.href = '/';
+                return;
+            }
+            
+            const staffDoc = await db.collection('staff').doc(user.uid).get();
+            const data = staffDoc.data();
+            
+            document.getElementById('profileName').textContent = data.fullName;
+            document.getElementById('profileService').textContent = data.serviceNumber;
+            document.getElementById('profileDept').textContent = data.departmentName;
+            document.getElementById('profileEmail').textContent = data.email;
+            document.getElementById('profilePhone').textContent = data.phone || '-';
+            document.getElementById('profileDepartment').textContent = data.departmentName;
+            document.getElementById('profileEmpId').textContent = data.employeeId;
+            document.getElementById('profileJoinDate').textContent = STAFF.formatDate(data.joinDate?.toDate?.() || data.createdAt?.toDate?.());
+            document.getElementById('profileAvatar').textContent = data.fullName.charAt(0);
+        });
+    </script>
+</body>
+</html>
