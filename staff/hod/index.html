@@ -1,0 +1,293 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HOD Dashboard - TAAGC</title>
+    
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
+    
+    <link rel="stylesheet" href="/assets/css/staff.css">
+    
+    <style>
+        .hod-badge-large {
+            background: #c19a6b;
+            color: white;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            display: inline-block;
+            margin-left: 10px;
+        }
+        
+        .team-stats {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+        
+        .approval-card {
+            background: white;
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 15px;
+            border: 1px solid #e2e8f0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .approval-actions {
+            display: flex;
+            gap: 10px;
+        }
+        
+        .approve-btn {
+            background: #10b981;
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 6px;
+            cursor: pointer;
+        }
+        
+        .reject-btn {
+            background: #ef4444;
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 6px;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+    <div class="staff-container">
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <div class="staff-avatar" id="userAvatar">H</div>
+                <h3 id="userName">Loading...</h3>
+                <div class="service-number-small" id="userServiceNumber"></div>
+                <span class="department-badge" id="userDepartment"></span>
+                <span class="hod-badge-large">HOD</span>
+            </div>
+
+            <nav class="nav-menu">
+                <div class="nav-item active" onclick="location.href='/hod/'">
+                    <i class="fas fa-tachometer-alt"></i> HOD Dashboard
+                </div>
+                <div class="nav-item" onclick="location.href='/hod/team.html'">
+                    <i class="fas fa-users"></i> My Team
+                </div>
+                <div class="nav-item" onclick="location.href='/hod/approvals.html'">
+                    <i class="fas fa-check-circle"></i> Approvals
+                    <span class="nav-badge" id="pendingCount">0</span>
+                </div>
+                <div class="nav-item" onclick="location.href='/hod/reports.html'">
+                    <i class="fas fa-chart-bar"></i> Reports
+                </div>
+                <div class="nav-item" onclick="location.href='/hod/evaluations.html'">
+                    <i class="fas fa-star"></i> Evaluations
+                </div>
+                <div class="nav-item" onclick="logout()">
+                    <i class="fas fa-sign-out-alt"></i> Logout
+                </div>
+            </nav>
+        </aside>
+
+        <main class="main-content">
+            <div class="top-bar">
+                <h1>Head of Department Dashboard</h1>
+                <div class="service-info">
+                    <i class="fas fa-id-card"></i>
+                    <span id="headerServiceNumber"></span>
+                </div>
+            </div>
+
+            <!-- Team Stats -->
+            <div class="team-stats">
+                <div class="stat-card">
+                    <div class="stat-value" id="teamTotal">0</div>
+                    <div class="stat-label">Team Members</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value" id="teamPresent">0</div>
+                    <div class="stat-label">Present Today</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value" id="teamOnLeave">0</div>
+                    <div class="stat-label">On Leave</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value" id="pendingRequests">0</div>
+                    <div class="stat-label">Pending Approvals</div>
+                </div>
+            </div>
+
+            <!-- Pending Approvals -->
+            <h2>Pending Approvals</h2>
+            <div id="pendingApprovals">
+                <!-- Loaded via JavaScript -->
+            </div>
+
+            <!-- Team Overview -->
+            <h2 style="margin-top: 30px;">Team Overview</h2>
+            <div class="table-container">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Name</th>
+                            <th>Service Number</th>
+                            <th>Status</th>
+                            <th>Today's Attendance</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="teamOverview">
+                        <!-- Loaded via JavaScript -->
+                    </tbody>
+                </table>
+            </div>
+        </main>
+    </div>
+
+    <script src="/assets/js/staff.js"></script>
+    <script>
+        const firebaseConfig = {
+            apiKey: "AIzaSyCOcCDPqRSlAMJJBEeNchTA1qO9tl9Nldw",
+            authDomain: "xtaagc.firebaseapp.com",
+            projectId: "xtaagc"
+        };
+
+        firebase.initializeApp(firebaseConfig);
+        const auth = firebase.auth();
+        const db = firebase.firestore();
+
+        let currentStaff = null;
+        let teamMembers = [];
+
+        auth.onAuthStateChanged(async (user) => {
+            if (!user) {
+                window.location.href = '/';
+                return;
+            }
+            
+            await loadStaffData(user.uid);
+            if (!currentStaff.isHeadOfDepartment) {
+                window.location.href = '/dashboard.html';
+                return;
+            }
+            loadTeamData();
+        });
+
+        async function loadStaffData(uid) {
+            const doc = await db.collection('staff').doc(uid).get();
+            currentStaff = { id: doc.id, ...doc.data() };
+            document.getElementById('userName').textContent = currentStaff.fullName;
+            document.getElementById('userServiceNumber').textContent = currentStaff.serviceNumber;
+            document.getElementById('userDepartment').textContent = currentStaff.departmentName;
+            document.getElementById('headerServiceNumber').textContent = currentStaff.serviceNumber;
+            document.getElementById('userAvatar').textContent = currentStaff.fullName.charAt(0);
+        }
+
+        async function loadTeamData() {
+            // Load team members
+            const teamSnapshot = await db.collection('staff')
+                .where('departmentCode', '==', currentStaff.departmentCode)
+                .get();
+            
+            teamMembers = [];
+            teamSnapshot.forEach(doc => teamMembers.push({ id: doc.id, ...doc.data() }));
+            
+            document.getElementById('teamTotal').textContent = teamMembers.length;
+            
+            // Load pending leave requests
+            const pendingSnapshot = await db.collection('leave')
+                .where('department', '==', currentStaff.departmentCode)
+                .where('status', '==', 'pending')
+                .get();
+            
+            document.getElementById('pendingRequests').textContent = pendingSnapshot.size;
+            document.getElementById('pendingCount').textContent = pendingSnapshot.size;
+            
+            // Load approvals
+            let approvalsHtml = '';
+            pendingSnapshot.forEach(doc => {
+                const request = doc.data();
+                approvalsHtml += `
+                    <div class="approval-card">
+                        <div>
+                            <strong>${request.staffName}</strong>
+                            <div>${request.type} Leave - ${request.days} days</div>
+                            <div style="font-size: 12px;">${request.startDate} to ${request.endDate}</div>
+                        </div>
+                        <div class="approval-actions">
+                            <button class="approve-btn" onclick="handleApproval('${doc.id}', 'approved')">Approve</button>
+                            <button class="reject-btn" onclick="handleApproval('${doc.id}', 'rejected')">Reject</button>
+                        </div>
+                    </div>
+                `;
+            });
+            
+            document.getElementById('pendingApprovals').innerHTML = approvalsHtml || '<p>No pending approvals</p>';
+            
+            // Load team overview
+            const today = new Date().toISOString().split('T')[0];
+            let present = 0;
+            let overviewHtml = '';
+            
+            for (const member of teamMembers) {
+                const attendanceSnapshot = await db.collection('attendance')
+                    .where('staffId', '==', member.id)
+                    .where('date', '==', today)
+                    .limit(1)
+                    .get();
+                
+                const isPresent = !attendanceSnapshot.empty;
+                if (isPresent) present++;
+                
+                overviewHtml += `
+                    <tr>
+                        <td>${member.fullName} ${member.id === currentStaff.id ? '(You)' : ''}</td>
+                        <td>${member.serviceNumber}</td>
+                        <td><span class="badge badge-success">Active</span></td>
+                        <td>${isPresent ? '✅ Present' : '❌ Not Checked In'}</td>
+                        <td>
+                            <button class="btn btn-sm" onclick="viewMember('${member.id}')">View</button>
+                        </td>
+                    </tr>
+                `;
+            }
+            
+            document.getElementById('teamPresent').textContent = present;
+            document.getElementById('teamOnLeave').textContent = teamMembers.length - present;
+            document.getElementById('teamOverview').innerHTML = overviewHtml;
+        }
+
+        async function handleApproval(requestId, status) {
+            await db.collection('leave').doc(requestId).update({
+                status: status,
+                hodApproval: {
+                    approvedBy: currentStaff.fullName,
+                    approvedAt: firebase.firestore.FieldValue.serverTimestamp(),
+                    status: status
+                }
+            });
+            
+            STAFF.showToast(`Request ${status}`, 'success');
+            loadTeamData();
+        }
+
+        function viewMember(memberId) {
+            window.location.href = `/hod/team.html?view=${memberId}`;
+        }
+    </script>
+</body>
+</html>
