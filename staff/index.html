@@ -75,7 +75,7 @@
             <div style="text-align: center; margin-top: 20px;">
                 <p style="color: #64748b; font-size: 14px;">
                     First time? 
-                    <a href="/register.html" style="color: #c19a6b; text-decoration: none; font-weight: 600;">
+                    <a href="/register" style="color: #c19a6b; text-decoration: none; font-weight: 600;">
                         Register here
                     </a>
                 </p>
@@ -161,7 +161,7 @@
         // Check if already logged in
         auth.onAuthStateChanged(user => {
             if (user && sessionStorage.getItem('staffData')) {
-                window.location.href = '/dashboard.html';
+                window.location.href = '/dashboard';
             }
         });
     </script>
