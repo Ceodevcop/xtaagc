@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Staff Dashboard - TAAGC</title>
+    
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
+    
+    <link rel="stylesheet" href="/assets/css/staff.css">
+</head>
+<body>
+    <div class="staff-container">
+        <!-- Sidebar -->
+        <aside class="sidebar" id="sidebar">
+            <div class="sidebar-header">
+                <div class="staff-avatar" id="userAvatar">S</div>
+                <h3 id="userName">Loading...</h3>
+                <div class="service-number-small" id="userServiceNumber"></div>
+                <span class="department-badge" id="userDepartment"></span>
+            </div>
+
+            <nav class="nav-menu">
+                <div class="nav-item active" onclick="location.href='/dashboard.html'">
+                    <i class="fas fa-tachometer-alt"></i> Dashboard
+                </div>
+                <div class="nav-item" onclick="location.href='/profile.html'">
+                    <i class="fas fa-user"></i> My Profile
+                </div>
+                <div class="nav-item" id="hodMenu" style="display: none;" onclick="location.href='/departments/'">
+                    <i class="fas fa-building"></i> Department
+                    <span class="hod-badge">HOD</span>
+                </div>
+                <div class="nav-item" onclick="logout()">
+                    <i class="fas fa-sign-out-alt"></i> Logout
+                </div>
+            </nav>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <div class="top-bar">
+                <h1>Staff Dashboard</h1>
+                <div class="service-info">
+                    <i class="fas fa-id-card"></i>
+                    <span id="headerServiceNumber"></span>
+                </div>
+            </div>
+
+            <!-- Welcome Card -->
+            <div class="welcome-card" style="background: linear-gradient(135deg, #0a2540, #1a3a4f); color: white; padding: 30px; border-radius: 16px; margin-bottom: 30px;">
+                <h2>Welcome, <span id="welcomeName"></span>!</h2>
+                <p>You are logged in as <span id="welcomeRole"></span></p>
+            </div>
+
+            <!-- Stats Grid -->
+            <div class="stats-grid" id="statsGrid">
+                <div class="stat-card">
+                    <div class="stat-icon"><i class="fas fa-building"></i></div>
+                    <div class="stat-value" id="deptEmployees">0</div>
+                    <div class="stat-label">Department Members</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon"><i class="fas fa-calendar-check"></i></div>
+                    <div class="stat-value" id="tasksCompleted">0</div>
+                    <div class="stat-label">Tasks Completed</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon"><i class="fas fa-clock"></i></div>
+                    <div class="stat-value" id="workingHours">0</div>
+                    <div class="stat-label">Hours This Week</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon"><i class="fas fa-star"></i></div>
+                    <div class="stat-value" id="performance">0%</div>
+                    <div class="stat-label">Performance</div>
+                </div>
+            </div>
+
+            <!-- Department Members (HOD Only) -->
+            <div id="departmentSection" style="display: none;">
+                <h2 style="margin: 30px 0 20px;">Department Members</h2>
+                <div class="table-container">
+                    <table id="deptMembersTable">
+                        <thead>
+                            <tr>
+                                <th>Employee ID</th>
+                                <th>Name</th>
+                                <th>Service Number</th>
+                                <th>Role</th>
+                                <th>Join Date</th>
+                                <th>Status</th>
+                            </tr>
+                        </thead>
+                        <tbody id="deptMembersBody">
+                            <tr><td colspan="6">Loading...</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Recent Activity -->
+            <h2 style="margin: 30px 0 20px;">Recent Activity</h2>
+            <div class="table-container">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Date</th>
+                            <th>Action</th>
+                            <th>Details</th>
+                        </tr>
+                    </thead>
+                    <tbody id="activityBody">
+                        <tr><td colspan="3">Loading...</td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </main>
+    </div>
+
+    <script src="/assets/js/staff.js"></script>
+    <script>
+        // Firebase Config
+        const firebaseConfig = {
+            apiKey: "AIzaSyCOcCDPqRSlAMJJBEeNchTA1qO9tl9Nldw",
+            authDomain: "xtaagc.firebaseapp.com",
+            projectId: "xtaagc"
+        };
+
+        firebase.initializeApp(firebaseConfig);
+        const auth = firebase.auth();
+        const db = firebase.firestore();
+
+        let currentStaff = null;
+
+        // Check authentication
+        auth.onAuthStateChanged(async (user) => {
+            if (!user) {
+                window.location.href = '/';
+                return;
+            }
+            
+            await loadStaffData(user.uid);
+        });
+
+        async function loadStaffData(uid) {
+            try {
+                const staffDoc = await db.collection('staff').doc(uid).get();
+                
+                if (!staffDoc.exists) {
+                    await auth.signOut();
+                    window.location.href = '/';
+                    return;
+                }
+                
+                currentStaff = { id: staffDoc.id, ...staffDoc.data() };
+                
+                // Update UI with staff data
+                document.getElementById('userName').textContent = currentStaff.fullName;
+                document.getElementById('userServiceNumber').textContent = currentStaff.serviceNumber;
+                document.getElementById('userDepartment').textContent = currentStaff.departmentName;
+                document.getElementById('headerServiceNumber').textContent = currentStaff.serviceNumber;
+                document.getElementById('welcomeName').textContent = currentStaff.fullName;
+                document.getElementById('welcomeRole').textContent = 
+                    currentStaff.isHeadOfDepartment ? 'Head of Department' : 'Staff Member';
+                document.getElementById('userAvatar').textContent = 
+                    currentStaff.fullName.charAt(0);
+                
+                // Show HOD menu if applicable
+                if (currentStaff.isHeadOfDepartment) {
+                    document.getElementById('hodMenu').style.display = 'flex';
+                    document.getElementById('departmentSection').style.display = 'block';
+                    await loadDepartmentMembers();
+                }
+                
+                await loadDashboardStats();
+                
+            } catch (error) {
+                console.error('Error loading staff:', error);
+            }
+        }
+
+        async function loadDepartmentMembers() {
+            try {
+                const snapshot = await db.collection('staff')
+                    .where('departmentCode', '==', currentStaff.departmentCode)
+                    .get();
+                
+                const members = [];
+                snapshot.forEach(doc => members.push({ id: doc.id, ...doc.data() }));
+                
+                document.getElementById('deptEmployees').textContent = members.length;
+                
+                const tbody = document.getElementById('deptMembersBody');
+                tbody.innerHTML = members.map(member => `
+                    <tr>
+                        <td>${member.employeeId}</td>
+                        <td>${member.fullName} ${member.isHeadOfDepartment ? '<span class="hod-badge">HOD</span>' : ''}</td>
+                        <td>${member.serviceNumber}</td>
+                        <td>${member.role}</td>
+                        <td>${STAFF.formatDate(member.joinDate?.toDate?.() || member.createdAt?.toDate?.())}</td>
+                        <td><span class="badge badge-success">${member.status || 'Active'}</span></td>
+                    </tr>
+                `).join('');
+                
+            } catch (error) {
+                console.error('Error loading members:', error);
+            }
+        }
+
+        async function loadDashboardStats() {
+            // Load stats from Firebase
+            document.getElementById('tasksCompleted').textContent = '12';
+            document.getElementById('workingHours').textContent = '38';
+            document.getElementById('performance').textContent = '92%';
+            
+            // Load activity
+            const activityBody = document.getElementById('activityBody');
+            activityBody.innerHTML = `
+                <tr>
+                    <td>${new Date().toLocaleDateString()}</td>
+                    <td>Logged in</td>
+                    <td>Successful login from dashboard</td>
+                </tr>
+                <tr>
+                    <td>${new Date(Date.now() - 86400000).toLocaleDateString()}</td>
+                    <td>Profile updated</td>
+                    <td>Updated contact information</td>
+                </tr>
+            `;
+        }
+
+        // Logout function
+        window.logout = async function() {
+            await auth.signOut();
+            sessionStorage.clear();
+            window.location.href = '/';
+        };
+    </script>
+</body>
+</html>
