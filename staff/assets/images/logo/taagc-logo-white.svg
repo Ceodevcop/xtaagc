@@ -1,0 +1,8 @@
+<svg width="200" height="50" viewBox="0 0 200 50" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <!-- White version for dark backgrounds -->
+    <rect x="0" y="0" width="50" height="50" rx="12" fill="#C19A6B"/>
+    <text x="25" y="35" font-family="Inter" font-size="24" font-weight="800" fill="#FFFFFF" text-anchor="middle">TA</text>
+    
+    <text x="70" y="35" font-family="Inter" font-size="28" font-weight="800" fill="#FFFFFF">TAAGC</text>
+    <text x="150" y="35" font-family="Inter" font-size="20" font-weight="400" fill="#94A3B8">STAFF</text>
+</svg>
