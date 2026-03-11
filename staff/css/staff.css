@@ -1,0 +1,359 @@
+/* /assets/css/staff.css */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Inter', sans-serif;
+}
+
+body {
+    background: #f8fafc;
+    color: #1e293b;
+}
+
+/* Login & Register Pages */
+.auth-container {
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: linear-gradient(135deg, #0a2540, #1a3a4f);
+    padding: 20px;
+}
+
+.auth-card {
+    background: white;
+    border-radius: 24px;
+    padding: 40px;
+    width: 100%;
+    max-width: 450px;
+    box-shadow: 0 20px 40px rgba(0,0,0,0.2);
+}
+
+.auth-logo {
+    text-align: center;
+    margin-bottom: 30px;
+}
+
+.auth-logo h1 {
+    color: #0a2540;
+    font-size: 28px;
+}
+
+.auth-logo h1 span {
+    color: #c19a6b;
+}
+
+.auth-logo p {
+    color: #64748b;
+    margin-top: 5px;
+}
+
+/* Form Elements */
+.form-group {
+    margin-bottom: 20px;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 8px;
+    font-weight: 600;
+    color: #1e293b;
+}
+
+.form-group label i {
+    color: #c19a6b;
+    margin-right: 8px;
+}
+
+.form-control {
+    width: 100%;
+    padding: 14px 16px;
+    border: 2px solid #e2e8f0;
+    border-radius: 12px;
+    font-size: 15px;
+    transition: all 0.3s;
+}
+
+.form-control:focus {
+    border-color: #c19a6b;
+    outline: none;
+    box-shadow: 0 0 0 3px rgba(193,154,107,0.1);
+}
+
+.form-control[readonly] {
+    background: #f8fafc;
+    cursor: not-allowed;
+}
+
+/* Buttons */
+.btn {
+    padding: 14px 24px;
+    border: none;
+    border-radius: 12px;
+    font-weight: 600;
+    font-size: 15px;
+    cursor: pointer;
+    transition: all 0.3s;
+    width: 100%;
+}
+
+.btn-primary {
+    background: linear-gradient(135deg, #0a2540, #1a3a4f);
+    color: white;
+}
+
+.btn-primary:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 10px 20px rgba(10,37,64,0.2);
+}
+
+.btn-accent {
+    background: #c19a6b;
+    color: white;
+}
+
+.btn-accent:hover {
+    background: #b38b5f;
+}
+
+/* Service Number Display */
+.service-number-box {
+    background: #f8fafc;
+    border: 2px dashed #c19a6b;
+    border-radius: 12px;
+    padding: 20px;
+    text-align: center;
+    margin: 20px 0;
+}
+
+.service-number {
+    font-family: monospace;
+    font-size: 24px;
+    font-weight: 700;
+    color: #c19a6b;
+    letter-spacing: 1px;
+}
+
+.service-number-label {
+    font-size: 12px;
+    color: #64748b;
+    margin-top: 5px;
+}
+
+/* Department Info */
+.department-badge {
+    display: inline-block;
+    padding: 4px 12px;
+    background: rgba(193,154,107,0.1);
+    color: #c19a6b;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 600;
+}
+
+/* Dashboard Layout */
+.staff-container {
+    display: flex;
+    min-height: 100vh;
+}
+
+.sidebar {
+    width: 280px;
+    background: linear-gradient(180deg, #0a2540, #1a3a4f);
+    color: white;
+    position: fixed;
+    height: 100vh;
+    overflow-y: auto;
+}
+
+.sidebar-header {
+    padding: 30px 20px;
+    text-align: center;
+    border-bottom: 1px solid rgba(255,255,255,0.1);
+}
+
+.staff-avatar {
+    width: 80px;
+    height: 80px;
+    background: #c19a6b;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 15px;
+    font-size: 32px;
+    font-weight: 700;
+}
+
+.service-number-small {
+    font-family: monospace;
+    font-size: 12px;
+    color: #c19a6b;
+    margin-top: 5px;
+}
+
+.nav-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px 20px;
+    color: rgba(255,255,255,0.8);
+    text-decoration: none;
+    transition: all 0.3s;
+    cursor: pointer;
+}
+
+.nav-item:hover,
+.nav-item.active {
+    background: #c19a6b;
+    color: white;
+}
+
+.nav-item i {
+    width: 20px;
+}
+
+.main-content {
+    flex: 1;
+    margin-left: 280px;
+    padding: 30px;
+}
+
+.top-bar {
+    background: white;
+    padding: 20px 30px;
+    border-radius: 16px;
+    margin-bottom: 30px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+}
+
+.service-info {
+    background: #f8fafc;
+    padding: 8px 16px;
+    border-radius: 30px;
+    font-size: 14px;
+}
+
+.service-info i {
+    color: #c19a6b;
+    margin-right: 8px;
+}
+
+/* Cards */
+.stats-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 25px;
+    margin-bottom: 30px;
+}
+
+.stat-card {
+    background: white;
+    padding: 25px;
+    border-radius: 16px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+    border: 1px solid #e2e8f0;
+}
+
+.stat-icon {
+    width: 50px;
+    height: 50px;
+    background: rgba(193,154,107,0.1);
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #c19a6b;
+    font-size: 20px;
+    margin-bottom: 15px;
+}
+
+.stat-value {
+    font-size: 28px;
+    font-weight: 700;
+    color: #0a2540;
+    margin-bottom: 5px;
+}
+
+.stat-label {
+    color: #64748b;
+    font-size: 14px;
+}
+
+/* Tables */
+.table-container {
+    background: white;
+    border-radius: 16px;
+    padding: 20px;
+    border: 1px solid #e2e8f0;
+    overflow-x: auto;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+th {
+    text-align: left;
+    padding: 15px;
+    color: #64748b;
+    font-weight: 600;
+    border-bottom: 2px solid #e2e8f0;
+}
+
+td {
+    padding: 15px;
+    border-bottom: 1px solid #e2e8f0;
+}
+
+/* HOD Badge */
+.hod-badge {
+    background: #c19a6b;
+    color: white;
+    padding: 2px 8px;
+    border-radius: 12px;
+    font-size: 10px;
+    margin-left: 8px;
+}
+
+/* Alert */
+.alert {
+    padding: 15px 20px;
+    border-radius: 12px;
+    margin-bottom: 20px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.alert-success {
+    background: #dcfce7;
+    border: 1px solid #10b981;
+    color: #0e9f6e;
+}
+
+.alert-error {
+    background: #fee2e2;
+    border: 1px solid #e53e3e;
+    color: #c53030;
+}
+
+/* Loading */
+.spinner {
+    display: inline-block;
+    width: 20px;
+    height: 20px;
+    border: 3px solid rgba(255,255,255,0.3);
+    border-radius: 50%;
+    border-top-color: white;
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    to { transform: rotate(360deg); }
+}
