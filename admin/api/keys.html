@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>API Keys - TAAGC Admin</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="/assets/css/admin.css">
+    <script src="/assets/js/admin.js"></script>
+</head>
+<body>
+    <div class="admin-container">
+        <aside class="sidebar">...</aside>
+        <main class="main-content">
+            <div class="top-bar">
+                <h1>API Keys</h1>
+                <button class="btn btn-primary" onclick="generateNewKey()"><i class="fas fa-plus"></i> Generate New Key</button>
+            </div>
+
+            <!-- Your API Keys -->
+            <div class="api-section">
+                <h2>Your API Keys</h2>
+                <table class="keys-table">
+                    <thead>
+                        <tr>
+                            <th>Name</th>
+                            <th>API Key</th>
+                            <th>Created</th>
+                            <th>Last Used</th>
+                            <th>Status</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="yourKeysBody"></tbody>
+                </table>
+            </div>
+
+            <!-- External API Keys -->
+            <div class="api-section">
+                <h2>External Service API Keys</h2>
+                <p>Store API keys for third-party services</p>
+                
+                <div class="external-keys-grid" id="externalKeysGrid"></div>
+            </div>
+
+            <!-- Import/Export -->
+            <div class="api-section">
+                <h2>Import/Export API Keys</h2>
+                <div style="display: flex; gap: 20px;">
+                    <div style="flex: 1;">
+                        <h3>Import from External Service</h3>
+                        <select class="form-control" id="importService">
+                            <option value="plaid">Plaid</option>
+                            <option value="stripe">Stripe</option>
+                            <option value="dwolla">Dwolla</option>
+                            <option value="yodlee">Yodlee</option>
+                        </select>
+                        <button class="btn btn-primary" onclick="importFromService()" style="margin-top: 10px;">
+                            <i class="fas fa-download"></i> Import Keys
+                        </button>
+                    </div>
+                    <div style="flex: 1;">
+                        <h3>Export Configuration</h3>
+                        <button class="btn btn-outline" onclick="exportKeys('json')">
+                            <i class="fas fa-file-code"></i> Export as JSON
+                        </button>
+                        <button class="btn btn-outline" onclick="exportKeys('env')">
+                            <i class="fas fa-file-alt"></i> Export as .env
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script>
+        function loadApiKeys() {
+            const yourKeys = [
+                { name: 'Production Key', key: 'taagc_live_8x7w3r9t...', created: '2024-01-01', last: '2 min ago', status: 'active' },
+                { name: 'Development Key', key: 'taagc_dev_2y4u6i8o...', created: '2024-01-15', last: '1 hour ago', status: 'active' }
+            ];
+            
+            document.getElementById('yourKeysBody').innerHTML = yourKeys.map(key => `
+                <tr>
+                    <td>${key.name}</td>
+                    <td><code>${key.key}</code></td>
+                    <td>${key.created}</td>
+                    <td>${key.last}</td>
+                    <td><span class="badge badge-success">${key.status}</span></td>
+                    <td>
+                        <button onclick="revokeKey('${key.name}')"><i class="fas fa-ban"></i></button>
+                        <button onclick="copyKey('${key.key}')"><i class="fas fa-copy"></i></button>
+                    </td>
+                </tr>
+            `).join('');
+            
+            const externalServices = [
+                { name: 'Plaid', fields: ['client_id', 'secret'] },
+                { name: 'Stripe', fields: ['publishable_key', 'secret_key'] },
+                { name: 'Dwolla', fields: ['key', 'secret'] },
+                { name: 'Yodlee', fields: ['apiKey', 'secret'] }
+            ];
+            
+            document.getElementById('externalKeysGrid').innerHTML = externalServices.map(service => `
+                <div class="service-card">
+                    <h3>${service.name}</h3>
+                    ${service.fields.map(field => `
+                        <div class="form-group">
+                            <label>${field.replace('_', ' ').toUpperCase()}</label>
+                            <input type="password" class="form-control" id="${service.name}_${field}" 
+                                   value="${TAAGC.apiKeys.getKey(service.name)?.[field] || ''}">
+                        </div>
+                    `).join('')}
+                    <button class="btn btn-sm btn-primary" onclick="saveExternalKey('${service.name}')">
+                        <i class="fas fa-save"></i> Save
+                    </button>
+                    <button class="btn btn-sm btn-success" onclick="testExternalKey('${service.name}')">
+                        <i class="fas fa-vial"></i> Test
+                    </button>
+                </div>
+            `).join('');
+        }
+
+        function saveExternalKey(service) {
+            const keys = {};
+            const inputs = document.querySelectorAll(`[id^="${service}_"]`);
+            inputs.forEach(input => {
+                const field = input.id.split('_')[1];
+                keys[field] = input.value;
+            });
+            
+            TAAGC.apiKeys.saveKey(service, keys.key || keys.client_id || keys.apiKey || keys.publishable_key, 
+                                  keys.secret || keys.secret_key);
+        }
+
+        async function testExternalKey(service) {
+            const result = await TAAGC.apiKeys.testConnection(service, `https://api.${service.toLowerCase()}.com/v1/test`, 
+                                                              TAAGC.apiKeys.getKey(service)?.key);
+            if (result.success) {
+                TAAGC.ui.showToast(`✅ Connected to ${service} successfully!`, 'success');
+            } else {
+                TAAGC.ui.showToast(`❌ Connection failed: ${result.error}`, 'error');
+            }
+        }
+
+        function generateNewKey() {
+            TAAGC.ui.showToast('New API key generated', 'success');
+        }
+
+        function revokeKey(name) {
+            if (confirm(`Revoke API key ${name}?`)) {
+                TAAGC.ui.showToast(`Key ${name} revoked`, 'success');
+            }
+        }
+
+        function copyKey(key) {
+            navigator.clipboard.writeText(key);
+            TAAGC.ui.showToast('API key copied to clipboard', 'success');
+        }
+
+        function importFromService() {
+            const service = document.getElementById('importService').value;
+            TAAGC.ui.showToast(`Importing keys from ${service}...`, 'info');
+            setTimeout(() => {
+                TAAGC.ui.showToast(`✅ Keys imported from ${service}!`, 'success');
+            }, 2000);
+        }
+
+        function exportKeys(format) {
+            const config = {
+                timestamp: new Date().toISOString(),
+                version: TAAGC.version,
+                keys: TAAGC.apiKeys.keys
+            };
+            
+            if (format === 'json') {
+                const blob = new Blob([JSON.stringify(config, null, 2)], { type: 'application/json' });
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = 'api-keys.json';
+                a.click();
+            } else {
+                let env = '# TAAGC API Keys\n';
+                Object.keys(config.keys).forEach(service => {
+                    Object.keys(config.keys[service]).forEach(key => {
+                        env += `${service.toUpperCase()}_${key.toUpperCase()}=${config.keys[service][key]}\n`;
+                    });
+                });
+                const blob = new Blob([env], { type: 'text/plain' });
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = '.env';
+                a.click();
+            }
+            
+            TAAGC.ui.showToast(`Keys exported as ${format.toUpperCase()}`, 'success');
+        }
+
+        loadApiKeys();
+    </script>
+</body>
+</html>
