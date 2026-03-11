@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>API Manager - TAAGC Admin</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="/assets/css/admin.css">
+    <script src="/assets/js/admin.js"></script>
+</head>
+<body>
+    <div class="admin-container">
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <div class="logo-icon">TA</div>
+                <h2><span>TAAGC</span> ADMIN</h2>
+            </div>
+            <nav class="nav-menu">
+                <a href="/dashboard/" class="nav-item"><i class="fas fa-tachometer-alt"></i> Dashboard</a>
+                <a href="/users/" class="nav-item"><i class="fas fa-users"></i> Users</a>
+                <a href="/banks/" class="nav-item"><i class="fas fa-university"></i> Banks</a>
+                <a href="/api/" class="nav-item active"><i class="fas fa-code"></i> API Manager</a>
+            </nav>
+        </aside>
+
+        <main class="main-content">
+            <div class="top-bar">
+                <h1>API Manager</h1>
+                <div>
+                    <button class="btn btn-primary" onclick="location.href='/api/keys.html'">
+                        <i class="fas fa-key"></i> Manage API Keys
+                    </button>
+                    <button class="btn btn-outline" onclick="location.href='/api/endpoints.html'">
+                        <i class="fas fa-code"></i> Endpoints
+                    </button>
+                </div>
+            </div>
+
+            <!-- Stats -->
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-value">24</div>
+                    <div class="stat-label">Total Endpoints</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value">12</div>
+                    <div class="stat-label">Active Keys</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value">45k</div>
+                    <div class="stat-label">Requests Today</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value">99.9%</div>
+                    <div class="stat-label">Uptime</div>
+                </div>
+            </div>
+
+            <!-- Quick Links -->
+            <div class="quick-links">
+                <a href="/api/keys.html" class="quick-link">
+                    <i class="fas fa-key"></i>
+                    <h3>API Keys</h3>
+                    <p>Create and manage API keys</p>
+                </a>
+                <a href="/api/endpoints.html" class="quick-link">
+                    <i class="fas fa-code"></i>
+                    <h3>Endpoints</h3>
+                    <p>View all API endpoints</p>
+                </a>
+                <a href="/api/webhooks.html" class="quick-link">
+                    <i class="fas fa-webhook"></i>
+                    <h3>Webhooks</h3>
+                    <p>Configure webhook endpoints</p>
+                </a>
+                <a href="/api/logs.html" class="quick-link">
+                    <i class="fas fa-history"></i>
+                    <h3>API Logs</h3>
+                    <p>View API request logs</p>
+                </a>
+            </div>
+        </main>
+    </div>
+</body>
+</html>
