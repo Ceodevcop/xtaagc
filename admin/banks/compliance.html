@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Bank Compliance - TAAGC Admin</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="/assets/css/admin.css">
+    <script src="/assets/js/admin.js"></script>
+</head>
+<body>
+    <div class="admin-container">
+        <aside class="sidebar">...</aside>
+        <main class="main-content">
+            <div class="top-bar">
+                <h1>Bank Compliance</h1>
+                <button class="btn btn-primary" onclick="runComplianceCheck()"><i class="fas fa-shield-alt"></i> Run Check</button>
+            </div>
+
+            <div class="compliance-grid">
+                <div class="compliance-card">
+                    <h3>KYC/AML Status</h3>
+                    <div class="compliance-status">✅ Compliant</div>
+                    <div>Last checked: Today</div>
+                </div>
+                <div class="compliance-card">
+                    <h3>Data Protection</h3>
+                    <div class="compliance-status">✅ GDPR Compliant</div>
+                    <div>Last audit: 2 days ago</div>
+                </div>
+                <div class="compliance-card">
+                    <h3>PCI DSS</h3>
+                    <div class="compliance-status">⚠️ Partial</div>
+                    <div>Due: Mar 30, 2024</div>
+                </div>
+            </div>
+
+            <table class="compliance-table">
+                <thead>
+                    <tr>
+                        <th>Requirement</th>
+                        <th>Status</th>
+                        <th>Last Audit</th>
+                        <th>Next Due</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody id="complianceBody"></tbody>
+            </table>
+        </main>
+    </div>
+
+    <script>
+        function loadCompliance() {
+            const items = [
+                { req: 'KYC Program', status: 'compliant', last: '2024-03-01', next: '2024-06-01' },
+                { req: 'AML Monitoring', status: 'compliant', last: '2024-03-01', next: '2024-06-01' },
+                { req: 'Data Encryption', status: 'compliant', last: '2024-02-15', next: '2024-05-15' }
+            ];
+            
+            document.getElementById('complianceBody').innerHTML = items.map(item => `
+                <tr>
+                    <td>${item.req}</td>
+                    <td><span class="badge badge-success">${item.status}</span></td>
+                    <td>${item.last}</td>
+                    <td>${item.next}</td>
+                    <td><button onclick="viewDetails('${item.req}')"><i class="fas fa-eye"></i></button></td>
+                </tr>
+            `).join('');
+        }
+        
+        function runComplianceCheck() { TAAGC.ui.showToast('Running compliance check...', 'success'); }
+        function viewDetails(req) { TAAGC.ui.showToast(`Viewing ${req} details`, 'info'); }
+        
+        loadCompliance();
+    </script>
+</body>
+  </html>
