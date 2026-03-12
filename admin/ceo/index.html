@@ -1,0 +1,1204 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CEO Dashboard - TAAGC Global</title>
+    
+    <!-- Fonts & Icons -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
+    
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+    
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Inter', sans-serif;
+        }
+
+        body {
+            background: #f8fafc;
+            color: #1e293b;
+        }
+
+        /* ===== CEO CONTAINER ===== */
+        .ceo-container {
+            display: flex;
+            min-height: 100vh;
+        }
+
+        /* ===== SIDEBAR ===== */
+        .sidebar {
+            width: 320px;
+            background: linear-gradient(180deg, #0a2540 0%, #1a3a4f 100%);
+            color: white;
+            position: fixed;
+            height: 100vh;
+            overflow-y: auto;
+            box-shadow: 4px 0 20px rgba(0,0,0,0.1);
+            z-index: 100;
+        }
+
+        .sidebar-header {
+            padding: 30px 20px;
+            text-align: center;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+        }
+
+        .ceo-crown {
+            background: #c19a6b;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 15px;
+            font-size: 20px;
+        }
+
+        .sidebar-header h2 {
+            color: white;
+            font-size: 24px;
+        }
+
+        .sidebar-header h2 span {
+            color: #c19a6b;
+        }
+
+        .user-info {
+            padding: 20px;
+            background: rgba(255,255,255,0.1);
+            margin: 20px;
+            border-radius: 16px;
+            text-align: center;
+        }
+
+        .user-avatar {
+            width: 60px;
+            height: 60px;
+            background: #c19a6b;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 10px;
+            font-size: 24px;
+            font-weight: 700;
+        }
+
+        .user-role {
+            display: inline-block;
+            padding: 4px 12px;
+            background: rgba(193,154,107,0.3);
+            border-radius: 20px;
+            font-size: 11px;
+            margin-top: 8px;
+        }
+
+        /* Navigation */
+        .nav-section {
+            padding: 20px 20px 10px;
+            font-size: 11px;
+            text-transform: uppercase;
+            color: rgba(255,255,255,0.4);
+            letter-spacing: 1px;
+        }
+
+        .nav-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px 20px;
+            color: rgba(255,255,255,0.8);
+            text-decoration: none;
+            border-radius: 8px;
+            transition: all 0.3s;
+            margin: 2px 10px;
+            cursor: pointer;
+        }
+
+        .nav-item:hover,
+        .nav-item.active {
+            background: #c19a6b;
+            color: white;
+        }
+
+        .nav-item i {
+            width: 20px;
+            font-size: 16px;
+        }
+
+        .nav-badge {
+            margin-left: auto;
+            background: rgba(255,255,255,0.2);
+            padding: 2px 8px;
+            border-radius: 20px;
+            font-size: 11px;
+        }
+
+        /* ===== MAIN CONTENT ===== */
+        .main-content {
+            flex: 1;
+            margin-left: 320px;
+            padding: 30px;
+        }
+
+        .top-bar {
+            background: white;
+            padding: 20px 30px;
+            border-radius: 16px;
+            margin-bottom: 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+        }
+
+        .page-title h1 {
+            color: #0a2540;
+            font-size: 24px;
+            margin-bottom: 5px;
+        }
+
+        .page-title p {
+            color: #64748b;
+            font-size: 14px;
+        }
+
+        .date-badge {
+            background: #f1f5f9;
+            padding: 8px 16px;
+            border-radius: 30px;
+            font-size: 14px;
+        }
+
+        .logout-btn {
+            padding: 8px 16px;
+            background: #e53e3e;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.3s;
+        }
+
+        .logout-btn:hover {
+            background: #c53030;
+        }
+
+        /* ===== WELCOME CARD ===== */
+        .welcome-card {
+            background: linear-gradient(135deg, #0a2540, #1a3a4f);
+            color: white;
+            padding: 30px;
+            border-radius: 16px;
+            margin-bottom: 30px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .welcome-card::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -10%;
+            width: 50%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(193,154,107,0.2) 0%, transparent 70%);
+        }
+
+        .welcome-card h2 {
+            font-size: 28px;
+            margin-bottom: 10px;
+        }
+
+        .welcome-card h2 span {
+            color: #c19a6b;
+        }
+
+        /* ===== STATS GRID ===== */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 25px;
+            margin-bottom: 30px;
+        }
+
+        .stat-card {
+            background: white;
+            padding: 25px;
+            border-radius: 16px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            transition: transform 0.3s;
+            border: 1px solid #e2e8f0;
+            cursor: pointer;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-5px);
+            border-color: #c19a6b;
+        }
+
+        .stat-icon {
+            width: 50px;
+            height: 50px;
+            background: rgba(193,154,107,0.1);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #c19a6b;
+            font-size: 20px;
+            margin-bottom: 15px;
+        }
+
+        .stat-value {
+            font-size: 28px;
+            font-weight: 700;
+            color: #0a2540;
+            margin-bottom: 5px;
+        }
+
+        .stat-label {
+            color: #64748b;
+            font-size: 14px;
+        }
+
+        /* ===== QUICK ACTIONS ===== */
+        .quick-actions {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+        }
+
+        .quick-action-btn {
+            padding: 12px 24px;
+            background: white;
+            border: 1px solid #e2e8f0;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .quick-action-btn:hover {
+            border-color: #c19a6b;
+            color: #c19a6b;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+
+        .quick-action-btn.primary {
+            background: #c19a6b;
+            color: white;
+            border: none;
+        }
+
+        .quick-action-btn.primary:hover {
+            background: #b38b5f;
+        }
+
+        /* ===== SECTION TITLE ===== */
+        .section-title {
+            font-size: 20px;
+            color: #0a2540;
+            margin: 30px 0 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .section-title i {
+            color: #c19a6b;
+        }
+
+        /* ===== MANAGEMENT GRID ===== */
+        .management-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 20px;
+            margin-bottom: 40px;
+        }
+
+        .management-card {
+            background: white;
+            border-radius: 16px;
+            padding: 20px;
+            border: 1px solid #e2e8f0;
+            transition: all 0.3s;
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .management-card:hover {
+            transform: translateY(-5px);
+            border-color: #c19a6b;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+        }
+
+        .management-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 4px;
+            height: 100%;
+            background: linear-gradient(180deg, #c19a6b, #e5b884);
+        }
+
+        .management-icon {
+            width: 50px;
+            height: 50px;
+            background: rgba(193,154,107,0.1);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #c19a6b;
+            font-size: 20px;
+            margin-bottom: 15px;
+        }
+
+        .management-title {
+            font-size: 18px;
+            font-weight: 700;
+            color: #0a2540;
+            margin-bottom: 5px;
+        }
+
+        .management-desc {
+            color: #64748b;
+            font-size: 13px;
+            margin-bottom: 15px;
+        }
+
+        .management-stats {
+            display: flex;
+            gap: 15px;
+            color: #94a3b8;
+            font-size: 12px;
+            border-top: 1px solid #e2e8f0;
+            padding-top: 15px;
+        }
+
+        .management-badge {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            padding: 4px 10px;
+            background: #10b981;
+            color: white;
+            border-radius: 20px;
+            font-size: 10px;
+            font-weight: 600;
+        }
+
+        /* ===== DEPARTMENT GRID ===== */
+        .dept-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 15px;
+            margin: 20px 0;
+        }
+
+        .dept-card {
+            background: white;
+            border-radius: 12px;
+            padding: 15px;
+            border: 1px solid #e2e8f0;
+            transition: all 0.3s;
+            cursor: pointer;
+        }
+
+        .dept-card:hover {
+            border-color: #c19a6b;
+            transform: translateY(-3px);
+        }
+
+        .dept-code {
+            font-size: 18px;
+            font-weight: 800;
+            color: #0a2540;
+        }
+
+        .dept-name {
+            font-size: 12px;
+            color: #64748b;
+            margin: 5px 0;
+        }
+
+        .dept-status {
+            display: inline-block;
+            padding: 2px 8px;
+            border-radius: 12px;
+            font-size: 10px;
+            background: #10b98120;
+            color: #10b981;
+        }
+
+        /* ===== TABLES ===== */
+        .table-container {
+            background: white;
+            border-radius: 16px;
+            padding: 20px;
+            border: 1px solid #e2e8f0;
+            overflow-x: auto;
+            margin-bottom: 30px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        th {
+            text-align: left;
+            padding: 15px;
+            color: #64748b;
+            font-weight: 600;
+            font-size: 13px;
+            border-bottom: 2px solid #e2e8f0;
+        }
+
+        td {
+            padding: 15px;
+            border-bottom: 1px solid #e2e8f0;
+        }
+
+        tr:hover {
+            background: #f8fafc;
+        }
+
+        .status-badge {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 11px;
+            font-weight: 600;
+        }
+
+        .status-active {
+            background: #10b98120;
+            color: #10b981;
+        }
+
+        .status-pending {
+            background: #f59e0b20;
+            color: #f59e0b;
+        }
+
+        /* ===== CHARTS ===== */
+        .charts-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 25px;
+            margin-bottom: 30px;
+        }
+
+        .chart-card {
+            background: white;
+            border-radius: 16px;
+            padding: 20px;
+            border: 1px solid #e2e8f0;
+        }
+
+        .chart-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+
+        .chart-container {
+            height: 250px;
+            position: relative;
+        }
+
+        /* ===== MODALS ===== */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.5);
+            z-index: 2000;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .modal.active {
+            display: flex;
+        }
+
+        .modal-content {
+            background: white;
+            border-radius: 20px;
+            padding: 30px;
+            width: 90%;
+            max-width: 500px;
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .modal-close {
+            font-size: 24px;
+            cursor: pointer;
+            color: #64748b;
+        }
+
+        /* ===== FORMS ===== */
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #0a2540;
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 12px 16px;
+            border: 2px solid #e2e8f0;
+            border-radius: 10px;
+            font-size: 14px;
+            transition: all 0.3s;
+        }
+
+        .form-control:focus {
+            border-color: #c19a6b;
+            outline: none;
+        }
+
+        .btn {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .btn-primary {
+            background: #c19a6b;
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: #b38b5f;
+        }
+
+        .btn-success {
+            background: #10b981;
+            color: white;
+        }
+
+        /* ===== ALERTS ===== */
+        .alert {
+            padding: 15px 20px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            animation: slideIn 0.3s ease;
+        }
+
+        @keyframes slideIn {
+            from {
+                transform: translateY(-20px);
+                opacity: 0;
+            }
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+
+        .alert-success {
+            background: #dcfce7;
+            border: 1px solid #10b981;
+            color: #0e9f6e;
+        }
+
+        .alert-error {
+            background: #fee2e2;
+            border: 1px solid #e53e3e;
+            color: #c53030;
+        }
+
+        .spinner {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid rgba(255,255,255,0.3);
+            border-radius: 50%;
+            border-top-color: white;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        /* ===== RESPONSIVE ===== */
+        @media (max-width: 1200px) {
+            .stats-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            .charts-grid {
+                grid-template-columns: 1fr;
+            }
+            .dept-grid {
+                grid-template-columns: repeat(3, 1fr);
+            }
+        }
+
+        @media (max-width: 768px) {
+            .sidebar {
+                width: 80px;
+            }
+            .sidebar .user-info h4,
+            .sidebar .user-info p,
+            .sidebar .nav-item span {
+                display: none;
+            }
+            .main-content {
+                margin-left: 80px;
+            }
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+            .dept-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="ceo-container">
+        <!-- ===== SIDEBAR ===== -->
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <div class="ceo-crown"><i class="fas fa-crown"></i></div>
+                <h2><span>TAAGC</span> CEO</h2>
+            </div>
+
+            <div class="user-info" id="userInfo">
+                <div class="user-avatar" id="userAvatar">AH</div>
+                <h4 id="userName">Loading...</h4>
+                <p id="userEmail">ceo@taagc.website</p>
+                <span class="user-role" id="userRole">Super Admin</span>
+            </div>
+
+            <!-- Navigation -->
+            <div class="nav-section">MAIN</div>
+            <div class="nav-item active" onclick="showSection('dashboard')">
+                <i class="fas fa-tachometer-alt"></i> <span>Dashboard</span>
+            </div>
+
+            <div class="nav-section">CEO TOOLS</div>
+            <div class="nav-item" onclick="location.href='/admin/ceo/hod-register.html'">
+                <i class="fas fa-crown"></i> <span>Register HOD</span>
+                <span class="nav-badge">16 depts</span>
+            </div>
+            <div class="nav-item" onclick="location.href='/admin/ceo/staff-management.html'">
+                <i class="fas fa-users"></i> <span>Staff Management</span>
+                <span class="nav-badge" id="staffCount">0</span>
+            </div>
+            <div class="nav-item" onclick="location.href='/admin/ceo/departments.html'">
+                <i class="fas fa-building"></i> <span>Departments</span>
+                <span class="nav-badge">16</span>
+            </div>
+            <div class="nav-item" onclick="location.href='/admin/ceo/system-settings.html'">
+                <i class="fas fa-cog"></i> <span>System Settings</span>
+            </div>
+
+            <div class="nav-section">QUICK LINKS</div>
+            <div class="nav-item" onclick="location.href='/admin/'">
+                <i class="fas fa-shield-alt"></i> <span>Admin Panel</span>
+            </div>
+            <div class="nav-item" onclick="location.href='/staff/'">
+                <i class="fas fa-user-tie"></i> <span>Staff Portal</span>
+            </div>
+            <div class="nav-item" onclick="location.href='/investor/'">
+                <i class="fas fa-chart-line"></i> <span>Investor Portal</span>
+            </div>
+
+            <div class="nav-item" onclick="logout()" style="margin-top: 20px; color: #e53e3e;">
+                <i class="fas fa-sign-out-alt"></i> <span>Logout</span>
+            </div>
+        </aside>
+
+        <!-- ===== MAIN CONTENT ===== -->
+        <main class="main-content">
+            <div class="top-bar">
+                <div class="page-title">
+                    <h1 id="pageTitle">CEO Dashboard</h1>
+                    <p id="pageSubtitle">Welcome back, CEO. Full system access granted.</p>
+                </div>
+                <div class="date-badge" id="currentDate"></div>
+                <button class="logout-btn" onclick="logout()" style="display: none;">
+                    <i class="fas fa-sign-out-alt"></i> Logout
+                </button>
+            </div>
+
+            <!-- Alert Container -->
+            <div id="alertContainer" class="alert" style="display: none;"></div>
+
+            <!-- ===== DASHBOARD SECTION ===== -->
+            <div id="dashboardSection">
+                <!-- Welcome Card -->
+                <div class="welcome-card">
+                    <h2>👑 Welcome, <span id="welcomeName">CEO</span></h2>
+                    <p>You have full super admin access. Manage your entire platform from one central dashboard.</p>
+                </div>
+
+                <!-- Platform Stats -->
+                <div class="stats-grid">
+                    <div class="stat-card" onclick="location.href='/admin/'">
+                        <div class="stat-icon"><i class="fas fa-globe"></i></div>
+                        <div class="stat-value">6</div>
+                        <div class="stat-label">Subdomains</div>
+                    </div>
+                    <div class="stat-card" onclick="location.href='/admin/'">
+                        <div class="stat-icon"><i class="fas fa-file"></i></div>
+                        <div class="stat-value">124</div>
+                        <div class="stat-label">Total Pages</div>
+                    </div>
+                    <div class="stat-card" onclick="location.href='/admin/ceo/departments.html'">
+                        <div class="stat-icon"><i class="fas fa-building"></i></div>
+                        <div class="stat-value">16</div>
+                        <div class="stat-label">Departments</div>
+                    </div>
+                    <div class="stat-card" onclick="location.href='/admin/'">
+                        <div class="stat-icon"><i class="fas fa-database"></i></div>
+                        <div class="stat-value">28</div>
+                        <div class="stat-label">Collections</div>
+                    </div>
+                </div>
+
+                <!-- Quick Actions -->
+                <div class="quick-actions">
+                    <button class="quick-action-btn" onclick="location.href='/admin/ceo/hod-register.html'">
+                        <i class="fas fa-crown"></i> Register HOD
+                    </button>
+                    <button class="quick-action-btn" onclick="location.href='/admin/ceo/staff-management.html'">
+                        <i class="fas fa-user-plus"></i> Add Staff
+                    </button>
+                    <button class="quick-action-btn" onclick="location.href='/admin/ceo/departments.html'">
+                        <i class="fas fa-building"></i> Manage Depts
+                    </button>
+                    <button class="quick-action-btn primary" onclick="generateReport()">
+                        <i class="fas fa-file-pdf"></i> Generate Report
+                    </button>
+                </div>
+
+                <!-- Charts -->
+                <div class="charts-grid">
+                    <div class="chart-card">
+                        <div class="chart-header">
+                            <h3>Platform Growth</h3>
+                        </div>
+                        <div class="chart-container">
+                            <canvas id="growthChart"></canvas>
+                        </div>
+                    </div>
+                    <div class="chart-card">
+                        <div class="chart-header">
+                            <h3>User Distribution</h3>
+                        </div>
+                        <div class="chart-container">
+                            <canvas id="userChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Departments Overview -->
+                <h3 class="section-title"><i class="fas fa-building"></i> All Departments (16)</h3>
+                <div class="dept-grid" id="deptGrid">
+                    <!-- Departments will be loaded here -->
+                </div>
+
+                <!-- CEO Tools Grid -->
+                <h3 class="section-title"><i class="fas fa-crown"></i> CEO Tools</h3>
+                <div class="management-grid">
+                    <!-- Register HOD -->
+                    <div class="management-card" onclick="location.href='/admin/ceo/hod-register.html'">
+                        <div class="management-icon"><i class="fas fa-crown"></i></div>
+                        <div class="management-title">Register HOD</div>
+                        <div class="management-desc">Create new Head of Department accounts</div>
+                        <div class="management-stats">
+                            <span><i class="fas fa-building"></i> 16 departments</span>
+                            <span><i class="fas fa-user-tie"></i> <span id="hodCount">0</span> assigned</span>
+                        </div>
+                    </div>
+
+                    <!-- Staff Management -->
+                    <div class="management-card" onclick="location.href='/admin/ceo/staff-management.html'">
+                        <div class="management-icon"><i class="fas fa-users"></i></div>
+                        <div class="management-title">Staff Management</div>
+                        <div class="management-desc">Manage all staff members</div>
+                        <div class="management-stats">
+                            <span><i class="fas fa-user-tie"></i> <span id="staffTotal">0</span> staff</span>
+                        </div>
+                    </div>
+
+                    <!-- Departments -->
+                    <div class="management-card" onclick="location.href='/admin/ceo/departments.html'">
+                        <div class="management-icon"><i class="fas fa-building"></i></div>
+                        <div class="management-title">Departments</div>
+                        <div class="management-desc">Manage department structure</div>
+                        <div class="management-stats">
+                            <span><i class="fas fa-building"></i> 16 departments</span>
+                        </div>
+                    </div>
+
+                    <!-- System Settings -->
+                    <div class="management-card" onclick="location.href='/admin/ceo/system-settings.html'">
+                        <div class="management-icon"><i class="fas fa-cog"></i></div>
+                        <div class="management-title">System Settings</div>
+                        <div class="management-desc">Configure platform settings</div>
+                    </div>
+
+                    <!-- Admin Panel -->
+                    <div class="management-card" onclick="location.href='/admin/'">
+                        <div class="management-icon"><i class="fas fa-shield-alt"></i></div>
+                        <div class="management-title">Admin Panel</div>
+                        <div class="management-desc">Full administration panel</div>
+                        <div class="management-stats">
+                            <span><i class="fas fa-file"></i> 93 pages</span>
+                        </div>
+                    </div>
+
+                    <!-- Staff Portal -->
+                    <div class="management-card" onclick="location.href='/staff/'">
+                        <div class="management-icon"><i class="fas fa-user-tie"></i></div>
+                        <div class="management-title">Staff Portal</div>
+                        <div class="management-desc">Employee portal</div>
+                        <div class="management-stats">
+                            <span><i class="fas fa-file"></i> 17 pages</span>
+                        </div>
+                    </div>
+
+                    <!-- Investor Portal -->
+                    <div class="management-card" onclick="location.href='/investor/'">
+                        <div class="management-icon"><i class="fas fa-chart-line"></i></div>
+                        <div class="management-title">Investor Portal</div>
+                        <div class="management-desc">Investor dashboard</div>
+                        <div class="management-stats">
+                            <span><i class="fas fa-file"></i> 9 pages</span>
+                        </div>
+                    </div>
+
+                    <!-- Banks Module -->
+                    <div class="management-card" onclick="location.href='/admin/banks/'">
+                        <div class="management-icon"><i class="fas fa-university"></i></div>
+                        <div class="management-title">Banks Module</div>
+                        <div class="management-desc">12-page banking system</div>
+                    </div>
+
+                    <!-- Agencies Module -->
+                    <div class="management-card" onclick="location.href='/admin/agencies/'">
+                        <div class="management-icon"><i class="fas fa-building"></i></div>
+                        <div class="management-title">Agencies</div>
+                        <div class="management-desc">10-page agency management</div>
+                    </div>
+
+                    <!-- Events Module -->
+                    <div class="management-card" onclick="location.href='/admin/events/'">
+                        <div class="management-icon"><i class="fas fa-calendar"></i></div>
+                        <div class="management-title">Events</div>
+                        <div class="management-desc">10-page event management</div>
+                    </div>
+
+                    <!-- API Manager -->
+                    <div class="management-card" onclick="location.href='/admin/api/'">
+                        <div class="management-icon"><i class="fas fa-code"></i></div>
+                        <div class="management-title">API Manager</div>
+                        <div class="management-desc">5-page API management</div>
+                    </div>
+                </div>
+
+                <!-- Recent Activity -->
+                <h3 class="section-title"><i class="fas fa-history"></i> Recent Activity</h3>
+                <div class="table-container">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Action</th>
+                                <th>User</th>
+                                <th>Target</th>
+                                <th>Time</th>
+                                <th>Status</th>
+                            </tr>
+                        </thead>
+                        <tbody id="activityBody">
+                            <tr><td colspan="5" class="text-center">Loading activities...</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script>
+        // Firebase Config
+        const firebaseConfig = {
+            apiKey: "AIzaSyCOcCDPqRSlAMJJBEeNchTA1qO9tl9Nldw",
+            authDomain: "xtaagc.firebaseapp.com",
+            projectId: "xtaagc"
+        };
+
+        firebase.initializeApp(firebaseConfig);
+        const auth = firebase.auth();
+        const db = firebase.firestore();
+
+        let currentCEO = null;
+        let growthChart, userChart;
+
+        // 16 Departments
+        const departments = [
+            { code: 'ADM', name: 'Administration' },
+            { code: 'HR', name: 'Human Resources' },
+            { code: 'FIN', name: 'Finance' },
+            { code: 'IT', name: 'Information Technology' },
+            { code: 'MKT', name: 'Marketing' },
+            { code: 'OPS', name: 'Operations' },
+            { code: 'SAL', name: 'Sales' },
+            { code: 'SUP', name: 'Support' },
+            { code: 'DEV', name: 'Development' },
+            { code: 'ACC', name: 'Accounting' },
+            { code: 'LEG', name: 'Legal' },
+            { code: 'CS', name: 'Customer Service' },
+            { code: 'AGR', name: 'Agriculture' },
+            { code: 'GRN', name: 'Grain Processing' },
+            { code: 'CON', name: 'Contracts' },
+            { code: 'MER', name: 'Merchandise' }
+        ];
+
+        // Update date
+        function updateDate() {
+            const date = new Date();
+            document.getElementById('currentDate').textContent = date.toLocaleDateString('en-US', {
+                weekday: 'long',
+                year: 'numeric',
+                month: 'long',
+                day: 'numeric'
+            });
+        }
+
+        // Show alert
+        function showAlert(message, type) {
+            const alert = document.getElementById('alertContainer');
+            alert.className = `alert alert-${type}`;
+            alert.innerHTML = `<i class="fas fa-${type === 'success' ? 'check-circle' : 'exclamation-circle'}"></i> ${message}`;
+            alert.style.display = 'flex';
+            setTimeout(() => alert.style.display = 'none', 3000);
+        }
+
+        // Check CEO authentication
+        auth.onAuthStateChanged(async (user) => {
+            if (!user) {
+                window.location.href = '/';
+                return;
+            }
+
+            const userDoc = await db.collection('users').doc(user.uid).get();
+            if (!userDoc.exists || userDoc.data().role !== 'super_admin') {
+                window.location.href = '/';
+                return;
+            }
+
+            currentCEO = user;
+            const userData = userDoc.data();
+            
+            document.getElementById('userName').textContent = userData.fullName || 'CEO';
+            document.getElementById('userEmail').textContent = user.email;
+            document.getElementById('welcomeName').textContent = userData.fullName || 'CEO';
+            document.getElementById('userAvatar').textContent = 
+                (userData.fullName || 'CEO').charAt(0);
+            
+            updateDate();
+            loadDashboardData();
+            initializeCharts();
+            renderDepartments();
+        });
+
+        // Load dashboard data
+        async function loadDashboardData() {
+            try {
+                // Load staff count
+                const staffSnapshot = await db.collection('staff').get();
+                const staffCount = staffSnapshot.size;
+                document.getElementById('staffCount').textContent = staffCount;
+                document.getElementById('staffTotal').textContent = staffCount;
+
+                // Load HOD count
+                const hodSnapshot = await db.collection('staff')
+                    .where('isHeadOfDepartment', '==', true)
+                    .get();
+                document.getElementById('hodCount').textContent = hodSnapshot.size;
+
+                // Load recent activity
+                const activitySnapshot = await db.collection('activity_logs')
+                    .orderBy('timestamp', 'desc')
+                    .limit(5)
+                    .get();
+
+                const tbody = document.getElementById('activityBody');
+                if (activitySnapshot.empty) {
+                    tbody.innerHTML = '<tr><td colspan="5" class="text-center">No recent activity</td></tr>';
+                    return;
+                }
+
+                let html = '';
+                activitySnapshot.forEach(doc => {
+                    const log = doc.data();
+                    const time = log.timestamp?.toDate?.() || new Date();
+                    const timeAgo = getTimeAgo(time);
+                    
+                    html += `
+                        <tr>
+                            <td>${log.action || 'Action'}</td>
+                            <td>${log.userName || 'System'}</td>
+                            <td>${log.target || '-'}</td>
+                            <td>${timeAgo}</td>
+                            <td><span class="status-badge status-active">${log.status || 'Success'}</span></td>
+                        </tr>
+                    `;
+                });
+                tbody.innerHTML = html;
+
+            } catch (error) {
+                console.error('Error loading dashboard:', error);
+            }
+        }
+
+        // Render departments
+        function renderDepartments() {
+            const grid = document.getElementById('deptGrid');
+            grid.innerHTML = departments.map(dept => `
+                <div class="dept-card" onclick="location.href='/admin/ceo/departments.html?code=${dept.code}'">
+                    <div class="dept-code">${dept.code}</div>
+                    <div class="dept-name">${dept.name}</div>
+                    <span class="dept-status">Active</span>
+                </div>
+            `).join('');
+        }
+
+        // Initialize charts
+        function initializeCharts() {
+            // Growth Chart
+            const growthCtx = document.getElementById('growthChart').getContext('2d');
+            growthChart = new Chart(growthCtx, {
+                type: 'line',
+                data: {
+                    labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'],
+                    datasets: [{
+                        label: 'Users',
+                        data: [650, 780, 900, 1050, 1200, 1450],
+                        borderColor: '#c19a6b',
+                        backgroundColor: 'rgba(193,154,107,0.1)',
+                        tension: 0.4,
+                        fill: true
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: { legend: { display: false } }
+                }
+            });
+
+            // User Distribution Chart
+            const userCtx = document.getElementById('userChart').getContext('2d');
+            userChart = new Chart(userCtx, {
+                type: 'doughnut',
+                data: {
+                    labels: ['Admin', 'Staff', 'Investor', 'Client'],
+                    datasets: [{
+                        data: [5, 24, 156, 1048],
+                        backgroundColor: ['#c19a6b', '#0a2540', '#10b981', '#3b82f6'],
+                        borderWidth: 0
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: { legend: { position: 'bottom' } }
+                }
+            });
+        }
+
+        // Time ago helper
+        function getTimeAgo(date) {
+            const seconds = Math.floor((new Date() - date) / 1000);
+            const intervals = {
+                year: 31536000,
+                month: 2592000,
+                week: 604800,
+                day: 86400,
+                hour: 3600,
+                minute: 60
+            };
+            
+            for (const [unit, secondsInUnit] of Object.entries(intervals)) {
+                const interval = Math.floor(seconds / secondsInUnit);
+                if (interval >= 1) {
+                    return interval === 1 ? `1 ${unit} ago` : `${interval} ${unit}s ago`;
+                }
+            }
+            return 'just now';
+        }
+
+        // Generate report
+        function generateReport() {
+            showAlert('Generating report...', 'success');
+            setTimeout(() => {
+                window.location.href = '/admin/reports/';
+            }, 1000);
+        }
+
+        // Show section (for navigation)
+        function showSection(section) {
+            console.log('Section:', section);
+        }
+
+        // Logout
+        function logout() {
+            auth.signOut();
+            localStorage.clear();
+            window.location.href = '/';
+        }
+    </script>
+</body>
+</html>
