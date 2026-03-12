@@ -1,0 +1,405 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TAAGC Global · complete file structure</title>
+    <!-- Font Awesome 6 -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Inter', 'Segoe UI', system-ui, sans-serif;
+        }
+        body {
+            background: #f0f4fa;
+            padding: 30px 20px;
+        }
+        .container {
+            max-width: 1500px;
+            margin: 0 auto;
+            background: #ffffff;
+            border-radius: 36px;
+            box-shadow: 0 30px 60px -15px rgba(0,35,65,0.3);
+            overflow: hidden;
+            padding: 40px 40px 50px;
+        }
+        h1 {
+            font-size: 2.8rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, #0B2F4E, #1C4E72);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 8px;
+            letter-spacing: -0.02em;
+        }
+        .subtitle {
+            font-size: 1.2rem;
+            color: #26577b;
+            margin-bottom: 35px;
+            border-left: 6px solid #e09f2c;
+            padding-left: 20px;
+            background: #fbfaf8;
+            border-radius: 0 20px 20px 0;
+            line-height: 1.4;
+        }
+        .badge {
+            background: #e09f2c;
+            color: #0b2a3f;
+            font-weight: 600;
+            padding: 6px 16px;
+            border-radius: 40px;
+            font-size: 0.85rem;
+            display: inline-block;
+            letter-spacing: 0.3px;
+            margin-right: 12px;
+        }
+        .section-title {
+            font-size: 2rem;
+            font-weight: 650;
+            margin: 50px 0 25px 0;
+            padding-bottom: 14px;
+            border-bottom: 4px solid #e09f2c;
+            color: #0f2c41;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        .section-title i {
+            color: #e09f2c;
+            font-size: 2rem;
+        }
+        .file-tree {
+            background: #f8fafd;
+            border-radius: 28px;
+            padding: 30px 25px;
+            border: 1px solid #dde5ed;
+            box-shadow: inset 0 2px 6px rgba(0,0,0,0.02);
+            font-family: 'Fira Code', 'Courier New', monospace;
+            font-size: 0.95rem;
+            overflow-x: auto;
+            white-space: pre-wrap;
+            word-break: break-word;
+        }
+        .tree-node {
+            line-height: 2.1;
+        }
+        .tree-folder {
+            color: #1f4b74;
+            font-weight: 600;
+        }
+        .tree-folder i, .tree-file i {
+            width: 1.8rem;
+            color: #e09f2c;
+        }
+        .tree-file {
+            color: #2d4055;
+        }
+        .tree-branch {
+            padding-left: 28px;
+            border-left: 2px dashed #bed0e0;
+            margin-left: 12px;
+        }
+        .comment {
+            color: #6a889c;
+            font-style: italic;
+            font-size: 0.9rem;
+            margin-left: 25px;
+            font-family: 'Inter', sans-serif;
+        }
+        .grid-stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(240px,1fr));
+            gap: 20px;
+            margin: 30px 0;
+        }
+        .stat-card {
+            background: #e8f0fa;
+            border-radius: 20px;
+            padding: 20px 18px;
+            border: 1px solid #c5d9ec;
+        }
+        .stat-card .number {
+            font-size: 2.2rem;
+            font-weight: 700;
+            color: #0b2f4e;
+        }
+        .label {
+            color: #31658c;
+            font-weight: 500;
+        }
+        .dot-domain {
+            background: #1f486b;
+            color: white;
+            padding: 3px 15px;
+            border-radius: 40px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            display: inline-block;
+            margin: 20px 0 5px;
+            letter-spacing: 0.3px;
+        }
+        .legend {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 25px;
+            margin: 35px 0 15px;
+            font-size: 0.95rem;
+        }
+        .legend i {
+            color: #e09f2c;
+            margin-right: 5px;
+        }
+        hr {
+            border: none;
+            border-top: 2px dashed #b6cbd9;
+            margin: 30px 0;
+        }
+        .footer {
+            text-align: center;
+            margin-top: 50px;
+            color: #5a7694;
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <h1><i class="fas fa-folder-tree"></i> TAAGC Global · filesystem structure</h1>
+    <div class="subtitle">Complete platform architecture · subdomains · 124 pages · 28 Firebase collections</div>
+
+    <!-- quick stats -->
+    <div class="grid-stats">
+        <div class="stat-card"><span class="number">6</span> <span class="label">subdomains</span></div>
+        <div class="stat-card"><span class="number">16</span> <span class="label">departments</span></div>
+        <div class="stat-card"><span class="number">28</span> <span class="label">Firebase collections</span></div>
+        <div class="stat-card"><span class="number">124</span> <span class="label">total pages</span></div>
+    </div>
+
+    <!-- subdomains quick view -->
+    <div style="display: flex; gap: 12px; flex-wrap: wrap; margin-bottom: 25px;">
+        <span class="badge"><i class="fas fa-globe"></i> taacg.website (public)</span>
+        <span class="badge"><i class="fas fa-lock"></i> admin.taacg.website (admin)</span>
+        <span class="badge"><i class="fas fa-users"></i> staff.taacg.website (staff)</span>
+        <span class="badge"><i class="fas fa-chart-pie"></i> investor.taacg.website</span>
+        <span class="badge"><i class="fas fa-code"></i> api.taacg.website</span>
+        <span class="badge"><i class="fas fa-bolt"></i> cdn.taacg.website</span>
+    </div>
+
+    <!-- MAIN FILE TREE -->
+    <div class="section-title"><i class="fas fa-sitemap"></i> root project: taacg-global-platform/</div>
+    <div class="file-tree">
+        <div class="tree-node"><i class="fas fa-folder-open tree-folder"></i> <span class="tree-folder">public/</span> <span class="comment">// static assets (cdn.taacg.website)</span></div>
+        <div class="tree-branch">
+            <div><i class="fas fa-folder tree-folder"></i> images/</div>
+            <div><i class="fas fa-folder tree-folder"></i> fonts/</div>
+            <div><i class="fas fa-folder tree-folder"></i> css/</div>
+            <div><i class="fas fa-folder tree-folder"></i> js/</div>
+        </div>
+
+        <div class="tree-node" style="margin-top:18px;"><i class="fas fa-folder-open tree-folder"></i> <span class="tree-folder">src/</span> <span class="comment">// application core</span></div>
+        <div class="tree-branch">
+
+            <!-- domains -->
+            <div><i class="fas fa-folder tree-folder"></i> domains/ <span class="comment">// subdomain-specific modules</span></div>
+            <div class="tree-branch">
+                <!-- main website -->
+                <div><i class="fas fa-folder tree-folder"></i> main/ <span class="comment">taacg.website (public, 5 pages)</span></div>
+                <div class="tree-branch">
+                    <div><i class="fas fa-folder tree-folder"></i> pages/</div>
+                    <div class="tree-branch">
+                        <div><i class="far fa-file tree-file"></i> home/</div>
+                        <div><i class="far fa-file tree-file"></i> about/</div>
+                        <div><i class="far fa-file tree-file"></i> services/</div>
+                        <div><i class="far fa-file tree-file"></i> contact/</div>
+                        <div><i class="far fa-file tree-file"></i> careers/</div>
+                    </div>
+                    <div><i class="fas fa-folder tree-folder"></i> components/</div>
+                </div>
+
+                <!-- admin panel (93 pages) -->
+                <div style="margin-top:10px;"><i class="fas fa-folder tree-folder"></i> admin/ <span class="comment">admin.taacg.website (93 pages)</span></div>
+                <div class="tree-branch">
+                    <div><i class="fas fa-folder tree-folder"></i> pages/</div>
+                    <div class="tree-branch">
+                        <div><i class="far fa-file tree-file"></i> dashboard/</div>
+                        <div><i class="far fa-file tree-file"></i> users/ (6)</div>
+                        <div><i class="far fa-file tree-file"></i> admins/ (4, CEO only)</div>
+                        <div><i class="far fa-file tree-file"></i> staff/ (12)</div>
+                        <div><i class="far fa-file tree-file"></i> investors/ (6)</div>
+                        <div><i class="far fa-file tree-file"></i> investments/ (7)</div>
+                        <div><i class="far fa-file tree-file"></i> transactions/ (6)</div>
+                        <div><i class="far fa-file tree-file"></i> banks/ (12)</div>
+                        <div><i class="far fa-file tree-file"></i> agencies/ (10)</div>
+                        <div><i class="far fa-file tree-file"></i> events/ (10)</div>
+                        <div><i class="far fa-file tree-file"></i> api/ (5)</div>
+                        <div><i class="far fa-file tree-file"></i> ceo/ (5, CEO only)</div>
+                        <div><i class="far fa-file tree-file"></i> reports/ (5)</div>
+                        <div><i class="far fa-file tree-file"></i> settings/ (5, CEO only)</div>
+                    </div>
+                    <div><i class="fas fa-folder tree-folder"></i> components/ (admin ui)</div>
+                </div>
+
+                <!-- staff portal (17) -->
+                <div style="margin-top:10px;"><i class="fas fa-folder tree-folder"></i> staff/ <span class="comment">staff.taacg.website (17 pages)</span></div>
+                <div class="tree-branch">
+                    <div><i class="fas fa-folder tree-folder"></i> pages/</div>
+                    <div class="tree-branch">
+                        <div><i class="far fa-file tree-file"></i> dashboard/</div>
+                        <div><i class="far fa-file tree-file"></i> tasks/</div>
+                        <div><i class="far fa-file tree-file"></i> attendance/</div>
+                        <div><i class="far fa-file tree-file"></i> leave/</div>
+                        <div><i class="far fa-file tree-file"></i> performance/</div>
+                        <div><i class="far fa-file tree-file"></i> goals/</div>
+                        <div><i class="far fa-file tree-file"></i> documents/</div>
+                    </div>
+                    <div><i class="fas fa-folder tree-folder"></i> components/</div>
+                </div>
+
+                <!-- investor portal (9) -->
+                <div style="margin-top:10px;"><i class="fas fa-folder tree-folder"></i> investor/ <span class="comment">investor.taacg.website (9 pages)</span></div>
+                <div class="tree-branch">
+                    <div><i class="fas fa-folder tree-folder"></i> pages/</div>
+                    <div class="tree-branch">
+                        <div><i class="far fa-file tree-file"></i> dashboard/</div>
+                        <div><i class="far fa-file tree-file"></i> portfolio/</div>
+                        <div><i class="far fa-file tree-file"></i> investments/</div>
+                        <div><i class="far fa-file tree-file"></i> transactions/</div>
+                    </div>
+                    <div><i class="fas fa-folder tree-folder"></i> components/</div>
+                </div>
+            </div> <!-- end domains -->
+
+            <!-- core -->
+            <div style="margin-top:20px;"><i class="fas fa-folder tree-folder"></i> core/ <span class="comment">business logic, auth, departments</span></div>
+            <div class="tree-branch">
+                <div><i class="fas fa-folder tree-folder"></i> auth/ (roles: superadmin, admin, hod, staff, investor, client)</div>
+                <div><i class="fas fa-folder tree-folder"></i> departments/ (16 depts logic)</div>
+                <div><i class="fas fa-folder tree-folder"></i> banks/ (banking module)</div>
+                <div><i class="fas fa-folder tree-folder"></i> notifications/</div>
+            </div>
+
+            <!-- data (firebase) -->
+            <div style="margin-top:20px;"><i class="fas fa-folder tree-folder"></i> data/ <span class="comment">Firebase repositories (28 collections)</span></div>
+            <div class="tree-branch">
+                <div><i class="fas fa-folder tree-folder"></i> collections/</div>
+                <div class="tree-branch">
+                    <div><i class="far fa-file tree-file"></i> UserRepository.ts (users)</div>
+                    <div><i class="far fa-file tree-file"></i> StaffRepository.ts (staff)</div>
+                    <div><i class="far fa-file tree-file"></i> AdminRepository.ts</div>
+                    <div><i class="far fa-file tree-file"></i> InvestorRepository.ts</div>
+                    <div><i class="far fa-file tree-file"></i> InvestmentRepository.ts</div>
+                    <div><i class="far fa-file tree-file"></i> TransactionRepository.ts</div>
+                    <div><i class="far fa-file tree-file"></i> BankRepository.ts</div>
+                    <div><i class="far fa-file tree-file"></i> BankAccountRepository.ts</div>
+                    <div><i class="far fa-file tree-file"></i> AgencyRepository.ts</div>
+                    <div><i class="far fa-file tree-file"></i> ContractRepository.ts</div>
+                    <div><i class="far fa-file tree-file"></i> CommissionRepository.ts</div>
+                    <div><i class="far fa-file tree-file"></i> EventRepository.ts</div>
+                    <div><i class="far fa-file tree-file"></i> RegistrationRepository.ts</div>
+                    <div><i class="far fa-file tree-file"></i> TaskRepository.ts</div>
+                    <div><i class="far fa-file tree-file"></i> AttendanceRepository.ts</div>
+                    <div><i class="far fa-file tree-file"></i> LeaveRepository.ts</div>
+                    <div><i class="far fa-file tree-file"></i> PerformanceRepository.ts</div>
+                    <div><i class="far fa-file tree-file"></i> GoalRepository.ts</div>
+                    <div><i class="far fa-file tree-file"></i> StaffDocumentRepository.ts</div>
+                    <div><i class="far fa-file tree-file"></i> NotificationRepository.ts</div>
+                    <div><i class="far fa-file tree-file"></i> ChatRepository.ts</div>
+                    <div><i class="far fa-file tree-file"></i> MessageRepository.ts</div>
+                    <div><i class="far fa-file tree-file"></i> ActivityLogRepository.ts</div>
+                    <div><i class="far fa-file tree-file"></i> AuditLogRepository.ts</div>
+                    <div><i class="far fa-file tree-file"></i> SettingRepository.ts</div>
+                    <div><i class="far fa-file tree-file"></i> ComplianceRepository.ts</div>
+                    <div><i class="far fa-file tree-file"></i> SecurityLogRepository.ts</div>
+                </div>
+                <div><i class="far fa-file tree-file"></i> firebaseConfig.ts</div>
+            </div>
+
+            <!-- api -->
+            <div style="margin-top:20px;"><i class="fas fa-folder tree-folder"></i> api/ <span class="comment">api.taacg.website</span></div>
+            <div class="tree-branch">
+                <div><i class="fas fa-folder tree-folder"></i> rest/v1/</div>
+                <div class="tree-branch">
+                    <div><i class="far fa-file tree-file"></i> users/</div>
+                    <div><i class="far fa-file tree-file"></i> banks/</div>
+                    <div><i class="far fa-file tree-file"></i> transactions/</div>
+                </div>
+            </div>
+
+            <!-- shared -->
+            <div style="margin-top:20px;"><i class="fas fa-folder tree-folder"></i> shared/ <span class="comment">reusable ui, layouts, utils</span></div>
+            <div class="tree-branch">
+                <div><i class="fas fa-folder tree-folder"></i> layouts/ (AdminLayout, StaffLayout, PublicLayout)</div>
+                <div><i class="fas fa-folder tree-folder"></i> ui/ (buttons, cards, modals)</div>
+                <div><i class="fas fa-folder tree-folder"></i> hooks/</div>
+                <div><i class="fas fa-folder tree-folder"></i> utils/ (permissions, date)</div>
+            </div>
+        </div> <!-- end src branch -->
+
+        <!-- other root folders -->
+        <div style="margin-top:20px;"><i class="fas fa-folder tree-folder"></i> tests/ <span class="comment">unit + integration</span></div>
+        <div><i class="fas fa-folder tree-folder"></i> scripts/ <span class="comment">deployment commands (from page 11)</span></div>
+        <div><i class="fas fa-folder tree-folder"></i> docs/ <span class="comment">platform documentation (pdf, structure)</span></div>
+        <div><i class="far fa-file tree-file"></i> .env.local <span class="comment">Firebase keys, API config</span></div>
+        <div><i class="far fa-file tree-file"></i> package.json</div>
+    </div>
+
+    <!-- collections summary (28) -->
+    <div style="margin-top: 45px;">
+        <span class="dot-domain"><i class="fas fa-database"></i> 28 FIREBASE COLLECTIONS (exact from spec)</span>
+        <div style="display: flex; flex-wrap: wrap; gap: 12px; margin-top: 18px; background: #eef3f9; padding: 20px; border-radius: 30px;">
+            <span class="badge" style="background:#0b2f4e; color:white;">users</span> <span class="badge">staff</span> <span class="badge">admin</span> <span class="badge">investors</span> <span class="badge">investments</span> <span class="badge">transactions</span> <span class="badge">banks</span> <span class="badge">bank_accounts</span> <span class="badge">bank_transactions</span> <span class="badge">agencies</span> <span class="badge">agency_contracts</span> <span class="badge">agency_commissions</span> <span class="badge">events</span> <span class="badge">event_registrations</span> <span class="badge">tasks</span> <span class="badge">attendance</span> <span class="badge">leave</span> <span class="badge">performance_reviews</span> <span class="badge">goals</span> <span class="badge">staff_documents</span> <span class="badge">notifications</span> <span class="badge">chats</span> <span class="badge">messages</span> <span class="badge">activity_logs</span> <span class="badge">audit_logs</span> <span class="badge">settings</span> <span class="badge">compliance</span> <span class="badge">security</span>
+        </div>
+    </div>
+
+    <!-- page count breakdown -->
+    <hr>
+    <div style="display: flex; flex-wrap: wrap; gap: 35px; justify-content: space-between;">
+        <div><i class="fas fa-file-alt"></i> <strong>Main website</strong> 5 public</div>
+        <div><i class="fas fa-file-alt"></i> <strong>Admin panel</strong> 93 (12 banks, 10 agencies, etc)</div>
+        <div><i class="fas fa-file-alt"></i> <strong>Staff portal</strong> 17</div>
+        <div><i class="fas fa-file-alt"></i> <strong>Investor portal</strong> 9</div>
+        <div><i class="fas fa-calculator"></i> <strong>GRAND TOTAL 124 PAGES</strong></div>
+    </div>
+    <hr>
+
+    <!-- department codes & HODs -->
+    <div>
+        <span class="dot-domain"><i class="fas fa-building"></i> 16 DEPARTMENTS (codes)</span>
+        <div style="display: flex; flex-wrap: wrap; gap: 15px 30px; margin: 20px 0;">
+            <div><span style="font-weight:700;">ADM</span> Admin</div> <div><span style="font-weight:700;">HR</span> Human Resources</div> <div><span style="font-weight:700;">FIN</span> Finance</div> <div><span style="font-weight:700;">IT</span> IT</div>
+            <div><span style="font-weight:700;">MKT</span> Marketing</div> <div><span style="font-weight:700;">OPS</span> Operations</div> <div><span style="font-weight:700;">SAL</span> Sales</div> <div><span style="font-weight:700;">SUP</span> Support</div>
+            <div><span style="font-weight:700;">DEV</span> Development</div> <div><span style="font-weight:700;">ACC</span> Accounting</div> <div><span style="font-weight:700;">LEG</span> Legal</div> <div><span style="font-weight:700;">CS</span> Customer Service</div>
+            <div><span style="font-weight:700;">AGR</span> Agriculture</div> <div><span style="font-weight:700;">GRN</span> Grain</div> <div><span style="font-weight:700;">CON</span> Contracts</div> <div><span style="font-weight:700;">MER</span> Merchandise</div>
+        </div>
+    </div>
+
+    <!-- roles -->
+    <div class="legend">
+        <span><i class="fas fa-crown" style="color:#e09f2c;"></i> Super Admin L5 (CEO)</span>
+        <span><i class="fas fa-user-tie"></i> Admin L4</span>
+        <span><i class="fas fa-users"></i> Head of Dept L3</span>
+        <span><i class="fas fa-user"></i> Staff L2</span>
+        <span><i class="fas fa-chart-line"></i> Investor L1</span>
+        <span><i class="fas fa-user"></i> Client L0</span>
+    </div>
+
+    <!-- additional folders: banks, ceo, etc -->
+    <div style="background: #e3ebf6; border-radius: 24px; padding: 20px; margin-top: 35px;">
+        <i class="fas fa-diagram-project" style="color:#e09f2c;"></i> <strong>Admin panel deep dive (banks module 12p, ceo 5p, etc):</strong> see <code>src/domains/admin/pages/</code> structure above.
+        <div style="margin-top: 12px;"><i class="fas fa-check-circle"></i> Full alignment with TAAGC v3.0.0 documentation: subdomains, collections, roles, page counts.</div>
+    </div>
+
+    <!-- deployment & footer -->
+    <div style="margin-top: 45px; background: #0b2f4e; color: white; border-radius: 28px; padding: 25px;">
+        <i class="fas fa-terminal" style="color:#e09f2c;"></i> deployment commands (from page 11)
+        <pre style="background: #1e4564; color: #d4e3ff; padding: 15px; border-radius: 20px; margin-top: 12px; font-family: monospace;">npm run build:all  &&  firebase deploy --only hosting:admin,hosting:staff,hosting:investor  ||  ./scripts/deploy.sh</pre>
+    </div>
+
+    <div class="footer">
+        <i class="fas fa-copyright"></i> TAAGC Global platform – file structure v3.0.0 (March 2026) – all 16 departments, 124 pages, 28 collections.
+    </div>
+</div>
+</body>
+</html>
