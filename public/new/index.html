@@ -1,0 +1,461 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TAAGC Global · complete company structure</title>
+    <!-- Font Awesome 6 (free) for icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Roboto, system-ui, sans-serif;
+        }
+        body {
+            background: #f4f7fb;
+            padding: 30px 20px;
+            color: #1e2b3c;
+        }
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 32px;
+            box-shadow: 0 25px 50px -12px rgba(0,0,0,0.25);
+            overflow: hidden;
+            padding: 40px 35px;
+        }
+        h1 {
+            font-size: 2.8rem;
+            font-weight: 700;
+            background: linear-gradient(145deg, #0B2A4A, #1B4A6B);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 0.25rem;
+            letter-spacing: -0.02em;
+        }
+        .subhead {
+            font-size: 1.2rem;
+            color: #2c4c6e;
+            border-left: 5px solid #e09f2c;
+            padding-left: 20px;
+            margin: 10px 0 30px 0;
+            font-weight: 400;
+        }
+        .badge {
+            background: #e09f2c;
+            color: #0B2A4A;
+            font-weight: 600;
+            padding: 4px 14px;
+            border-radius: 40px;
+            font-size: 0.8rem;
+            display: inline-block;
+            letter-spacing: 0.3px;
+        }
+        .section-title {
+            font-size: 2rem;
+            font-weight: 600;
+            margin: 50px 0 25px 0;
+            padding-bottom: 12px;
+            border-bottom: 4px solid #e09f2c;
+            color: #0f2c41;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .section-title i {
+            color: #e09f2c;
+            font-size: 2rem;
+        }
+        .grid-4 {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 24px;
+            margin-top: 15px;
+        }
+        .hod-card {
+            background: #ffffff;
+            border-radius: 24px;
+            padding: 24px 20px;
+            box-shadow: 0 10px 20px -8px rgba(0,32,64,0.08);
+            border: 1px solid #eef2f6;
+            transition: all 0.2s;
+            border-top: 5px solid;
+        }
+        .hod-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 20px 25px -10px rgba(0,55,100,0.15);
+        }
+        .hod-code {
+            font-family: 'Courier New', monospace;
+            background: #eef2f6;
+            padding: 5px 12px;
+            border-radius: 50px;
+            font-weight: 600;
+            font-size: 0.8rem;
+            letter-spacing: 0.5px;
+        }
+        .hod-name {
+            font-size: 1.4rem;
+            font-weight: 700;
+            margin: 15px 0 5px;
+        }
+        .hod-title {
+            color: #e09f2c;
+            font-weight: 600;
+            margin-bottom: 12px;
+            font-size: 0.95rem;
+            text-transform: uppercase;
+        }
+        .hod-meta {
+            display: flex;
+            gap: 12px;
+            margin: 12px 0;
+            flex-wrap: wrap;
+        }
+        .reports-to {
+            background: #f0f7ff;
+            padding: 8px 12px;
+            border-radius: 16px;
+            font-size: 0.9rem;
+        }
+        .kpi-list {
+            margin-top: 16px;
+            list-style: none;
+        }
+        .kpi-list li {
+            font-size: 0.9rem;
+            padding: 6px 0 6px 24px;
+            background: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="%23e09f2c"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41L9 16.17z"/></svg>') left center no-repeat;
+            background-size: 16px;
+        }
+
+        /* org chart visual */
+        .org-chart {
+            background: #102b3f;
+            background: linear-gradient(145deg, #0A2538, #123b54);
+            border-radius: 28px;
+            padding: 40px 25px;
+            color: white;
+            margin: 40px 0;
+            overflow-x: auto;
+        }
+        .org-row {
+            display: flex;
+            justify-content: center;
+            gap: 25px;
+            flex-wrap: wrap;
+            margin: 20px 0;
+        }
+        .org-node {
+            background: rgba(255,255,255,0.08);
+            backdrop-filter: blur(4px);
+            border: 1px solid rgba(255,215,120,0.3);
+            border-radius: 24px;
+            padding: 18px 22px;
+            min-width: 200px;
+            text-align: center;
+            box-shadow: 0 10px 20px -5px rgba(0,0,0,0.5);
+        }
+        .org-node.ceo {
+            background: #e09f2c;
+            color: #0A2538;
+            font-weight: bold;
+            border: none;
+        }
+        .org-node.c-level {
+            background: #1c4b6e;
+        }
+        .org-node.hod {
+            background: #153e55;
+        }
+        .org-node.small {
+            font-size: 0.85rem;
+            padding: 12px 15px;
+            min-width: 150px;
+        }
+        .connector {
+            color: #e09f2c;
+            font-size: 1.5rem;
+            margin: 0 5px;
+        }
+        .legend {
+            display: flex;
+            gap: 20px;
+            justify-content: center;
+            margin-top: 20px;
+            color: #ddd;
+        }
+        table.goal-table {
+            width: 100%;
+            border-collapse: collapse;
+            background: white;
+            border-radius: 20px;
+            overflow: hidden;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.03);
+        }
+        table.goal-table th {
+            background: #f7f1e3;
+            color: #1d3d5c;
+            font-weight: 700;
+            padding: 16px 12px;
+            text-align: left;
+        }
+        table.goal-table td {
+            padding: 14px 12px;
+            border-bottom: 1px solid #eaeef3;
+            vertical-align: top;
+        }
+        table.goal-table tr:hover td {
+            background: #fafcff;
+        }
+        .metric-badge {
+            background: #e09f2c20;
+            color: #b1740e;
+            font-weight: 600;
+            border-radius: 40px;
+            padding: 2px 10px;
+            font-size: 0.75rem;
+            border: 1px solid #e09f2c60;
+        }
+        .footer-note {
+            text-align: center;
+            margin-top: 60px;
+            font-size: 0.9rem;
+            color: #7f8fa4;
+            border-top: 2px dashed #cdd9e9;
+            padding-top: 30px;
+        }
+        i {
+            margin-right: 6px;
+            color: #e09f2c;
+        }
+        .tag {
+            background: #1d3d5c;
+            color: white;
+            border-radius: 30px;
+            padding: 2px 12px;
+            font-size: 0.7rem;
+            font-weight: 500;
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <h1><i class="fas fa-sitemap"></i> TAAGC Global · company structure</h1>
+    <div class="subhead">Complete HOD job descriptions · reporting hierarchy · goals & platform metrics (v3.0.0)</div>
+
+    <!-- PART 1: JOB DESCRIPTIONS (16 HODs) -->
+    <div class="section-title"><i class="fas fa-id-card"></i> Part 1: Heads of Department – complete job descriptions</div>
+
+    <!-- cluster A -->
+    <h3 style="margin: 30px 0 10px;"><i class="fas fa-tractor"></i> CLUSTER A – Operations & production</h3>
+    <div class="grid-4">
+        <!-- OPS -->
+        <div class="hod-card" style="border-top-color: #1f77b4;">
+            <span class="hod-code">OPS001</span>
+            <div class="hod-name">Head of Operations</div>
+            <div class="hod-title"><i class="fas fa-gear"></i> OPS · Level 3</div>
+            <div class="reports-to"><i class="fas fa-arrow-up"></i> Reports to COO</div>
+            <div><span class="tag">staff.taacg.website</span> <span class="tag">admin/ops</span></div>
+            <ul class="kpi-list">
+                <li>Operational efficiency >95%</li>
+                <li>On-time delivery >98%</li>
+                <li>Cost per unit -10% YoY</li>
+                <li>Resource utilization >85%</li>
+            </ul>
+        </div>
+        <!-- AGR -->
+        <div class="hod-card" style="border-top-color: #2ca02c;">
+            <span class="hod-code">AGR001</span>
+            <div class="hod-name">Head of Agriculture</div>
+            <div class="hod-title"><i class="fas fa-seedling"></i> AGR · Level 3</div>
+            <div class="reports-to"><i class="fas fa-arrow-up"></i> Reports to COO</div>
+            <ul class="kpi-list">
+                <li>Yield per hectare +15% YoY</li>
+                <li>Crop quality score >4.5/5</li>
+                <li>Input efficiency 3:1</li>
+                <li>Loss percentage <5%</li>
+            </ul>
+        </div>
+        <!-- GRN -->
+        <div class="hod-card" style="border-top-color: #d49b3b;">
+            <span class="hod-code">GRN001</span>
+            <div class="hod-name">Head of Grain Processing</div>
+            <div class="hod-title"><i class="fas fa-wheat"></i> GRN · Level 3</div>
+            <div class="reports-to"><i class="fas fa-arrow-up"></i> Reports to COO</div>
+            <ul class="kpi-list">
+                <li>Processing efficiency >90%</li>
+                <li>Quality score >98%</li>
+                <li>Waste <3%</li>
+                <li>Equipment uptime >95%</li>
+            </ul>
+        </div>
+        <!-- MER -->
+        <div class="hod-card" style="border-top-color: #9467bd;">
+            <span class="hod-code">MER001</span>
+            <div class="hod-name">Head of Merchandise</div>
+            <div class="hod-title"><i class="fas fa-box"></i> MER · Level 3</div>
+            <div class="reports-to"><i class="fas fa-arrow-up"></i> Reports to COO</div>
+            <ul class="kpi-list">
+                <li>Inventory turnover 8x/year</li>
+                <li>Stock-out rate <2%</li>
+                <li>Gross margin >40%</li>
+                <li>New product success >70%</li>
+            </ul>
+        </div>
+    </div>
+
+    <!-- cluster B -->
+    <h3 style="margin: 40px 0 10px;"><i class="fas fa-scale-balanced"></i> CLUSTER B – Finance & legal</h3>
+    <div class="grid-4">
+        <div class="hod-card" style="border-top-color: #d62728;"><span class="hod-code">FIN001</span><div class="hod-name">Head of Finance</div><div class="hod-title">FIN · Level 3</div><div class="reports-to">Reports to CFO</div><ul class="kpi-list"><li>Budget variance <5%</li><li>Forecast accuracy >90%</li><li>Cash flow ratio >1.5</li><li>Investment ROI >15%</li></ul></div>
+        <div class="hod-card" style="border-top-color: #e377c2;"><span class="hod-code">ACC001</span><div class="hod-name">Head of Accounting</div><div class="hod-title">ACC · Level 3</div><div class="reports-to">Reports to CFO</div><ul class="kpi-list"><li>DSO <30 days</li><li>Payroll accuracy 100%</li><li>Close time <5 days</li><li>Audit findings 0</li></ul></div>
+        <div class="hod-card" style="border-top-color: #7f7f7f;"><span class="hod-code">LEG001</span><div class="hod-name">Head of Legal</div><div class="hod-title">LEG · Level 3</div><div class="reports-to">Reports to CFO</div><ul class="kpi-list"><li>Compliance audit >95%</li><li>Legal incidents 0</li><li>Dispute rate <2%</li><li>Review <3 days</li></ul></div>
+        <div class="hod-card" style="border-top-color: #bcbd22;"><span class="hod-code">CON001</span><div class="hod-name">Head of Contracts</div><div class="hod-title">CON · Level 3</div><div class="reports-to">Reports to CFO</div><ul class="kpi-list"><li>Contract cycle <7 days</li><li>Compliance >98%</li><li>Renewal rate >85%</li><li>Dispute rate <1%</li></ul></div>
+    </div>
+
+    <!-- cluster C -->
+    <h3 style="margin: 40px 0 10px;"><i class="fas fa-microchip"></i> CLUSTER C – Technology</h3>
+    <div class="grid-4">
+        <div class="hod-card" style="border-top-color: #17becf;"><span class="hod-code">IT001</span><div class="hod-name">Head of IT</div><div class="hod-title">IT · Level 3</div><div class="reports-to">Reports to CTO</div><ul class="kpi-list"><li>System uptime >99.9%</li><li>Resolution <4h</li><li>Security incidents 0</li><li>User sat. >4.5</li></ul></div>
+        <div class="hod-card" style="border-top-color: #9e9ac8;"><span class="hod-code">DEV001</span><div class="hod-name">Head of Development</div><div class="hod-title">DEV · Level 3</div><div class="reports-to">Reports to CTO</div><ul class="kpi-list"><li>Deploy weekly</li><li>Bug fix <48h</li><li>Code coverage >80%</li><li>Platform uptime 99.9%</li></ul></div>
+        <div class="hod-card" style="border-top-color: #f1a340;"><span class="hod-code">SUP001</span><div class="hod-name">Head of Support</div><div class="hod-title">SUP · Level 3</div><div class="reports-to">Reports to CTO</div><ul class="kpi-list"><li>First contact resolution >70%</li><li>Handle time <10min</li><li>Ticket volume <100/m</li><li>User sat. >4.5</li></ul></div>
+        <div class="hod-card" style="border-top-color: #998ec3;"><span class="hod-code">(IT/DEV covered)</span><div class="hod-name" style="font-size:1.2rem;">&nbsp;</div><div class="hod-title"> </div></div>
+    </div>
+
+    <!-- cluster D -->
+    <h3 style="margin: 40px 0 10px;"><i class="fas fa-chart-line"></i> CLUSTER D – Revenue & growth</h3>
+    <div class="grid-4">
+        <div class="hod-card" style="border-top-color: #f46d43;"><span class="hod-code">SAL001</span><div class="hod-name">Head of Sales</div><div class="hod-title">SAL · Level 3</div><div class="reports-to">Reports to COO/CEO</div><ul class="kpi-list"><li>Revenue vs target 100%+</li><li>CAC -10% YoY</li><li>Conversion >25%</li><li>Retention >90%</li></ul></div>
+        <div class="hod-card" style="border-top-color: #66c2a5;"><span class="hod-code">MKT001</span><div class="hod-name">Head of Marketing</div><div class="hod-title">MKT · Level 3</div><div class="reports-to">Reports to COO/CEO</div><ul class="kpi-list"><li>Leads +20% YoY</li><li>MQL→SQL >30%</li><li>Campaign ROI >300%</li><li>Website +30%</li></ul></div>
+        <div class="hod-card" style="border-top-color: #fec44f;"><span class="hod-code">MER</span><div class="hod-name">(in cluster A)</div><div class="hod-title"> </div></div>
+        <div class="hod-card" style="border-top-color: #d9d9d9;"></div>
+    </div>
+
+    <!-- cluster E -->
+    <h3 style="margin: 40px 0 10px;"><i class="fas fa-users"></i> CLUSTER E – People & culture</h3>
+    <div class="grid-4">
+        <div class="hod-card" style="border-top-color: #8c6bb1;"><span class="hod-code">HR001</span><div class="hod-name">Head of HR</div><div class="hod-title">HR · Level 3</div><div class="reports-to">Reports to CEO</div><ul class="kpi-list"><li>Turnover <10%</li><li>Time to hire <30d</li><li>Engagement >4/5</li><li>Review completion 100%</li></ul></div>
+        <div class="hod-card" style="border-top-color: #b15928;"><span class="hod-code">ADM001</span><div class="hod-name">Head of Administration</div><div class="hod-title">ADM · Level 3</div><div class="reports-to">Reports to CEO</div><ul class="kpi-list"><li>Office efficiency >90%</li><li>Event sat. >4.5</li><li>Request <24h</li><li>Cost/employee -5%</li></ul></div>
+    </div>
+
+    <!-- cluster F -->
+    <h3 style="margin: 40px 0 10px;"><i class="fas fa-headset"></i> CLUSTER F – Customer experience</h3>
+    <div class="grid-4">
+        <div class="hod-card" style="border-top-color: #fdae61;"><span class="hod-code">CS001</span><div class="hod-name">Head of Customer Service</div><div class="hod-title">CS · Level 3</div><div class="reports-to">Reports to COO</div><ul class="kpi-list"><li>CSAT >4.5</li><li>First response <15m</li><li>Resolution <24h</li><li>Retention >90%</li></ul></div>
+        <div class="hod-card" style="border-top-color: #abd9e9;"><span class="hod-code">SUP001</span><div class="hod-name">Head of Support</div><div class="hod-title">SUP (tech) · L3</div><div class="reports-to">Reports to CTO</div><ul class="kpi-list"><li>FCR >70%</li><li>Avg handle <10m</li><li>KB views >1k/m</li></ul></div>
+    </div>
+
+    <!-- PART 2: REPORTING HIERARCHY FLOWCHART -->
+    <div class="section-title" style="margin-top: 60px;"><i class="fas fa-project-diagram"></i> Part 2: Reporting hierarchy – org chart</div>
+    <div class="org-chart">
+        <div class="org-row">
+            <div class="org-node ceo"><i class="fas fa-crown"></i> CEO (Level 5)<br><span style="font-size:0.8rem;">Board of Directors</span></div>
+        </div>
+        <div class="org-row">
+            <div class="org-node c-level"><i class="fas fa-user-tie"></i> COO (L4)</div>
+            <div class="org-node c-level"><i class="fas fa-user-tie"></i> CFO (L4)</div>
+            <div class="org-node c-level"><i class="fas fa-user-tie"></i> CTO (L4)</div>
+            <div class="org-node c-level"><i class="fas fa-user-tie"></i> HR/ADM (to CEO)</div>
+        </div>
+        <div class="org-row" style="gap:12px;">
+            <!-- COO cluster -->
+            <div style="display:flex; flex-direction:column; gap:8px;">
+                <div class="org-node hod small">OPS · AGR · GRN · MER</div>
+                <div class="org-node hod small">SAL · MKT · CS</div>
+            </div>
+            <!-- CFO cluster -->
+            <div style="display:flex; flex-direction:column; gap:8px;">
+                <div class="org-node hod small">FIN · ACC</div>
+                <div class="org-node hod small">LEG · CON</div>
+            </div>
+            <!-- CTO cluster -->
+            <div style="display:flex; flex-direction:column; gap:8px;">
+                <div class="org-node hod small">IT · DEV · SUP</div>
+            </div>
+            <!-- direct to CEO -->
+            <div style="display:flex; flex-direction:column; gap:8px;">
+                <div class="org-node hod small">HR · ADM</div>
+            </div>
+        </div>
+        <div class="org-row">
+            <div class="org-node small" style="background:#1a4d6e;">Staff (Level 2) · 16 teams</div>
+        </div>
+        <div class="org-row">
+            <div class="org-node small" style="background:#2f6d5a;">Investors L1</div>
+            <div class="org-node small" style="background:#2f6d5a;">Clients L0</div>
+            <div class="org-node small" style="background:#2f6d5a;">Agencies / vendors</div>
+        </div>
+        <div class="legend"><span><i class="fas fa-square" style="color:#e09f2c;"></i> CEO</span> <span><i class="fas fa-square" style="color:#1c4b6e;"></i> C-Level</span> <span><i class="fas fa-square" style="color:#153e55;"></i> HOD</span></div>
+    </div>
+
+    <!-- PART 3: GOALS MAPPED TO PLATFORM METRICS (summary tables) -->
+    <div class="section-title"><i class="fas fa-bullseye"></i> Part 3: Goals → platform metrics (Firebase collections)</div>
+
+    <h3><i class="fas fa-leaf"></i> Operations & production cluster (OPS, AGR, GRN, MER)</h3>
+    <table class="goal-table">
+        <tr><th>Department</th><th>Goal</th><th>Platform metric</th><th>Firebase collection</th><th>Target</th></tr>
+        <tr><td>OPS</td><td>On‑time delivery</td><td>on_time_delivery_percentage</td><td>transactions</td><td>>98%</td></tr>
+        <tr><td>AGR</td><td>Yield per hectare</td><td>yield_per_hectare</td><td>tasks (agri)</td><td>+15% YoY</td></tr>
+        <tr><td>GRN</td><td>Processing efficiency</td><td>processing_efficiency</td><td>tasks</td><td>>90%</td></tr>
+        <tr><td>MER</td><td>Inventory turnover</td><td>inventory_turnover_rate</td><td>transactions</td><td>8x/year</td></tr>
+    </table>
+
+    <h3 style="margin-top:30px;"><i class="fas fa-file-invoice"></i> Finance & legal (FIN, ACC, LEG, CON)</h3>
+    <table class="goal-table">
+        <tr><th>Dept</th><th>Goal</th><th>Metric</th><th>Collection</th><th>Target</th></tr>
+        <tr><td>FIN</td><td>Budget variance</td><td>budget_variance</td><td>transactions</td><td><5%</td></tr>
+        <tr><td>ACC</td><td>DSO</td><td>days_sales_outstanding</td><td>transactions</td><td><30d</td></tr>
+        <tr><td>LEG</td><td>Compliance audit</td><td>compliance_audit_score</td><td>compliance</td><td>>95%</td></tr>
+        <tr><td>CON</td><td>Contract cycle</td><td>contract_cycle_days</td><td>agency_contracts</td><td><7d</td></tr>
+    </table>
+
+    <h3 style="margin-top:30px;"><i class="fas fa-laptop"></i> Technology (IT, DEV, SUP)</h3>
+    <table class="goal-table">
+        <tr><th>Dept</th><th>Goal</th><th>Metric</th><th>Collection</th><th>Target</th></tr>
+        <tr><td>IT</td><td>System uptime</td><td>system_uptime_percentage</td><td>activity_logs</td><td>99.9%</td></tr>
+        <tr><td>DEV</td><td>Bug fix turnaround</td><td>bug_fix_turnaround</td><td>tasks</td><td><48h</td></tr>
+        <tr><td>SUP</td><td>First contact resolution</td><td>first_contact_resolution_rate</td><td>activity_logs</td><td>>70%</td></tr>
+    </table>
+
+    <h3 style="margin-top:30px;"><i class="fas fa-chart-simple"></i> Revenue, people, customer</h3>
+    <table class="goal-table">
+        <tr><th>Dept</th><th>Goal</th><th>Metric</th><th>Collection</th><th>Target</th></tr>
+        <tr><td>SAL</td><td>Revenue vs target</td><td>revenue_vs_target</td><td>transactions</td><td>100%+</td></tr>
+        <tr><td>MKT</td><td>Lead volume</td><td>lead_volume</td><td>users</td><td>+20% YoY</td></tr>
+        <tr><td>HR</td><td>Turnover rate</td><td>turnover_rate</td><td>staff</td><td><10%</td></tr>
+        <tr><td>CS</td><td>CSAT</td><td>csat_score</td><td>users</td><td>>4.5/5</td></tr>
+    </table>
+
+    <!-- platform-wide dashboard -->
+    <div style="background: #eef4fa; border-radius: 24px; padding: 25px; margin: 45px 0 20px;">
+        <h3><i class="fas fa-gauge-high"></i> Platform‑wide metrics dashboard</h3>
+        <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(220px,1fr)); gap: 15px; margin-top: 20px;">
+            <div><span class="metric-badge">users</span> Active users >1000 (CEO)</div>
+            <div><span class="metric-badge">transactions</span> Monthly >5000 (CFO)</div>
+            <div><span class="metric-badge">attendance</span> >95% (HR)</div>
+            <div><span class="metric-badge">activity_logs</span> Uptime 99.9% (CTO)</div>
+            <div><span class="metric-badge">investments</span> ROI >15% (CFO)</div>
+            <div><span class="metric-badge">users</span> CSAT >4.5 (CS)</div>
+            <div><span class="metric-badge">tasks</span> Completion >90% (COO)</div>
+            <div><span class="metric-badge">security</span> Incidents 0 (CTO)</div>
+        </div>
+    </div>
+
+    <!-- Complete list of 16 HOD codes -->
+    <div style="background: #fbf7f0; border-radius: 20px; padding: 20px; margin-top: 30px;">
+        <i class="fas fa-list"></i> <strong>All 16 departments (HOD codes)</strong>: 
+        ADM001, HR001, FIN001, IT001, MKT001, OPS001, SAL001, SUP001, DEV001, ACC001, LEG001, CS001, AGR001, GRN001, CON001, MER001.
+        <span style="margin-left: 15px;"><i class="fas fa-check-circle" style="color:#e09f2c;"></i> HOD service numbers format: XXX001/MM/YYYY</span>
+    </div>
+
+    <div class="footer-note">
+        <i class="fas fa-file-pdf"></i> TAAGC Global company structure v3.0.0 – March 2026 <br>
+        job descriptions, reporting hierarchy, departmental goals & Firebase metrics
+    </div>
+</div>
+</body>
+</html>
