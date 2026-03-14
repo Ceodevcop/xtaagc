@@ -1,0 +1,584 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TAAGC Global · investment & trading</title>
+    <!-- Font Awesome 6 -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <!-- Firebase -->
+    <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-firestore-compat.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Inter', 'Segoe UI', system-ui, sans-serif;
+        }
+        body {
+            background: #f0f6fd;
+        }
+        /* top bar */
+        .top-bar {
+            background: #0a1f30;
+            color: white;
+            padding: 12px 40px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 0.95rem;
+            flex-wrap: wrap;
+        }
+        .contact-info span {
+            margin-right: 25px;
+        }
+        .contact-info i {
+            color: #e09f2c;
+            margin-right: 6px;
+        }
+        .market-ticker {
+            color: #e09f2c;
+            font-weight: 600;
+        }
+        /* main navigation */
+        .navbar {
+            background: white;
+            padding: 15px 40px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 5px 20px #0000000c;
+        }
+        .logo h1 {
+            font-size: 2rem;
+            font-weight: 800;
+            background: linear-gradient(145deg, #0a1f30, #1e4f7a);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            cursor: pointer;
+        }
+        .nav-links a {
+            color: #1f4970;
+            text-decoration: none;
+            margin: 0 15px;
+            font-weight: 500;
+        }
+        .nav-links a:hover {
+            color: #e09f2c;
+        }
+        .auth-buttons button {
+            padding: 10px 25px;
+            border-radius: 60px;
+            border: none;
+            font-weight: 600;
+            cursor: pointer;
+            margin-left: 10px;
+        }
+        .btn-login {
+            background: transparent;
+            border: 2px solid #e09f2c;
+            color: #e09f2c;
+        }
+        .btn-signup {
+            background: #e09f2c;
+            color: #0a1f30;
+        }
+        /* ===== 9 BANNER SLIDESHOW - CLICKABLE ===== */
+        .banner-slideshow {
+            position: relative;
+            width: 100%;
+            height: 600px;
+            overflow: hidden;
+            cursor: pointer;
+        }
+        .slide-container {
+            position: relative;
+            width: 100%;
+            height: 100%;
+        }
+        .slide {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            opacity: 0;
+            transition: opacity 0.8s ease-in-out;
+            background-size: cover;
+            background-position: center;
+            display: flex;
+            align-items: center;
+            padding: 0 80px;
+            cursor: pointer;
+            text-decoration: none;
+        }
+        .slide.active {
+            opacity: 1;
+            z-index: 1;
+        }
+        .slide-content {
+            max-width: 600px;
+            color: white;
+            text-shadow: 0 4px 12px #00000080;
+            background: rgba(0,0,0,0.4);
+            padding: 40px;
+            border-radius: 40px;
+            backdrop-filter: blur(5px);
+            border-left: 8px solid #e09f2c;
+            pointer-events: none;
+        }
+        .slide-content h2 {
+            font-size: 3.5rem;
+            margin-bottom: 15px;
+        }
+        .slide-content p {
+            font-size: 1.2rem;
+            margin-bottom: 25px;
+        }
+        .slide-btn {
+            background: #e09f2c;
+            border: none;
+            color: #0a1f30;
+            font-weight: 700;
+            padding: 15px 35px;
+            border-radius: 60px;
+            font-size: 1.1rem;
+            cursor: pointer;
+            border: 2px solid white;
+            pointer-events: none;
+        }
+        /* indicators and arrows remain clickable */
+        .slide-indicators {
+            position: absolute;
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 20;
+            display: flex;
+            gap: 15px;
+        }
+        .indicator {
+            width: 60px;
+            height: 8px;
+            background: rgba(255,255,255,0.4);
+            border-radius: 8px;
+            cursor: pointer;
+            transition: 0.2s;
+            z-index: 30;
+        }
+        .indicator.active {
+            background: #e09f2c;
+            width: 90px;
+        }
+        .slide-arrow {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            z-index: 20;
+            background: rgba(255,255,255,0.2);
+            backdrop-filter: blur(4px);
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2rem;
+            color: white;
+            cursor: pointer;
+            border: 2px solid #e09f2c;
+        }
+        .slide-arrow.left {
+            left: 30px;
+        }
+        .slide-arrow.right {
+            right: 30px;
+        }
+        .slide-arrow:hover {
+            background: #e09f2c;
+            color: #0a1f30;
+        }
+        /* stats section */
+        .stats-section {
+            background: white;
+            padding: 60px 40px;
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 30px;
+            text-align: center;
+        }
+        .stat-item h3 {
+            font-size: 2.5rem;
+            color: #e09f2c;
+        }
+        /* services grid */
+        .services-section {
+            padding: 60px 40px;
+            background: #f8fcff;
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 30px;
+        }
+        .service-card {
+            background: white;
+            border-radius: 30px;
+            padding: 30px;
+            box-shadow: 0 15px 30px -10px #b0c8dd;
+            border: 1px solid #d0e2f2;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+        .service-card:hover {
+            transform: translateY(-5px);
+            border-color: #e09f2c;
+        }
+        .service-card i {
+            font-size: 2.5rem;
+            color: #e09f2c;
+            margin-bottom: 20px;
+        }
+        .footer {
+            background: #0a1f30;
+            color: white;
+            padding: 40px;
+            text-align: center;
+        }
+        .fb-status {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background: #0a1f30;
+            color: #e09f2c;
+            padding: 8px 16px;
+            border-radius: 60px;
+            font-size: 0.8rem;
+            z-index: 1000;
+        }
+        .click-hint {
+            position: absolute;
+            bottom: 100px;
+            right: 30px;
+            background: #e09f2c;
+            color: #0a1f30;
+            padding: 8px 20px;
+            border-radius: 60px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            z-index: 15;
+            animation: pulse 2s infinite;
+        }
+        @keyframes pulse {
+            0% { opacity: 1; }
+            50% { opacity: 0.7; }
+            100% { opacity: 1; }
+        }
+    </style>
+</head>
+<body>
+    <div class="top-bar">
+        <div class="contact-info">
+            <span><i class="fas fa-phone"></i> +1 (800) 123-4567</span>
+            <span><i class="fas fa-envelope"></i> support@taagc.com</span>
+            <span><i class="fas fa-comment"></i> live chat 24/7</span>
+        </div>
+        <div class="market-ticker">
+            <span id="btc-price">BTC $63,420</span> | <span id="eth-price">ETH $3,512</span> | <span>S&P 500 +1.2%</span>
+        </div>
+    </div>
+
+    <div class="navbar">
+        <div class="logo" onclick="window.location.href='/'">
+            <h1>TAAGC Global</h1>
+        </div>
+        <div class="nav-links">
+            <a href="/invest">invest</a>
+            <a href="/trade">trade</a>
+            <a href="/markets">markets</a>
+            <a href="/about">about</a>
+            <a href="/support">support</a>
+        </div>
+        <div class="auth-buttons">
+            <button class="btn-login" onclick="window.location.href='/login'">log in</button>
+            <button class="btn-signup" onclick="window.location.href='/signup'">sign up</button>
+        </div>
+    </div>
+
+    <!-- click hint -->
+    <div class="click-hint"><i class="fas fa-hand-pointer"></i> click any banner to learn more</div>
+
+    <!-- 9 CLICKABLE BANNER SLIDESHOW -->
+    <div class="banner-slideshow" id="bannerSlideshow">
+        <div class="slide-container" id="slideContainer">
+            <!-- Slide 1 - First 100 Bonus → /bonus -->
+            <a href="/bonus" class="slide active" style="background-image: linear-gradient(145deg, #0a1f30cc, #1b405acc), url('https://images.unsplash.com/photo-1460925895917-afdab827c52f?w=1200');">
+                <div class="slide-content">
+                    <h2>first 100 bonus</h2>
+                    <p>pay $2 · get $3 · limited to first 100 investors</p>
+                    <button class="slide-btn">claim bonus →</button>
+                </div>
+            </a>
+            <!-- Slide 2 - Real Estate Fund → /real-estate -->
+            <a href="/real-estate" class="slide" style="background-image: linear-gradient(145deg, #0a1f30cc, #1b405acc), url('https://images.unsplash.com/photo-1605792657660-596af9009e82?w=1200');">
+                <div class="slide-content">
+                    <h2>real estate fund</h2>
+                    <p>15-20% annual returns · $100 min</p>
+                    <button class="slide-btn">invest now →</button>
+                </div>
+            </a>
+            <!-- Slide 3 - Crypto Trading → /crypto -->
+            <a href="/crypto" class="slide" style="background-image: linear-gradient(145deg, #0a1f30cc, #1b405acc), url('https://images.unsplash.com/photo-1611974789855-9c2a0a7236a3?w=1200');">
+                <div class="slide-content">
+                    <h2>crypto trading</h2>
+                    <p>0% fees for first month · leverage up to 10x</p>
+                    <button class="slide-btn">start trading →</button>
+                </div>
+            </a>
+            <!-- Slide 4 - Agriculture → /agriculture -->
+            <a href="/agriculture" class="slide" style="background-image: linear-gradient(145deg, #0a1f30cc, #1b405acc), url('https://images.unsplash.com/photo-1560520653-9e0e4c89eb11?w=1200');">
+                <div class="slide-content">
+                    <h2>agriculture investment</h2>
+                    <p>grain processing · farmlands · 18% projected</p>
+                    <button class="slide-btn">explore →</button>
+                </div>
+            </a>
+            <!-- Slide 5 - Private Equity → /private-equity -->
+            <a href="/private-equity" class="slide" style="background-image: linear-gradient(145deg, #0a1f30cc, #1b405acc), url('https://images.unsplash.com/photo-1559526324-593bc073d938?w=1200');">
+                <div class="slide-content">
+                    <h2>private equity</h2>
+                    <p>access institutional deals · $1,000 min</p>
+                    <button class="slide-btn">view deals →</button>
+                </div>
+            </a>
+            <!-- Slide 6 - Referral Bonus → /referral -->
+            <a href="/referral" class="slide" style="background-image: linear-gradient(145deg, #0a1f30cc, #1b405acc), url('https://images.unsplash.com/photo-1579532537598-459ecdaf39cc?w=1200');">
+                <div class="slide-content">
+                    <h2>referral bonus</h2>
+                    <p>get $50 for each friend · unlimited</p>
+                    <button class="slide-btn">refer now →</button>
+                </div>
+            </a>
+            <!-- Slide 7 - Staking → /staking -->
+            <a href="/staking" class="slide" style="background-image: linear-gradient(145deg, #0a1f30cc, #1b405acc), url('https://images.unsplash.com/photo-1590283603385-17ffb3a7f29f?w=1200');">
+                <div class="slide-content">
+                    <h2>staking rewards</h2>
+                    <p>earn up to 12% APY on crypto</p>
+                    <button class="slide-btn">stake now →</button>
+                </div>
+            </a>
+            <!-- Slide 8 - Forex → /forex -->
+            <a href="/forex" class="slide" style="background-image: linear-gradient(145deg, #0a1f30cc, #1b405acc), url('https://images.unsplash.com/photo-1554224155-8d04cb21cd6c?w=1200');">
+                <div class="slide-content">
+                    <h2>forex trading</h2>
+                    <p>tight spreads · 24/7 market</p>
+                    <button class="slide-btn">trade forex →</button>
+                </div>
+            </a>
+            <!-- Slide 9 - Retirement → /retirement -->
+            <a href="/retirement" class="slide" style="background-image: linear-gradient(145deg, #0a1f30cc, #1b405acc), url('https://images.unsplash.com/photo-1563013544-824ae1b704d3?w=1200');">
+                <div class="slide-content">
+                    <h2>retirement planning</h2>
+                    <p>tax-advantaged accounts · expert advisors</p>
+                    <button class="slide-btn">plan future →</button>
+                </div>
+            </a>
+        </div>
+
+        <!-- navigation arrows (still clickable) -->
+        <div class="slide-arrow left" id="prevSlide"><i class="fas fa-chevron-left"></i></div>
+        <div class="slide-arrow right" id="nextSlide"><i class="fas fa-chevron-right"></i></div>
+
+        <!-- indicators -->
+        <div class="slide-indicators" id="slideIndicators">
+            <div class="indicator active" data-index="0"></div>
+            <div class="indicator" data-index="1"></div>
+            <div class="indicator" data-index="2"></div>
+            <div class="indicator" data-index="3"></div>
+            <div class="indicator" data-index="4"></div>
+            <div class="indicator" data-index="5"></div>
+            <div class="indicator" data-index="6"></div>
+            <div class="indicator" data-index="7"></div>
+            <div class="indicator" data-index="8"></div>
+        </div>
+    </div>
+
+    <!-- stats section -->
+    <div class="stats-section">
+        <div class="stat-item">
+            <h3>$2.5B+</h3>
+            <p>assets under management</p>
+        </div>
+        <div class="stat-item">
+            <h3>50K+</h3>
+            <p>active investors</p>
+        </div>
+        <div class="stat-item">
+            <h3>25+</h3>
+            <p>countries</p>
+        </div>
+        <div class="stat-item">
+            <h3>24/7</h3>
+            <p>customer support</p>
+        </div>
+    </div>
+
+    <!-- services grid -->
+    <div class="services-section">
+        <div class="service-card" onclick="window.location.href='/invest'">
+            <i class="fas fa-chart-line"></i>
+            <h3>investment opportunities</h3>
+            <p>15-25% projected annual returns</p>
+        </div>
+        <div class="service-card" onclick="window.location.href='/calculator'">
+            <i class="fas fa-calculator"></i>
+            <h3>ROI calculator</h3>
+            <p>calculate your potential returns</p>
+        </div>
+        <div class="service-card" onclick="window.location.href='/prospectus'">
+            <i class="fas fa-file-pdf"></i>
+            <h3>download prospectus</h3>
+            <p>detailed investment information</p>
+        </div>
+        <div class="service-card" onclick="window.location.href='/open-account'">
+            <i class="fas fa-credit-card"></i>
+            <h3>open trading account</h3>
+            <p>minimum $1 only</p>
+        </div>
+        <div class="service-card" onclick="window.location.href='/analysis'">
+            <i class="fas fa-chart-bar"></i>
+            <h3>market analysis</h3>
+            <p>daily signals & insights</p>
+        </div>
+        <div class="service-card" onclick="window.location.href='/support'">
+            <i class="fas fa-headset"></i>
+            <h3>client support</h3>
+            <p>24/7 multilingual help</p>
+        </div>
+    </div>
+
+    <!-- footer -->
+    <div class="footer">
+        <p>© 2026 TAAGC Global · all rights reserved · regulated and secure</p>
+        <p style="margin-top: 15px; color:#8ba9c6;"><i class="fas fa-shield-alt"></i> 50,000+ investors trust us</p>
+    </div>
+
+    <!-- firebase status -->
+    <div class="fb-status" id="firebaseStatus">⏳ connecting...</div>
+
+    <script>
+        // Firebase config
+        const firebaseConfig = {
+            apiKey: "AIzaSyAI1MrcP977UgRLQoePxl64JOSyj9v4WpI",
+            authDomain: "xtaagc.firebaseapp.com",
+            projectId: "xtaagc",
+            storageBucket: "xtaagc.firebasestorage.app",
+            messagingSenderId: "256073982437",
+            appId: "1:256073982437:web:8da63bb7acc86c0ca98f0c"
+        };
+
+        // Initialize Firebase
+        firebase.initializeApp(firebaseConfig);
+        const db = firebase.firestore();
+        document.getElementById('firebaseStatus').innerHTML = '✅ firebase connected · 9 clickable banners';
+
+        // ===== 9-BANNER SLIDESHOW =====
+        const slides = document.querySelectorAll('.slide');
+        const indicators = document.querySelectorAll('.indicator');
+        const prevBtn = document.getElementById('prevSlide');
+        const nextBtn = document.getElementById('nextSlide');
+        let currentSlide = 0;
+        let slideInterval;
+
+        function showSlide(index) {
+            if (index < 0) index = slides.length - 1;
+            if (index >= slides.length) index = 0;
+            
+            slides.forEach(slide => slide.classList.remove('active'));
+            slides[index].classList.add('active');
+            
+            indicators.forEach(ind => ind.classList.remove('active'));
+            indicators[index].classList.add('active');
+            
+            currentSlide = index;
+        }
+
+        function nextSlide() {
+            showSlide(currentSlide + 1);
+        }
+
+        function prevSlide() {
+            showSlide(currentSlide - 1);
+        }
+
+        // auto advance every 6 seconds
+        function startAutoSlide() {
+            slideInterval = setInterval(nextSlide, 6000);
+        }
+
+        function stopAutoSlide() {
+            clearInterval(slideInterval);
+        }
+
+        // event listeners
+        nextBtn.addEventListener('click', (e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            stopAutoSlide();
+            nextSlide();
+            startAutoSlide();
+        });
+
+        prevBtn.addEventListener('click', (e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            stopAutoSlide();
+            prevSlide();
+            startAutoSlide();
+        });
+
+        // indicator clicks
+        indicators.forEach((indicator, idx) => {
+            indicator.addEventListener('click', (e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                stopAutoSlide();
+                showSlide(idx);
+                startAutoSlide();
+            });
+        });
+
+        // start slideshow
+        startAutoSlide();
+
+        // Firebase - track banner clicks
+        async function trackBannerClick(slideIndex, href) {
+            try {
+                await db.collection('banner_clicks').add({
+                    slideIndex: slideIndex,
+                    destination: href,
+                    timestamp: firebase.firestore.FieldValue.serverTimestamp(),
+                    userAgent: navigator.userAgent
+                });
+                console.log('banner click tracked:', href);
+            } catch (e) {
+                console.log('tracking not available');
+            }
+        }
+
+        // add click tracking to all slides
+        slides.forEach((slide, idx) => {
+            slide.addEventListener('click', (e) => {
+                const href = slide.getAttribute('href');
+                trackBannerClick(idx, href);
+                // don't prevent default - let the link work normally
+            });
+        });
+
+        // market ticker simulation
+        setInterval(() => {
+            const btc = (Math.random() * 2000 + 62000).toFixed(0);
+            const eth = (Math.random() * 200 + 3400).toFixed(0);
+            document.getElementById('btc-price').innerHTML = `BTC $${btc}`;
+            document.getElementById('eth-price').innerHTML = `ETH $${eth}`;
+        }, 5000);
+    </script>
+</body>
+</html>
