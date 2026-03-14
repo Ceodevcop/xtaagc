@@ -1,16 +1,37 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Game Test</title>
-    <script async src="https://sdk.crazygames.com/crazygames-sdk-v3.js"></script>
+    <title>Game Test - CrazyGames</title>
+    <script src="https://sdk.crazygames.com/crazygames-sdk-v3.js"></script>
+    <script>
+        window.addEventListener('load', function() {
+            // Check environment
+            const env = window.CrazyGames.SDK.environment;
+            console.log('Running in environment:', env);
+            
+            if (env === 'local') {
+                document.getElementById('status').innerHTML = 
+                    '✅ Local mode - ads will show as overlay';
+            } else if (env === 'crazygames') {
+                document.getElementById('status').innerHTML = 
+                    '✅ CrazyGames mode - real ads will show';
+            } else {
+                document.getElementById('status').innerHTML = 
+                    '❌ Disabled mode - SDK will throw errors';
+            }
+        });
+        
+        function testAd() {
+            window.CrazyGames.SDK.ad.requestAd('midgame', {
+                beforeAd: () => console.log('Ad starting'),
+                afterAd: () => console.log('Ad finished')
+            });
+        }
+    </script>
 </head>
 <body>
-    <h2>Testing Game Embed</h2>
-    <iframe src="https://games.crazygames.com/en/8-ball-pool/index.html" 
-            width="800" 
-            height="600" 
-            frameborder="0" 
-            allow="gamepad *;">
-    </iframe>
+    <h2>CrazyGames SDK Test</h2>
+    <div id="status">Checking environment...</div>
+    <button onclick="testAd()">Test Ad</button>
 </body>
 </html>
