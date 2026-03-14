@@ -1,0 +1,400 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TAAGC · create account</title>
+    <!-- Font Awesome 6 -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <!-- Firebase -->
+    <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-firestore-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-auth-compat.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+        }
+        body {
+            background: linear-gradient(145deg, #0a1f30, #1b4b6e);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+        .register-container {
+            max-width: 500px;
+            width: 100%;
+            background: white;
+            border-radius: 40px;
+            padding: 50px 40px;
+            box-shadow: 0 30px 60px -20px #000;
+            border: 3px solid #e09f2c;
+        }
+        .logo {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        .logo h1 {
+            font-size: 2.5rem;
+            font-weight: 800;
+            background: linear-gradient(145deg, #0a1f30, #1e4f7a);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        .logo p {
+            color: #e09f2c;
+            font-weight: 600;
+        }
+        .form-group {
+            margin-bottom: 20px;
+        }
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #0a1f30;
+        }
+        .form-group input {
+            width: 100%;
+            padding: 15px 20px;
+            border-radius: 60px;
+            border: 2px solid #d0e2f2;
+            font-size: 1rem;
+            transition: 0.2s;
+        }
+        .form-group input:focus {
+            outline: none;
+            border-color: #e09f2c;
+        }
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+        }
+        .register-btn {
+            background: #e09f2c;
+            color: #0a1f30;
+            border: none;
+            width: 100%;
+            padding: 15px;
+            border-radius: 60px;
+            font-size: 1.1rem;
+            font-weight: 700;
+            cursor: pointer;
+            margin: 20px 0 10px;
+            border: 2px solid white;
+        }
+        .register-btn:hover {
+            background: #cf8f1f;
+        }
+        .error-message {
+            background: #f8d7da;
+            color: #721c24;
+            padding: 12px;
+            border-radius: 60px;
+            text-align: center;
+            margin: 15px 0;
+            display: none;
+        }
+        .success-message {
+            background: #d4edda;
+            color: #155724;
+            padding: 12px;
+            border-radius: 60px;
+            text-align: center;
+            margin: 15px 0;
+            display: none;
+        }
+        .login-link {
+            text-align: center;
+            margin-top: 20px;
+            color: #6b8ca8;
+        }
+        .login-link a {
+            color: #e09f2c;
+            font-weight: 600;
+            text-decoration: none;
+        }
+        .login-link a:hover {
+            text-decoration: underline;
+        }
+        .back-to-home {
+            text-align: center;
+            margin-top: 15px;
+        }
+        .back-to-home a {
+            color: #6b8ca8;
+            text-decoration: none;
+            font-size: 0.9rem;
+        }
+        .back-to-home a:hover {
+            color: #e09f2c;
+        }
+        .password-strength {
+            margin-top: 8px;
+            font-size: 0.8rem;
+        }
+        .strength-weak {
+            color: #dc3545;
+        }
+        .strength-medium {
+            color: #e09f2c;
+        }
+        .strength-strong {
+            color: #198754;
+        }
+        .fb-status {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background: #0a1f30;
+            color: #e09f2c;
+            padding: 8px 16px;
+            border-radius: 60px;
+            font-size: 0.8rem;
+        }
+        .terms {
+            margin: 20px 0;
+            font-size: 0.9rem;
+            color: #6b8ca8;
+        }
+        .terms input {
+            margin-right: 8px;
+        }
+    </style>
+</head>
+<body>
+    <div class="register-container">
+        <div class="logo">
+            <h1>TAAGC</h1>
+            <p>create your account</p>
+        </div>
+
+        <div id="errorMessage" class="error-message"></div>
+        <div id="successMessage" class="success-message"></div>
+
+        <form id="registerForm" onsubmit="event.preventDefault();">
+            <div class="form-row">
+                <div class="form-group">
+                    <label><i class="fas fa-user"></i> first name</label>
+                    <input type="text" id="firstName" placeholder="John" required>
+                </div>
+                <div class="form-group">
+                    <label><i class="fas fa-user"></i> last name</label>
+                    <input type="text" id="lastName" placeholder="Doe" required>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label><i class="fas fa-envelope"></i> email</label>
+                <input type="email" id="email" placeholder="your@email.com" required>
+            </div>
+
+            <div class="form-group">
+                <label><i class="fas fa-phone"></i> phone number</label>
+                <input type="tel" id="phone" placeholder="+1 234 567 8900" required>
+            </div>
+
+            <div class="form-group">
+                <label><i class="fas fa-lock"></i> password</label>
+                <input type="password" id="password" placeholder="••••••••" required>
+                <div id="passwordStrength" class="password-strength"></div>
+            </div>
+
+            <div class="form-group">
+                <label><i class="fas fa-lock"></i> confirm password</label>
+                <input type="password" id="confirmPassword" placeholder="••••••••" required>
+            </div>
+
+            <div class="terms">
+                <input type="checkbox" id="terms" required>
+                <label>I agree to the <a href="/terms" style="color:#e09f2c;">Terms of Service</a> and <a href="/privacy" style="color:#e09f2c;">Privacy Policy</a></label>
+            </div>
+
+            <button type="submit" class="register-btn" id="registerBtn">
+                <i class="fas fa-user-plus"></i> create account
+            </button>
+        </form>
+
+        <div class="login-link">
+            already have an account? <a href="/login">log in here</a>
+        </div>
+
+        <div class="back-to-home">
+            <a href="/"><i class="fas fa-arrow-left"></i> back to home</a>
+        </div>
+    </div>
+
+    <div class="fb-status" id="firebaseStatus">⏳ connecting...</div>
+
+    <script>
+        const firebaseConfig = {
+            apiKey: "AIzaSyAI1MrcP977UgRLQoePxl64JOSyj9v4WpI",
+            authDomain: "xtaagc.firebaseapp.com",
+            projectId: "xtaagc",
+            storageBucket: "xtaagc.firebasestorage.app",
+            messagingSenderId: "256073982437",
+            appId: "1:256073982437:web:8da63bb7acc86c0ca98f0c"
+        };
+
+        firebase.initializeApp(firebaseConfig);
+        const auth = firebase.auth();
+        const db = firebase.firestore();
+        
+        document.getElementById('firebaseStatus').innerHTML = '✅ register ready';
+
+        // Check if already logged in
+        auth.onAuthStateChanged((user) => {
+            if (user) {
+                window.location.href = '/marketplace';
+            }
+        });
+
+        // Password strength checker
+        document.getElementById('password').addEventListener('input', function() {
+            const password = this.value;
+            const strengthDiv = document.getElementById('passwordStrength');
+            
+            if (password.length === 0) {
+                strengthDiv.innerHTML = '';
+                return;
+            }
+            
+            let strength = 0;
+            if (password.length >= 8) strength++;
+            if (password.match(/[a-z]/)) strength++;
+            if (password.match(/[A-Z]/)) strength++;
+            if (password.match(/[0-9]/)) strength++;
+            if (password.match(/[^a-zA-Z0-9]/)) strength++;
+            
+            let message = '';
+            let className = '';
+            
+            if (strength <= 2) {
+                message = 'weak password';
+                className = 'strength-weak';
+            } else if (strength <= 4) {
+                message = 'medium password';
+                className = 'strength-medium';
+            } else {
+                message = 'strong password';
+                className = 'strength-strong';
+            }
+            
+            strengthDiv.innerHTML = message;
+            strengthDiv.className = 'password-strength ' + className;
+        });
+
+        // Register form handler
+        document.getElementById('registerForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const firstName = document.getElementById('firstName').value.trim();
+            const lastName = document.getElementById('lastName').value.trim();
+            const email = document.getElementById('email').value;
+            const phone = document.getElementById('phone').value;
+            const password = document.getElementById('password').value;
+            const confirmPassword = document.getElementById('confirmPassword').value;
+            const terms = document.getElementById('terms').checked;
+            
+            const errorDiv = document.getElementById('errorMessage');
+            const successDiv = document.getElementById('successMessage');
+            const registerBtn = document.getElementById('registerBtn');
+
+            // Hide previous messages
+            errorDiv.style.display = 'none';
+            successDiv.style.display = 'none';
+
+            // Validate
+            if (!firstName || !lastName || !email || !phone || !password) {
+                showError('all fields are required');
+                return;
+            }
+
+            if (password !== confirmPassword) {
+                showError('passwords do not match');
+                return;
+            }
+
+            if (password.length < 8) {
+                showError('password must be at least 8 characters');
+                return;
+            }
+
+            if (!terms) {
+                showError('you must agree to the terms');
+                return;
+            }
+
+            // Show loading
+            registerBtn.disabled = true;
+            registerBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> creating account...';
+
+            try {
+                // Create auth user (auto-generates UID)
+                const userCredential = await auth.createUserWithEmailAndPassword(email, password);
+                const user = userCredential.user;
+                
+                // Auto-generated UID is user.uid
+                console.log('Generated UID:', user.uid);
+
+                // Save user data to Firestore with the auto-generated UID
+                await db.collection('users').doc(user.uid).set({
+                    uid: user.uid,                     // Auto-generated from Firebase Auth
+                    firstName: firstName,
+                    lastName: lastName,
+                    fullName: `${firstName} ${lastName}`,
+                    email: email,
+                    phone: phone,
+                    createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+                    role: 'user',
+                    status: 'active'
+                });
+
+                // Show success
+                successDiv.style.display = 'block';
+                successDiv.innerHTML = '✅ account created! redirecting...';
+                
+                // Redirect after short delay
+                setTimeout(() => {
+                    window.location.href = '/marketplace';
+                }, 1500);
+
+            } catch (error) {
+                console.error('Registration error:', error);
+                
+                // Handle specific error messages
+                let message = 'registration failed';
+                if (error.code === 'auth/email-already-in-use') {
+                    message = 'email already registered';
+                } else if (error.code === 'auth/invalid-email') {
+                    message = 'invalid email format';
+                } else if (error.code === 'auth/weak-password') {
+                    message = 'password is too weak';
+                } else {
+                    message = error.message;
+                }
+                
+                showError(message);
+                
+                // Re-enable button
+                registerBtn.disabled = false;
+                registerBtn.innerHTML = '<i class="fas fa-user-plus"></i> create account';
+            }
+        });
+
+        function showError(message) {
+            const errorDiv = document.getElementById('errorMessage');
+            errorDiv.innerHTML = `❌ ${message}`;
+            errorDiv.style.display = 'block';
+        }
+
+        // Auto-focus first name
+        document.getElementById('firstName').focus();
+    </script>
+</body>
+</html>
