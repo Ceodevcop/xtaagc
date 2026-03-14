@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>GameEarn - Play Games & Earn Real Rewards</title>
+    <title>TAAGC GAMES - Play, Trade & Earn Game Points</title>
     <!-- Font Awesome for Icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
@@ -14,21 +14,34 @@
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
         }
 
+        :root {
+            --primary: #667eea;
+            --secondary: #764ba2;
+            --success: #10b981;
+            --warning: #f59e0b;
+            --danger: #ef4444;
+            --dark: #1a1a1a;
+            --light: #f3f4f6;
+        }
+
         body {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: linear-gradient(135deg, #667eea15 0%, #764ba215 100%);
             color: #333;
-            line-height: 1.6;
         }
 
         /* Header & Navigation */
         header {
-            background: rgba(255, 255, 255, 0.95);
-            box-shadow: 0 2px 20px rgba(0,0,0,0.1);
+            background: rgba(255, 255, 255, 0.98);
+            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
             position: fixed;
             width: 100%;
             top: 0;
             z-index: 1000;
             backdrop-filter: blur(10px);
+            border-bottom: 3px solid transparent;
+            background-image: linear-gradient(white, white), linear-gradient(45deg, var(--primary), var(--secondary));
+            background-origin: border-box;
+            background-clip: padding-box, border-box;
         }
 
         nav {
@@ -41,12 +54,22 @@
         }
 
         .logo {
-            font-size: 1.8rem;
-            font-weight: bold;
-            background: linear-gradient(45deg, #667eea, #764ba2);
+            font-size: 2rem;
+            font-weight: 800;
+            background: linear-gradient(45deg, var(--primary), var(--secondary));
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             text-decoration: none;
+            letter-spacing: -0.5px;
+        }
+
+        .logo span {
+            font-size: 1rem;
+            display: block;
+            background: linear-gradient(45deg, var(--primary), var(--secondary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            letter-spacing: 2px;
         }
 
         .nav-links {
@@ -58,34 +81,54 @@
         .nav-links a {
             text-decoration: none;
             color: #333;
-            font-weight: 500;
-            transition: color 0.3s;
+            font-weight: 600;
+            transition: all 0.3s;
+            position: relative;
         }
 
         .nav-links a:hover {
-            color: #667eea;
+            color: var(--primary);
         }
 
-        .telegram-btn {
-            background: #0088cc;
+        .nav-links a::after {
+            content: '';
+            position: absolute;
+            bottom: -5px;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background: linear-gradient(45deg, var(--primary), var(--secondary));
+            transition: width 0.3s;
+        }
+
+        .nav-links a:hover::after {
+            width: 100%;
+        }
+
+        .balance-badge {
+            background: linear-gradient(45deg, var(--primary), var(--secondary));
             color: white !important;
             padding: 0.5rem 1.5rem;
             border-radius: 50px;
             display: flex;
             align-items: center;
             gap: 0.5rem;
-            transition: transform 0.3s !important;
+            font-weight: 600;
         }
 
-        .telegram-btn:hover {
+        .balance-badge:hover {
             transform: translateY(-2px);
-            background: #0077b5;
+            box-shadow: 0 10px 20px rgba(102, 126, 234, 0.3);
             color: white !important;
+        }
+
+        .balance-badge::after {
+            display: none;
         }
 
         /* Hero Section */
         .hero {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
             min-height: 100vh;
             display: flex;
             align-items: center;
@@ -100,14 +143,15 @@
             position: absolute;
             width: 200%;
             height: 200%;
-            background: rgba(255,255,255,0.1);
+            background: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" opacity="0.1"><path d="M20 20 L80 20 L80 80 L20 80 Z" fill="none" stroke="white" stroke-width="2"/><circle cx="50" cy="50" r="15" fill="none" stroke="white" stroke-width="2"/></svg>');
+            background-size: 50px 50px;
             transform: rotate(-45deg);
             top: -50%;
             left: -50%;
-            animation: shine 10s infinite linear;
+            animation: moveBackground 20s linear infinite;
         }
 
-        @keyframes shine {
+        @keyframes moveBackground {
             0% { transform: rotate(-45deg) translateX(-100%); }
             100% { transform: rotate(-45deg) translateX(100%); }
         }
@@ -120,16 +164,23 @@
         }
 
         .hero-content h1 {
-            font-size: 3.5rem;
+            font-size: 3.8rem;
             line-height: 1.2;
             margin-bottom: 1.5rem;
             animation: fadeInUp 1s ease;
         }
 
-        .hero-content p {
-            font-size: 1.2rem;
-            margin-bottom: 2rem;
+        .hero-content h1 span {
+            display: block;
+            font-size: 2rem;
             opacity: 0.9;
+            font-weight: 300;
+        }
+
+        .hero-content p {
+            font-size: 1.3rem;
+            margin-bottom: 2rem;
+            opacity: 0.95;
             animation: fadeInUp 1s ease 0.2s both;
         }
 
@@ -141,24 +192,25 @@
         }
 
         .btn {
-            padding: 1rem 2rem;
+            padding: 1rem 2.5rem;
             border-radius: 50px;
             text-decoration: none;
-            font-weight: 600;
+            font-weight: 700;
             transition: all 0.3s;
             display: inline-flex;
             align-items: center;
-            gap: 0.5rem;
+            gap: 0.8rem;
+            font-size: 1.1rem;
         }
 
         .btn-primary {
             background: white;
-            color: #667eea;
+            color: var(--primary);
         }
 
         .btn-primary:hover {
             transform: translateY(-3px);
-            box-shadow: 0 10px 20px rgba(0,0,0,0.2);
+            box-shadow: 0 15px 30px rgba(0,0,0,0.2);
         }
 
         .btn-secondary {
@@ -169,27 +221,30 @@
 
         .btn-secondary:hover {
             background: white;
-            color: #667eea;
+            color: var(--primary);
             transform: translateY(-3px);
         }
 
-        .hero-image {
-            flex: 1;
-            position: relative;
-            z-index: 1;
-            animation: float 6s ease-in-out infinite;
+        .hero-stats {
+            display: flex;
+            gap: 3rem;
+            margin-top: 3rem;
+            animation: fadeInUp 1s ease 0.6s both;
         }
 
-        .hero-image img {
-            width: 100%;
-            max-width: 500px;
+        .hero-stat {
+            text-align: center;
+        }
+
+        .hero-stat .number {
+            font-size: 2rem;
+            font-weight: bold;
             display: block;
-            margin: 0 auto;
         }
 
-        @keyframes float {
-            0%, 100% { transform: translateY(0); }
-            50% { transform: translateY(-20px); }
+        .hero-stat .label {
+            font-size: 0.9rem;
+            opacity: 0.9;
         }
 
         @keyframes fadeInUp {
@@ -203,336 +258,403 @@
             }
         }
 
-        /* Featured Games Section */
-        .featured {
+        /* Payment Platform Section */
+        .payment-platform {
             padding: 5rem 5%;
             background: white;
+            position: relative;
         }
 
-        .section-title {
+        .platform-card {
+            background: linear-gradient(135deg, #667eea10, #764ba210);
+            border-radius: 30px;
+            padding: 3rem;
+            max-width: 1200px;
+            margin: 0 auto;
+            border: 2px solid transparent;
+            background-image: linear-gradient(white, white), linear-gradient(45deg, var(--primary), var(--secondary));
+            background-origin: border-box;
+            background-clip: padding-box, border-box;
+            box-shadow: 0 20px 40px rgba(102, 126, 234, 0.2);
+        }
+
+        .platform-header {
             text-align: center;
-            font-size: 2.5rem;
             margin-bottom: 3rem;
-            color: #333;
         }
 
-        .section-title span {
-            background: linear-gradient(45deg, #667eea, #764ba2);
+        .platform-header h2 {
+            font-size: 2.8rem;
+            margin-bottom: 1rem;
+        }
+
+        .platform-header h2 span {
+            background: linear-gradient(45deg, var(--primary), var(--secondary));
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
         }
 
-        .game-grid {
+        .platform-header p {
+            color: #666;
+            font-size: 1.2rem;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .platform-features {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            margin-bottom: 3rem;
+        }
+
+        .platform-feature {
+            background: white;
+            padding: 2rem;
+            border-radius: 20px;
+            text-align: center;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.05);
+            transition: transform 0.3s;
+            border: 1px solid #e5e7eb;
+        }
+
+        .platform-feature:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 20px 40px rgba(102, 126, 234, 0.15);
+        }
+
+        .feature-icon {
+            width: 80px;
+            height: 80px;
+            background: linear-gradient(45deg, var(--primary), var(--secondary));
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 1.5rem;
+            color: white;
+            font-size: 2rem;
+        }
+
+        .platform-link {
+            display: inline-block;
+            background: linear-gradient(45deg, var(--primary), var(--secondary));
+            color: white;
+            text-decoration: none;
+            padding: 1rem 3rem;
+            border-radius: 50px;
+            font-weight: 700;
+            font-size: 1.2rem;
+            transition: all 0.3s;
+            border: none;
+            cursor: pointer;
+        }
+
+        .platform-link:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 15px 30px rgba(102, 126, 234, 0.4);
+        }
+
+        /* P2P Marketplace Section */
+        .marketplace {
+            padding: 5rem 5%;
+            background: linear-gradient(135deg, #f3f4f6, #ffffff);
+        }
+
+        .marketplace-grid {
+            display: grid;
+            grid-template-columns: 3fr 2fr;
             gap: 2rem;
             max-width: 1400px;
             margin: 0 auto;
         }
 
+        .buy-orders {
+            background: white;
+            border-radius: 20px;
+            padding: 2rem;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.05);
+        }
+
+        .sell-orders {
+            background: white;
+            border-radius: 20px;
+            padding: 2rem;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.05);
+        }
+
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+            padding-bottom: 1rem;
+            border-bottom: 2px solid #e5e7eb;
+        }
+
+        .section-header h3 {
+            font-size: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .section-header h3 i {
+            color: var(--primary);
+        }
+
+        .badge {
+            background: var(--primary);
+            color: white;
+            padding: 0.3rem 1rem;
+            border-radius: 50px;
+            font-size: 0.9rem;
+        }
+
+        .order-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem;
+            border-bottom: 1px solid #e5e7eb;
+            transition: background 0.3s;
+        }
+
+        .order-item:hover {
+            background: #f9fafb;
+        }
+
+        .seller-info {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .seller-avatar {
+            width: 40px;
+            height: 40px;
+            background: linear-gradient(45deg, #e5e7eb, #d1d5db);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            color: #4b5563;
+        }
+
+        .order-details {
+            flex: 1;
+        }
+
+        .order-details .amount {
+            font-weight: bold;
+            font-size: 1.1rem;
+            color: var(--success);
+        }
+
+        .order-details .price {
+            color: #666;
+            font-size: 0.9rem;
+        }
+
+        .order-details .price span {
+            color: var(--primary);
+            font-weight: bold;
+        }
+
+        .trade-btn {
+            background: var(--primary);
+            color: white;
+            border: none;
+            padding: 0.5rem 1.5rem;
+            border-radius: 50px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s;
+        }
+
+        .trade-btn:hover {
+            background: var(--secondary);
+            transform: scale(1.05);
+        }
+
+        .create-order {
+            margin-top: 2rem;
+            text-align: center;
+        }
+
+        .create-order-btn {
+            background: transparent;
+            border: 2px dashed var(--primary);
+            color: var(--primary);
+            padding: 1rem;
+            border-radius: 10px;
+            width: 100%;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .create-order-btn:hover {
+            background: var(--primary);
+            color: white;
+            border: 2px solid var(--primary);
+        }
+
+        /* Games Section */
+        .games {
+            padding: 5rem 5%;
+            background: white;
+        }
+
+        .games-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 2rem;
+            max-width: 1400px;
+            margin: 2rem auto 0;
+        }
+
         .game-card {
             background: white;
-            border-radius: 15px;
+            border-radius: 20px;
             overflow: hidden;
             box-shadow: 0 10px 30px rgba(0,0,0,0.1);
-            transition: transform 0.3s;
+            transition: all 0.3s;
+            border: 1px solid #e5e7eb;
         }
 
         .game-card:hover {
             transform: translateY(-10px);
+            box-shadow: 0 30px 50px rgba(102, 126, 234, 0.2);
         }
 
-        .game-image {
-            height: 200px;
-            background: linear-gradient(45deg, #667eea, #764ba2);
-            position: relative;
-            overflow: hidden;
-        }
-
-        .game-image i {
-            font-size: 5rem;
-            color: rgba(255,255,255,0.3);
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-        }
-
-        .game-info {
+        .game-header {
+            background: linear-gradient(45deg, var(--primary), var(--secondary));
+            color: white;
             padding: 1.5rem;
+            text-align: center;
         }
 
-        .game-info h3 {
-            font-size: 1.3rem;
-            margin-bottom: 0.5rem;
-            color: #333;
-        }
-
-        .game-info p {
-            color: #666;
+        .game-header i {
+            font-size: 3rem;
             margin-bottom: 1rem;
-            font-size: 0.95rem;
+        }
+
+        .game-body {
+            padding: 1.5rem;
         }
 
         .game-meta {
             display: flex;
             justify-content: space-between;
-            align-items: center;
             margin-bottom: 1rem;
         }
 
-        .earning {
+        .entry-fee {
             background: #e8f5e9;
-            color: #4caf50;
+            color: var(--success);
             padding: 0.3rem 1rem;
             border-radius: 50px;
             font-weight: 600;
-            font-size: 0.9rem;
         }
 
-        .players {
+        .prize-pool {
+            background: #fff3e0;
+            color: var(--warning);
+            padding: 0.3rem 1rem;
+            border-radius: 50px;
+            font-weight: 600;
+        }
+
+        .game-stats {
+            display: flex;
+            justify-content: space-between;
+            margin: 1rem 0;
             color: #666;
             font-size: 0.9rem;
         }
 
-        .players i {
-            color: #667eea;
-            margin-right: 0.3rem;
-        }
-
-        .play-btn {
+        .play-now-btn {
             display: block;
             text-align: center;
-            background: linear-gradient(45deg, #667eea, #764ba2);
+            background: linear-gradient(45deg, var(--primary), var(--secondary));
             color: white;
             text-decoration: none;
-            padding: 0.8rem;
-            border-radius: 50px;
+            padding: 1rem;
+            border-radius: 10px;
             font-weight: 600;
             transition: transform 0.3s;
         }
 
-        .play-btn:hover {
+        .play-now-btn:hover {
             transform: scale(1.05);
         }
 
-        /* Telegram Games Section */
-        .telegram-games {
+        /* Telegram Section */
+        .telegram-section {
             padding: 5rem 5%;
-            background: #f8f9fa;
-        }
-
-        .tg-game-card {
-            background: white;
-            border-radius: 15px;
-            padding: 2rem;
-            text-align: center;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
-            transition: transform 0.3s;
-        }
-
-        .tg-game-card:hover {
-            transform: translateY(-10px);
-        }
-
-        .tg-icon {
-            width: 80px;
-            height: 80px;
-            background: linear-gradient(45deg, #0088cc, #00a3e0);
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin: 0 auto 1.5rem;
-        }
-
-        .tg-icon i {
-            font-size: 2.5rem;
+            background: linear-gradient(135deg, #1a1a1a, #2d2d2d);
             color: white;
         }
 
-        .tg-game-card h3 {
-            font-size: 1.5rem;
-            margin-bottom: 0.5rem;
-        }
-
-        .tg-game-card p {
-            color: #666;
-            margin-bottom: 1.5rem;
-        }
-
-        .tg-stats {
-            display: flex;
-            justify-content: space-around;
-            margin-bottom: 1.5rem;
-        }
-
-        .stat {
+        .telegram-content {
+            max-width: 1200px;
+            margin: 0 auto;
             text-align: center;
         }
 
-        .stat-value {
-            font-size: 1.3rem;
-            font-weight: bold;
+        .telegram-content h2 {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .telegram-content h2 span {
             color: #0088cc;
         }
 
-        .stat-label {
-            font-size: 0.8rem;
-            color: #666;
+        .telegram-features {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 2rem;
+            margin: 3rem 0;
         }
 
-        .tg-btn {
-            display: inline-block;
+        .telegram-feature {
+            padding: 1.5rem;
+        }
+
+        .telegram-feature i {
+            font-size: 2.5rem;
+            color: #0088cc;
+            margin-bottom: 1rem;
+        }
+
+        .telegram-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 1rem;
             background: #0088cc;
             color: white;
             text-decoration: none;
-            padding: 0.8rem 2rem;
+            padding: 1.2rem 3rem;
             border-radius: 50px;
-            font-weight: 600;
+            font-weight: 700;
+            font-size: 1.2rem;
             transition: all 0.3s;
         }
 
-        .tg-btn:hover {
+        .telegram-btn:hover {
             background: #0077b5;
-            transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(0,136,204,0.3);
-        }
-
-        /* Earning Tips Section */
-        .tips {
-            padding: 5rem 5%;
-            background: white;
-        }
-
-        .tips-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 2rem;
-            max-width: 1400px;
-            margin: 0 auto;
-        }
-
-        .tip-card {
-            text-align: center;
-            padding: 2rem;
-            border-radius: 15px;
-            background: #f8f9fa;
-            transition: transform 0.3s;
-        }
-
-        .tip-card:hover {
-            transform: translateY(-10px);
-        }
-
-        .tip-icon {
-            width: 70px;
-            height: 70px;
-            background: linear-gradient(45deg, #667eea, #764ba2);
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin: 0 auto 1.5rem;
-            color: white;
-            font-size: 1.8rem;
-        }
-
-        .tip-card h3 {
-            margin-bottom: 1rem;
-            color: #333;
-        }
-
-        .tip-card p {
-            color: #666;
-            margin-bottom: 1.5rem;
-        }
-
-        .tip-link {
-            color: #667eea;
-            text-decoration: none;
-            font-weight: 600;
-            display: inline-flex;
-            align-items: center;
-            gap: 0.5rem;
-        }
-
-        .tip-link:hover {
-            gap: 1rem;
-        }
-
-        /* Telegram Community Section */
-        .community {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            padding: 5rem 5%;
-            color: white;
-            text-align: center;
-        }
-
-        .community h2 {
-            font-size: 2.5rem;
-            margin-bottom: 1rem;
-        }
-
-        .community p {
-            font-size: 1.2rem;
-            margin-bottom: 2rem;
-            opacity: 0.9;
-            max-width: 600px;
-            margin-left: auto;
-            margin-right: auto;
-        }
-
-        .tg-join-btn {
-            display: inline-flex;
-            align-items: center;
-            gap: 1rem;
-            background: white;
-            color: #667eea;
-            padding: 1rem 3rem;
-            border-radius: 50px;
-            text-decoration: none;
-            font-weight: 600;
-            font-size: 1.2rem;
-            transition: transform 0.3s;
-        }
-
-        .tg-join-btn:hover {
             transform: translateY(-5px);
-            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
-        }
-
-        .tg-join-btn i {
-            font-size: 1.5rem;
-        }
-
-        .community-stats {
-            display: flex;
-            justify-content: center;
-            gap: 3rem;
-            margin-top: 3rem;
-        }
-
-        .community-stat {
-            text-align: center;
-        }
-
-        .community-stat .number {
-            font-size: 2rem;
-            font-weight: bold;
-            display: block;
-        }
-
-        .community-stat .label {
-            font-size: 0.9rem;
-            opacity: 0.9;
+            box-shadow: 0 15px 30px rgba(0,136,204,0.3);
         }
 
         /* Footer */
         footer {
             background: #1a1a1a;
             color: white;
-            padding: 3rem 5% 1rem;
+            padding: 4rem 5% 1rem;
         }
 
         .footer-content {
@@ -544,11 +666,23 @@
         }
 
         .footer-section h3 {
-            margin-bottom: 1rem;
+            margin-bottom: 1.5rem;
             font-size: 1.2rem;
+            position: relative;
+            padding-bottom: 0.5rem;
         }
 
-        .footer-section p {
+        .footer-section h3::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 50px;
+            height: 2px;
+            background: linear-gradient(45deg, var(--primary), var(--secondary));
+        }
+
+        .footer-section p, .footer-section ul {
             color: #999;
             line-height: 1.8;
         }
@@ -558,52 +692,113 @@
         }
 
         .footer-section ul li {
-            margin-bottom: 0.5rem;
+            margin-bottom: 0.8rem;
         }
 
         .footer-section ul li a {
             color: #999;
             text-decoration: none;
             transition: color 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
         }
 
         .footer-section ul li a:hover {
             color: white;
         }
 
-        .social-links {
-            display: flex;
-            gap: 1rem;
-            margin-top: 1rem;
-        }
-
-        .social-links a {
-            width: 40px;
-            height: 40px;
-            background: #333;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: white;
-            text-decoration: none;
-            transition: all 0.3s;
-        }
-
-        .social-links a:hover {
-            background: #667eea;
-            transform: translateY(-3px);
-        }
-
         .footer-bottom {
             text-align: center;
-            padding-top: 2rem;
-            margin-top: 2rem;
+            padding-top: 3rem;
+            margin-top: 3rem;
             border-top: 1px solid #333;
             color: #999;
         }
 
-        /* Responsive Design */
+        /* Modal */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.5);
+            z-index: 2000;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal.active {
+            display: flex;
+        }
+
+        .modal-content {
+            background: white;
+            padding: 2rem;
+            border-radius: 20px;
+            max-width: 500px;
+            width: 90%;
+            max-height: 80vh;
+            overflow-y: auto;
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+        }
+
+        .close-modal {
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            cursor: pointer;
+            color: #666;
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+        }
+
+        .form-group input, .form-group select {
+            width: 100%;
+            padding: 0.8rem;
+            border: 1px solid #ddd;
+            border-radius: 10px;
+            font-size: 1rem;
+        }
+
+        .submit-btn {
+            width: 100%;
+            background: linear-gradient(45deg, var(--primary), var(--secondary));
+            color: white;
+            border: none;
+            padding: 1rem;
+            border-radius: 10px;
+            font-weight: 600;
+            cursor: pointer;
+        }
+
+        /* Responsive */
+        @media (max-width: 968px) {
+            .marketplace-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .hero-content h1 {
+                font-size: 2.8rem;
+            }
+        }
+
         @media (max-width: 768px) {
             nav {
                 flex-direction: column;
@@ -621,25 +816,12 @@
                 padding-top: 8rem;
             }
 
-            .hero-content h1 {
-                font-size: 2.5rem;
-            }
-
-            .hero-buttons {
+            .hero-stats {
                 justify-content: center;
             }
 
-            .hero-image {
-                margin-top: 2rem;
-            }
-
-            .section-title {
-                font-size: 2rem;
-            }
-
-            .community-stats {
-                flex-direction: column;
-                gap: 1rem;
+            .platform-card {
+                padding: 2rem 1rem;
             }
         }
     </style>
@@ -647,277 +829,572 @@
 <body>
     <header>
         <nav>
-            <a href="#" class="logo">GameEarn</a>
+            <a href="#" class="logo">TAAGC <span>GAMES</span></a>
             <div class="nav-links">
                 <a href="#home">Home</a>
                 <a href="#games">Games</a>
-                <a href="#telegram">Telegram Games</a>
-                <a href="#tips">Earning Tips</a>
-                <a href="#community">Community</a>
-                <a href="https://t.me/yourchannel" class="telegram-btn" target="_blank">
-                    <i class="fab fa-telegram"></i> Join Telegram
+                <a href="#marketplace">Marketplace</a>
+                <a href="#payment">Points</a>
+                <a href="#telegram">Community</a>
+                <a href="#" class="balance-badge" onclick="openModal('balanceModal')">
+                    <i class="fas fa-coins"></i> 2,500 Points
                 </a>
             </div>
         </nav>
     </header>
 
+    <!-- Hero Section -->
     <section class="hero" id="home">
         <div class="hero-content">
-            <h1>Play Games & Earn Real Rewards</h1>
-            <p>Join thousands of gamers earning daily through our Telegram community and partner games. Start your earning journey today!</p>
+            <h1>
+                <span>Welcome to</span>
+                TAAGC GAMES
+            </h1>
+            <p>Play games, earn points, and trade with other players in our secure P2P marketplace. Buy, sell, and trade game points instantly!</p>
             <div class="hero-buttons">
                 <a href="#games" class="btn btn-primary">
                     <i class="fas fa-gamepad"></i> Start Playing
                 </a>
-                <a href="https://t.me/yourchannel" class="btn btn-secondary" target="_blank">
-                    <i class="fab fa-telegram"></i> Join Community
+                <a href="#marketplace" class="btn btn-secondary">
+                    <i class="fas fa-exchange-alt"></i> Trade Points
                 </a>
             </div>
-        </div>
-        <div class="hero-image">
-            <!-- Using Font Awesome as placeholder - replace with actual game image -->
-            <i class="fas fa-joystick" style="font-size: 400px; color: rgba(255,255,255,0.2);"></i>
+            <div class="hero-stats">
+                <div class="hero-stat">
+                    <span class="number">10K+</span>
+                    <span class="label">Active Players</span>
+                </div>
+                <div class="hero-stat">
+                    <span class="number">50K+</span>
+                    <span class="label">Points Traded</span>
+                </div>
+                <div class="hero-stat">
+                    <span class="number">24/7</span>
+                    <span class="label">Live Trading</span>
+                </div>
+            </div>
         </div>
     </section>
 
-    <section class="featured" id="games">
-        <h2 class="section-title">Featured <span>Earning Games</span></h2>
-        <div class="game-grid">
-            <!-- Game Card 1 -->
+    <!-- Payment Platform Section -->
+    <section class="payment-platform" id="payment">
+        <div class="platform-card">
+            <div class="platform-header">
+                <h2>💰 <span>TAAGC Pay</span> Platform</h2>
+                <p>Your secure payment gateway for all game points transactions</p>
+            </div>
+            <div class="platform-features">
+                <div class="platform-feature">
+                    <div class="feature-icon">
+                        <i class="fas fa-coins"></i>
+                    </div>
+                    <h3>Buy Points</h3>
+                    <p>Purchase game points instantly with multiple payment methods</p>
+                </div>
+                <div class="platform-feature">
+                    <div class="feature-icon">
+                        <i class="fas fa-hand-holding-usd"></i>
+                    </div>
+                    <h3>Sell Points</h3>
+                    <p>Convert your game points to real money through our platform</p>
+                </div>
+                <div class="platform-feature">
+                    <div class="feature-icon">
+                        <i class="fas fa-users"></i>
+                    </div>
+                    <h3>P2P Trading</h3>
+                    <p>Trade directly with other players - you set the price!</p>
+                </div>
+            </div>
+            <div style="text-align: center;">
+                <a href="https://pay.taagc.website" class="platform-link" target="_blank">
+                    <i class="fas fa-arrow-right"></i> Go to TAAGC Pay
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- P2P Marketplace Section -->
+    <section class="marketplace" id="marketplace">
+        <div class="section-title" style="text-align: center; margin-bottom: 3rem;">
+            <h2 style="font-size: 2.5rem;">🎯 Live <span style="background: linear-gradient(45deg, var(--primary), var(--secondary)); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">P2P Marketplace</span></h2>
+            <p style="color: #666;">Buy and sell points directly with other players</p>
+        </div>
+        <div class="marketplace-grid">
+            <!-- Buy Orders (People selling points) -->
+            <div class="buy-orders">
+                <div class="section-header">
+                    <h3><i class="fas fa-shopping-cart"></i> Sell Orders</h3>
+                    <span class="badge">24 active</span>
+                </div>
+                <div class="order-list">
+                    <!-- Order 1 -->
+                    <div class="order-item">
+                        <div class="seller-info">
+                            <div class="seller-avatar">JD</div>
+                            <div class="order-details">
+                                <div class="amount">1,000 Points</div>
+                                <div class="price">Price: <span>$10.50</span> ($0.0105/point)</div>
+                            </div>
+                        </div>
+                        <button class="trade-btn" onclick="openModal('tradeModal')">Buy</button>
+                    </div>
+                    <!-- Order 2 -->
+                    <div class="order-item">
+                        <div class="seller-info">
+                            <div class="seller-avatar">MK</div>
+                            <div class="order-details">
+                                <div class="amount">5,000 Points</div>
+                                <div class="price">Price: <span>$50.00</span> ($0.0100/point)</div>
+                            </div>
+                        </div>
+                        <button class="trade-btn" onclick="openModal('tradeModal')">Buy</button>
+                    </div>
+                    <!-- Order 3 -->
+                    <div class="order-item">
+                        <div class="seller-info">
+                            <div class="seller-avatar">RT</div>
+                            <div class="order-details">
+                                <div class="amount">2,500 Points</div>
+                                <div class="price">Price: <span>$26.25</span> ($0.0105/point)</div>
+                            </div>
+                        </div>
+                        <button class="trade-btn" onclick="openModal('tradeModal')">Buy</button>
+                    </div>
+                    <!-- Order 4 -->
+                    <div class="order-item">
+                        <div class="seller-info">
+                            <div class="seller-avatar">PL</div>
+                            <div class="order-details">
+                                <div class="amount">10,000 Points</div>
+                                <div class="price">Price: <span>$95.00</span> ($0.0095/point)</div>
+                            </div>
+                        </div>
+                        <button class="trade-btn" onclick="openModal('tradeModal')">Buy</button>
+                    </div>
+                </div>
+                <div class="create-order">
+                    <button class="create-order-btn" onclick="openModal('sellModal')">
+                        <i class="fas fa-plus-circle"></i> Create Sell Order
+                    </button>
+                </div>
+            </div>
+
+            <!-- Sell Orders (People buying points) -->
+            <div class="sell-orders">
+                <div class="section-header">
+                    <h3><i class="fas fa-tag"></i> Buy Orders</h3>
+                    <span class="badge">18 active</span>
+                </div>
+                <div class="order-list">
+                    <!-- Order 1 -->
+                    <div class="order-item">
+                        <div class="seller-info">
+                            <div class="seller-avatar">AB</div>
+                            <div class="order-details">
+                                <div class="amount">Wants 3,000 Points</div>
+                                <div class="price">Offering: <span>$28.50</span> ($0.0095/point)</div>
+                            </div>
+                        </div>
+                        <button class="trade-btn" onclick="openModal('tradeModal')">Sell</button>
+                    </div>
+                    <!-- Order 2 -->
+                    <div class="order-item">
+                        <div class="seller-info">
+                            <div class="seller-avatar">CD</div>
+                            <div class="order-details">
+                                <div class="amount">Wants 1,500 Points</div>
+                                <div class="price">Offering: <span>$15.00</span> ($0.0100/point)</div>
+                            </div>
+                        </div>
+                        <button class="trade-btn" onclick="openModal('tradeModal')">Sell</button>
+                    </div>
+                    <!-- Order 3 -->
+                    <div class="order-item">
+                        <div class="seller-info">
+                            <div class="seller-avatar">EF</div>
+                            <div class="order-details">
+                                <div class="amount">Wants 7,500 Points</div>
+                                <div class="price">Offering: <span>$71.25</span> ($0.0095/point)</div>
+                            </div>
+                        </div>
+                        <button class="trade-btn" onclick="openModal('tradeModal')">Sell</button>
+                    </div>
+                    <!-- Order 4 -->
+                    <div class="order-item">
+                        <div class="seller-info">
+                            <div class="seller-avatar">GH</div>
+                            <div class="order-details">
+                                <div class="amount">Wants 20,000 Points</div>
+                                <div class="price">Offering: <span>$190.00</span> ($0.0095/point)</div>
+                            </div>
+                        </div>
+                        <button class="trade-btn" onclick="openModal('tradeModal')">Sell</button>
+                    </div>
+                </div>
+                <div class="create-order">
+                    <button class="create-order-btn" onclick="openModal('buyModal')">
+                        <i class="fas fa-plus-circle"></i> Create Buy Order
+                    </button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Games Section -->
+    <section class="games" id="games">
+        <div class="section-title" style="text-align: center; margin-bottom: 3rem;">
+            <h2 style="font-size: 2.5rem;">🎮 Featured <span style="background: linear-gradient(45deg, var(--primary), var(--secondary)); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">Earning Games</span></h2>
+            <p style="color: #666;">Play and earn points that you can trade in our marketplace</p>
+        </div>
+        <div class="games-grid">
+            <!-- Game 1 -->
             <div class="game-card">
-                <div class="game-image">
+                <div class="game-header">
                     <i class="fas fa-dragon"></i>
-                </div>
-                <div class="game-info">
                     <h3>Fantasy Quest</h3>
-                    <p>Epic RPG adventure with real token rewards. Complete quests, earn tokens.</p>
+                </div>
+                <div class="game-body">
                     <div class="game-meta">
-                        <span class="earning"><i class="fas fa-coins"></i> Earn up to 500/day</span>
-                        <span class="players"><i class="fas fa-users"></i> 50K+ players</span>
+                        <span class="entry-fee">Entry: 100 pts</span>
+                        <span class="prize-pool">Prize: 1,000 pts</span>
                     </div>
-                    <a href="#" class="play-btn">Play Now</a>
+                    <p style="color: #666; margin-bottom: 1rem;">Epic RPG adventure with massive point rewards.</p>
+                    <div class="game-stats">
+                        <span><i class="fas fa-users"></i> 2.3K playing</span>
+                        <span><i class="fas fa-trophy"></i> 78% win rate</span>
+                    </div>
+                    <a href="#" class="play-now-btn">
+                        <i class="fas fa-play"></i> Play Now
+                    </a>
                 </div>
             </div>
 
-            <!-- Game Card 2 -->
+            <!-- Game 2 -->
             <div class="game-card">
-                <div class="game-image">
+                <div class="game-header">
                     <i class="fas fa-robot"></i>
+                    <h3>Tap Master Pro</h3>
                 </div>
-                <div class="game-info">
-                    <h3>Tap Master</h3>
-                    <p>Simple tap-to-earn game. Just tap and watch your earnings grow!</p>
+                <div class="game-body">
                     <div class="game-meta">
-                        <span class="earning"><i class="fas fa-coins"></i> Earn up to 200/day</span>
-                        <span class="players"><i class="fas fa-users"></i> 100K+ players</span>
+                        <span class="entry-fee">Entry: 50 pts</span>
+                        <span class="prize-pool">Prize: 500 pts</span>
                     </div>
-                    <a href="#" class="play-btn">Play Now</a>
+                    <p style="color: #666; margin-bottom: 1rem;">Fast-paced tapping game. Higher score wins!</p>
+                    <div class="game-stats">
+                        <span><i class="fas fa-users"></i> 5.1K playing</span>
+                        <span><i class="fas fa-trophy"></i> 65% win rate</span>
+                    </div>
+                    <a href="#" class="play-now-btn">
+                        <i class="fas fa-play"></i> Play Now
+                    </a>
                 </div>
             </div>
 
-            <!-- Game Card 3 -->
+            <!-- Game 3 -->
             <div class="game-card">
-                <div class="game-image">
+                <div class="game-header">
                     <i class="fas fa-chess-queen"></i>
+                    <h3>Battle Arena</h3>
                 </div>
-                <div class="game-info">
-                    <h3>Crypto Tycoon</h3>
-                    <p>Build your business empire and earn real cryptocurrency.</p>
+                <div class="game-body">
                     <div class="game-meta">
-                        <span class="earning"><i class="fas fa-coins"></i> Earn up to 1000/day</span>
-                        <span class="players"><i class="fas fa-users"></i> 75K+ players</span>
+                        <span class="entry-fee">Entry: 200 pts</span>
+                        <span class="prize-pool">Prize: 2,000 pts</span>
                     </div>
-                    <a href="#" class="play-btn">Play Now</a>
+                    <p style="color: #666; margin-bottom: 1rem;">1v1 battles. Winner takes all points!</p>
+                    <div class="game-stats">
+                        <span><i class="fas fa-users"></i> 1.8K playing</span>
+                        <span><i class="fas fa-trophy"></i> 52% win rate</span>
+                    </div>
+                    <a href="#" class="play-now-btn">
+                        <i class="fas fa-play"></i> Play Now
+                    </a>
+                </div>
+            </div>
+
+            <!-- Game 4 -->
+            <div class="game-card">
+                <div class="game-header">
+                    <i class="fas fa-puzzle-piece"></i>
+                    <h3>Puzzle Master</h3>
+                </div>
+                <div class="game-body">
+                    <div class="game-meta">
+                        <span class="entry-fee">Entry: 30 pts</span>
+                        <span class="prize-pool">Prize: 300 pts</span>
+                    </div>
+                    <p style="color: #666; margin-bottom: 1rem;">Solve puzzles fast to win points.</p>
+                    <div class="game-stats">
+                        <span><i class="fas fa-users"></i> 3.2K playing</span>
+                        <span><i class="fas fa-trophy"></i> 82% win rate</span>
+                    </div>
+                    <a href="#" class="play-now-btn">
+                        <i class="fas fa-play"></i> Play Now
+                    </a>
                 </div>
             </div>
         </div>
     </section>
 
-    <section class="telegram-games" id="telegram">
-        <h2 class="section-title">🔥 Hot <span>Telegram Games</span></h2>
-        <div class="game-grid">
-            <!-- Telegram Game 1 -->
-            <div class="tg-game-card">
-                <div class="tg-icon">
-                    <i class="fab fa-telegram"></i>
+    <!-- Telegram Community Section -->
+    <section class="telegram-section" id="telegram">
+        <div class="telegram-content">
+            <h2>Join Our <span>Telegram</span> Community</h2>
+            <p style="font-size: 1.2rem; opacity: 0.9; max-width: 600px; margin: 0 auto;">Get instant trade notifications, game updates, and connect with 10,000+ players!</p>
+            
+            <div class="telegram-features">
+                <div class="telegram-feature">
+                    <i class="fas fa-bolt"></i>
+                    <h4>Instant Trades</h4>
+                    <p>Get notified when new orders are created</p>
                 </div>
-                <h3>Hamster Kombat</h3>
-                <p>35M+ players. Tap to earn, upgrade your exchange, get tokens.</p>
-                <div class="tg-stats">
-                    <div class="stat">
-                        <span class="stat-value">35M+</span>
-                        <span class="stat-label">Players</span>
-                    </div>
-                    <div class="stat">
-                        <span class="stat-value">$0.10</span>
-                        <span class="stat-label">Per tap</span>
-                    </div>
+                <div class="telegram-feature">
+                    <i class="fas fa-gamepad"></i>
+                    <h4>Game Alerts</h4>
+                    <p>New games and tournaments announced first</p>
                 </div>
-                <a href="https://t.me/hamster_kombat_bot" class="tg-btn" target="_blank">
-                    <i class="fab fa-telegram"></i> Play on Telegram
-                </a>
+                <div class="telegram-feature">
+                    <i class="fas fa-chart-line"></i>
+                    <h4>Price Updates</h4>
+                    <p>Real-time point price changes</p>
+                </div>
             </div>
 
-            <!-- Telegram Game 2 -->
-            <div class="tg-game-card">
-                <div class="tg-icon">
-                    <i class="fab fa-telegram"></i>
-                </div>
-                <h3>Catizen</h3>
-                <p>$16M+ generated. Build your cat city and earn rewards.</p>
-                <div class="tg-stats">
-                    <div class="stat">
-                        <span class="stat-value">25M+</span>
-                        <span class="stat-label">Players</span>
-                    </div>
-                    <div class="stat">
-                        <span class="stat-value">$16M</span>
-                        <span class="stat-label">Earned</span>
-                    </div>
-                </div>
-                <a href="https://t.me/catizen_bot" class="tg-btn" target="_blank">
-                    <i class="fab fa-telegram"></i> Play on Telegram
-                </a>
-            </div>
+            <a href="https://t.me/taagcgames" class="telegram-btn" target="_blank">
+                <i class="fab fa-telegram"></i> Join Telegram Community
+                <i class="fas fa-arrow-right"></i>
+            </a>
 
-            <!-- Telegram Game 3 -->
-            <div class="tg-game-card">
-                <div class="tg-icon">
-                    <i class="fab fa-telegram"></i>
-                </div>
-                <h3>Notcoin</h3>
-                <p>The original tap-to-earn. Simple, addictive, rewarding.</p>
-                <div class="tg-stats">
-                    <div class="stat">
-                        <span class="stat-value">35M+</span>
-                        <span class="stat-label">Players</span>
-                    </div>
-                    <div class="stat">
-                        <span class="stat-value">$1B+</span>
-                        <span class="stat-label">Market cap</span>
-                    </div>
-                </div>
-                <a href="https://t.me/notcoin_bot" class="tg-btn" target="_blank">
-                    <i class="fab fa-telegram"></i> Play on Telegram
-                </a>
+            <div style="margin-top: 2rem; display: flex; justify-content: center; gap: 2rem;">
+                <span><i class="fas fa-check-circle" style="color: #0088cc;"></i> 10,234 Members</span>
+                <span><i class="fas fa-check-circle" style="color: #0088cc;"></i> Active 24/7</span>
+                <span><i class="fas fa-check-circle" style="color: #0088cc;"></i> Official Support</span>
             </div>
         </div>
     </section>
 
-    <section class="tips" id="tips">
-        <h2 class="section-title">💰 <span>Earning Tips</span> & Strategies</h2>
-        <div class="tips-grid">
-            <div class="tip-card">
-                <div class="tip-icon">
-                    <i class="fas fa-rocket"></i>
-                </div>
-                <h3>Start with Tap Games</h3>
-                <p>Begin with simple tap-to-earn games like Hamster Kombat and Notcoin. No investment needed.</p>
-                <a href="#" class="tip-link">Learn more <i class="fas fa-arrow-right"></i></a>
-            </div>
-
-            <div class="tip-card">
-                <div class="tip-icon">
-                    <i class="fas fa-users"></i>
-                </div>
-                <h3>Use Referrals</h3>
-                <p>Most games pay for referrals. Invite friends to multiply your earnings exponentially.</p>
-                <a href="#" class="tip-link">Learn more <i class="fas fa-arrow-right"></i></a>
-            </div>
-
-            <div class="tip-card">
-                <div class="tip-icon">
-                    <i class="fas fa-clock"></i>
-                </div>
-                <h3>Daily Bonuses</h3>
-                <p>Log in daily for bonus rewards. Many games offer increasing daily streak bonuses.</p>
-                <a href="#" class="tip-link">Learn more <i class="fas fa-arrow-right"></i></a>
-            </div>
-
-            <div class="tip-card">
-                <div class="tip-icon">
-                    <i class="fas fa-shield-alt"></i>
-                </div>
-                <h3>Avoid Scams</h3>
-                <p>Learn to identify legitimate earning games and avoid common crypto scams.</p>
-                <a href="#" class="tip-link">Learn more <i class="fas fa-arrow-right"></i></a>
-            </div>
-        </div>
-    </section>
-
-    <section class="community" id="community">
-        <h2>Join Our Telegram Community</h2>
-        <p>Get daily earning tips, new game alerts, and connect with 10,000+ fellow gamers!</p>
-        <a href="https://t.me/yourchannel" class="tg-join-btn" target="_blank">
-            <i class="fab fa-telegram"></i> Join Now - It's Free!
-        </a>
-        <div class="community-stats">
-            <div class="community-stat">
-                <span class="number">10K+</span>
-                <span class="label">Members</span>
-            </div>
-            <div class="community-stat">
-                <span class="number">24/7</span>
-                <span class="label">Support</span>
-            </div>
-            <div class="community-stat">
-                <span class="number">$50K+</span>
-                <span class="label">Paid to Members</span>
-            </div>
-        </div>
-    </section>
-
+    <!-- Footer -->
     <footer>
         <div class="footer-content">
             <div class="footer-section">
-                <h3>GameEarn</h3>
-                <p>Your trusted source for play-to-earn games and Telegram gaming community. Start earning while having fun!</p>
-                <div class="social-links">
-                    <a href="#"><i class="fab fa-telegram"></i></a>
-                    <a href="#"><i class="fab fa-twitter"></i></a>
-                    <a href="#"><i class="fab fa-discord"></i></a>
-                    <a href="#"><i class="fab fa-youtube"></i></a>
+                <h3>TAAGC GAMES</h3>
+                <p>Your premier gaming platform with P2P point trading. Play games, earn points, and trade with our secure marketplace.</p>
+                <div style="margin-top: 1rem;">
+                    <p><i class="fas fa-coins" style="color: var(--primary);"></i> Current Point Price: $0.0102</p>
+                    <p><i class="fas fa-chart-line" style="color: var(--primary);"></i> 24h Volume: 125,000 pts</p>
                 </div>
             </div>
 
             <div class="footer-section">
                 <h3>Quick Links</h3>
                 <ul>
-                    <li><a href="#home">Home</a></li>
-                    <li><a href="#games">Games</a></li>
-                    <li><a href="#telegram">Telegram Games</a></li>
-                    <li><a href="#tips">Earning Tips</a></li>
-                    <li><a href="#community">Community</a></li>
+                    <li><a href="#home"><i class="fas fa-chevron-right"></i> Home</a></li>
+                    <li><a href="#games"><i class="fas fa-chevron-right"></i> Games</a></li>
+                    <li><a href="#marketplace"><i class="fas fa-chevron-right"></i> Marketplace</a></li>
+                    <li><a href="#payment"><i class="fas fa-chevron-right"></i> TAAGC Pay</a></li>
+                    <li><a href="#telegram"><i class="fas fa-chevron-right"></i> Telegram</a></li>
                 </ul>
             </div>
 
             <div class="footer-section">
-                <h3>Top Games</h3>
+                <h3>Trading</h3>
                 <ul>
-                    <li><a href="#">Hamster Kombat</a></li>
-                    <li><a href="#">Catizen</a></li>
-                    <li><a href="#">Notcoin</a></li>
-                    <li><a href="#">Tap Master</a></li>
-                    <li><a href="#">Crypto Tycoon</a></li>
+                    <li><a href="#"><i class="fas fa-chevron-right"></i> Buy Points</a></li>
+                    <li><a href="#"><i class="fas fa-chevron-right"></i> Sell Points</a></li>
+                    <li><a href="#"><i class="fas fa-chevron-right"></i> Trading Guide</a></li>
+                    <li><a href="#"><i class="fas fa-chevron-right"></i> Point Calculator</a></li>
+                    <li><a href="#"><i class="fas fa-chevron-right"></i> Transaction History</a></li>
                 </ul>
             </div>
 
             <div class="footer-section">
-                <h3>Contact</h3>
+                <h3>Support</h3>
                 <ul>
-                    <li><i class="fas fa-envelope"></i> support@gameearn.com</li>
-                    <li><i class="fab fa-telegram"></i> @gameearn_support</li>
-                    <li><i class="fas fa-globe"></i> www.gameearn.com</li>
+                    <li><a href="#"><i class="fas fa-chevron-right"></i> FAQ</a></li>
+                    <li><a href="#"><i class="fas fa-chevron-right"></i> Terms of Service</a></li>
+                    <li><a href="#"><i class="fas fa-chevron-right"></i> Privacy Policy</a></li>
+                    <li><a href="#"><i class="fas fa-chevron-right"></i> Contact Us</a></li>
                 </ul>
             </div>
         </div>
         <div class="footer-bottom">
-            <p>&copy; 2024 GameEarn. All rights reserved. | Play responsibly.</p>
+            <p>&copy; 2024 TAAGC GAMES. All rights reserved. | Powered by pay.taagc.website</p>
+            <p style="margin-top: 0.5rem; font-size: 0.9rem;">
+                <i class="fab fa-telegram"></i> @taagcgames | 
+                <i class="fas fa-globe"></i> pay.taagc.website
+            </p>
         </div>
     </footer>
 
-    <!-- Smooth Scrolling Script -->
+    <!-- Modals -->
+    <!-- Trade Modal -->
+    <div class="modal" id="tradeModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Complete Trade</h2>
+                <button class="close-modal" onclick="closeModal('tradeModal')">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div style="background: #f3f4f6; padding: 1rem; border-radius: 10px; margin-bottom: 1.5rem;">
+                    <p><strong>Trade Details:</strong></p>
+                    <p>Buying: 1,000 points from @player123</p>
+                    <p>Total: $10.50</p>
+                    <p>Rate: $0.0105 per point</p>
+                </div>
+                <form onsubmit="event.preventDefault(); alert('Trade initiated! Check Telegram for updates.'); closeModal('tradeModal');">
+                    <div class="form-group">
+                        <label>Your TAAGC Pay Email</label>
+                        <input type="email" placeholder="your@email.com" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Amount to Trade</label>
+                        <input type="number" value="1000" readonly>
+                    </div>
+                    <div class="form-group">
+                        <label>Payment Method</label>
+                        <select>
+                            <option>TAAGC Pay Balance</option>
+                            <option>Bank Transfer</option>
+                            <option>USDT (TRC20)</option>
+                        </select>
+                    </div>
+                    <button type="submit" class="submit-btn">Confirm Trade</button>
+                </form>
+                <p style="text-align: center; margin-top: 1rem; font-size: 0.9rem; color: #666;">
+                    <i class="fas fa-shield-alt"></i> Secure trade protected by TAAGC Pay
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Create Sell Order Modal -->
+    <div class="modal" id="sellModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Create Sell Order</h2>
+                <button class="close-modal" onclick="closeModal('sellModal')">&times;</button>
+            </div>
+            <div class="modal-body">
+                <form onsubmit="event.preventDefault(); alert('Sell order created! It will appear in marketplace.'); closeModal('sellModal');">
+                    <div class="form-group">
+                        <label>Your Available Balance</label>
+                        <input type="text" value="2,500 Points" readonly style="background: #f3f4f6;">
+                    </div>
+                    <div class="form-group">
+                        <label>Points to Sell</label>
+                        <input type="number" placeholder="Enter amount" min="100" max="2500" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Price per Point ($)</label>
+                        <input type="number" step="0.0001" placeholder="0.0100" value="0.0100" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Total Value</label>
+                        <input type="text" placeholder="Auto-calculated" readonly style="background: #f3f4f6;">
+                    </div>
+                    <button type="submit" class="submit-btn">Create Sell Order</button>
+                </form>
+                <p style="text-align: center; margin-top: 1rem; color: #666;">
+                    <i class="fas fa-info-circle"></i> Market rate: $0.0102/point
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Create Buy Order Modal -->
+    <div class="modal" id="buyModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Create Buy Order</h2>
+                <button class="close-modal" onclick="closeModal('buyModal')">&times;</button>
+            </div>
+            <div class="modal-body">
+                <form onsubmit="event.preventDefault(); alert('Buy order created! Sellers will contact you.'); closeModal('buyModal');">
+                    <div class="form-group">
+                        <label>Your TAAGC Pay Balance</label>
+                        <input type="text" value="$25.50" readonly style="background: #f3f4f6;">
+                    </div>
+                    <div class="form-group">
+                        <label>Points to Buy</label>
+                        <input type="number" placeholder="Enter amount" min="100" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Price per Point ($)</label>
+                        <input type="number" step="0.0001" placeholder="0.0095" value="0.0095" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Total to Spend</label>
+                        <input type="text" placeholder="Auto-calculated" readonly style="background: #f3f4f6;">
+                    </div>
+                    <button type="submit" class="submit-btn">Create Buy Order</button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Balance Modal -->
+    <div class="modal" id="balanceModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Your Points Balance</h2>
+                <button class="close-modal" onclick="closeModal('balanceModal')">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div style="text-align: center; padding: 2rem; background: linear-gradient(135deg, var(--primary), var(--secondary)); color: white; border-radius: 10px; margin-bottom: 1.5rem;">
+                    <h3 style="font-size: 3rem;">2,500</h3>
+                    <p>Game Points</p>
+                    <p style="font-size: 1.2rem;">≈ $25.50 USD</p>
+                </div>
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+                    <a href="https://pay.taagc.website" class="platform-link" style="text-align: center; font-size: 1rem; padding: 0.8rem;" target="_blank">
+                        <i class="fas fa-plus-circle"></i> Add Points
+                    </a>
+                    <a href="#" class="btn btn-primary" style="text-align: center; font-size: 1rem; padding: 0.8rem; background: var(--primary); color: white;" onclick="openModal('sellModal'); closeModal('balanceModal');">
+                        <i class="fas fa-hand-holding-usd"></i> Sell Points
+                    </a>
+                </div>
+                <div style="margin-top: 1.5rem;">
+                    <h4>Recent Transactions</h4>
+                    <div style="margin-top: 1rem;">
+                        <div style="display: flex; justify-content: space-between; padding: 0.5rem; border-bottom: 1px solid #e5e7eb;">
+                            <span>Won Fantasy Quest</span>
+                            <span style="color: var(--success);">+500 pts</span>
+                        </div>
+                        <div style="display: flex; justify-content: space-between; padding: 0.5rem; border-bottom: 1px solid #e5e7eb;">
+                            <span>Sold to @player123</span>
+                            <span style="color: var(--success);">+$10.50</span>
+                        </div>
+                        <div style="display: flex; justify-content: space-between; padding: 0.5rem;">
+                            <span>Bought from @seller456</span>
+                            <span style="color: var(--danger);">-1,000 pts</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Scripts -->
     <script>
+        // Modal functions
+        function openModal(modalId) {
+            document.getElementById(modalId).classList.add('active');
+        }
+
+        function closeModal(modalId) {
+            document.getElementById(modalId).classList.remove('active');
+        }
+
+        // Close modal when clicking outside
+        window.onclick = function(event) {
+            if (event.target.classList.contains('modal')) {
+                event.target.classList.remove('active');
+            }
+        }
+
+        // Smooth scrolling
         document.querySelectorAll('a[href^="#"]').forEach(anchor => {
             anchor.addEventListener('click', function (e) {
                 e.preventDefault();
@@ -930,6 +1407,38 @@
                 }
             });
         });
+
+        // Auto-calculate total for sell order
+        const sellAmount = document.querySelector('#sellModal input[placeholder="Enter amount"]');
+        const sellPrice = document.querySelector('#sellModal input[placeholder="0.0100"]');
+        const sellTotal = document.querySelector('#sellModal input[placeholder="Auto-calculated"]');
+        
+        if(sellAmount && sellPrice && sellTotal) {
+            sellAmount.addEventListener('input', updateSellTotal);
+            sellPrice.addEventListener('input', updateSellTotal);
+        }
+
+        function updateSellTotal() {
+            const amount = parseFloat(sellAmount.value) || 0;
+            const price = parseFloat(sellPrice.value) || 0;
+            sellTotal.value = '$' + (amount * price).toFixed(2);
+        }
+
+        // Auto-calculate total for buy order
+        const buyAmount = document.querySelector('#buyModal input[placeholder="Enter amount"]');
+        const buyPrice = document.querySelector('#buyModal input[placeholder="0.0095"]');
+        const buyTotal = document.querySelector('#buyModal input[placeholder="Auto-calculated"]');
+        
+        if(buyAmount && buyPrice && buyTotal) {
+            buyAmount.addEventListener('input', updateBuyTotal);
+            buyPrice.addEventListener('input', updateBuyTotal);
+        }
+
+        function updateBuyTotal() {
+            const amount = parseFloat(buyAmount.value) || 0;
+            const price = parseFloat(buyPrice.value) || 0;
+            buyTotal.value = '$' + (amount * price).toFixed(2);
+        }
     </script>
 </body>
 </html>
