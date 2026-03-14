@@ -92,17 +92,35 @@
             justify-content: center;
             color: #0a1f30;
         }
-        .marketplace-header {
+        /* ===== MULTIPLE BANNER STYLES ===== */
+        .hero-banner {
             background: linear-gradient(145deg, #0a2b40, #1a4b6e);
             color: white;
             padding: 60px 40px;
             text-align: center;
+            position: relative;
+            overflow: hidden;
         }
-        .marketplace-header h1 {
+        .hero-banner::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: url('https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?w=1200') center/cover;
+            opacity: 0.1;
+            z-index: 0;
+        }
+        .hero-content {
+            position: relative;
+            z-index: 1;
+        }
+        .hero-banner h1 {
             font-size: 3.5rem;
             margin-bottom: 15px;
         }
-        .marketplace-header p {
+        .hero-banner p {
             font-size: 1.3rem;
             color: #e09f2c;
         }
@@ -118,12 +136,63 @@
             cursor: pointer;
             border: 2px solid white;
         }
+        /* promo banners carousel */
+        .promo-carousel {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 20px;
+            padding: 30px 40px;
+            background: white;
+        }
+        .promo-card {
+            background: linear-gradient(145deg, #f9f1e0, #f5e5cc);
+            border-radius: 20px;
+            padding: 20px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            border: 2px solid #e09f2c;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+        .promo-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 30px -10px #e09f2c;
+        }
+        .promo-icon {
+            font-size: 2.5rem;
+        }
+        .promo-text h3 {
+            font-size: 1.2rem;
+            margin-bottom: 5px;
+        }
+        .promo-text p {
+            color: #0a1f30;
+            font-weight: 600;
+        }
+        /* category banner */
+        .category-banner {
+            background: linear-gradient(145deg, #1a4b6e, #0a2b40);
+            color: white;
+            padding: 20px 40px;
+            margin: 20px 40px;
+            border-radius: 60px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .category-banner span {
+            background: #e09f2c;
+            color: #0a1f30;
+            padding: 8px 20px;
+            border-radius: 60px;
+            font-weight: 600;
+        }
         .marketplace-grid {
             display: grid;
             grid-template-columns: 250px 1fr;
             gap: 30px;
-            padding: 40px;
-            background: #f5faff;
+            padding: 20px 40px;
         }
         .sidebar {
             background: white;
@@ -209,7 +278,51 @@
             color: #e09f2c;
             margin: 8px 0;
         }
-        /* create store modal */
+        /* mid-page banner */
+        .mid-banner {
+            background: linear-gradient(145deg, #e09f2c, #f5b84c);
+            margin: 30px 40px;
+            padding: 30px 40px;
+            border-radius: 60px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            color: #0a1f30;
+        }
+        .mid-banner button {
+            background: #0a1f30;
+            color: white;
+            border: none;
+            padding: 12px 30px;
+            border-radius: 60px;
+            font-weight: 600;
+            cursor: pointer;
+        }
+        /* footer banners */
+        .footer-banners {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 20px;
+            padding: 40px;
+            background: white;
+            margin-top: 30px;
+        }
+        .footer-banner {
+            background: #f0f6fd;
+            border-radius: 20px;
+            padding: 25px;
+            text-align: center;
+            cursor: pointer;
+            border: 2px solid #e0ebf5;
+        }
+        .footer-banner:hover {
+            border-color: #e09f2c;
+        }
+        .footer-banner i {
+            font-size: 2.5rem;
+            color: #e09f2c;
+            margin-bottom: 15px;
+        }
         .modal {
             display: none;
             position: fixed;
@@ -234,10 +347,6 @@
             max-height: 90vh;
             overflow-y: auto;
         }
-        .modal-content h2 {
-            margin-bottom: 25px;
-            color: #0a1f30;
-        }
         .form-group {
             margin-bottom: 20px;
         }
@@ -255,7 +364,6 @@
         }
         .form-group textarea {
             border-radius: 20px;
-            resize: vertical;
         }
         .image-preview {
             width: 100%;
@@ -302,6 +410,7 @@
             display: flex;
             gap: 15px;
             margin: 20px 0;
+            flex-wrap: wrap;
         }
         .store-tab {
             padding: 10px 25px;
@@ -338,7 +447,7 @@
             <span><i class="fas fa-phone"></i> +1 (800) 123-4567</span>
             <span><i class="fas fa-envelope"></i> marketplace@taagc.com</span>
         </div>
-        <div><i class="fas fa-store"></i> public marketplace · sell your own items</div>
+        <div><i class="fas fa-store"></i> public marketplace · 10,000+ items</div>
     </div>
 
     <div class="navbar">
@@ -361,10 +470,45 @@
         </div>
     </div>
 
-    <div class="marketplace-header">
-        <h1><i class="fas fa-store-alt"></i> public marketplace</h1>
-        <p>buy & sell · create your own store · no listing fees</p>
-        <button class="create-store-btn" id="createStoreBtn"><i class="fas fa-plus"></i> open your store</button>
+    <!-- BANNER 1: HERO -->
+    <div class="hero-banner">
+        <div class="hero-content">
+            <h1><i class="fas fa-store-alt"></i> public marketplace</h1>
+            <p>buy & sell · create your own store · 0% commission for 3 months</p>
+            <button class="create-store-btn" id="createStoreBtn"><i class="fas fa-plus"></i> open your store</button>
+        </div>
+    </div>
+
+    <!-- BANNER 2: PROMO CAROUSEL (4 banners) -->
+    <div class="promo-carousel">
+        <div class="promo-card" onclick="window.location.href='/seller-bonus'">
+            <div class="promo-icon"><i class="fas fa-gift"></i></div>
+            <div class="promo-text">
+                <h3>seller bonus</h3>
+                <p>get $50 free</p>
+            </div>
+        </div>
+        <div class="promo-card" onclick="window.location.href='/free-listing'">
+            <div class="promo-icon"><i class="fas fa-tags"></i></div>
+            <div class="promo-text">
+                <h3>free listings</h3>
+                <p>first 50 items</p>
+            </div>
+        </div>
+        <div class="promo-card" onclick="window.location.href='/shipping'">
+            <div class="promo-icon"><i class="fas fa-truck"></i></div>
+            <div class="promo-text">
+                <h3>free shipping</h3>
+                <p>orders over $50</p>
+            </div>
+        </div>
+        <div class="promo-card" onclick="window.location.href='/referral'">
+            <div class="promo-icon"><i class="fas fa-users"></i></div>
+            <div class="promo-text">
+                <h3>refer a friend</h3>
+                <p>earn $25 each</p>
+            </div>
+        </div>
     </div>
 
     <!-- my stores section (shows if user has stores) -->
@@ -374,7 +518,14 @@
         <div id="storeProducts"></div>
     </div>
 
-    <!-- main marketplace -->
+    <!-- BANNER 3: CATEGORY PROMO -->
+    <div class="category-banner">
+        <span><i class="fas fa-bolt"></i> today's deals</span>
+        <span>electronics · fashion · home · up to 40% off</span>
+        <span>limited time <i class="fas fa-clock"></i></span>
+    </div>
+
+    <!-- main marketplace grid -->
     <div class="marketplace-grid">
         <div class="sidebar">
             <h3>categories</h3>
@@ -391,8 +542,35 @@
         </div>
 
         <div class="products-grid" id="productsGrid">
-            <!-- products load here -->
             <div style="grid-column:1/-1; text-align:center; padding:50px;">loading marketplace...</div>
+        </div>
+    </div>
+
+    <!-- BANNER 4: MID-PAGE PROMO -->
+    <div class="mid-banner">
+        <div>
+            <h2><i class="fas fa-crown"></i> become a premium seller</h2>
+            <p>unlock advanced analytics & priority support</p>
+        </div>
+        <button onclick="window.location.href='/upgrade'">upgrade now →</button>
+    </div>
+
+    <!-- BANNER 5: FOOTER BANNERS (3) -->
+    <div class="footer-banners">
+        <div class="footer-banner" onclick="window.location.href='/how-to-sell'">
+            <i class="fas fa-play-circle"></i>
+            <h3>how to sell</h3>
+            <p>start selling in 5 minutes</p>
+        </div>
+        <div class="footer-banner" onclick="window.location.href='/seller-protection'">
+            <i class="fas fa-shield-alt"></i>
+            <h3>seller protection</h3>
+            <p>100% payment protection</p>
+        </div>
+        <div class="footer-banner" onclick="window.location.href='/analytics'">
+            <i class="fas fa-chart-line"></i>
+            <h3>seller analytics</h3>
+            <p>track your performance</p>
         </div>
     </div>
 
@@ -435,7 +613,7 @@
         </div>
     </div>
 
-    <!-- add product modal (shows after store created) -->
+    <!-- add product modal -->
     <div class="modal" id="addProductModal">
         <div class="modal-content">
             <h2><i class="fas fa-box"></i> add product</h2>
@@ -498,13 +676,12 @@
         const auth = firebase.auth();
         const storage = firebase.storage();
         
-        document.getElementById('firebaseStatus').innerHTML = '✅ marketplace ready';
+        document.getElementById('firebaseStatus').innerHTML = '✅ marketplace ready · 9 banners active';
 
         let currentUser = null;
         let userStores = [];
         let currentStore = null;
 
-        // auth state
         auth.onAuthStateChanged(async (user) => {
             if (user) {
                 currentUser = user;
@@ -513,14 +690,12 @@
                 document.getElementById('userName').innerText = user.email || 'user';
                 await loadUserStores();
             } else {
-                // anonymous user can browse
                 document.getElementById('authButtons').style.display = 'flex';
                 document.getElementById('userWelcome').style.display = 'none';
                 loadPublicProducts();
             }
         });
 
-        // load user stores
         async function loadUserStores() {
             if (!currentUser) return;
             
@@ -552,7 +727,6 @@
                 tabs.appendChild(tab);
             });
             
-            // add "add product" button
             const addBtn = document.createElement('span');
             addBtn.className = 'store-tab';
             addBtn.innerHTML = '<i class="fas fa-plus"></i> add product';
@@ -585,7 +759,6 @@
             container.innerHTML = html || '<p>no products yet</p>';
         }
 
-        // load public products
         async function loadPublicProducts(category = 'all') {
             let query = db.collection('products').where('status', '==', 'active');
             
@@ -621,7 +794,6 @@
             grid.innerHTML = html;
         }
 
-        // category filter
         document.querySelectorAll('.category-list li').forEach(li => {
             li.addEventListener('click', () => {
                 document.querySelectorAll('.category-list li').forEach(l => l.classList.remove('active'));
@@ -630,7 +802,6 @@
             });
         });
 
-        // create store modal
         document.getElementById('createStoreBtn').addEventListener('click', () => {
             if (!currentUser) {
                 alert('please login to create a store');
@@ -654,7 +825,6 @@
             
             const docRef = await db.collection('stores').add(storeData);
             
-            // handle logo upload
             const logoFile = document.getElementById('logoInput').files[0];
             if (logoFile) {
                 const storageRef = storage.ref(`stores/${docRef.id}/logo`);
@@ -690,7 +860,6 @@
             
             const docRef = await db.collection('products').add(productData);
             
-            // handle images
             const imageFiles = document.getElementById('productImages').files;
             if (imageFiles.length > 0) {
                 const storageRef = storage.ref(`products/${docRef.id}/main`);
@@ -715,7 +884,6 @@
             window.location.href = `/product/${id}`;
         };
 
-        // initial load
         loadPublicProducts();
     </script>
 </body>
