@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Online Games - TAAGC GAMES</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        /* Copy styles from main portal */
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', sans-serif; }
+        :root { --primary: #667eea; --secondary: #764ba2; }
+        body { background: linear-gradient(135deg, #667eea10, #764ba210); }
+        .header { background: white; box-shadow: 0 2px 20px rgba(0,0,0,0.1); position: sticky; top: 0; z-index: 1000; }
+        .nav { display: flex; justify-content: space-between; align-items: center; padding: 1rem 5%; max-width: 1400px; margin: 0 auto; }
+        .logo { font-size: 2rem; font-weight: 800; background: linear-gradient(135deg, var(--primary), var(--secondary)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; text-decoration: none; }
+        .main-content { max-width: 1400px; margin: 2rem auto; padding: 0 5%; }
+        .games-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 1.5rem; }
+        .game-card { background: white; border-radius: 15px; overflow: hidden; box-shadow: 0 5px 15px rgba(0,0,0,0.08); transition: all 0.3s; cursor: pointer; text-decoration: none; color: inherit; }
+        .game-card:hover { transform: translateY(-5px); box-shadow: 0 15px 30px rgba(102,126,234,0.15); }
+        .game-thumbnail { aspect-ratio: 16/9; background: linear-gradient(135deg, #667eea20, #764ba220); display: flex; align-items: center; justify-content: center; font-size: 3rem; position: relative; }
+        .game-info { padding: 1rem; }
+        .game-title { font-weight: 600; margin-bottom: 0.3rem; }
+        .game-meta { display: flex; justify-content: space-between; color: #666; font-size: 0.8rem; }
+        .filter-bar { display: flex; gap: 1rem; margin-bottom: 2rem; flex-wrap: wrap; }
+        .filter-btn { padding: 0.5rem 1.5rem; border: 2px solid #e5e7eb; border-radius: 50px; background: white; cursor: pointer; transition: all 0.3s; }
+        .filter-btn.active { background: linear-gradient(135deg, var(--primary), var(--secondary)); color: white; border-color: transparent; }
+        .pagination { display: flex; justify-content: center; gap: 0.5rem; margin: 3rem 0; }
+        .page-btn { width: 40px; height: 40px; border: 1px solid #e5e7eb; background: white; border-radius: 10px; cursor: pointer; }
+        .page-btn.active { background: linear-gradient(135deg, var(--primary), var(--secondary)); color: white; border-color: transparent; }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <div class="nav">
+            <a href="/" class="logo">TAAGC GAMES</a>
+            <a href="/" style="color: var(--primary); text-decoration: none;">← Back to Home</a>
+        </div>
+    </div>
+    
+    <div class="main-content">
+        <h1 style="font-size: 2.5rem; margin-bottom: 1rem;">🎮 Online Games</h1>
+        <p style="color: #666; margin-bottom: 2rem;">Play the best free online games. Lightweight, fast-loading, and touch-friendly!</p>
+        
+        <!-- Filter Bar -->
+        <div class="filter-bar">
+            <button class="filter-btn active">All</button>
+            <button class="filter-btn">Strategy</button>
+            <button class="filter-btn">Puzzle</button>
+            <button class="filter-btn">Card</button>
+            <button class="filter-btn">Board</button>
+            <button class="filter-btn">Action</button>
+        </div>
+        
+        <!-- Games Grid -->
+        <div class="games-grid" id="onlineGamesGrid"></div>
+        
+        <!-- Pagination -->
+        <div class="pagination">
+            <button class="page-btn">1</button>
+            <button class="page-btn active">2</button>
+            <button class="page-btn">3</button>
+            <button class="page-btn">4</button>
+            <button class="page-btn">5</button>
+            <button class="page-btn">→</button>
+        </div>
+    </div>
+
+    <!-- Game Embed Modal -->
+    <div id="gameModal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.9); z-index: 2000;">
+        <div style="position: relative; width: 100%; height: 100%;">
+            <button onclick="closeGame()" style="position: absolute; top: 20px; right: 20px; background: white; border: none; width: 40px; height: 40px; border-radius: 50%; cursor: pointer; z-index: 2001;">✕</button>
+            <iframe id="gameFrame" style="width: 100%; height: 100%; border: none;"></iframe>
+        </div>
+    </div>
+
+    <script>
+        const onlineGames = [
+            { id: 1, title: "8 Ball Pool", thumbnail: "🎱", players: "2.3K", size: "2.1MB", url: "https://games.taagc.website/embed/8ball" },
+            { id: 2, title: "Chess Master", thumbnail: "♟️", players: "1.5K", size: "1.8MB", url: "https://games.taagc.website/embed/chess" },
+            { id: 3, title: "Sudoku", thumbnail: "🔢", players: "3K", size: "1.2MB", url: "https://games.taagc.website/embed/sudoku" },
+            { id: 4, title: "Solitaire", thumbnail: "🃏", players: "2.8K", size: "1.5MB", url: "https://games.taagc.website/embed/solitaire" },
+            { id: 5, title: "Mahjong", thumbnail: "🀄", players: "1.9K", size: "2.3MB", url: "https://games.taagc.website/embed/mahjong" },
+            { id: 6, title: "Checkers", thumbnail: "⬛", players: "1.2K", size: "1.4MB", url: "https://games.taagc.website/embed/checkers" },
+            { id: 7, title: "Backgammon", thumbnail: "🎲", players: "1.1K", size: "1.6MB", url: "https://games.taagc.website/embed/backgammon" },
+            { id: 8, title: "Dominoes", thumbnail: "🁢", players: "1.8K", size: "1.3MB", url: "https://games.taagc.website/embed/dominoes" },
+            { id: 9, title: "Spider Solitaire", thumbnail: "🕷️", players: "2.1K", size: "1.5MB", url: "https://games.taagc.website/embed/spider" },
+            { id: 10, title: "FreeCell", thumbnail: "🃏", players: "1.4K", size: "1.4MB", url: "https://games.taagc.website/embed/freecell" },
+            { id: 11, title: "Minesweeper", thumbnail: "💣", players: "2.5K", size: "1.1MB", url: "https://games.taagc.website/embed/minesweeper" },
+            { id: 12, title: "Word Search", thumbnail: "🔍", players: "1.7K", size: "1.2MB", url: "https://games.taagc.website/embed/wordsearch" }
+        ];
+
+        function renderOnlineGames() {
+            const html = onlineGames.map(game => `
+                <a href="#" class="game-card" onclick="playGame('${game.url}', '${game.title}')">
+                    <div class="game-thumbnail">
+                        <span>${game.thumbnail}</span>
+                    </div>
+                    <div class="game-info">
+                        <div class="game-title">${game.title}</div>
+                        <div class="game-meta">
+                            <span><i class="fas fa-users"></i> ${game.players}</span>
+                            <span class="game-size">${game.size}</span>
+                        </div>
+                    </div>
+                </a>
+            `).join('');
+            
+            document.getElementById('onlineGamesGrid').innerHTML = html;
+        }
+
+        function playGame(url, title) {
+            document.getElementById('gameFrame').src = url;
+            document.getElementById('gameModal').style.display = 'block';
+            document.title = `Playing ${title} - TAAGC Games`;
+        }
+
+        function closeGame() {
+            document.getElementById('gameModal').style.display = 'none';
+            document.getElementById('gameFrame').src = '';
+            document.title = 'Online Games - TAAGC GAMES';
+        }
+
+        renderOnlineGames();
+    </script>
+</body>
+</html>
