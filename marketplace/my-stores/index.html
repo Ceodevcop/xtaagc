@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -11,7 +10,6 @@
     <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-firestore-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-auth-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-storage-compat.js"></script>
     <style>
         * {
             margin: 0;
@@ -159,10 +157,6 @@
             background: #d4edda;
             color: #155724;
         }
-        .status-pending {
-            background: #fff3cd;
-            color: #856404;
-        }
         .store-stats {
             display: grid;
             grid-template-columns: repeat(3, 1fr);
@@ -195,7 +189,6 @@
             cursor: pointer;
             flex: 1;
             text-align: center;
-            text-decoration: none;
             font-size: 0.9rem;
         }
         .btn-primary {
@@ -207,39 +200,49 @@
             border: 2px solid #e09f2c;
             color: #e09f2c;
         }
-        .btn-danger {
-            background: #dc3545;
-            color: white;
+        .error-container {
+            background: #f8d7da;
+            border: 2px solid #dc3545;
+            border-radius: 30px;
+            padding: 40px;
+            text-align: center;
+            margin: 40px;
         }
-        .products-section {
-            margin-top: 40px;
+        .error-container i {
+            font-size: 4rem;
+            color: #dc3545;
+            margin-bottom: 20px;
         }
-        .products-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-            gap: 20px;
+        .error-container h2 {
+            color: #721c24;
+            margin-bottom: 15px;
+        }
+        .error-container p {
+            color: #721c24;
+            margin-bottom: 20px;
+        }
+        .index-link {
+            background: #e09f2c;
+            color: #0a1f30;
+            padding: 15px 30px;
+            border-radius: 60px;
+            text-decoration: none;
+            display: inline-block;
+            font-weight: 600;
             margin-top: 20px;
         }
-        .product-card {
-            background: white;
-            border-radius: 20px;
-            padding: 15px;
-            border: 2px solid #e0ebf5;
-            cursor: pointer;
+        .loading-spinner {
+            text-align: center;
+            padding: 60px;
         }
-        .product-card:hover {
-            border-color: #e09f2c;
+        .loading-spinner i {
+            font-size: 3rem;
+            color: #e09f2c;
+            animation: spin 1s linear infinite;
         }
-        .product-image {
-            width: 100%;
-            height: 150px;
-            background: #f0f6fd;
-            border-radius: 15px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: #6b8ca8;
-            margin-bottom: 10px;
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
         }
         .modal {
             display: none;
@@ -265,9 +268,6 @@
             max-height: 90vh;
             overflow-y: auto;
         }
-        .modal-content h2 {
-            margin-bottom: 25px;
-        }
         .form-group {
             margin-bottom: 20px;
         }
@@ -285,7 +285,6 @@
         }
         .form-group textarea {
             border-radius: 20px;
-            resize: vertical;
         }
         .modal-buttons {
             display: flex;
@@ -314,22 +313,6 @@
             font-size: 0.8rem;
             z-index: 1000;
         }
-        .error-message {
-            color: #dc3545;
-            padding: 10px;
-            background: #f8d7da;
-            border-radius: 60px;
-            margin: 10px 0;
-            display: none;
-        }
-        .success-message {
-            color: #155724;
-            background: #d4edda;
-            padding: 10px;
-            border-radius: 60px;
-            margin: 10px 0;
-            display: none;
-        }
     </style>
 </head>
 <body>
@@ -355,17 +338,15 @@
         </button>
     </div>
 
-    <div class="stores-container">
-        <div id="storesGrid" class="stores-grid">
-            <!-- stores loaded here -->
-        </div>
+    <div id="storesContainer" class="stores-container">
+        <!-- stores loaded here -->
     </div>
 
     <!-- CREATE STORE MODAL -->
     <div class="modal" id="createStoreModal">
         <div class="modal-content">
             <h2><i class="fas fa-store"></i> create new store</h2>
-            <div id="createStoreError" class="error-message"></div>
+            <div id="createStoreError" style="color:#dc3545; margin-bottom:15px; display:none;"></div>
             <div class="form-group">
                 <label>store name *</label>
                 <input type="text" id="storeName" placeholder="e.g., John's Electronics" maxlength="50">
@@ -394,78 +375,6 @@
         </div>
     </div>
 
-    <!-- ADD PRODUCT MODAL -->
-    <div class="modal" id="addProductModal">
-        <div class="modal-content">
-            <h2><i class="fas fa-box"></i> add product</h2>
-            <div id="addProductError" class="error-message"></div>
-            <input type="hidden" id="currentStoreId">
-            <div class="form-group">
-                <label>product title *</label>
-                <input type="text" id="productTitle" placeholder="e.g., iPhone 13" maxlength="100">
-            </div>
-            <div class="form-group">
-                <label>description</label>
-                <textarea id="productDesc" rows="3" placeholder="product details..."></textarea>
-            </div>
-            <div class="form-group">
-                <label>price ($) *</label>
-                <input type="number" id="productPrice" step="0.01" min="0" placeholder="0.00">
-            </div>
-            <div class="form-group">
-                <label>quantity</label>
-                <input type="number" id="productQuantity" min="0" value="1">
-            </div>
-            <div class="form-group">
-                <label>category</label>
-                <select id="productCategory">
-                    <option value="electronics">📱 electronics</option>
-                    <option value="fashion">👕 fashion</option>
-                    <option value="home">🏠 home</option>
-                    <option value="sports">⚽ sports</option>
-                </select>
-            </div>
-            <div class="modal-buttons">
-                <button class="btn btn-outline" onclick="closeModal('addProductModal')">cancel</button>
-                <button class="btn btn-primary" id="saveProductBtn">add product</button>
-            </div>
-        </div>
-    </div>
-
-    <!-- EDIT STORE MODAL -->
-    <div class="modal" id="editStoreModal">
-        <div class="modal-content">
-            <h2><i class="fas fa-edit"></i> edit store</h2>
-            <div id="editStoreError" class="error-message"></div>
-            <input type="hidden" id="editStoreId">
-            <div class="form-group">
-                <label>store name</label>
-                <input type="text" id="editStoreName" maxlength="50">
-            </div>
-            <div class="form-group">
-                <label>description</label>
-                <textarea id="editStoreDesc" rows="3"></textarea>
-            </div>
-            <div class="form-group">
-                <label>category</label>
-                <select id="editStoreCategory">
-                    <option value="electronics">📱 electronics</option>
-                    <option value="fashion">👕 fashion</option>
-                    <option value="home">🏠 home</option>
-                    <option value="sports">⚽ sports</option>
-                    <option value="collectibles">💎 collectibles</option>
-                    <option value="art">🎨 art</option>
-                    <option value="vehicles">🚗 vehicles</option>
-                    <option value="other">📦 other</option>
-                </select>
-            </div>
-            <div class="modal-buttons">
-                <button class="btn btn-outline" onclick="closeModal('editStoreModal')">cancel</button>
-                <button class="btn btn-primary" id="updateStoreBtn">update store</button>
-            </div>
-        </div>
-    </div>
-
     <div class="fb-status" id="firebaseStatus">⏳ loading...</div>
 
     <script>
@@ -485,9 +394,7 @@
         document.getElementById('firebaseStatus').innerHTML = '✅ my stores ready';
 
         let currentUser = null;
-        let userStores = [];
 
-        // Auth state
         auth.onAuthStateChanged((user) => {
             if (user) {
                 currentUser = user;
@@ -511,41 +418,85 @@
 
         window.logout = () => auth.signOut();
 
-        // Load user stores
+        // Load user stores with error handling
         async function loadUserStores() {
-            if (!currentUser) return;
+            const container = document.getElementById('storesContainer');
             
+            if (!currentUser) return;
+
+            // Show loading
+            container.innerHTML = `
+                <div class="loading-spinner">
+                    <i class="fas fa-spinner"></i>
+                    <p style="margin-top:20px;">loading your stores...</p>
+                </div>
+            `;
+
             try {
+                // Try without orderBy first (doesn't need index)
                 const snapshot = await db.collection('stores')
                     .where('ownerId', '==', currentUser.uid)
-                    .orderBy('createdAt', 'desc')
                     .get();
 
-                userStores = snapshot.docs.map(doc => ({
+                const stores = snapshot.docs.map(doc => ({
                     id: doc.id,
                     ...doc.data()
                 }));
 
-                renderStores();
+                // Sort manually (since we can't use orderBy without index)
+                stores.sort((a, b) => {
+                    const dateA = a.createdAt?.toDate?.() || new Date(0);
+                    const dateB = b.createdAt?.toDate?.() || new Date(0);
+                    return dateB - dateA;
+                });
+
+                renderStores(stores);
 
             } catch (error) {
                 console.error('Error loading stores:', error);
-                document.getElementById('storesGrid').innerHTML = `
-                    <div class="empty-state">
-                        <i class="fas fa-exclamation-circle"></i>
-                        <h3>error loading stores</h3>
-                        <p>${error.message}</p>
-                    </div>
-                `;
+                
+                // Check if it's an index error
+                if (error.message?.includes('index') || error.code === 'failed-precondition') {
+                    // Extract the index creation link from error
+                    const match = error.message?.match(/https:\/\/console\.firebase\.google\.com[^\s]*/);
+                    const indexLink = match ? match[0] : 'https://console.firebase.google.com/project/xtaagc/firestore/indexes';
+                    
+                    container.innerHTML = `
+                        <div class="error-container">
+                            <i class="fas fa-database"></i>
+                            <h2>Firestore Index Required</h2>
+                            <p>To sort stores by date, we need to create an index.</p>
+                            <p style="font-size:0.9rem; background:#f8d7da; padding:10px; border-radius:60px;">
+                                Click the button below, then click "Create Index"
+                            </p>
+                            <a href="${indexLink}" target="_blank" class="index-link">
+                                <i class="fas fa-plus-circle"></i> create index
+                            </a>
+                            <p style="margin-top:20px; font-size:0.8rem;">
+                                After creating the index, refresh this page in 2-3 minutes.
+                            </p>
+                        </div>
+                    `;
+                } else {
+                    container.innerHTML = `
+                        <div class="error-container">
+                            <i class="fas fa-exclamation-triangle"></i>
+                            <h2>Error Loading Stores</h2>
+                            <p>${error.message}</p>
+                            <button class="index-link" onclick="location.reload()">
+                                try again
+                            </button>
+                        </div>
+                    `;
+                }
             }
         }
 
-        // Render stores
-        async function renderStores() {
-            const grid = document.getElementById('storesGrid');
+        function renderStores(stores) {
+            const container = document.getElementById('storesContainer');
             
-            if (userStores.length === 0) {
-                grid.innerHTML = `
+            if (stores.length === 0) {
+                container.innerHTML = `
                     <div class="empty-state">
                         <i class="fas fa-store"></i>
                         <h3>no stores yet</h3>
@@ -558,26 +509,12 @@
                 return;
             }
 
-            let html = '';
-            for (const store of userStores) {
-                // Get product count
-                const productsSnap = await db.collection('stores')
-                    .doc(store.id)
-                    .collection('products')
-                    .where('status', '==', 'active')
-                    .count()
-                    .get();
+            let html = '<div class="stores-grid">';
+            
+            stores.forEach(store => {
+                const createdDate = store.createdAt?.toDate?.() || new Date();
+                const dateStr = createdDate.toLocaleDateString();
                 
-                const productCount = productsSnap.data().count || 0;
-                
-                // Get order count
-                const ordersSnap = await db.collection('orders')
-                    .where('storeId', '==', store.id)
-                    .count()
-                    .get();
-                
-                const orderCount = ordersSnap.data().count || 0;
-
                 html += `
                     <div class="store-card">
                         <div class="store-header">
@@ -591,26 +528,29 @@
                                 <span class="store-status status-${store.status || 'active'}">
                                     ${store.status || 'active'}
                                 </span>
+                                <div style="font-size:0.8rem; color:#6b8ca8; margin-top:5px;">
+                                    created: ${dateStr}
+                                </div>
                             </div>
                         </div>
                         
                         <div class="store-stats">
                             <div class="stat-item">
-                                <div class="stat-value">${productCount}</div>
+                                <div class="stat-value">0</div>
                                 <div class="stat-label">products</div>
                             </div>
                             <div class="stat-item">
-                                <div class="stat-value">${orderCount}</div>
+                                <div class="stat-value">0</div>
                                 <div class="stat-label">orders</div>
                             </div>
                             <div class="stat-item">
-                                <div class="stat-value">$${store.totalSales || 0}</div>
+                                <div class="stat-value">$0</div>
                                 <div class="stat-label">sales</div>
                             </div>
                         </div>
 
                         <div class="store-actions">
-                            <button class="btn btn-primary" onclick="showAddProduct('${store.id}')">
+                            <button class="btn btn-primary" onclick="addProduct('${store.id}')">
                                 <i class="fas fa-plus"></i> add
                             </button>
                             <button class="btn btn-outline" onclick="editStore('${store.id}')">
@@ -620,70 +560,25 @@
                                 <i class="fas fa-eye"></i> view
                             </button>
                         </div>
-
-                        <!-- Products preview -->
-                        <div style="padding: 0 20px 20px;" id="preview-${store.id}">
-                            <small>loading products...</small>
-                        </div>
                     </div>
                 `;
-            }
+            });
             
-            grid.innerHTML = html;
-            
-            // Load product previews
-            userStores.forEach(store => loadProductPreview(store.id));
+            html += '</div>';
+            container.innerHTML = html;
         }
 
-        // Load product preview for a store
-        async function loadProductPreview(storeId) {
-            try {
-                const snapshot = await db.collection('stores')
-                    .doc(storeId)
-                    .collection('products')
-                    .where('status', '==', 'active')
-                    .limit(3)
-                    .get();
-
-                const previewDiv = document.getElementById(`preview-${storeId}`);
-                
-                if (snapshot.empty) {
-                    previewDiv.innerHTML = '<small>no products yet</small>';
-                    return;
-                }
-
-                let html = '<div class="products-grid" style="grid-template-columns:repeat(3,1fr); gap:10px;">';
-                snapshot.forEach(doc => {
-                    const p = doc.data();
-                    html += `
-                        <div class="product-card" onclick="viewProduct('${storeId}', '${doc.id}')">
-                            <div class="product-image">
-                                <i class="fas fa-box"></i>
-                            </div>
-                            <div style="font-size:0.9rem; font-weight:600;">${p.title}</div>
-                            <div style="color:#e09f2c;">$${p.price}</div>
-                        </div>
-                    `;
-                });
-                html += '</div>';
-                previewDiv.innerHTML = html;
-
-            } catch (error) {
-                console.error('Error loading preview:', error);
-            }
-        }
-
-        // Show create store modal
+        // Create store
         document.getElementById('createStoreBtn').addEventListener('click', () => {
             document.getElementById('createStoreModal').classList.add('active');
         });
 
-        // Save new store
         document.getElementById('saveStoreBtn').addEventListener('click', async () => {
             const name = document.getElementById('storeName').value.trim();
             
             if (!name) {
-                showError('createStoreError', 'store name is required');
+                document.getElementById('createStoreError').style.display = 'block';
+                document.getElementById('createStoreError').innerHTML = 'store name is required';
                 return;
             }
 
@@ -699,8 +594,7 @@
                     ownerId: currentUser.uid,
                     ownerEmail: currentUser.email,
                     createdAt: firebase.firestore.FieldValue.serverTimestamp(),
-                    status: 'active',
-                    totalSales: 0
+                    status: 'active'
                 };
 
                 await db.collection('stores').add(storeData);
@@ -711,132 +605,33 @@
                 loadUserStores();
 
             } catch (error) {
-                showError('createStoreError', error.message);
+                document.getElementById('createStoreError').style.display = 'block';
+                document.getElementById('createStoreError').innerHTML = error.message;
             } finally {
                 btn.disabled = false;
                 btn.innerHTML = 'create store';
             }
         });
 
-        // Show add product modal
-        window.showAddProduct = (storeId) => {
-            document.getElementById('currentStoreId').value = storeId;
-            document.getElementById('addProductModal').classList.add('active');
+        // Placeholder functions
+        window.addProduct = (storeId) => {
+            alert('Add product feature coming soon! Store ID: ' + storeId);
         };
 
-        // Save product
-        document.getElementById('saveProductBtn').addEventListener('click', async () => {
-            const storeId = document.getElementById('currentStoreId').value;
-            const title = document.getElementById('productTitle').value.trim();
-            const price = document.getElementById('productPrice').value;
-
-            if (!title || !price) {
-                showError('addProductError', 'title and price are required');
-                return;
-            }
-
-            const btn = document.getElementById('saveProductBtn');
-            btn.disabled = true;
-            btn.innerHTML = 'adding...';
-
-            try {
-                const productData = {
-                    title: title,
-                    description: document.getElementById('productDesc').value.trim(),
-                    price: parseFloat(price),
-                    quantity: parseInt(document.getElementById('productQuantity').value) || 1,
-                    category: document.getElementById('productCategory').value,
-                    status: 'active',
-                    createdAt: firebase.firestore.FieldValue.serverTimestamp()
-                };
-
-                await db.collection('stores')
-                    .doc(storeId)
-                    .collection('products')
-                    .add(productData);
-
-                closeModal('addProductModal');
-                document.getElementById('productTitle').value = '';
-                document.getElementById('productDesc').value = '';
-                document.getElementById('productPrice').value = '';
-                loadUserStores();
-
-            } catch (error) {
-                showError('addProductError', error.message);
-            } finally {
-                btn.disabled = false;
-                btn.innerHTML = 'add product';
-            }
-        });
-
-        // Edit store
         window.editStore = (storeId) => {
-            const store = userStores.find(s => s.id === storeId);
-            if (store) {
-                document.getElementById('editStoreId').value = storeId;
-                document.getElementById('editStoreName').value = store.name || '';
-                document.getElementById('editStoreDesc').value = store.description || '';
-                document.getElementById('editStoreCategory').value = store.category || 'other';
-                document.getElementById('editStoreModal').classList.add('active');
-            }
+            alert('Edit store feature coming soon! Store ID: ' + storeId);
         };
 
-        // Update store
-        document.getElementById('updateStoreBtn').addEventListener('click', async () => {
-            const storeId = document.getElementById('editStoreId').value;
-            const name = document.getElementById('editStoreName').value.trim();
-
-            if (!name) {
-                showError('editStoreError', 'store name is required');
-                return;
-            }
-
-            const btn = document.getElementById('updateStoreBtn');
-            btn.disabled = true;
-            btn.innerHTML = 'updating...';
-
-            try {
-                await db.collection('stores').doc(storeId).update({
-                    name: name,
-                    description: document.getElementById('editStoreDesc').value.trim(),
-                    category: document.getElementById('editStoreCategory').value,
-                    updatedAt: firebase.firestore.FieldValue.serverTimestamp()
-                });
-
-                closeModal('editStoreModal');
-                loadUserStores();
-
-            } catch (error) {
-                showError('editStoreError', error.message);
-            } finally {
-                btn.disabled = false;
-                btn.innerHTML = 'update store';
-            }
-        });
-
-        // View store
         window.viewStore = (storeId) => {
             window.location.href = `/store/${storeId}`;
         };
 
-        // View product
-        window.viewProduct = (storeId, productId) => {
-            window.location.href = `/store/${storeId}/product/${productId}`;
-        };
-
-        // Modal helpers
         window.closeModal = (modalId) => {
             document.getElementById(modalId).classList.remove('active');
-            document.getElementById(modalId + 'Error').style.display = 'none';
+            document.getElementById('createStoreError').style.display = 'none';
         };
 
-        function showError(elementId, message) {
-            const el = document.getElementById(elementId);
-            el.innerHTML = message;
-            el.style.display = 'block';
-        }
-
-        // Close modals on outside click
+        // Close modal on outside click
         window.onclick = (event) => {
             if (event.target.classList.contains('modal')) {
                 event.target.classList.remove('active');
