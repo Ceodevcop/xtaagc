@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Wallet - TAAGC GAMES</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', sans-serif; }
+        :root { --primary: #667eea; --secondary: #764ba2; --success: #10b981; --warning: #f59e0b; }
+        body { background: linear-gradient(135deg, #667eea10, #764ba210); }
+        .header { background: white; box-shadow: 0 2px 20px rgba(0,0,0,0.1); position: sticky; top: 0; z-index: 1000; }
+        .nav { display: flex; justify-content: space-between; align-items: center; padding: 1rem 5%; max-width: 1400px; margin: 0 auto; }
+        .logo { font-size: 2rem; font-weight: 800; background: linear-gradient(135deg, var(--primary), var(--secondary)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; text-decoration: none; }
+        .main-content { max-width: 1000px; margin: 2rem auto; padding: 0 5%; }
+        
+        .wallet-card {
+            background: white;
+            border-radius: 30px;
+            padding: 2rem;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+        }
+        
+        .balance-card {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            border-radius: 20px;
+            padding: 3rem;
+            color: white;
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+        
+        .balance-amount {
+            font-size: 4rem;
+            font-weight: 800;
+            margin: 1rem 0;
+        }
+        
+        .balance-usd {
+            font-size: 1.5rem;
+            opacity: 0.9;
+        }
+        
+        .action-buttons {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 1rem;
+            margin: 2rem 0;
+        }
+        
+        .action-btn {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: white;
+            border: none;
+            padding: 1.5rem;
+            border-radius: 15px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .action-btn i { font-size: 2rem; }
+        .action-btn:hover { transform: translateY(-5px); box-shadow: 0 10px 20px rgba(102,126,234,0.3); }
+        
+        .transaction-history {
+            margin-top: 2rem;
+        }
+        
+        .transaction-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem;
+            border-bottom: 1px solid #e5e7eb;
+        }
+        
+        .transaction-credit { color: var(--success); font-weight: 600; }
+        .transaction-debit { color: var(--warning); font-weight: 600; }
+        
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 1rem;
+            margin: 2rem 0;
+        }
+        
+        .stat-card {
+            background: #f8fafc;
+            padding: 1.5rem;
+            border-radius: 15px;
+            text-align: center;
+        }
+        
+        .stat-value { font-size: 1.5rem; font-weight: 700; color: var(--primary); }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <div class="nav">
+            <a href="/" class="logo">TAAGC GAMES</a>
+            <a href="/" style="color: var(--primary); text-decoration: none;">← Back to Home</a>
+        </div>
+    </div>
+    
+    <div class="main-content">
+        <div class="wallet-card">
+            <h1 style="margin-bottom: 2rem;">💼 Your Wallet</h1>
+            
+            <!-- Balance Card -->
+            <div class="balance-card">
+                <div>Total Balance</div>
+                <div class="balance-amount" id="walletBalance">2,500</div>
+                <div class="balance-usd">≈ $25.50 USD</div>
+            </div>
+            
+            <!-- Stats -->
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-value" id="totalEarned">1,250</div>
+                    <div>Earned This Month</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value" id="totalSpent">890</div>
+                    <div>Spent This Month</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value" id="tournamentsWon">12</div>
+                    <div>Tournaments Won</div>
+                </div>
+            </div>
+            
+            <!-- Action Buttons -->
+            <div class="action-buttons">
+                <button class="action-btn" onclick="addPoints()">
+                    <i class="fas fa-plus-circle"></i>
+                    Add Points
+                </button>
+                <button class="action-btn" onclick="withdrawPoints()">
+                    <i class="fas fa-hand-holding-usd"></i>
+                    Withdraw
+                </button>
+                <button class="action-btn" onclick="transferPoints()">
+                    <i class="fas fa-exchange-alt"></i>
+                    Transfer
+                </button>
+            </div>
+            
+            <!-- Quick Add Amounts -->
+            <div style="margin: 2rem 0;">
+                <h3>Quick Add</h3>
+                <div style="display: flex; gap: 1rem; margin-top: 1rem;">
+                    <button onclick="quickAdd(100)" style="flex: 1; padding: 1rem; background: #f8fafc; border: 2px solid #e5e7eb; border-radius: 10px; cursor: pointer;">100 PTS</button>
+                    <button onclick="quickAdd(500)" style="flex: 1; padding: 1rem; background: #f8fafc; border: 2px solid #e5e7eb; border-radius: 10px; cursor: pointer;">500 PTS</button>
+                    <button onclick="quickAdd(1000)" style="flex: 1; padding: 1rem; background: #f8fafc; border: 2px solid #e5e7eb; border-radius: 10px; cursor: pointer;">1000 PTS</button>
+                    <button onclick="quickAdd(5000)" style="flex: 1; padding: 1rem; background: #f8fafc; border: 2px solid #e5e7eb; border-radius: 10px; cursor: pointer;">5000 PTS</button>
+                </div>
+            </div>
+            
+            <!-- Transaction History -->
+            <div class="transaction-history">
+                <h3>Recent Transactions</h3>
+                
+                <div class="transaction-item">
+                    <div>
+                        <div><strong>Won Tournament</strong></div>
+                        <div style="font-size: 0.9rem; color: #666;">8 Ball Pool Championship</div>
+                    </div>
+                    <div class="transaction-credit">+500 PTS</div>
+                </div>
+                
+                <div class="transaction-item">
+                    <div>
+                        <div><strong>Bought Points</strong></div>
+                        <div style="font-size: 0.9rem; color: #666;">via TAAGC Pay</div>
+                    </div>
+                    <div class="transaction-credit">+1000 PTS</div>
+                </div>
+                
+                <div class="transaction-item">
+                    <div>
+                        <div><strong>Joined Tournament</strong></div>
+                        <div style="font-size: 0.9rem; color: #666;">Racing Grand Prix</div>
+                    </div>
+                    <div class="transaction-debit">-200 PTS</div>
+                </div>
+                
+                <div class="transaction-item">
+                    <div>
+                        <div><strong>Referred Friend</strong></div>
+                        <div style="font-size: 0.9rem; color: #666;">Bonus for referral</div>
+                    </div>
+                    <div class="transaction-credit">+100 PTS</div>
+                </div>
+            </div>
+            
+            <!-- Payment Methods -->
+            <div style="margin-top: 2rem;">
+                <h3>Payment Methods</h3>
+                <div style="display: flex; gap: 1rem; margin-top: 1rem;">
+                    <div style="flex: 1; padding: 1rem; border: 2px solid #e5e7eb; border-radius: 10px; text-align: center;">
+                        <i class="fas fa-credit-card"></i> Card
+                    </div>
+                    <div style="flex: 1; padding: 1rem; border: 2px solid #e5e7eb; border-radius: 10px; text-align: center;">
+                        <i class="fas fa-university"></i> Bank
+                    </div>
+                    <div style="flex: 1; padding: 1rem; border: 2px solid #e5e7eb; border-radius: 10px; text-align: center; background: linear-gradient(135deg, #667eea10, #764ba210);">
+                        <i class="fab fa-bitcoin"></i> Crypto
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let balance = 2500;
+        
+        function addPoints() {
+            window.location.href = 'https://pay.taagc.website';
+        }
+        
+        function withdrawPoints() {
+            window.location.href = 'https://pay.taagc.website/withdraw';
+        }
+        
+        function transferPoints() {
+            const address = prompt('Enter recipient username or wallet address:');
+            if(address) {
+                const amount = prompt('Enter amount to transfer:');
+                if(amount && !isNaN(amount) && amount > 0) {
+                    if(amount <= balance) {
+                        balance -= parseInt(amount);
+                        document.getElementById('walletBalance').textContent = balance;
+                        alert(`Successfully transferred ${amount} PTS to ${address}`);
+                    } else {
+                        alert('Insufficient balance!');
+                    }
+                }
+            }
+        }
+        
+        function quickAdd(amount) {
+            if(confirm(`Add ${amount} PTS to your wallet?`)) {
+                window.location.href = `https://pay.taagc.website/purchase?amount=${amount}`;
+            }
+        }
+    </script>
+</body>
+</html>
