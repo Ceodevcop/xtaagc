@@ -1,0 +1,534 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TAAGC Global · first 100 bonus</title>
+    <!-- Firebase SDK (compat) -->
+    <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-firestore-compat.js"></script>
+    <!-- Font Awesome 6 -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Inter', 'Segoe UI', system-ui, sans-serif;
+        }
+        body {
+            background: linear-gradient(145deg, #0a2538 0%, #143e5a 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+        .bonus-card {
+            background: rgba(255,255,255,0.95);
+            backdrop-filter: blur(8px);
+            max-width: 700px;
+            width: 100%;
+            border-radius: 48px;
+            padding: 35px 30px;
+            box-shadow: 0 40px 70px -10px #00000080;
+            border: 2px solid #e09f2c60;
+        }
+        h1 {
+            font-size: 2.6rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, #0b2f4e, #22628b);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 8px;
+        }
+        .subtitle {
+            color: #1f5379;
+            font-size: 1.2rem;
+            margin-bottom: 30px;
+            border-left: 6px solid #e09f2c;
+            padding-left: 20px;
+        }
+        .counter-panel {
+            background: #eef4fa;
+            border-radius: 100px;
+            padding: 15px 25px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin: 25px 0 30px;
+            border: 2px solid #bed9f0;
+        }
+        .counter {
+            font-size: 2.8rem;
+            font-weight: 800;
+            color: #e09f2c;
+            text-shadow: 2px 2px 0 #fce5b5;
+        }
+        .badge-eligible {
+            background: #198754;
+            color: white;
+            padding: 10px 24px;
+            border-radius: 60px;
+            font-weight: 700;
+            font-size: 1.2rem;
+        }
+        .badge-waiting {
+            background: #ffc107;
+            color: #1b3f5a;
+            padding: 10px 24px;
+            border-radius: 60px;
+            font-weight: 700;
+        }
+        .timer-box {
+            background: #0b2f4e;
+            color: white;
+            border-radius: 40px;
+            padding: 25px;
+            text-align: center;
+            margin: 30px 0;
+            border: 3px solid #e09f2c;
+        }
+        .timer-digits {
+            font-family: 'Courier New', monospace;
+            font-size: 3rem;
+            font-weight: 800;
+            letter-spacing: 6px;
+            color: #e09f2c;
+        }
+        .btn {
+            background: white;
+            border: 3px solid #22628b;
+            color: #22628b;
+            font-weight: 700;
+            padding: 16px 30px;
+            border-radius: 60px;
+            font-size: 1.2rem;
+            cursor: pointer;
+            transition: 0.2s;
+            width: 100%;
+        }
+        .btn-primary {
+            background: #e09f2c;
+            border-color: #e09f2c;
+            color: #0b2f4e;
+        }
+        .btn-primary:hover:not(:disabled) {
+            background: #cf8f1f;
+            transform: scale(1.02);
+        }
+        .btn:disabled {
+            opacity: 0.4;
+            cursor: not-allowed;
+        }
+        .wallet-row {
+            background: #f9f1e3;
+            border-radius: 60px;
+            padding: 15px 25px;
+            display: flex;
+            gap: 15px;
+            align-items: center;
+            margin: 25px 0 15px;
+        }
+        .wallet-input {
+            flex: 1;
+            padding: 15px 20px;
+            border-radius: 60px;
+            border: 2px solid #b6d2ec;
+            font-size: 1.1rem;
+            background: white;
+        }
+        .info-message {
+            background: #fff3db;
+            border-radius: 30px;
+            padding: 16px 22px;
+            font-size: 1rem;
+            border-left: 8px solid #e09f2c;
+            margin-top: 20px;
+        }
+        .firebase-hint {
+            background: #102c41;
+            color: #bcd9f0;
+            padding: 12px 18px;
+            border-radius: 40px;
+            font-family: monospace;
+            font-size: 0.9rem;
+        }
+        .user-list {
+            max-height: 200px;
+            overflow-y: auto;
+            background: #e4edf6;
+            border-radius: 30px;
+            padding: 10px 15px;
+            margin-top: 25px;
+        }
+        .user-item {
+            padding: 8px 10px;
+            border-bottom: 1px dashed #9bb7d1;
+            display: flex;
+            justify-content: space-between;
+        }
+    </style>
+</head>
+<body>
+<div class="bonus-card">
+    <h1><i class="fas fa-gift" style="color:#e09f2c;"></i> First 100 bonus</h1>
+    <div class="subtitle">pay $2 · get $3 · 48h to claim</div>
+
+    <!-- Firebase config (demo using test project, but we'll simulate with dummy) 
+         we will use mock but connect to real firebase emulator? we create working demo with in-memory fallback 
+         but include real firebase structure -->
+    <div class="firebase-hint">
+        <i class="fas fa-database"></i> Firebase: collection "users" (first 100) · bonusEligible, wallet, deadline
+    </div>
+
+    <!-- live registered users count (fetched) -->
+    <div class="counter-panel">
+        <span style="font-weight:600;"><i class="fas fa-users"></i> registered users</span>
+        <span class="counter" id="userCounter">--</span>
+    </div>
+
+    <!-- eligibility status -->
+    <div id="eligibilityDisplay"></div>
+
+    <!-- 48h timer section (shown if eligible) -->
+    <div id="timerSection" style="display: none;" class="timer-box">
+        <i class="fas fa-hourglass-half" style="font-size:2rem;"></i>
+        <div style="font-size:1.2rem; margin-bottom:10px;">⏳ time left to pay $2 (bonus $1 extra)</div>
+        <div class="timer-digits" id="countdownTimer">47:59:59</div>
+        <div style="margin-top:10px;">after payment you receive $3 total</div>
+    </div>
+
+    <!-- wallet input & pay button -->
+    <div class="wallet-row" id="walletSection" style="display: none;">
+        <i class="fas fa-wallet" style="font-size:2rem; color:#22628b;"></i>
+        <input type="text" class="wallet-input" id="walletAddress" placeholder="your TRC20 / BEP20 address" value="0xDemo...Wallet">
+        <button class="btn btn-primary" id="payBtn">pay $2</button>
+    </div>
+
+    <!-- info message / bonus status -->
+    <div class="info-message" id="infoMessage">
+        🔍 checking eligibility...
+    </div>
+
+    <!-- live mini user list (first 5) -->
+    <div id="userListContainer" class="user-list">
+        <div style="font-weight:600; margin-bottom:5px;"><i class="fas fa-list"></i> first registered (firebase)</div>
+        <div id="userList">loading...</div>
+    </div>
+</div>
+
+<script>
+    (function() {
+        // ------------------ FIREBASE CONFIG (replace with your own) ------------------
+        // For demo, we use a public test project + firestore emulation.
+        // We'll simulate first 100 registered users via memory if firebase fails,
+        // but we write real firestore calls.
+        const firebaseConfig = {
+            apiKey: "AIzaSyDummy123_ChangeThis",          // <-- REPLACE WITH YOUR CREDENTIALS
+            authDomain: "taagc-global.firebaseapp.com",   // dummy
+            projectId: "taagc-global",
+            storageBucket: "taagc-global.appspot.com",
+            messagingSenderId: "1234567890",
+            appId: "1:1234567890:web:abc123"
+        };
+
+        // initialize firebase
+        let app, db;
+        let firebaseAvailable = false;
+        try {
+            app = firebase.initializeApp(firebaseConfig);
+            db = firebase.firestore();
+            // enable offline for demo? not needed
+            firebaseAvailable = true;
+            console.log("firebase initialized (mock credentials may fail - we'll fallback to local)");
+        } catch (e) {
+            console.warn("firebase init failed, using local mock data", e);
+            firebaseAvailable = false;
+        }
+
+        // ---------- state ----------
+        const currentUserId = "user_demo_001";   // pretend logged-in user (e.g., from auth)
+        let userData = null;
+        let first100Count = 0;
+        let eligible = false;
+        let timerInterval = null;
+        let paymentDeadline = null; // timestamp
+
+        // DOM elements
+        const userCounterSpan = document.getElementById('userCounter');
+        const eligibilityDiv = document.getElementById('eligibilityDisplay');
+        const timerSection = document.getElementById('timerSection');
+        const walletSection = document.getElementById('walletSection');
+        const walletInput = document.getElementById('walletAddress');
+        const payBtn = document.getElementById('payBtn');
+        const infoMessage = document.getElementById('infoMessage');
+        const userListEl = document.getElementById('userList');
+
+        // helper: format countdown
+        function updateTimerDisplay(deadlineMs) {
+            const now = Date.now();
+            const diff = Math.max(0, deadlineMs - now);
+            const hours = Math.floor(diff / (1000 * 60 * 60));
+            const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+            const seconds = Math.floor((diff % (1000 * 60)) / 1000);
+            return `${hours.toString().padStart(2,'0')}:${minutes.toString().padStart(2,'0')}:${seconds.toString().padStart(2,'0')}`;
+        }
+
+        // load first 100 users count + check current user eligibility
+        async function fetchEligibility() {
+            try {
+                let first100Query;
+                let userDoc = null;
+                let first100Docs = [];
+
+                if (firebaseAvailable && db) {
+                    // get first 100 users ordered by registration (assuming field 'registeredAt')
+                    first100Query = await db.collection('users')
+                        .orderBy('registeredAt', 'asc')
+                        .limit(100)
+                        .get();
+                    first100Docs = first100Query.docs;
+                    first100Count = first100Docs.length;
+
+                    // get current user
+                    userDoc = await db.collection('users').doc(currentUserId).get();
+                } else {
+                    // fallback mock data: generate 90 registered users (to show eligibility)
+                    first100Count = 90; // less than 100, so eligible
+                    // mock user eligible if within first 100 and not paid
+                    userData = {
+                        id: currentUserId,
+                        registeredAt: new Date('2025-01-15'),
+                        bonusEligible: true,
+                        wallet: null,
+                        paymentDeadline: null,
+                        bonusPaid: false
+                    };
+                    // mock first100 list
+                    first100Docs = Array(90).fill().map((_,i) => ({ id: `user_${i+1}`, data: () => ({ registeredAt: new Date(2025,0,i+1) }) }));
+                }
+
+                if (userDoc && userDoc.exists) {
+                    userData = { id: userDoc.id, ...userDoc.data() };
+                } else if (!firebaseAvailable && userData) {
+                    // already set
+                } else {
+                    // create mock user data for demo
+                    userData = {
+                        id: currentUserId,
+                        registeredAt: new Date(),
+                        bonusEligible: true,
+                        wallet: null,
+                        paymentDeadline: null,
+                        bonusPaid: false
+                    };
+                }
+
+                // check if current user is within first 100 (by comparing registration)
+                let userIsInFirst100 = false;
+                if (first100Docs.length > 0) {
+                    // simple mock: if user registered early
+                    if (userData && userData.registeredAt) {
+                        // we need to check index. in mock we assume yes if first100Count <100
+                        userIsInFirst100 = first100Count < 100; // for demo, if less than 100 registered, assume eligible
+                    }
+                }
+
+                // also check if user already paid or has pending timer
+                const now = Date.now();
+                if (userData && userData.paymentDeadline && userData.paymentDeadline.toDate) {
+                    paymentDeadline = userData.paymentDeadline.toDate().getTime();
+                } else if (userData && userData.paymentDeadline) {
+                    paymentDeadline = new Date(userData.paymentDeadline).getTime();
+                }
+
+                const hasValidDeadline = paymentDeadline && paymentDeadline > now;
+                const alreadyPaid = userData?.bonusPaid === true;
+
+                // eligibility: within first 100, not paid, and (no deadline or deadline valid)
+                if (userIsInFirst100 && !alreadyPaid && first100Count <= 100) {
+                    if (!paymentDeadline || hasValidDeadline) {
+                        eligible = true;
+                    } else {
+                        eligible = false; // deadline passed
+                    }
+                } else {
+                    eligible = false;
+                }
+
+                // if eligible and no deadline, set one? Actually we set when user clicks "I want to pay"
+                // but we also can show pending deadline from firebase
+                if (eligible && paymentDeadline && hasValidDeadline) {
+                    // show timer
+                }
+
+                // update UI
+                updateUI(first100Count, eligible, paymentDeadline, userData);
+
+                // render user list (first 5 names)
+                if (first100Docs.length > 0) {
+                    let html = '';
+                    first100Docs.slice(0,5).forEach((doc, idx) => {
+                        let name = doc.id;
+                        if (doc.data && doc.data().email) name = doc.data().email;
+                        html += `<div class="user-item"><span>${idx+1}. ${name}</span> <i class="fas fa-check-circle" style="color:#198754;"></i></div>`;
+                    });
+                    if (first100Docs.length > 5) html += `<div class="user-item">... and ${first100Docs.length-5} more</div>`;
+                    userListEl.innerHTML = html;
+                } else {
+                    userListEl.innerHTML = '<div class="user-item">⚠️ using mock: 90 registered users (first 100 eligible)</div>';
+                }
+
+            } catch (error) {
+                console.error("firebase error", error);
+                // fallback: mock eligible
+                first100Count = 90;
+                eligible = true;
+                updateUI(first100Count, eligible, null, null);
+                userListEl.innerHTML = '<div class="user-item">demo mode: 90 users (eligible)</div>';
+            }
+        }
+
+        function updateUI(count, isEligible, deadline, userData) {
+            userCounterSpan.innerText = count;
+
+            if (isEligible) {
+                eligibilityDiv.innerHTML = `<span class="badge-eligible"><i class="fas fa-star"></i> you are eligible (first ${count} / 100) </span>`;
+                // show timer if deadline exists and valid
+                const now = Date.now();
+                if (deadline && deadline > now) {
+                    timerSection.style.display = 'block';
+                    walletSection.style.display = 'flex';
+                    // start countdown
+                    if (timerInterval) clearInterval(timerInterval);
+                    timerInterval = setInterval(() => {
+                        const remain = updateTimerDisplay(deadline);
+                        document.getElementById('countdownTimer').innerText = remain;
+                        if (Date.now() >= deadline) {
+                            clearInterval(timerInterval);
+                            timerSection.style.display = 'none';
+                            walletSection.style.display = 'none';
+                            infoMessage.innerText = '⌛ 48h passed. Bonus expired.';
+                            // update firebase maybe
+                        }
+                    }, 1000);
+                    // if user already has wallet prefilled
+                    if (userData?.wallet) walletInput.value = userData.wallet;
+                    infoMessage.innerHTML = `✅ You are in first ${count}. Pay $2 within 48h to get $3.`;
+                } else {
+                    // eligible but no deadline set: show option to start
+                    timerSection.style.display = 'none';
+                    walletSection.style.display = 'flex';
+                    infoMessage.innerHTML = `✅ You are eligible. Click "pay $2" to lock bonus (48h timer starts).`;
+                }
+            } else {
+                if (count >= 100) {
+                    eligibilityDiv.innerHTML = `<span class="badge-waiting"><i class="fas fa-clock"></i> first 100 already full (${count} registered)</span>`;
+                } else if (userData?.bonusPaid) {
+                    eligibilityDiv.innerHTML = `<span class="badge-waiting"><i class="fas fa-check"></i> bonus already claimed</span>`;
+                } else {
+                    eligibilityDiv.innerHTML = `<span class="badge-waiting"><i class="fas fa-hourglass"></i> waiting for first 100 slot</span>`;
+                }
+                timerSection.style.display = 'none';
+                walletSection.style.display = 'none';
+            }
+        }
+
+        // handle pay button
+        payBtn.addEventListener('click', async function() {
+            if (!eligible) {
+                alert('You are not eligible at this moment.');
+                return;
+            }
+            const wallet = walletInput.value.trim();
+            if (!wallet) {
+                alert('Enter wallet address');
+                return;
+            }
+
+            // simulate $2 payment (in real app you'd integrate crypto/modal)
+            const confirmed = confirm(`Simulate $2 payment from wallet ${wallet}? (demo)`);
+            if (!confirmed) return;
+
+            // set deadline = now + 48h
+            const deadlineMs = Date.now() + 48 * 60 * 60 * 1000;
+            paymentDeadline = deadlineMs;
+
+            // update firebase (if available)
+            if (firebaseAvailable && db) {
+                try {
+                    await db.collection('users').doc(currentUserId).set({
+                        wallet: wallet,
+                        paymentDeadline: new Date(deadlineMs),
+                        bonusPaid: false,
+                        bonusEligible: true
+                    }, { merge: true });
+                } catch (e) { console.warn("firebase update failed", e); }
+            }
+
+            // update local userData
+            if (!userData) userData = {};
+            userData.wallet = wallet;
+            userData.paymentDeadline = new Date(deadlineMs);
+            userData.bonusPaid = false;
+
+            // show timer and message
+            timerSection.style.display = 'block';
+            infoMessage.innerHTML = `💲 Payment received (simulated). You have 48h to complete, but bonus $1 will be added after confirmation.`;
+            // start countdown
+            if (timerInterval) clearInterval(timerInterval);
+            timerInterval = setInterval(() => {
+                const remain = updateTimerDisplay(deadlineMs);
+                document.getElementById('countdownTimer').innerText = remain;
+                if (Date.now() >= deadlineMs) {
+                    clearInterval(timerInterval);
+                    timerSection.style.display = 'none';
+                    walletSection.style.display = 'none';
+                    infoMessage.innerText = '⏰ 48h passed. You can restart eligibility if slots remain.';
+                }
+            }, 1000);
+
+            // after 5 seconds simulate bonus added (for demo)
+            setTimeout(() => {
+                if (userData && !userData.bonusPaid) {
+                    // mark bonus paid in firebase
+                    if (firebaseAvailable && db) {
+                        db.collection('users').doc(currentUserId).update({
+                            bonusPaid: true,
+                            finalBonus: 3  // $1 bonus + $2
+                        }).catch(()=>{});
+                    }
+                    userData.bonusPaid = true;
+                    infoMessage.innerHTML = '🎉 BONUS AWARDED: $1 bonus added → total $3. Thank you!';
+                }
+            }, 8000);
+        });
+
+        // init
+        fetchEligibility();
+
+        // refresh count every 15 seconds (simulate new registrations)
+        setInterval(() => {
+            // in mock, increase count slowly to demonstrate
+            if (!firebaseAvailable) {
+                if (first100Count < 100) {
+                    first100Count++;
+                    userCounterSpan.innerText = first100Count;
+                    if (first100Count >= 100) {
+                        eligible = false;
+                        updateUI(first100Count, false, null, userData);
+                    } else {
+                        // re-check if current user still eligible (they are if they were)
+                    }
+                }
+            } else {
+                // real fetch
+                fetchEligibility();
+            }
+        }, 8000);
+    })();
+</script>
+<!-- note: firebase may be misconfigured; for demo we fallback to local mock -->
+</body>
+</html>
