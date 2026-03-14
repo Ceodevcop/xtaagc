@@ -1,0 +1,299 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tournaments - TAAGC GAMES</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', sans-serif; }
+        :root { --primary: #667eea; --secondary: #764ba2; }
+        body { background: linear-gradient(135deg, #667eea10, #764ba210); }
+        .header { background: white; box-shadow: 0 2px 20px rgba(0,0,0,0.1); position: sticky; top: 0; z-index: 1000; }
+        .nav { display: flex; justify-content: space-between; align-items: center; padding: 1rem 5%; max-width: 1400px; margin: 0 auto; }
+        .logo { font-size: 2rem; font-weight: 800; background: linear-gradient(135deg, var(--primary), var(--secondary)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; text-decoration: none; }
+        .main-content { max-width: 1400px; margin: 2rem auto; padding: 0 5%; }
+        
+        .tournament-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+            gap: 2rem;
+            margin-top: 2rem;
+        }
+        
+        .tournament-card {
+            background: white;
+            border-radius: 20px;
+            padding: 1.5rem;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .tournament-badge {
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: white;
+            padding: 0.3rem 1rem;
+            border-radius: 50px;
+            font-size: 0.8rem;
+        }
+        
+        .prize-pool {
+            font-size: 2rem;
+            color: var(--warning);
+            font-weight: 800;
+            margin: 1rem 0;
+        }
+        
+        .entry-fee {
+            display: inline-block;
+            background: var(--success);
+            color: white;
+            padding: 0.5rem 1rem;
+            border-radius: 10px;
+            margin: 1rem 0;
+        }
+        
+        .progress-container {
+            margin: 1.5rem 0;
+        }
+        
+        .progress-bar {
+            height: 10px;
+            background: #e5e7eb;
+            border-radius: 5px;
+            overflow: hidden;
+        }
+        
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            transition: width 0.3s;
+        }
+        
+        .tournament-footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 1rem;
+            padding-top: 1rem;
+            border-top: 1px solid #e5e7eb;
+        }
+        
+        .join-btn {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: white;
+            border: none;
+            padding: 0.8rem 2rem;
+            border-radius: 50px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .join-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(102,126,234,0.3);
+        }
+        
+        .filter-bar {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 2rem;
+            flex-wrap: wrap;
+        }
+        
+        .filter-btn {
+            padding: 0.5rem 1.5rem;
+            border: 2px solid #e5e7eb;
+            background: white;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .filter-btn.active {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: white;
+            border-color: transparent;
+        }
+        
+        .featured-tournament {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            border-radius: 30px;
+            padding: 3rem;
+            color: white;
+            margin-bottom: 3rem;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <div class="nav">
+            <a href="/" class="logo">TAAGC GAMES</a>
+            <a href="/" style="color: var(--primary); text-decoration: none;">← Back to Home</a>
+        </div>
+    </div>
+    
+    <div class="main-content">
+        <!-- Featured Tournament -->
+        <div class="featured-tournament">
+            <span style="background: white; color: var(--primary); padding: 0.3rem 1rem; border-radius: 50px; font-weight: 600;">🔥 FEATURED</span>
+            <h1 style="font-size: 3rem; margin: 1rem 0;">Battle Royale Championship</h1>
+            <div style="display: flex; gap: 3rem; margin: 2rem 0;">
+                <div>
+                    <div style="font-size: 2.5rem; font-weight: 800;">50,000 PTS</div>
+                    <div>Prize Pool</div>
+                </div>
+                <div>
+                    <div style="font-size: 2.5rem; font-weight: 800;">500 PTS</div>
+                    <div>Entry Fee</div>
+                </div>
+                <div>
+                    <div style="font-size: 2.5rem; font-weight: 800;">89/100</div>
+                    <div>Players Joined</div>
+                </div>
+            </div>
+            <button class="join-btn" style="background: white; color: var(--primary);" onclick="joinTournament(1)">Join Now</button>
+        </div>
+        
+        <!-- Filter Bar -->
+        <div class="filter-bar">
+            <button class="filter-btn active">All Tournaments</button>
+            <button class="filter-btn">Racing</button>
+            <button class="filter-btn">Football</button>
+            <button class="filter-btn">Multiplayer</button>
+            <button class="filter-btn">Battle Royale</button>
+        </div>
+        
+        <!-- Tournaments Grid -->
+        <div class="tournament-grid" id="tournamentGrid"></div>
+    </div>
+
+    <script>
+        const tournaments = [
+            {
+                id: 1,
+                title: "8 Ball Pool Championship",
+                prize: "10,000 PTS",
+                entry: "100 PTS",
+                current: 128,
+                max: 256,
+                time: "2h left",
+                game: "🎱",
+                status: "hot"
+            },
+            {
+                id: 2,
+                title: "Racing Grand Prix",
+                prize: "15,000 PTS",
+                entry: "200 PTS",
+                current: 45,
+                max: 128,
+                time: "5h left",
+                game: "🏎️",
+                status: "new"
+            },
+            {
+                id: 3,
+                title: "Football Cup",
+                prize: "20,000 PTS",
+                entry: "150 PTS",
+                current: 64,
+                max: 128,
+                time: "3h left",
+                game: "⚽",
+                status: "hot"
+            },
+            {
+                id: 4,
+                title: "Battle Royale",
+                prize: "50,000 PTS",
+                entry: "500 PTS",
+                current: 89,
+                max: 100,
+                time: "1h left",
+                game: "🔫",
+                status: "featured"
+            },
+            {
+                id: 5,
+                title: "Chess Masters",
+                prize: "5,000 PTS",
+                entry: "50 PTS",
+                current: 16,
+                max: 32,
+                time: "6h left",
+                game: "♟️",
+                status: "new"
+            },
+            {
+                id: 6,
+                title: "Street Football",
+                prize: "8,000 PTS",
+                entry: "80 PTS",
+                current: 22,
+                max: 64,
+                time: "4h left",
+                game: "⚽",
+                status: ""
+            }
+        ];
+
+        function renderTournaments() {
+            const html = tournaments.map(t => `
+                <div class="tournament-card">
+                    <div style="font-size: 3rem; text-align: center;">${t.game}</div>
+                    <h2 style="margin: 1rem 0;">${t.title}</h2>
+                    
+                    <div style="display: flex; justify-content: space-between;">
+                        <div class="prize-pool">🏆 ${t.prize}</div>
+                        <div class="entry-fee">Entry: ${t.entry}</div>
+                    </div>
+                    
+                    <div class="progress-container">
+                        <div style="display: flex; justify-content: space-between; margin-bottom: 0.5rem;">
+                            <span>${t.current} players</span>
+                            <span>${t.max} max</span>
+                        </div>
+                        <div class="progress-bar">
+                            <div class="progress-fill" style="width: ${(t.current/t.max)*100}%"></div>
+                        </div>
+                    </div>
+                    
+                    <div class="tournament-footer">
+                        <span>⏰ ${t.time}</span>
+                        <button class="join-btn" onclick="joinTournament(${t.id})">Join</button>
+                    </div>
+                    
+                    ${t.status ? `<span class="tournament-badge">${t.status === 'hot' ? '🔥 HOT' : t.status === 'new' ? '🆕 NEW' : '⭐ FEATURED'}</span>` : ''}
+                </div>
+            `).join('');
+            
+            document.getElementById('tournamentGrid').innerHTML = html;
+        }
+
+        function joinTournament(id) {
+            const tournament = tournaments.find(t => t.id === id);
+            const entryFee = parseInt(tournament.entry);
+            const walletBalance = parseInt(document.getElementById('walletBalance')?.textContent || '2500');
+            
+            if(walletBalance >= entryFee) {
+                alert(`Successfully joined ${tournament.title}! Entry fee: ${entryFee} points deducted.`);
+                // Update wallet balance
+                if(document.getElementById('walletBalance')) {
+                    document.getElementById('walletBalance').textContent = walletBalance - entryFee;
+                }
+            } else {
+                alert('Insufficient points! Please add points to join.');
+                window.location.href = 'https://pay.taagc.website';
+            }
+        }
+
+        renderTournaments();
+    </script>
+</body>
+</html>
