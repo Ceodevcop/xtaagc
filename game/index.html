@@ -1,0 +1,935 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GameEarn - Play Games & Earn Real Rewards</title>
+    <!-- Font Awesome for Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: #333;
+            line-height: 1.6;
+        }
+
+        /* Header & Navigation */
+        header {
+            background: rgba(255, 255, 255, 0.95);
+            box-shadow: 0 2px 20px rgba(0,0,0,0.1);
+            position: fixed;
+            width: 100%;
+            top: 0;
+            z-index: 1000;
+            backdrop-filter: blur(10px);
+        }
+
+        nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem 5%;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .logo {
+            font-size: 1.8rem;
+            font-weight: bold;
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-decoration: none;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 2rem;
+            align-items: center;
+        }
+
+        .nav-links a {
+            text-decoration: none;
+            color: #333;
+            font-weight: 500;
+            transition: color 0.3s;
+        }
+
+        .nav-links a:hover {
+            color: #667eea;
+        }
+
+        .telegram-btn {
+            background: #0088cc;
+            color: white !important;
+            padding: 0.5rem 1.5rem;
+            border-radius: 50px;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            transition: transform 0.3s !important;
+        }
+
+        .telegram-btn:hover {
+            transform: translateY(-2px);
+            background: #0077b5;
+            color: white !important;
+        }
+
+        /* Hero Section */
+        .hero {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            padding: 6rem 5% 4rem;
+            color: white;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hero::before {
+            content: '';
+            position: absolute;
+            width: 200%;
+            height: 200%;
+            background: rgba(255,255,255,0.1);
+            transform: rotate(-45deg);
+            top: -50%;
+            left: -50%;
+            animation: shine 10s infinite linear;
+        }
+
+        @keyframes shine {
+            0% { transform: rotate(-45deg) translateX(-100%); }
+            100% { transform: rotate(-45deg) translateX(100%); }
+        }
+
+        .hero-content {
+            flex: 1;
+            position: relative;
+            z-index: 1;
+            max-width: 600px;
+        }
+
+        .hero-content h1 {
+            font-size: 3.5rem;
+            line-height: 1.2;
+            margin-bottom: 1.5rem;
+            animation: fadeInUp 1s ease;
+        }
+
+        .hero-content p {
+            font-size: 1.2rem;
+            margin-bottom: 2rem;
+            opacity: 0.9;
+            animation: fadeInUp 1s ease 0.2s both;
+        }
+
+        .hero-buttons {
+            display: flex;
+            gap: 1rem;
+            flex-wrap: wrap;
+            animation: fadeInUp 1s ease 0.4s both;
+        }
+
+        .btn {
+            padding: 1rem 2rem;
+            border-radius: 50px;
+            text-decoration: none;
+            font-weight: 600;
+            transition: all 0.3s;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .btn-primary {
+            background: white;
+            color: #667eea;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 20px rgba(0,0,0,0.2);
+        }
+
+        .btn-secondary {
+            background: transparent;
+            color: white;
+            border: 2px solid white;
+        }
+
+        .btn-secondary:hover {
+            background: white;
+            color: #667eea;
+            transform: translateY(-3px);
+        }
+
+        .hero-image {
+            flex: 1;
+            position: relative;
+            z-index: 1;
+            animation: float 6s ease-in-out infinite;
+        }
+
+        .hero-image img {
+            width: 100%;
+            max-width: 500px;
+            display: block;
+            margin: 0 auto;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-20px); }
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Featured Games Section */
+        .featured {
+            padding: 5rem 5%;
+            background: white;
+        }
+
+        .section-title {
+            text-align: center;
+            font-size: 2.5rem;
+            margin-bottom: 3rem;
+            color: #333;
+        }
+
+        .section-title span {
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .game-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .game-card {
+            background: white;
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            transition: transform 0.3s;
+        }
+
+        .game-card:hover {
+            transform: translateY(-10px);
+        }
+
+        .game-image {
+            height: 200px;
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .game-image i {
+            font-size: 5rem;
+            color: rgba(255,255,255,0.3);
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+        }
+
+        .game-info {
+            padding: 1.5rem;
+        }
+
+        .game-info h3 {
+            font-size: 1.3rem;
+            margin-bottom: 0.5rem;
+            color: #333;
+        }
+
+        .game-info p {
+            color: #666;
+            margin-bottom: 1rem;
+            font-size: 0.95rem;
+        }
+
+        .game-meta {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+
+        .earning {
+            background: #e8f5e9;
+            color: #4caf50;
+            padding: 0.3rem 1rem;
+            border-radius: 50px;
+            font-weight: 600;
+            font-size: 0.9rem;
+        }
+
+        .players {
+            color: #666;
+            font-size: 0.9rem;
+        }
+
+        .players i {
+            color: #667eea;
+            margin-right: 0.3rem;
+        }
+
+        .play-btn {
+            display: block;
+            text-align: center;
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            color: white;
+            text-decoration: none;
+            padding: 0.8rem;
+            border-radius: 50px;
+            font-weight: 600;
+            transition: transform 0.3s;
+        }
+
+        .play-btn:hover {
+            transform: scale(1.05);
+        }
+
+        /* Telegram Games Section */
+        .telegram-games {
+            padding: 5rem 5%;
+            background: #f8f9fa;
+        }
+
+        .tg-game-card {
+            background: white;
+            border-radius: 15px;
+            padding: 2rem;
+            text-align: center;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            transition: transform 0.3s;
+        }
+
+        .tg-game-card:hover {
+            transform: translateY(-10px);
+        }
+
+        .tg-icon {
+            width: 80px;
+            height: 80px;
+            background: linear-gradient(45deg, #0088cc, #00a3e0);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 1.5rem;
+        }
+
+        .tg-icon i {
+            font-size: 2.5rem;
+            color: white;
+        }
+
+        .tg-game-card h3 {
+            font-size: 1.5rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .tg-game-card p {
+            color: #666;
+            margin-bottom: 1.5rem;
+        }
+
+        .tg-stats {
+            display: flex;
+            justify-content: space-around;
+            margin-bottom: 1.5rem;
+        }
+
+        .stat {
+            text-align: center;
+        }
+
+        .stat-value {
+            font-size: 1.3rem;
+            font-weight: bold;
+            color: #0088cc;
+        }
+
+        .stat-label {
+            font-size: 0.8rem;
+            color: #666;
+        }
+
+        .tg-btn {
+            display: inline-block;
+            background: #0088cc;
+            color: white;
+            text-decoration: none;
+            padding: 0.8rem 2rem;
+            border-radius: 50px;
+            font-weight: 600;
+            transition: all 0.3s;
+        }
+
+        .tg-btn:hover {
+            background: #0077b5;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0,136,204,0.3);
+        }
+
+        /* Earning Tips Section */
+        .tips {
+            padding: 5rem 5%;
+            background: white;
+        }
+
+        .tips-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 2rem;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .tip-card {
+            text-align: center;
+            padding: 2rem;
+            border-radius: 15px;
+            background: #f8f9fa;
+            transition: transform 0.3s;
+        }
+
+        .tip-card:hover {
+            transform: translateY(-10px);
+        }
+
+        .tip-icon {
+            width: 70px;
+            height: 70px;
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 1.5rem;
+            color: white;
+            font-size: 1.8rem;
+        }
+
+        .tip-card h3 {
+            margin-bottom: 1rem;
+            color: #333;
+        }
+
+        .tip-card p {
+            color: #666;
+            margin-bottom: 1.5rem;
+        }
+
+        .tip-link {
+            color: #667eea;
+            text-decoration: none;
+            font-weight: 600;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .tip-link:hover {
+            gap: 1rem;
+        }
+
+        /* Telegram Community Section */
+        .community {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            padding: 5rem 5%;
+            color: white;
+            text-align: center;
+        }
+
+        .community h2 {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .community p {
+            font-size: 1.2rem;
+            margin-bottom: 2rem;
+            opacity: 0.9;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .tg-join-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 1rem;
+            background: white;
+            color: #667eea;
+            padding: 1rem 3rem;
+            border-radius: 50px;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 1.2rem;
+            transition: transform 0.3s;
+        }
+
+        .tg-join-btn:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+        }
+
+        .tg-join-btn i {
+            font-size: 1.5rem;
+        }
+
+        .community-stats {
+            display: flex;
+            justify-content: center;
+            gap: 3rem;
+            margin-top: 3rem;
+        }
+
+        .community-stat {
+            text-align: center;
+        }
+
+        .community-stat .number {
+            font-size: 2rem;
+            font-weight: bold;
+            display: block;
+        }
+
+        .community-stat .label {
+            font-size: 0.9rem;
+            opacity: 0.9;
+        }
+
+        /* Footer */
+        footer {
+            background: #1a1a1a;
+            color: white;
+            padding: 3rem 5% 1rem;
+        }
+
+        .footer-content {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 2rem;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .footer-section h3 {
+            margin-bottom: 1rem;
+            font-size: 1.2rem;
+        }
+
+        .footer-section p {
+            color: #999;
+            line-height: 1.8;
+        }
+
+        .footer-section ul {
+            list-style: none;
+        }
+
+        .footer-section ul li {
+            margin-bottom: 0.5rem;
+        }
+
+        .footer-section ul li a {
+            color: #999;
+            text-decoration: none;
+            transition: color 0.3s;
+        }
+
+        .footer-section ul li a:hover {
+            color: white;
+        }
+
+        .social-links {
+            display: flex;
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+
+        .social-links a {
+            width: 40px;
+            height: 40px;
+            background: #333;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            text-decoration: none;
+            transition: all 0.3s;
+        }
+
+        .social-links a:hover {
+            background: #667eea;
+            transform: translateY(-3px);
+        }
+
+        .footer-bottom {
+            text-align: center;
+            padding-top: 2rem;
+            margin-top: 2rem;
+            border-top: 1px solid #333;
+            color: #999;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            nav {
+                flex-direction: column;
+                gap: 1rem;
+            }
+
+            .nav-links {
+                flex-wrap: wrap;
+                justify-content: center;
+            }
+
+            .hero {
+                flex-direction: column;
+                text-align: center;
+                padding-top: 8rem;
+            }
+
+            .hero-content h1 {
+                font-size: 2.5rem;
+            }
+
+            .hero-buttons {
+                justify-content: center;
+            }
+
+            .hero-image {
+                margin-top: 2rem;
+            }
+
+            .section-title {
+                font-size: 2rem;
+            }
+
+            .community-stats {
+                flex-direction: column;
+                gap: 1rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <nav>
+            <a href="#" class="logo">GameEarn</a>
+            <div class="nav-links">
+                <a href="#home">Home</a>
+                <a href="#games">Games</a>
+                <a href="#telegram">Telegram Games</a>
+                <a href="#tips">Earning Tips</a>
+                <a href="#community">Community</a>
+                <a href="https://t.me/yourchannel" class="telegram-btn" target="_blank">
+                    <i class="fab fa-telegram"></i> Join Telegram
+                </a>
+            </div>
+        </nav>
+    </header>
+
+    <section class="hero" id="home">
+        <div class="hero-content">
+            <h1>Play Games & Earn Real Rewards</h1>
+            <p>Join thousands of gamers earning daily through our Telegram community and partner games. Start your earning journey today!</p>
+            <div class="hero-buttons">
+                <a href="#games" class="btn btn-primary">
+                    <i class="fas fa-gamepad"></i> Start Playing
+                </a>
+                <a href="https://t.me/yourchannel" class="btn btn-secondary" target="_blank">
+                    <i class="fab fa-telegram"></i> Join Community
+                </a>
+            </div>
+        </div>
+        <div class="hero-image">
+            <!-- Using Font Awesome as placeholder - replace with actual game image -->
+            <i class="fas fa-joystick" style="font-size: 400px; color: rgba(255,255,255,0.2);"></i>
+        </div>
+    </section>
+
+    <section class="featured" id="games">
+        <h2 class="section-title">Featured <span>Earning Games</span></h2>
+        <div class="game-grid">
+            <!-- Game Card 1 -->
+            <div class="game-card">
+                <div class="game-image">
+                    <i class="fas fa-dragon"></i>
+                </div>
+                <div class="game-info">
+                    <h3>Fantasy Quest</h3>
+                    <p>Epic RPG adventure with real token rewards. Complete quests, earn tokens.</p>
+                    <div class="game-meta">
+                        <span class="earning"><i class="fas fa-coins"></i> Earn up to 500/day</span>
+                        <span class="players"><i class="fas fa-users"></i> 50K+ players</span>
+                    </div>
+                    <a href="#" class="play-btn">Play Now</a>
+                </div>
+            </div>
+
+            <!-- Game Card 2 -->
+            <div class="game-card">
+                <div class="game-image">
+                    <i class="fas fa-robot"></i>
+                </div>
+                <div class="game-info">
+                    <h3>Tap Master</h3>
+                    <p>Simple tap-to-earn game. Just tap and watch your earnings grow!</p>
+                    <div class="game-meta">
+                        <span class="earning"><i class="fas fa-coins"></i> Earn up to 200/day</span>
+                        <span class="players"><i class="fas fa-users"></i> 100K+ players</span>
+                    </div>
+                    <a href="#" class="play-btn">Play Now</a>
+                </div>
+            </div>
+
+            <!-- Game Card 3 -->
+            <div class="game-card">
+                <div class="game-image">
+                    <i class="fas fa-chess-queen"></i>
+                </div>
+                <div class="game-info">
+                    <h3>Crypto Tycoon</h3>
+                    <p>Build your business empire and earn real cryptocurrency.</p>
+                    <div class="game-meta">
+                        <span class="earning"><i class="fas fa-coins"></i> Earn up to 1000/day</span>
+                        <span class="players"><i class="fas fa-users"></i> 75K+ players</span>
+                    </div>
+                    <a href="#" class="play-btn">Play Now</a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="telegram-games" id="telegram">
+        <h2 class="section-title">🔥 Hot <span>Telegram Games</span></h2>
+        <div class="game-grid">
+            <!-- Telegram Game 1 -->
+            <div class="tg-game-card">
+                <div class="tg-icon">
+                    <i class="fab fa-telegram"></i>
+                </div>
+                <h3>Hamster Kombat</h3>
+                <p>35M+ players. Tap to earn, upgrade your exchange, get tokens.</p>
+                <div class="tg-stats">
+                    <div class="stat">
+                        <span class="stat-value">35M+</span>
+                        <span class="stat-label">Players</span>
+                    </div>
+                    <div class="stat">
+                        <span class="stat-value">$0.10</span>
+                        <span class="stat-label">Per tap</span>
+                    </div>
+                </div>
+                <a href="https://t.me/hamster_kombat_bot" class="tg-btn" target="_blank">
+                    <i class="fab fa-telegram"></i> Play on Telegram
+                </a>
+            </div>
+
+            <!-- Telegram Game 2 -->
+            <div class="tg-game-card">
+                <div class="tg-icon">
+                    <i class="fab fa-telegram"></i>
+                </div>
+                <h3>Catizen</h3>
+                <p>$16M+ generated. Build your cat city and earn rewards.</p>
+                <div class="tg-stats">
+                    <div class="stat">
+                        <span class="stat-value">25M+</span>
+                        <span class="stat-label">Players</span>
+                    </div>
+                    <div class="stat">
+                        <span class="stat-value">$16M</span>
+                        <span class="stat-label">Earned</span>
+                    </div>
+                </div>
+                <a href="https://t.me/catizen_bot" class="tg-btn" target="_blank">
+                    <i class="fab fa-telegram"></i> Play on Telegram
+                </a>
+            </div>
+
+            <!-- Telegram Game 3 -->
+            <div class="tg-game-card">
+                <div class="tg-icon">
+                    <i class="fab fa-telegram"></i>
+                </div>
+                <h3>Notcoin</h3>
+                <p>The original tap-to-earn. Simple, addictive, rewarding.</p>
+                <div class="tg-stats">
+                    <div class="stat">
+                        <span class="stat-value">35M+</span>
+                        <span class="stat-label">Players</span>
+                    </div>
+                    <div class="stat">
+                        <span class="stat-value">$1B+</span>
+                        <span class="stat-label">Market cap</span>
+                    </div>
+                </div>
+                <a href="https://t.me/notcoin_bot" class="tg-btn" target="_blank">
+                    <i class="fab fa-telegram"></i> Play on Telegram
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <section class="tips" id="tips">
+        <h2 class="section-title">💰 <span>Earning Tips</span> & Strategies</h2>
+        <div class="tips-grid">
+            <div class="tip-card">
+                <div class="tip-icon">
+                    <i class="fas fa-rocket"></i>
+                </div>
+                <h3>Start with Tap Games</h3>
+                <p>Begin with simple tap-to-earn games like Hamster Kombat and Notcoin. No investment needed.</p>
+                <a href="#" class="tip-link">Learn more <i class="fas fa-arrow-right"></i></a>
+            </div>
+
+            <div class="tip-card">
+                <div class="tip-icon">
+                    <i class="fas fa-users"></i>
+                </div>
+                <h3>Use Referrals</h3>
+                <p>Most games pay for referrals. Invite friends to multiply your earnings exponentially.</p>
+                <a href="#" class="tip-link">Learn more <i class="fas fa-arrow-right"></i></a>
+            </div>
+
+            <div class="tip-card">
+                <div class="tip-icon">
+                    <i class="fas fa-clock"></i>
+                </div>
+                <h3>Daily Bonuses</h3>
+                <p>Log in daily for bonus rewards. Many games offer increasing daily streak bonuses.</p>
+                <a href="#" class="tip-link">Learn more <i class="fas fa-arrow-right"></i></a>
+            </div>
+
+            <div class="tip-card">
+                <div class="tip-icon">
+                    <i class="fas fa-shield-alt"></i>
+                </div>
+                <h3>Avoid Scams</h3>
+                <p>Learn to identify legitimate earning games and avoid common crypto scams.</p>
+                <a href="#" class="tip-link">Learn more <i class="fas fa-arrow-right"></i></a>
+            </div>
+        </div>
+    </section>
+
+    <section class="community" id="community">
+        <h2>Join Our Telegram Community</h2>
+        <p>Get daily earning tips, new game alerts, and connect with 10,000+ fellow gamers!</p>
+        <a href="https://t.me/yourchannel" class="tg-join-btn" target="_blank">
+            <i class="fab fa-telegram"></i> Join Now - It's Free!
+        </a>
+        <div class="community-stats">
+            <div class="community-stat">
+                <span class="number">10K+</span>
+                <span class="label">Members</span>
+            </div>
+            <div class="community-stat">
+                <span class="number">24/7</span>
+                <span class="label">Support</span>
+            </div>
+            <div class="community-stat">
+                <span class="number">$50K+</span>
+                <span class="label">Paid to Members</span>
+            </div>
+        </div>
+    </section>
+
+    <footer>
+        <div class="footer-content">
+            <div class="footer-section">
+                <h3>GameEarn</h3>
+                <p>Your trusted source for play-to-earn games and Telegram gaming community. Start earning while having fun!</p>
+                <div class="social-links">
+                    <a href="#"><i class="fab fa-telegram"></i></a>
+                    <a href="#"><i class="fab fa-twitter"></i></a>
+                    <a href="#"><i class="fab fa-discord"></i></a>
+                    <a href="#"><i class="fab fa-youtube"></i></a>
+                </div>
+            </div>
+
+            <div class="footer-section">
+                <h3>Quick Links</h3>
+                <ul>
+                    <li><a href="#home">Home</a></li>
+                    <li><a href="#games">Games</a></li>
+                    <li><a href="#telegram">Telegram Games</a></li>
+                    <li><a href="#tips">Earning Tips</a></li>
+                    <li><a href="#community">Community</a></li>
+                </ul>
+            </div>
+
+            <div class="footer-section">
+                <h3>Top Games</h3>
+                <ul>
+                    <li><a href="#">Hamster Kombat</a></li>
+                    <li><a href="#">Catizen</a></li>
+                    <li><a href="#">Notcoin</a></li>
+                    <li><a href="#">Tap Master</a></li>
+                    <li><a href="#">Crypto Tycoon</a></li>
+                </ul>
+            </div>
+
+            <div class="footer-section">
+                <h3>Contact</h3>
+                <ul>
+                    <li><i class="fas fa-envelope"></i> support@gameearn.com</li>
+                    <li><i class="fab fa-telegram"></i> @gameearn_support</li>
+                    <li><i class="fas fa-globe"></i> www.gameearn.com</li>
+                </ul>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>&copy; 2024 GameEarn. All rights reserved. | Play responsibly.</p>
+        </div>
+    </footer>
+
+    <!-- Smooth Scrolling Script -->
+    <script>
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                }
+            });
+        });
+    </script>
+</body>
+</html>
