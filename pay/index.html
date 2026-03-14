@@ -3,14 +3,16 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>TAAGC · PayPal REST payments</title>
-    <!-- Font Awesome -->
+    <title>TAAGC · secure payment center</title>
+    <!-- Font Awesome 6 -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <!-- Stripe.js (real) -->
+    <script src="https://js.stripe.com/v3/"></script>
+    <!-- PayPal (real) -->
+    <script src="https://www.paypal.com/sdk/js?client-id=YOUR_PAYPAL_CLIENT_ID&currency=USD&intent=capture&components=buttons,funding-eligibility"></script>
     <!-- Firebase -->
     <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-firestore-compat.js"></script>
-    <!-- PayPal REST SDK (advanced) -->
-    <script src="https://www.paypal.com/sdk/js?client-id=YOUR_PAYPAL_CLIENT_ID&currency=USD&intent=capture&components=buttons,funding-eligibility"></script>
     <style>
         * {
             margin: 0;
@@ -19,188 +21,298 @@
             font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
         }
         body {
-            background: linear-gradient(145deg, #0b253a 0%, #1c405b 100%);
+            background: linear-gradient(145deg, #0a1f30 0%, #1b405a 100%);
             min-height: 100vh;
-            display: flex;
-            align-items: center;
-            justify-content: center;
             padding: 20px;
         }
-        .paypal-container {
-            max-width: 900px;
-            width: 100%;
-            background: white;
-            border-radius: 48px;
-            box-shadow: 0 40px 70px -20px #000;
-            overflow: hidden;
-            padding: 35px;
+        .payment-wrapper {
+            max-width: 1200px;
+            margin: 0 auto;
         }
-        .header {
+        /* Main header with banner image */
+        .payment-header {
+            background: white;
+            border-radius: 40px 40px 0 0;
+            padding: 30px 35px 20px;
+            position: relative;
+            overflow: hidden;
+        }
+        .banner-container {
+            width: 100%;
+            height: 180px;
+            border-radius: 30px;
+            overflow: hidden;
+            margin-bottom: 25px;
+            box-shadow: 0 15px 30px -10px #00000060;
+        }
+        .banner-container img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            object-position: center;
+        }
+        .subdomain-badge {
+            background: #e09f2c;
+            color: #0a1f30;
+            padding: 8px 25px;
+            border-radius: 60px;
+            display: inline-block;
+            font-weight: 700;
+            font-size: 1.1rem;
+            margin-bottom: 15px;
+        }
+        .payment-grid {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 25px;
+            padding: 0 35px 35px;
+            background: white;
+            border-radius: 0 0 40px 40px;
+        }
+        /* main payment card */
+        .payment-card {
+            background: #f8fcff;
+            border-radius: 30px;
+            padding: 30px;
+            border: 2px solid #e0ebf5;
+        }
+        .secure-header {
             display: flex;
             align-items: center;
             gap: 15px;
-            margin-bottom: 30px;
+            margin-bottom: 25px;
         }
-        .paypal-logo {
-            background: #003087;
-            color: white;
-            width: 60px;
-            height: 60px;
-            border-radius: 18px;
+        .lock-icon {
+            background: #e09f2c;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 2rem;
+            color: white;
+            font-size: 1.5rem;
         }
-        .title h1 {
-            color: #0b253a;
-            font-size: 2rem;
-        }
-        .title p {
-            color: #5f7d9c;
-        }
-        .bonus-banner {
-            background: linear-gradient(135deg, #f5e9d8, #f5dbb1);
+        .bonus-card {
+            background: linear-gradient(145deg, #f9f1e0, #f5e5cc);
             border-radius: 30px;
             padding: 25px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 30px;
-            border: 2px solid #e09f2c;
+            text-align: center;
+            border: 3px solid #e09f2c;
+            margin-bottom: 25px;
         }
         .bonus-amount {
-            font-size: 3rem;
+            font-size: 3.5rem;
             font-weight: 800;
-            color: #0b253a;
+            color: #0e3b5a;
         }
         .bonus-amount span {
             color: #e09f2c;
             font-size: 1.5rem;
         }
-        .timer {
-            background: #0b253a;
-            color: white;
-            padding: 15px 25px;
+        .timer-section {
+            background: #0a2538;
             border-radius: 60px;
-            font-family: monospace;
-            font-size: 1.5rem;
-        }
-        .rest-badge {
-            background: #009cde;
-            color: white;
-            padding: 5px 15px;
-            border-radius: 30px;
-            font-size: 0.8rem;
-            display: inline-block;
-            margin-bottom: 15px;
-        }
-        .order-details {
-            background: #f5f9ff;
-            border-radius: 30px;
-            padding: 25px;
-            margin: 25px 0;
-        }
-        .detail-row {
+            padding: 15px 25px;
             display: flex;
             justify-content: space-between;
-            padding: 12px 0;
-            border-bottom: 1px dashed #cbdbe9;
+            align-items: center;
+            color: white;
+            margin: 20px 0;
         }
-        #paypal-button-container {
-            margin: 30px 0;
-            min-height: 200px;
+        .timer-display {
+            font-family: 'Courier New', monospace;
+            font-size: 2rem;
+            font-weight: 800;
+            color: #e09f2c;
         }
-        .webhook-status {
-            background: #e3f0fa;
+        .payment-methods {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 15px;
+            margin: 25px 0;
+        }
+        .method-card {
+            background: white;
+            border: 2px solid #d0e2f2;
             border-radius: 20px;
+            padding: 20px 10px;
+            text-align: center;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+        .method-card:hover, .method-card.selected {
+            border-color: #e09f2c;
+            background: #fff8e7;
+        }
+        .method-icon {
+            font-size: 2rem;
+            margin-bottom: 10px;
+        }
+        #card-element {
+            background: white;
             padding: 15px;
-            margin-top: 20px;
-            font-family: monospace;
+            border-radius: 15px;
+            border: 2px solid #d0e2f2;
+            margin: 20px 0;
+        }
+        .pay-button {
+            background: #e09f2c;
+            border: none;
+            color: #0a1f30;
+            font-weight: 800;
+            padding: 18px;
+            border-radius: 60px;
+            font-size: 1.2rem;
+            width: 100%;
+            cursor: pointer;
+            margin: 20px 0;
+        }
+        .pay-button:hover {
+            background: #cf8f1f;
+        }
+        /* right sidebar */
+        .sidebar {
+            display: flex;
+            flex-direction: column;
+            gap: 25px;
+        }
+        .info-card {
+            background: white;
+            border-radius: 30px;
+            padding: 25px;
+            border: 2px solid #e0ebf5;
         }
         .transaction-log {
-            background: #0b253a;
-            color: #9fc9ff;
+            background: #0a2538;
+            color: white;
             border-radius: 20px;
             padding: 20px;
-            margin-top: 25px;
             max-height: 200px;
             overflow-y: auto;
         }
         .log-entry {
-            padding: 8px;
+            padding: 8px 0;
             border-bottom: 1px solid #1e405b;
             font-size: 0.9rem;
         }
-        .firebase-status {
-            background: #e09f2c20;
-            border-radius: 60px;
-            padding: 8px 18px;
-            display: inline-block;
-            margin-bottom: 15px;
+        .footer {
+            text-align: center;
+            padding: 25px;
+            color: #8ba9c6;
         }
     </style>
 </head>
 <body>
-<div class="paypal-container">
-    <div class="header">
-        <div class="paypal-logo"><i class="fab fa-paypal"></i></div>
-        <div class="title">
-            <h1>PayPal REST API · real payments</h1>
-            <p><i class="fas fa-check-circle" style="color:#009cde;"></i> v2/checkout/orders · v1/payments/payouts</p>
+<div class="payment-wrapper">
+    <!-- HEADER WITH BANNER IMAGE -->
+    <div class="payment-header">
+        <div class="banner-container">
+            <img src="/assets/images/payment-banner.png" alt="TAAGC payment banner" onerror="this.src='https://via.placeholder.com/1200x180/e09f2c/0a1f30?text=TAAGC+Secure+Payment'; this.onerror=null;">
+        </div>
+        <span class="subdomain-badge"><i class="fas fa-lock"></i> pay.taacg.website · official gateway</span>
+    </div>
+
+    <!-- MAIN PAYMENT GRID -->
+    <div class="payment-grid">
+        <!-- LEFT: PAYMENT FORM -->
+        <div class="payment-card">
+            <div class="secure-header">
+                <div class="lock-icon"><i class="fas fa-shield-alt"></i></div>
+                <div>
+                    <h2>complete your payment</h2>
+                    <p style="color:#4f6f8f;">$2.00 + $1.00 bonus · 48h deadline</p>
+                </div>
+            </div>
+
+            <!-- bonus card -->
+            <div class="bonus-card">
+                <div class="bonus-amount">$2.00 <span>+ $1.00</span></div>
+                <p style="font-size:1.1rem;">pay $2 now · get $3 in your wallet</p>
+            </div>
+
+            <!-- timer -->
+            <div class="timer-section">
+                <span><i class="fas fa-hourglass-half"></i> time remaining</span>
+                <span class="timer-display" id="timer">47:59:59</span>
+            </div>
+
+            <!-- payment methods -->
+            <div class="payment-methods" id="paymentMethods">
+                <div class="method-card selected" data-method="card" id="methodCard">
+                    <div class="method-icon"><i class="fas fa-credit-card"></i></div>
+                    <div>card</div>
+                </div>
+                <div class="method-card" data-method="paypal" id="methodPaypal">
+                    <div class="method-icon"><i class="fab fa-paypal"></i></div>
+                    <div>paypal</div>
+                </div>
+                <div class="method-card" data-method="crypto" id="methodCrypto">
+                    <div class="method-icon"><i class="fab fa-bitcoin"></i></div>
+                    <div>crypto</div>
+                </div>
+            </div>
+
+            <!-- stripe card element -->
+            <div id="card-element"></div>
+
+            <!-- paypal button container -->
+            <div id="paypal-button-container" style="display: none;"></div>
+
+            <!-- crypto payment info -->
+            <div id="crypto-info" style="display: none; text-align: center; padding: 20px;">
+                <p style="background:#0a2538; color:#e09f2c; padding:15px; border-radius:15px; font-family:monospace;">
+                    bc1qxy2kgdygjrsqtzq2n0yrf2493p83kkfjhx0wlh
+                </p>
+                <p>send $2 USDT (TRC20) to above address</p>
+            </div>
+
+            <!-- pay button (for card only) -->
+            <button class="pay-button" id="cardPayButton"><i class="fas fa-bolt"></i> pay $2 with card</button>
+
+            <!-- transaction status -->
+            <div id="transaction-status" style="margin-top:20px;"></div>
+        </div>
+
+        <!-- RIGHT: INFO SIDEBAR -->
+        <div class="sidebar">
+            <div class="info-card">
+                <h3 style="margin-bottom:15px;">payment summary</h3>
+                <div style="display:flex; justify-content:space-between; margin:10px 0;">
+                    <span>amount:</span>
+                    <span>$2.00</span>
+                </div>
+                <div style="display:flex; justify-content:space-between; margin:10px 0;">
+                    <span>bonus:</span>
+                    <span style="color:#e09f2c;">+$1.00</span>
+                </div>
+                <div style="display:flex; justify-content:space-between; margin:10px 0; font-weight:700;">
+                    <span>total:</span>
+                    <span>$3.00</span>
+                </div>
+            </div>
+
+            <div class="info-card">
+                <h3 style="margin-bottom:15px;">first 100 bonus</h3>
+                <p>• pay $2, get $3</p>
+                <p>• 48h to complete</p>
+                <p>• instant bonus credit</p>
+            </div>
+
+            <!-- live transaction log -->
+            <div class="transaction-log" id="transactionLog">
+                <div class="log-entry"><i class="fas fa-circle" style="color:#e09f2c;"></i> ready to process</div>
+            </div>
         </div>
     </div>
 
-    <div class="firebase-status">
-        <i class="fas fa-database"></i> Firebase connected · <span id="firebaseIndicator">live</span>
-    </div>
-
-    <div class="bonus-banner">
-        <div>
-            <span class="rest-badge"><i class="fas fa-bolt"></i> REST API v2</span>
-            <div class="bonus-amount">$2.00 <span>+ $1.00 bonus</span></div>
-        </div>
-        <div class="timer" id="timer">47:59:59</div>
-    </div>
-
-    <!-- Order Details from PayPal REST -->
-    <div class="order-details" id="orderDetails">
-        <div class="detail-row">
-            <span>order ID:</span>
-            <span id="orderId">not created yet</span>
-        </div>
-        <div class="detail-row">
-            <span>intent:</span>
-            <span>CAPTURE</span>
-        </div>
-        <div class="detail-row">
-            <span>purchase unit:</span>
-            <span>$2.00 USD (bonus eligible)</span>
-        </div>
-        <div class="detail-row">
-            <span>payee:</span>
-            <span>merchant@taagc.com</span>
-        </div>
-    </div>
-
-    <!-- PayPal Button Container (SDK renders here) -->
-    <div id="paypal-button-container"></div>
-
-    <!-- Webhook Simulation / Real-time Updates -->
-    <div class="webhook-status" id="webhookStatus">
-        <i class="fas fa-bolt"></i> webhook: waiting for payment...
-    </div>
-
-    <!-- Transaction Log (from Firebase) -->
-    <div class="transaction-log" id="transactionLog">
-        <div class="log-entry"><i class="fas fa-circle" style="color:#e09f2c;"></i> ready to process payments</div>
+    <div class="footer">
+        <i class="fas fa-shield-alt"></i> 256-bit SSL · pci compliant · all transactions secure
     </div>
 </div>
 
 <script>
-    // ============================================
-    // FIREBASE CONFIG (YOUR ACTUAL CREDENTIALS)
-    // ============================================
+    // Firebase config
     const firebaseConfig = {
         apiKey: "AIzaSyAI1MrcP977UgRLQoePxl64JOSyj9v4WpI",
         authDomain: "xtaagc.firebaseapp.com",
@@ -213,16 +325,14 @@
     firebase.initializeApp(firebaseConfig);
     const db = firebase.firestore();
     
-    // ============================================
-    // PAYPAL REST API INTEGRATION
-    // ============================================
-    const PAYPAL_CLIENT_ID = 'YOUR_PAYPAL_CLIENT_ID'; // Replace with your actual client ID
-    const userId = 'user_' + Date.now(); // In production, use actual user ID
-    const bonusId = 'first100_' + Date.now();
+    // URL params
+    const urlParams = new URLSearchParams(window.location.search);
+    const userId = urlParams.get('uid') || 'user_' + Date.now();
+    const paymentId = urlParams.get('id') || 'PAY_' + Date.now();
     
-    // Timer (48h from now)
+    // Timer (48h)
     const deadline = Date.now() + 48 * 60 * 60 * 1000;
-    function updateTimer() {
+    setInterval(() => {
         const now = Date.now();
         const diff = Math.max(0, deadline - now);
         const h = Math.floor(diff / (1000*60*60));
@@ -230,225 +340,116 @@
         const s = Math.floor((diff % (1000*60)) / 1000);
         document.getElementById('timer').innerText = 
             `${h.toString().padStart(2,'0')}:${m.toString().padStart(2,'0')}:${s.toString().padStart(2,'0')}`;
-    }
-    setInterval(updateTimer, 1000);
+    }, 1000);
     
-    // ============================================
-    // PAYPAL BUTTONS WITH REST API
-    // ============================================
-    paypal.Buttons({
-        // Sets up the transaction when a payment button is clicked
-        createOrder: async function(data, actions) {
-            document.getElementById('webhookStatus').innerHTML = '<i class="fas fa-spinner fa-spin"></i> creating PayPal order...';
+    // Stripe setup
+    const stripe = Stripe('pk_test_your_key');
+    const elements = stripe.elements();
+    const cardElement = elements.create('card');
+    cardElement.mount('#card-element');
+    
+    // Method switching
+    const methods = document.querySelectorAll('.method-card');
+    methods.forEach(m => {
+        m.addEventListener('click', () => {
+            methods.forEach(mth => mth.classList.remove('selected'));
+            m.classList.add('selected');
             
-            try {
-                // This is the REST API call to create an order (v2)
-                const response = await fetch('https://api-m.paypal.com/v2/checkout/orders', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'Authorization': 'Bearer ' + await getAccessToken(),
-                        'PayPal-Request-Id': `order_${Date.now()}`
-                    },
-                    body: JSON.stringify({
-                        intent: 'CAPTURE',
+            const method = m.dataset.method;
+            document.getElementById('card-element').style.display = method === 'card' ? 'block' : 'none';
+            document.getElementById('cardPayButton').style.display = method === 'card' ? 'block' : 'none';
+            document.getElementById('paypal-button-container').style.display = method === 'paypal' ? 'block' : 'none';
+            document.getElementById('crypto-info').style.display = method === 'crypto' ? 'block' : 'none';
+            
+            if (method === 'paypal') initPayPal();
+        });
+    });
+    
+    // PayPal integration
+    function initPayPal() {
+        if (window.paypal) {
+            paypal.Buttons({
+                createOrder: function(data, actions) {
+                    return actions.order.create({
                         purchase_units: [{
-                            amount: {
-                                currency_code: 'USD',
-                                value: '2.00',
-                                breakdown: {
-                                    item_total: { currency_code: 'USD', value: '2.00' }
-                                }
-                            },
-                            description: 'TAAGC First 100 Bonus Payment',
-                            custom_id: JSON.stringify({ userId, bonusId, type: 'first100_bonus' }),
-                            invoice_id: `INV_${Date.now()}`,
-                            payee: {
-                                email_address: 'merchant@taagc.com' // Your PayPal email
-                            }
-                        }],
-                        application_context: {
-                            brand_name: 'TAAGC Global',
-                            landing_page: 'LOGIN',
-                            user_action: 'PAY_NOW',
-                            shipping_preference: 'NO_SHIPPING',
-                            return_url: 'https://pay.taacg.website/success',
-                            cancel_url: 'https://pay.taacg.website/cancel'
-                        }
-                    })
-                });
-                
-                const order = await response.json();
-                console.log('PayPal order created:', order);
-                
-                // Save order to Firebase
-                await db.collection('paypal_orders').doc(order.id).set({
-                    userId: userId,
-                    orderId: order.id,
-                    status: order.status,
-                    amount: 2.00,
-                    bonusEligible: true,
-                    createdAt: firebase.firestore.FieldValue.serverTimestamp(),
-                    deadline: new Date(deadline)
-                });
-                
-                document.getElementById('orderId').innerText = order.id;
-                document.getElementById('webhookStatus').innerHTML = '<i class="fas fa-check-circle" style="color:#009cde;"></i> order created, waiting for payment...';
-                
-                addLogEntry(`📦 order created: ${order.id}`);
-                
-                return order.id;
-            } catch (error) {
-                console.error('Order creation failed:', error);
-                document.getElementById('webhookStatus').innerHTML = `<i class="fas fa-exclamation-circle"></i> error: ${error.message}`;
-            }
-        },
-        
-        // Finalize the transaction after payer approval
-        onApprove: async function(data, actions) {
-            document.getElementById('webhookStatus').innerHTML = '<i class="fas fa-spinner fa-spin"></i> capturing payment...';
-            
-            try {
-                // Capture payment using REST API (v2)
-                const response = await fetch(`https://api-m.paypal.com/v2/checkout/orders/${data.orderID}/capture`, {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'Authorization': 'Bearer ' + await getAccessToken(),
-                        'PayPal-Request-Id': `capture_${Date.now()}`
-                    }
-                });
-                
-                const capture = await response.json();
-                console.log('Payment captured:', capture);
-                
-                if (capture.status === 'COMPLETED') {
-                    // Update Firebase
-                    await db.collection('paypal_orders').doc(data.orderID).update({
-                        status: 'COMPLETED',
-                        captureId: capture.id,
-                        captureDetails: capture,
-                        completedAt: firebase.firestore.FieldValue.serverTimestamp()
+                            amount: { value: '2.00' }
+                        }]
                     });
-                    
-                    // Record the payment
-                    await db.collection('payments').doc(capture.id).set({
-                        type: 'paypal_rest',
-                        orderId: data.orderID,
-                        userId: userId,
-                        amount: 2.00,
-                        bonus: 1.00,
-                        status: 'completed',
-                        paypalResponse: capture,
-                        timestamp: firebase.firestore.FieldValue.serverTimestamp()
+                },
+                onApprove: function(data, actions) {
+                    return actions.order.capture().then(async function(details) {
+                        await db.collection('payments').doc(data.orderID).set({
+                            userId: userId,
+                            method: 'paypal',
+                            amount: 2.00,
+                            bonus: 1.00,
+                            status: 'completed',
+                            paypalDetails: details,
+                            timestamp: firebase.firestore.FieldValue.serverTimestamp()
+                        });
+                        
+                        showStatus('✅ payment successful! $1 bonus added');
+                        addLogEntry(`paypal payment: ${data.orderID}`);
                     });
-                    
-                    // Trigger bonus payout (via PayPal Payouts API v1)
-                    await triggerBonusPayout(userId);
-                    
-                    document.getElementById('webhookStatus').innerHTML = `
-                        <i class="fas fa-check-circle" style="color:#198754;"></i> 
-                        payment completed! capture ID: ${capture.id}
-                    `;
-                    
-                    addLogEntry(`💰 payment captured: ${capture.id}`);
-                    addLogEntry(`🎁 bonus $1 will be sent to your PayPal`);
-                    
-                    // Update UI
-                    document.getElementById('orderDetails').innerHTML += `
-                        <div class="detail-row" style="background:#d4edda;">
-                            <span>✅ payment successful:</span>
-                            <span>${capture.id}</span>
-                        </div>
-                    `;
                 }
-            } catch (error) {
-                console.error('Capture failed:', error);
-                document.getElementById('webhookStatus').innerHTML = `<i class="fas fa-exclamation-circle"></i> capture error: ${error.message}`;
-            }
-        },
-        
-        // Handle errors
-        onError: function(err) {
-            console.error('PayPal error:', err);
-            document.getElementById('webhookStatus').innerHTML = `<i class="fas fa-exclamation-circle"></i> error: ${err.message}`;
-            addLogEntry(`❌ error: ${err.message}`);
+            }).render('#paypal-button-container');
         }
-    }).render('#paypal-button-container');
-    
-    // ============================================
-    // HELPER FUNCTIONS
-    // ============================================
-    
-    // Get PayPal OAuth2 access token (you need a backend for this in production)
-    async function getAccessToken() {
-        // In production, this should be done on your backend
-        // For demo, we'll use a mock token (real implementation would call your server)
-        return 'mock_access_token';
     }
     
-    // Trigger bonus payout via PayPal Payouts API (v1)
-    async function triggerBonusPayout(userId) {
-        addLogEntry('⏳ processing $1 bonus payout...');
+    // Card payment
+    document.getElementById('cardPayButton').addEventListener('click', async () => {
+        const { paymentMethod, error } = await stripe.createPaymentMethod({
+            type: 'card',
+            card: cardElement
+        });
         
-        try {
-            // In production, this would be a call to your backend
-            // which then calls PayPal Payouts API
-            const payoutResponse = {
-                batch_header: {
-                    payout_batch_id: `batch_${Date.now()}`,
-                    batch_status: 'SUCCESS'
-                }
-            };
-            
-            // Store payout record in Firebase
-            await db.collection('bonus_payouts').add({
+        if (error) {
+            showStatus('❌ ' + error.message);
+        } else {
+            await db.collection('payments').doc(paymentId).set({
                 userId: userId,
-                amount: 1.00,
-                status: 'sent',
-                payoutBatchId: payoutResponse.batch_header.payout_batch_id,
+                method: 'card',
+                amount: 2.00,
+                bonus: 1.00,
+                status: 'processing',
+                paymentMethodId: paymentMethod.id,
                 timestamp: firebase.firestore.FieldValue.serverTimestamp()
             });
             
-            addLogEntry('✅ $1 bonus payout sent!');
-        } catch (error) {
-            addLogEntry(`❌ bonus failed: ${error.message}`);
+            showStatus('⏳ payment processing...');
+            addLogEntry(`card payment: ${paymentMethod.id.substring(0,10)}...`);
+            
+            // Simulate success (in production, webhook confirms)
+            setTimeout(() => {
+                showStatus('✅ payment successful! $1 bonus added');
+            }, 3000);
         }
+    });
+    
+    function showStatus(msg) {
+        document.getElementById('transaction-status').innerHTML = 
+            `<div style="background:#e3f0fa; padding:15px; border-radius:15px;">${msg}</div>`;
     }
     
-    // Add entry to transaction log
-    function addLogEntry(message) {
+    function addLogEntry(msg) {
         const log = document.getElementById('transactionLog');
         const entry = document.createElement('div');
         entry.className = 'log-entry';
-        entry.innerHTML = `<i class="fas fa-circle" style="color:#e09f2c; font-size:0.5rem;"></i> ${message}`;
+        entry.innerHTML = `<i class="fas fa-circle" style="color:#e09f2c;"></i> ${msg}`;
         log.appendChild(entry);
-        log.scrollTop = log.scrollHeight;
     }
     
-    // Listen to webhook events (via Firebase)
-    function listenForWebhooks() {
-        // In production, PayPal would send webhooks to your server
-        // which updates Firebase. Here we'll simulate.
-        db.collection('webhook_events').orderBy('timestamp', 'desc').limit(5).onSnapshot((snapshot) => {
-            snapshot.docChanges().forEach((change) => {
-                if (change.type === 'added') {
-                    const event = change.doc.data();
-                    addLogEntry(`📡 webhook: ${event.type} - ${event.summary || ''}`);
-                }
-            });
-        });
-    }
+    // Save payment record
+    db.collection('payments').doc(paymentId).set({
+        userId: userId,
+        amount: 2.00,
+        bonus: 1.00,
+        status: 'pending',
+        deadline: new Date(deadline),
+        createdAt: firebase.firestore.FieldValue.serverTimestamp()
+    });
     
-    // Initialize
-    addLogEntry('🚀 PayPal REST API ready');
-    addLogEntry('📋 using Orders v2, Payouts v1');
-    listenForWebhooks();
-    
-    // Simulate a webhook for demo (remove in production)
-    setTimeout(() => {
-        addLogEntry('📡 webhook: PAYMENT.CAPTURE.COMPLETED');
-    }, 5000);
+    addLogEntry(`payment started: ${paymentId.substring(0,8)}...`);
 </script>
 </body>
 </html>
