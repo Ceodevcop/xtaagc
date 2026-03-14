@@ -3,19 +3,19 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>TAAGC · wallet & payments</title>
-    <!-- Font Awesome 6 -->
+    <title>TAAGC · Wallet</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <!-- Firebase -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
+    <script src="/assets/js/taagc-auth.js"></script>
     <style>
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
-            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            font-family: 'Inter', sans-serif;
         }
         body {
             background: linear-gradient(145deg, #0a1f30, #1b4b6e);
@@ -25,63 +25,75 @@
         .wallet-container {
             max-width: 1200px;
             margin: 0 auto;
+            background: white;
+            border-radius: 40px;
+            overflow: hidden;
+            box-shadow: 0 30px 60px -20px #000;
         }
-        /* Header */
         .wallet-header {
             background: white;
-            border-radius: 40px 40px 0 0;
-            padding: 30px 40px;
+            padding: 20px 40px;
             display: flex;
             justify-content: space-between;
             align-items: center;
-            flex-wrap: wrap;
             border-bottom: 4px solid #e09f2c;
         }
         .logo h1 {
             font-size: 2rem;
-            font-weight: 800;
             background: linear-gradient(145deg, #0a1f30, #1e4f7a);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
+        }
+        .domain-badge {
+            background: #f0f6fd;
+            padding: 8px 16px;
+            border-radius: 60px;
+            font-size: 0.9rem;
+            border: 2px solid #e09f2c;
+        }
+        .user-menu {
+            display: flex;
+            align-items: center;
+            gap: 20px;
         }
         .user-badge {
             display: flex;
             align-items: center;
             gap: 15px;
             background: #f0f6fd;
-            padding: 10px 25px;
+            padding: 10px 20px;
             border-radius: 60px;
         }
         .user-avatar {
-            width: 45px;
-            height: 45px;
+            width: 40px;
+            height: 40px;
             border-radius: 50%;
             background: #e09f2c;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 1.2rem;
             font-weight: 600;
             color: #0a1f30;
         }
-        .user-info {
-            line-height: 1.4;
+        .logout-btn {
+            background: transparent;
+            border: 2px solid #dc3545;
+            color: #dc3545;
+            padding: 8px 20px;
+            border-radius: 60px;
+            cursor: pointer;
         }
-        .user-name {
-            font-weight: 700;
-            color: #0a1f30;
-        }
-        .user-email {
-            font-size: 0.85rem;
-            color: #6b8ca8;
-        }
-        /* Main Content */
         .wallet-content {
             background: #f5faff;
-            border-radius: 0 0 40px 40px;
             padding: 40px;
         }
-        /* Wallet Cards */
+        .welcome-banner {
+            background: linear-gradient(145deg, #e09f2c, #f5b84c);
+            border-radius: 30px;
+            padding: 30px;
+            margin-bottom: 30px;
+            color: #0a1f30;
+        }
         .wallet-grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
@@ -98,22 +110,10 @@
         .wallet-card:hover {
             border-color: #e09f2c;
         }
-        .card-title {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            margin-bottom: 20px;
-            color: #0a1f30;
-            font-size: 1.2rem;
-        }
-        .card-title i {
-            color: #e09f2c;
-            font-size: 1.5rem;
-        }
         .wallet-address {
             background: #f0f6fd;
             border-radius: 60px;
-            padding: 15px 20px;
+            padding: 15px;
             font-family: monospace;
             font-size: 0.9rem;
             word-break: break-all;
@@ -126,88 +126,22 @@
             color: #e09f2c;
             margin: 15px 0;
         }
-        .balance small {
-            font-size: 1rem;
-            color: #6b8ca8;
-        }
-        /* Buttons */
         .btn {
-            padding: 12px 25px;
+            padding: 12px 20px;
             border-radius: 60px;
             border: none;
             font-weight: 600;
             cursor: pointer;
-            font-size: 0.95rem;
-            transition: 0.2s;
+            width: 100%;
         }
         .btn-primary {
             background: #e09f2c;
             color: #0a1f30;
-            width: 100%;
         }
-        .btn-primary:hover {
-            background: #cf8f1f;
-        }
-        .btn-outline {
-            background: transparent;
+        .btn-copy {
+            background: #0a1f30;
+            color: white;
             border: 2px solid #e09f2c;
-            color: #e09f2c;
-            width: 100%;
-        }
-        .btn-outline:hover {
-            background: #e09f2c;
-            color: #0a1f30;
-        }
-        /* Transactions */
-        .transactions-card {
-            background: white;
-            border-radius: 30px;
-            padding: 25px;
-            border: 2px solid #e0ebf5;
-            margin-top: 30px;
-        }
-        .transaction-item {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 15px 0;
-            border-bottom: 1px solid #e0ebf5;
-        }
-        .transaction-item:last-child {
-            border-bottom: none;
-        }
-        .tx-type {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-        .tx-type i {
-            width: 30px;
-            height: 30px;
-            border-radius: 50%;
-            background: #f0f6fd;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: #e09f2c;
-        }
-        .tx-amount {
-            font-weight: 700;
-        }
-        .tx-amount.positive {
-            color: #198754;
-        }
-        .tx-amount.negative {
-            color: #dc3545;
-        }
-        .tx-date {
-            font-size: 0.8rem;
-            color: #6b8ca8;
-        }
-        /* Loading */
-        .loading {
-            text-align: center;
-            padding: 60px;
         }
         .spinner {
             border: 4px solid #f0f6fd;
@@ -218,36 +152,8 @@
             animation: spin 1s linear infinite;
             margin: 20px auto;
         }
-        @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
-        }
-        /* Notifications */
-        .alert {
-            padding: 15px 25px;
-            border-radius: 60px;
-            margin: 20px 0;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-        .alert-success {
-            background: #d4edda;
-            color: #155724;
-            border: 2px solid #198754;
-        }
-        .alert-warning {
-            background: #fff3cd;
-            color: #856404;
-            border: 2px solid #e09f2c;
-        }
-        .alert-danger {
-            background: #f8d7da;
-            color: #721c24;
-            border: 2px solid #dc3545;
-        }
-        /* Firebase Status */
-        .fb-status {
+        @keyframes spin { 0% { transform: rotate(0deg); } }
+        .auth-status {
             position: fixed;
             bottom: 20px;
             right: 20px;
@@ -262,295 +168,135 @@
 </head>
 <body>
     <div class="wallet-container">
-        <!-- Header -->
         <div class="wallet-header">
             <div class="logo">
                 <h1><i class="fas fa-wallet"></i> TAAGC Pay</h1>
             </div>
-            <div id="userBadge" class="user-badge">
-                <div class="spinner-small"></div>
-                <span>loading user...</span>
+            <div class="domain-badge">
+                <i class="fas fa-globe"></i> <span id="current-domain"></span>
+            </div>
+            <div class="user-menu" id="user-menu">
+                <div class="spinner" style="width:30px; height:30px;"></div>
             </div>
         </div>
 
-        <!-- Main Content -->
         <div class="wallet-content" id="walletContent">
-            <div class="loading">
+            <div style="text-align:center; padding:60px;">
                 <div class="spinner"></div>
-                <p style="color:#6b8ca8; margin-top:20px;">detecting your wallet from Firebase...</p>
+                <p style="color:#6b8ca8; margin-top:20px;">loading your wallet...</p>
             </div>
         </div>
     </div>
 
-    <div class="fb-status" id="firebaseStatus">⏳ connecting...</div>
+    <div class="auth-status" id="auth-badge">loading...</div>
 
     <script>
-        // Firebase Configuration
-        const firebaseConfig = {
-            apiKey: "AIzaSyAI1MrcP977UgRLQoePxl64JOSyj9v4WpI",
-            authDomain: "xtaagc.firebaseapp.com",
-            projectId: "xtaagc",
-            storageBucket: "xtaagc.firebasestorage.app",
-            messagingSenderId: "256073982437",
-            appId: "1:256073982437:web:8da63bb7acc86c0ca98f0c"
-        };
+        document.getElementById('current-domain').textContent = window.location.hostname;
 
-        // Initialize Firebase
-        firebase.initializeApp(firebaseConfig);
-        const auth = firebase.auth();
-        const db = firebase.firestore();
-        
-        document.getElementById('firebaseStatus').innerHTML = '✅ wallet service active';
+        // Require authentication - redirects to login if not authenticated
+        if (!requireAuth('/login')) {
+            // Will redirect, so stop execution
+            throw new Error('Redirecting to login');
+        }
 
-        // Auth State Observer
-        auth.onAuthStateChanged(async (user) => {
-            if (user) {
-                console.log('User detected:', user.uid);
-                await loadUserWallet(user);
-            } else {
-                // Not logged in - redirect to login
-                window.location.href = '/login?redirect=wallet';
-            }
-        });
+        // Load wallet data
+        async function loadWallet() {
+            const user = auth.currentUser;
+            if (!user) return;
 
-        // Load User Wallet Data
-        async function loadUserWallet(user) {
             try {
-                // Get user data from Firestore
                 const userDoc = await db.collection('users').doc(user.uid).get();
                 
                 if (!userDoc.exists) {
-                    // Create user profile if doesn't exist
-                    await createUserProfile(user);
+                    window.location.href = '/register?complete=wallet';
+                    return;
                 }
-                
-                const userData = userDoc.exists ? userDoc.data() : {};
-                
-                // Get or create wallet data
-                let walletData = userData.wallet || {
-                    addresses: {},
-                    balances: {},
-                    transactions: []
+
+                const userData = userDoc.data();
+                const walletData = userData.wallet || {
+                    addresses: {
+                        btc: 'Not configured',
+                        eth: 'Not configured',
+                        usdt: 'Not configured'
+                    },
+                    balances: { btc: 0, eth: 0, usdt: 0, usd: 0 }
                 };
-                
-                // Update UI with user data
-                updateUI(user, userData, walletData);
-                
+
+                displayWallet(userData, walletData);
+
             } catch (error) {
                 console.error('Error loading wallet:', error);
-                showError('Failed to load wallet data: ' + error.message);
+                document.getElementById('walletContent').innerHTML = `
+                    <div style="text-align:center; padding:60px; background:#f8d7da; border-radius:30px;">
+                        <i class="fas fa-exclamation-circle fa-3x" style="color:#dc3545;"></i>
+                        <p style="margin-top:20px;">Error loading wallet: ${error.message}</p>
+                        <button class="btn btn-primary" onclick="location.reload()" style="width:auto; margin-top:20px;">
+                            try again
+                        </button>
+                    </div>
+                `;
             }
         }
 
-        // Create user profile if missing
-        async function createUserProfile(user) {
-            const userData = {
-                uid: user.uid,
-                email: user.email,
-                displayName: user.displayName || user.email.split('@')[0],
-                createdAt: firebase.firestore.FieldValue.serverTimestamp(),
-                wallet: {
-                    addresses: {
-                        btc: generateCryptoAddress('btc'),
-                        eth: generateCryptoAddress('eth'),
-                        usdt: generateCryptoAddress('usdt')
-                    },
-                    balances: {
-                        btc: 0,
-                        eth: 0,
-                        usdt: 0,
-                        usd: 0
-                    },
-                    transactions: []
-                }
-            };
-            
-            await db.collection('users').doc(user.uid).set(userData);
-            return userData;
-        }
-
-        // Generate mock crypto addresses (in production, these come from API)
-        function generateCryptoAddress(type) {
-            const prefixes = {
-                btc: 'bc1',
-                eth: '0x',
-                usdt: 'T'
-            };
-            const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
-            let address = prefixes[type];
-            for (let i = 0; i < 32; i++) {
-                address += chars.charAt(Math.floor(Math.random() * chars.length));
-            }
-            return address;
-        }
-
-        // Update UI with user data
-        function updateUI(user, userData, walletData) {
+        function displayWallet(userData, walletData) {
             const content = document.getElementById('walletContent');
             
-            // Update user badge
-            const badge = document.getElementById('userBadge');
-            const displayName = userData.displayName || user.email.split('@')[0];
-            const initial = displayName.charAt(0).toUpperCase();
-            
-            badge.innerHTML = `
-                <div class="user-avatar">${initial}</div>
-                <div class="user-info">
-                    <div class="user-name">${displayName}</div>
-                    <div class="user-email">${user.email}</div>
-                </div>
-            `;
-
-            // Render wallet content
             content.innerHTML = `
-                <!-- Wallet Grid -->
+                <div class="welcome-banner">
+                    <h2>Welcome back, ${userData.firstName || userData.fullName || 'User'}!</h2>
+                    <p style="margin-top:10px;">Your universal wallet works across all TAAGC platforms.</p>
+                </div>
+
                 <div class="wallet-grid">
-                    <!-- Bitcoin Wallet -->
                     <div class="wallet-card">
-                        <div class="card-title">
-                            <i class="fab fa-bitcoin"></i>
-                            <h3>Bitcoin Wallet</h3>
-                        </div>
-                        <div class="wallet-address" id="btcAddress">
-                            ${walletData.addresses?.btc || 'Not configured'}
-                        </div>
-                        <div class="balance">
-                            $${walletData.balances?.btc || '0.00'} <small>BTC</small>
-                        </div>
-                        <button class="btn btn-primary" onclick="copyAddress('btc')">
-                            <i class="fas fa-copy"></i> Copy Address
+                        <h3><i class="fab fa-bitcoin" style="color:#e09f2c;"></i> Bitcoin</h3>
+                        <div class="wallet-address" id="btc-address">${walletData.addresses.btc}</div>
+                        <div class="balance">$${walletData.balances.btc || '0.00'}</div>
+                        <button class="btn btn-copy" onclick="copyAddress('btc-address')">
+                            <i class="fas fa-copy"></i> copy address
                         </button>
                     </div>
 
-                    <!-- Ethereum Wallet -->
                     <div class="wallet-card">
-                        <div class="card-title">
-                            <i class="fab fa-ethereum"></i>
-                            <h3>Ethereum Wallet</h3>
-                        </div>
-                        <div class="wallet-address" id="ethAddress">
-                            ${walletData.addresses?.eth || 'Not configured'}
-                        </div>
-                        <div class="balance">
-                            $${walletData.balances?.eth || '0.00'} <small>ETH</small>
-                        </div>
-                        <button class="btn btn-primary" onclick="copyAddress('eth')">
-                            <i class="fas fa-copy"></i> Copy Address
+                        <h3><i class="fab fa-ethereum" style="color:#e09f2c;"></i> Ethereum</h3>
+                        <div class="wallet-address" id="eth-address">${walletData.addresses.eth}</div>
+                        <div class="balance">$${walletData.balances.eth || '0.00'}</div>
+                        <button class="btn btn-copy" onclick="copyAddress('eth-address')">
+                            <i class="fas fa-copy"></i> copy address
                         </button>
                     </div>
 
-                    <!-- USDT Wallet -->
                     <div class="wallet-card">
-                        <div class="card-title">
-                            <i class="fas fa-dollar-sign"></i>
-                            <h3>USDT Wallet</h3>
-                        </div>
-                        <div class="wallet-address" id="usdtAddress">
-                            ${walletData.addresses?.usdt || 'Not configured'}
-                        </div>
-                        <div class="balance">
-                            $${walletData.balances?.usdt || '0.00'} <small>USDT</small>
-                        </div>
-                        <button class="btn btn-primary" onclick="copyAddress('usdt')">
-                            <i class="fas fa-copy"></i> Copy Address
+                        <h3><i class="fas fa-dollar-sign" style="color:#e09f2c;"></i> USDT</h3>
+                        <div class="wallet-address" id="usdt-address">${walletData.addresses.usdt}</div>
+                        <div class="balance">$${walletData.balances.usdt || '0.00'}</div>
+                        <button class="btn btn-copy" onclick="copyAddress('usdt-address')">
+                            <i class="fas fa-copy"></i> copy address
                         </button>
                     </div>
                 </div>
 
-                <!-- Actions -->
-                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin: 30px 0;">
-                    <button class="btn btn-outline" onclick="depositFunds()">
-                        <i class="fas fa-arrow-down"></i> Deposit
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-top: 30px;">
+                    <button class="btn btn-primary" onclick="alert('Deposit feature coming soon!')">
+                        <i class="fas fa-arrow-down"></i> deposit
                     </button>
-                    <button class="btn btn-outline" onclick="withdrawFunds()">
-                        <i class="fas fa-arrow-up"></i> Withdraw
+                    <button class="btn btn-primary" onclick="alert('Withdraw feature coming soon!')">
+                        <i class="fas fa-arrow-up"></i> withdraw
                     </button>
-                </div>
-
-                <!-- Recent Transactions -->
-                <div class="transactions-card">
-                    <h3 style="margin-bottom: 20px;">Recent Transactions</h3>
-                    <div id="transactionsList">
-                        ${renderTransactions(walletData.transactions || [])}
-                    </div>
                 </div>
             `;
         }
 
-        // Render transactions
-        function renderTransactions(transactions) {
-            if (transactions.length === 0) {
-                return '<p style="text-align:center; color:#6b8ca8;">No transactions yet</p>';
-            }
-            
-            return transactions.slice(0, 5).map(tx => `
-                <div class="transaction-item">
-                    <div class="tx-type">
-                        <i class="fas fa-${tx.type === 'deposit' ? 'arrow-down' : 'arrow-up'}"></i>
-                        <div>
-                            <div>${tx.description || tx.type}</div>
-                            <div class="tx-date">${new Date(tx.date).toLocaleDateString()}</div>
-                        </div>
-                    </div>
-                    <div class="tx-amount ${tx.type === 'deposit' ? 'positive' : 'negative'}">
-                        ${tx.type === 'deposit' ? '+' : '-'}$${tx.amount}
-                    </div>
-                </div>
-            `).join('');
-        }
-
-        // Copy address to clipboard
-        window.copyAddress = async (type) => {
-            const addressEl = document.getElementById(`${type}Address`);
-            if (addressEl) {
-                try {
-                    await navigator.clipboard.writeText(addressEl.innerText);
-                    showNotification('Address copied!', 'success');
-                } catch (err) {
-                    showNotification('Failed to copy', 'error');
-                }
-            }
+        window.copyAddress = function(elementId) {
+            const address = document.getElementById(elementId).innerText;
+            navigator.clipboard.writeText(address);
+            alert('Address copied to clipboard!');
         };
 
-        // Deposit funds
-        window.depositFunds = () => {
-            showNotification('Deposit feature coming soon!', 'warning');
-        };
-
-        // Withdraw funds
-        window.withdrawFunds = () => {
-            showNotification('Withdrawal feature coming soon!', 'warning');
-        };
-
-        // Show notification
-        function showNotification(message, type) {
-            const alert = document.createElement('div');
-            alert.className = `alert alert-${type}`;
-            alert.innerHTML = `<i class="fas fa-${type === 'success' ? 'check-circle' : type === 'warning' ? 'exclamation-triangle' : 'exclamation-circle'}"></i> ${message}`;
-            
-            const content = document.getElementById('walletContent');
-            content.insertBefore(alert, content.firstChild);
-            
-            setTimeout(() => alert.remove(), 3000);
-        }
-
-        // Show error
-        function showError(message) {
-            const content = document.getElementById('walletContent');
-            content.innerHTML = `
-                <div class="alert alert-danger">
-                    <i class="fas fa-exclamation-circle"></i> ${message}
-                </div>
-                <button class="btn btn-primary" onclick="location.reload()">
-                    Try Again
-                </button>
-            `;
-        }
-
-        // Listen for auth errors
+        // Load wallet when ready
         auth.onAuthStateChanged((user) => {
-            if (!user) {
-                window.location.href = '/login?redirect=wallet';
+            if (user) {
+                loadWallet();
             }
         });
     </script>
