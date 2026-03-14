@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Multiplayer Games - TAAGC GAMES</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        /* Same styles as previous pages */
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', sans-serif; }
+        :root { --primary: #667eea; --secondary: #764ba2; }
+        body { background: linear-gradient(135deg, #667eea10, #764ba210); }
+        .header { background: white; box-shadow: 0 2px 20px rgba(0,0,0,0.1); position: sticky; top: 0; z-index: 1000; }
+        .nav { display: flex; justify-content: space-between; align-items: center; padding: 1rem 5%; max-width: 1400px; margin: 0 auto; }
+        .logo { font-size: 2rem; font-weight: 800; background: linear-gradient(135deg, var(--primary), var(--secondary)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; text-decoration: none; }
+        .main-content { max-width: 1400px; margin: 2rem auto; padding: 0 5%; }
+        .games-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 1.5rem; }
+        .game-card { background: white; border-radius: 15px; overflow: hidden; box-shadow: 0 5px 15px rgba(0,0,0,0.08); transition: all 0.3s; cursor: pointer; text-decoration: none; color: inherit; }
+        .game-card:hover { transform: translateY(-5px); box-shadow: 0 15px 30px rgba(102,126,234,0.15); }
+        .game-thumbnail { aspect-ratio: 16/9; background: linear-gradient(135deg, #667eea20, #764ba220); display: flex; align-items: center; justify-content: center; font-size: 3rem; position: relative; }
+        .game-info { padding: 1rem; }
+        .game-title { font-weight: 600; margin-bottom: 0.3rem; }
+        .game-meta { display: flex; justify-content: space-between; color: #666; font-size: 0.8rem; }
+        .online-counter { background: var(--success); color: white; padding: 0.2rem 0.5rem; border-radius: 5px; font-size: 0.7rem; }
+        .leaderboard { background: white; border-radius: 20px; padding: 1.5rem; margin-bottom: 2rem; box-shadow: 0 5px 15px rgba(0,0,0,0.08); }
+        .leaderboard-item { display: flex; align-items: center; gap: 1rem; padding: 0.8rem; border-bottom: 1px solid #e5e7eb; }
+        .rank-1 { background: linear-gradient(135deg, #ffd70020, #ffa50020); }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <div class="nav">
+            <a href="/" class="logo">TAAGC GAMES</a>
+            <a href="/" style="color: var(--primary); text-decoration: none;">← Back to Home</a>
+        </div>
+    </div>
+    
+    <div class="main-content">
+        <h1 style="font-size: 2.5rem; margin-bottom: 1rem;">👥 Multiplayer Games</h1>
+        <p style="color: #666; margin-bottom: 2rem;">Play with friends and players worldwide. Real-time multiplayer action!</p>
+        
+        <!-- Online Players Counter -->
+        <div style="background: linear-gradient(135deg, var(--primary), var(--secondary)); border-radius: 20px; padding: 1.5rem; color: white; margin-bottom: 2rem; display: flex; justify-content: space-between; align-items: center;">
+            <div>
+                <span style="font-size: 2rem;">🟢</span>
+                <span style="font-size: 1.5rem; margin-left: 0.5rem;" id="onlineCount">12,345</span>
+                <span>players online now</span>
+            </div>
+            <div>
+                <button onclick="playGame('https://games.taagc.website/embed/shellshock', 'Shell Shockers')" style="background: white; color: var(--primary); border: none; padding: 0.8rem 2rem; border-radius: 50px; font-weight: 600; cursor: pointer;">
+                    Quick Match
+                </button>
+            </div>
+        </div>
+        
+        <!-- Leaderboard -->
+        <div class="leaderboard">
+            <h2 style="margin-bottom: 1rem;">🏆 Weekly Leaderboard</h2>
+            <div class="leaderboard-item rank-1">
+                <span style="font-size: 1.5rem;">🥇</span>
+                <span style="font-weight: 700;">Player_123</span>
+                <span style="margin-left: auto;">15,234 pts</span>
+            </div>
+            <div class="leaderboard-item">
+                <span style="font-size: 1.2rem;">🥈</span>
+                <span style="font-weight: 700;">GamerPro</span>
+                <span style="margin-left: auto;">12,890 pts</span>
+            </div>
+            <div class="leaderboard-item">
+                <span style="font-size: 1.2rem;">🥉</span>
+                <span style="font-weight: 700;">SpeedMaster</span>
+                <span style="margin-left: auto;">10,567 pts</span>
+            </div>
+        </div>
+        
+        <!-- Games Grid -->
+        <div class="games-grid" id="multiplayerGamesGrid"></div>
+    </div>
+
+    <!-- Game Modal -->
+    <div id="gameModal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.9); z-index: 2000;">
+        <div style="position: relative; width: 100%; height: 100%;">
+            <button onclick="closeGame()" style="position: absolute; top: 20px; right: 20px; background: white; border: none; width: 40px; height: 40px; border-radius: 50%; cursor: pointer;">✕</button>
+            <iframe id="gameFrame" style="width: 100%; height: 100%; border: none;"></iframe>
+        </div>
+    </div>
+
+    <script>
+        const multiplayerGames = [
+            { id: 1, title: "Shell Shockers", thumbnail: "🥚", players: "8K", size: "5.2MB", online: "1.2K", url: "https://games.taagc.website/embed/shellshock" },
+            { id: 2, title: "Slither.io", thumbnail: "🐍", players: "12K", size: "1.9MB", online: "2.5K", url: "https://games.taagc.website/embed/slither" },
+            { id: 3, title: "Agar.io", thumbnail: "🟣", players: "15K", size: "1.8MB", online: "3.1K", url: "https://games.taagc.website/embed/agar" },
+            { id: 4, title: "Paper.io", thumbnail: "📄", players: "9K", size: "2MB", online: "1.8K", url: "https://games.taagc.website/embed/paper" },
+            { id: 5, title: "Wormax.io", thumbnail: "🪱", players: "7K", size: "2.2MB", online: "900", url: "https://games.taagc.website/embed/wormax" },
+            { id: 6, title: "Zombs Royale", thumbnail: "🧟", players: "10K", size: "4.5MB", online: "2.2K", url: "https://games.taagc.website/embed/zombs" },
+            { id: 7, title: "Surviv.io", thumbnail: "🔫", players: "11K", size: "3.8MB", online: "2.8K", url: "https://games.taagc.website/embed/surviv" },
+            { id: 8, title: "Krunker.io", thumbnail: "🎯", players: "14K", size: "4.2MB", online: "3.5K", url: "https://games.taagc.website/embed/krunker" }
+        ];
+
+        function renderMultiplayerGames() {
+            const html = multiplayerGames.map(game => `
+                <a href="#" class="game-card" onclick="playGame('${game.url}', '${game.title}')">
+                    <div class="game-thumbnail">
+                        <span>${game.thumbnail}</span>
+                        <span class="online-counter">${game.online} online</span>
+                    </div>
+                    <div class="game-info">
+                        <div class="game-title">${game.title}</div>
+                        <div class="game-meta">
+                            <span><i class="fas fa-users"></i> ${game.players}</span>
+                            <span class="game-size">${game.size}</span>
+                        </div>
+                    </div>
+                </a>
+            `).join('');
+            
+            document.getElementById('multiplayerGamesGrid').innerHTML = html;
+        }
+
+        function playGame(url, title) {
+            document.getElementById('gameFrame').src = url;
+            document.getElementById('gameModal').style.display = 'block';
+            document.title = `Playing ${title} - TAAGC Games`;
+        }
+
+        function closeGame() {
+            document.getElementById('gameModal').style.display = 'none';
+            document.getElementById('gameFrame').src = '';
+            document.title = 'Multiplayer Games - TAAGC GAMES';
+        }
+
+        // Simulate online counter
+        setInterval(() => {
+            const online = Math.floor(10000 + Math.random() * 5000);
+            document.getElementById('onlineCount').textContent = online.toLocaleString();
+        }, 5000);
+
+        renderMultiplayerGames();
+    </script>
+</body>
+</html>
