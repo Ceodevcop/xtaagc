@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Football Games - TAAGC GAMES</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        /* Same styles as racing games */
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', sans-serif; }
+        :root { --primary: #667eea; --secondary: #764ba2; }
+        body { background: linear-gradient(135deg, #667eea10, #764ba210); }
+        .header { background: white; box-shadow: 0 2px 20px rgba(0,0,0,0.1); position: sticky; top: 0; z-index: 1000; }
+        .nav { display: flex; justify-content: space-between; align-items: center; padding: 1rem 5%; max-width: 1400px; margin: 0 auto; }
+        .logo { font-size: 2rem; font-weight: 800; background: linear-gradient(135deg, var(--primary), var(--secondary)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; text-decoration: none; }
+        .main-content { max-width: 1400px; margin: 2rem auto; padding: 0 5%; }
+        .games-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 1.5rem; }
+        .game-card { background: white; border-radius: 15px; overflow: hidden; box-shadow: 0 5px 15px rgba(0,0,0,0.08); transition: all 0.3s; cursor: pointer; text-decoration: none; color: inherit; }
+        .game-card:hover { transform: translateY(-5px); box-shadow: 0 15px 30px rgba(102,126,234,0.15); }
+        .game-thumbnail { aspect-ratio: 16/9; background: linear-gradient(135deg, #667eea20, #764ba220); display: flex; align-items: center; justify-content: center; font-size: 3rem; position: relative; }
+        .game-info { padding: 1rem; }
+        .game-title { font-weight: 600; margin-bottom: 0.3rem; }
+        .game-meta { display: flex; justify-content: space-between; color: #666; font-size: 0.8rem; }
+        .live-match { background: linear-gradient(135deg, var(--primary), var(--secondary)); border-radius: 20px; padding: 2rem; color: white; margin-bottom: 2rem; }
+        .teams { display: flex; align-items: center; justify-content: space-around; font-size: 1.5rem; margin: 1rem 0; }
+        .score { font-size: 3rem; font-weight: 800; margin: 0 2rem; }
+        .live-badge { background: #ef4444; color: white; padding: 0.3rem 1rem; border-radius: 50px; display: inline-block; font-size: 0.9rem; animation: pulse 1.5s infinite; }
+        @keyframes pulse { 0% { opacity: 1; } 50% { opacity: 0.5; } 100% { opacity: 1; } }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <div class="nav">
+            <a href="/" class="logo">TAAGC GAMES</a>
+            <a href="/" style="color: var(--primary); text-decoration: none;">← Back to Home</a>
+        </div>
+    </div>
+    
+    <div class="main-content">
+        <h1 style="font-size: 2.5rem; margin-bottom: 1rem;">⚽ Football Games</h1>
+        <p style="color: #666; margin-bottom: 2rem;">The best football games online. Penalty shootouts, skill challenges, and more!</p>
+        
+        <!-- Live Match -->
+        <div class="live-match">
+            <span class="live-badge">LIVE NOW</span>
+            <div class="teams">
+                <div>🏴󠁧󠁢󠁥󠁮󠁧󠁿 Man City</div>
+                <div class="score">2 - 1</div>
+                <div>🇪🇸 Real Madrid</div>
+            </div>
+            <div style="text-align: center; margin-top: 1rem;">
+                <button onclick="playGame('https://games.taagc.website/embed/footballmasters', 'Football Masters')" style="background: white; color: var(--primary); border: none; padding: 0.8rem 2rem; border-radius: 50px; font-weight: 600; cursor: pointer;">
+                    Play Live Match
+                </button>
+            </div>
+        </div>
+        
+        <!-- Games Grid -->
+        <div class="games-grid" id="footballGamesGrid"></div>
+    </div>
+
+    <!-- Game Modal -->
+    <div id="gameModal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.9); z-index: 2000;">
+        <div style="position: relative; width: 100%; height: 100%;">
+            <button onclick="closeGame()" style="position: absolute; top: 20px; right: 20px; background: white; border: none; width: 40px; height: 40px; border-radius: 50%; cursor: pointer;">✕</button>
+            <iframe id="gameFrame" style="width: 100%; height: 100%; border: none;"></iframe>
+        </div>
+    </div>
+
+    <script>
+        const footballGames = [
+            { id: 1, title: "Penalty Shooters", thumbnail: "⚽", players: "6K", size: "2.4MB", url: "https://games.taagc.website/embed/penalty" },
+            { id: 2, title: "Football Masters", thumbnail: "🥅", players: "4.5K", size: "2.8MB", url: "https://games.taagc.website/embed/footballmasters" },
+            { id: 3, title: "Heads Arena", thumbnail: "👨", players: "3.2K", size: "3.1MB", url: "https://games.taagc.website/embed/heads" },
+            { id: 4, title: "Soccer Skills", thumbnail: "⭐", players: "5.5K", size: "2.2MB", url: "https://games.taagc.website/embed/skills" },
+            { id: 5, title: "World Cup 2024", thumbnail: "🏆", players: "4.8K", size: "3.4MB", url: "https://games.taagc.website/embed/worldcup" },
+            { id: 6, title: "Street Soccer", thumbnail: "🏃", players: "3.1K", size: "2.6MB", url: "https://games.taagc.website/embed/street" },
+            { id: 7, title: "Football Manager", thumbnail: "📋", players: "2.9K", size: "3.5MB", url: "https://games.taagc.website/embed/manager" },
+            { id: 8, title: "Penalty Kicks", thumbnail: "🎯", players: "5.2K", size: "2.1MB", url: "https://games.taagc.website/embed/penaltykicks" }
+        ];
+
+        function renderFootballGames() {
+            const html = footballGames.map(game => `
+                <a href="#" class="game-card" onclick="playGame('${game.url}', '${game.title}')">
+                    <div class="game-thumbnail">
+                        <span>${game.thumbnail}</span>
+                    </div>
+                    <div class="game-info">
+                        <div class="game-title">${game.title}</div>
+                        <div class="game-meta">
+                            <span><i class="fas fa-users"></i> ${game.players}</span>
+                            <span class="game-size">${game.size}</span>
+                        </div>
+                    </div>
+                </a>
+            `).join('');
+            
+            document.getElementById('footballGamesGrid').innerHTML = html;
+        }
+
+        function playGame(url, title) {
+            document.getElementById('gameFrame').src = url;
+            document.getElementById('gameModal').style.display = 'block';
+            document.title = `Playing ${title} - TAAGC Games`;
+        }
+
+        function closeGame() {
+            document.getElementById('gameModal').style.display = 'none';
+            document.getElementById('gameFrame').src = '';
+            document.title = 'Football Games - TAAGC GAMES';
+        }
+
+        renderFootballGames();
+    </script>
+</body>
+</html>
