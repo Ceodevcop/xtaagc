@@ -1,0 +1,380 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Marketplace - TAAGC GAMES</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', sans-serif; }
+        :root { --primary: #667eea; --secondary: #764ba2; --success: #10b981; }
+        body { background: linear-gradient(135deg, #667eea10, #764ba210); }
+        .header { background: white; box-shadow: 0 2px 20px rgba(0,0,0,0.1); position: sticky; top: 0; z-index: 1000; }
+        .nav { display: flex; justify-content: space-between; align-items: center; padding: 1rem 5%; max-width: 1400px; margin: 0 auto; }
+        .logo { font-size: 2rem; font-weight: 800; background: linear-gradient(135deg, var(--primary), var(--secondary)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; text-decoration: none; }
+        .main-content { max-width: 1400px; margin: 2rem auto; padding: 0 5%; }
+        
+        .marketplace-header {
+            background: white;
+            border-radius: 20px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.05);
+        }
+        
+        .tabs {
+            display: flex;
+            gap: 1rem;
+            border-bottom: 2px solid #e5e7eb;
+            margin-bottom: 2rem;
+        }
+        
+        .tab {
+            padding: 1rem 2rem;
+            cursor: pointer;
+            border-bottom: 2px solid transparent;
+            margin-bottom: -2px;
+            font-weight: 600;
+        }
+        
+        .tab.active {
+            color: var(--primary);
+            border-bottom-color: var(--primary);
+        }
+        
+        .marketplace-grid {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 2rem;
+        }
+        
+        .orders-section {
+            background: white;
+            border-radius: 20px;
+            padding: 1.5rem;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.05);
+        }
+        
+        .order-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem;
+            border-bottom: 1px solid #e5e7eb;
+            transition: background 0.3s;
+        }
+        
+        .order-item:hover {
+            background: #f8fafc;
+        }
+        
+        .seller-info {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+        
+        .seller-avatar {
+            width: 40px;
+            height: 40px;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+        }
+        
+        .order-details {
+            flex: 1;
+        }
+        
+        .order-amount {
+            font-weight: 700;
+            font-size: 1.1rem;
+        }
+        
+        .order-price {
+            color: #666;
+            font-size: 0.9rem;
+        }
+        
+        .order-price span {
+            color: var(--primary);
+            font-weight: 700;
+        }
+        
+        .trade-btn {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: white;
+            border: none;
+            padding: 0.5rem 1.5rem;
+            border-radius: 50px;
+            font-weight: 600;
+            cursor: pointer;
+        }
+        
+        .stats-panel {
+            background: white;
+            border-radius: 20px;
+            padding: 1.5rem;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.05);
+        }
+        
+        .market-stats {
+            display: grid;
+            gap: 1rem;
+            margin: 1.5rem 0;
+        }
+        
+        .stat-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 0.5rem;
+            background: #f8fafc;
+            border-radius: 10px;
+        }
+        
+        .create-order-btn {
+            width: 100%;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: white;
+            border: none;
+            padding: 1rem;
+            border-radius: 10px;
+            font-weight: 600;
+            cursor: pointer;
+            margin: 1rem 0;
+        }
+        
+        .price-chart {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            border-radius: 10px;
+            padding: 1rem;
+            color: white;
+            text-align: center;
+        }
+        
+        .badge {
+            padding: 0.2rem 0.5rem;
+            border-radius: 5px;
+            font-size: 0.8rem;
+        }
+        
+        .badge.success { background: var(--success); color: white; }
+        .badge.warning { background: #f59e0b; color: white; }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <div class="nav">
+            <a href="/" class="logo">TAAGC GAMES</a>
+            <a href="/" style="color: var(--primary); text-decoration: none;">← Back to Home</a>
+        </div>
+    </div>
+    
+    <div class="main-content">
+        <div class="marketplace-header">
+            <h1 style="font-size: 2.5rem;">🛒 P2P Marketplace</h1>
+            <p style="color: #666; margin-top: 0.5rem;">Buy and sell points directly with other players. Set your own price!</p>
+        </div>
+        
+        <!-- Tabs -->
+        <div class="tabs">
+            <div class="tab active" onclick="switchTab('buy')">🛍️ Buy Points</div>
+            <div class="tab" onclick="switchTab('sell')">💰 Sell Points</div>
+            <div class="tab" onclick="switchTab('history')">📜 My Trades</div>
+        </div>
+        
+        <!-- Marketplace Grid -->
+        <div class="marketplace-grid">
+            <!-- Orders Section -->
+            <div class="orders-section" id="ordersSection">
+                <!-- Dynamic content will be loaded here -->
+            </div>
+            
+            <!-- Stats Panel -->
+            <div class="stats-panel">
+                <h3>📊 Market Stats</h3>
+                
+                <div class="price-chart">
+                    <div>Current Rate</div>
+                    <div style="font-size: 2rem; font-weight: 800;" id="currentRate">$0.0102</div>
+                    <div style="font-size: 0.9rem;">per point</div>
+                </div>
+                
+                <div class="market-stats">
+                    <div class="stat-row">
+                        <span>24h Volume</span>
+                        <span><strong>125,000</strong> PTS</span>
+                    </div>
+                    <div class="stat-row">
+                        <span>Active Orders</span>
+                        <span><strong>42</strong> orders</span>
+                    </div>
+                    <div class="stat-row">
+                        <span>Buy Price</span>
+                        <span><strong style="color: var(--success);">$0.0100</strong></span>
+                    </div>
+                    <div class="stat-row">
+                        <span>Sell Price</span>
+                        <span><strong style="color: var(--warning);">$0.0105</strong></span>
+                    </div>
+                    <div class="stat-row">
+                        <span>Spread</span>
+                        <span><strong>5%</strong></span>
+                    </div>
+                </div>
+                
+                <button class="create-order-btn" onclick="createOrder()">
+                    <i class="fas fa-plus-circle"></i> Create Order
+                </button>
+                
+                <div style="margin-top: 1rem;">
+                    <h4>Recent Trades</h4>
+                    <div style="margin-top: 0.5rem;">
+                        <div style="display: flex; justify-content: space-between; padding: 0.5rem 0; border-bottom: 1px solid #e5e7eb;">
+                            <span>Sold 1,000 PTS</span>
+                            <span style="color: var(--success);">$10.20</span>
+                        </div>
+                        <div style="display: flex; justify-content: space-between; padding: 0.5rem 0; border-bottom: 1px solid #e5e7eb;">
+                            <span>Bought 500 PTS</span>
+                            <span style="color: var(--warning);">$5.25</span>
+                        </div>
+                        <div style="display: flex; justify-content: space-between; padding: 0.5rem 0;">
+                            <span>Sold 2,000 PTS</span>
+                            <span style="color: var(--success);">$20.40</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Sample orders data
+        const buyOrders = [
+            { seller: "Player123", amount: 1000, price: 0.0102, total: 10.20, rating: 4.9, verified: true },
+            { seller: "CryptoKing", amount: 5000, price: 0.0101, total: 50.50, rating: 4.8, verified: true },
+            { seller: "GameMaster", amount: 2500, price: 0.0103, total: 25.75, rating: 5.0, verified: true },
+            { seller: "ProTrader", amount: 10000, price: 0.0100, total: 100.00, rating: 4.7, verified: false }
+        ];
+        
+        const sellOrders = [
+            { buyer: "NewPlayer", amount: 500, price: 0.0098, total: 4.90, rating: 4.5, verified: false },
+            { buyer: "WhaleUser", amount: 20000, price: 0.0095, total: 190.00, rating: 5.0, verified: true },
+            { buyer: "CryptoFan", amount: 3000, price: 0.0099, total: 29.70, rating: 4.6, verified: true }
+        ];
+
+        let currentTab = 'buy';
+
+        function renderOrders() {
+            const ordersSection = document.getElementById('ordersSection');
+            const orders = currentTab === 'buy' ? buyOrders : sellOrders;
+            const type = currentTab === 'buy' ? 'Selling' : 'Buying';
+            
+            let html = `
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+                    <h3>${type} Orders</h3>
+                    <span class="badge ${currentTab === 'buy' ? 'warning' : 'success'}">${orders.length} active</span>
+                </div>
+            `;
+            
+            orders.forEach(order => {
+                const user = currentTab === 'buy' ? order.seller : order.buyer;
+                html += `
+                    <div class="order-item">
+                        <div class="seller-info">
+                            <div class="seller-avatar">${user.substring(0,2).toUpperCase()}</div>
+                            <div class="order-details">
+                                <div class="order-amount">${order.amount.toLocaleString()} Points</div>
+                                <div class="order-price">Price: <span>$${order.price.toFixed(4)}</span> per point</div>
+                                <div style="font-size: 0.8rem; color: #666;">
+                                    ⭐ ${order.rating} 
+                                    ${order.verified ? '<span style="color: var(--success);">✓ Verified</span>' : ''}
+                                </div>
+                            </div>
+                        </div>
+                        <div>
+                            <div style="text-align: right; margin-bottom: 0.5rem; font-weight: 700; color: var(--success);">
+                                $${order.total.toFixed(2)}
+                            </div>
+                            <button class="trade-btn" onclick="trade('${user}', ${order.amount}, ${order.price})">
+                                ${currentTab === 'buy' ? 'Buy' : 'Sell'}
+                            </button>
+                        </div>
+                    </div>
+                `;
+            });
+            
+            if(orders.length === 0) {
+                html += '<p style="text-align: center; padding: 2rem; color: #666;">No orders available</p>';
+            }
+            
+            ordersSection.innerHTML = html;
+        }
+
+        function switchTab(tab) {
+            currentTab = tab;
+            
+            // Update active tab styling
+            document.querySelectorAll('.tab').forEach((el, index) => {
+                if((tab === 'buy' && index === 0) || 
+                   (tab === 'sell' && index === 1) || 
+                   (tab === 'history' && index === 2)) {
+                    el.classList.add('active');
+                } else {
+                    el.classList.remove('active');
+                }
+            });
+            
+            if(tab === 'history') {
+                document.getElementById('ordersSection').innerHTML = `
+                    <div style="text-align: center; padding: 3rem;">
+                        <i class="fas fa-history" style="font-size: 3rem; color: #ccc; margin-bottom: 1rem;"></i>
+                        <h3>Your Trade History</h3>
+                        <p style="color: #666; margin: 1rem 0;">You haven't made any trades yet.</p>
+                        <button class="create-order-btn" onclick="switchTab('buy')" style="width: auto; padding: 0.8rem 2rem;">
+                            Start Trading
+                        </button>
+                    </div>
+                `;
+            } else {
+                renderOrders();
+            }
+        }
+
+        function trade(user, amount, price) {
+            const total = amount * price;
+            if(confirm(`${currentTab === 'buy' ? 'Buy' : 'Sell'} ${amount} points from ${user} for $${total.toFixed(2)}?`)) {
+                alert(`Trade initiated! Please complete payment through TAAGC Pay.`);
+                window.open('https://pay.taagc.website', '_blank');
+            }
+        }
+
+        function createOrder() {
+            const type = prompt('Create order to (buy/sell) points?');
+            if(type && (type.toLowerCase() === 'buy' || type.toLowerCase() === 'sell')) {
+                const amount = prompt('Enter amount of points:');
+                if(amount && !isNaN(amount) && amount > 0) {
+                    const price = prompt('Enter price per point (e.g., 0.0100):');
+                    if(price && !isNaN(price) && price > 0) {
+                        alert(`Order created! Your order to ${type} ${amount} points at $${price} will appear in the marketplace.`);
+                        // In real implementation, this would call your backend
+                    }
+                }
+            }
+        }
+
+        // Initialize
+        renderOrders();
+
+        // Simulate rate changes
+        setInterval(() => {
+            const rate = (0.0095 + Math.random() * 0.002).toFixed(4);
+            document.getElementById('currentRate').textContent = '$' + rate;
+        }, 5000);
+    </script>
+</body>
+</html>
