@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <link rel="icon" href="%PUBLIC_URL%/favicon.ico" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="theme-color" content="#2563eb" />
+  <meta name="description" content="TAAGC Fintech - Your trusted partner for airtime, data, bill payments, and banking services. Powered by 9PSB." />
+  <meta name="keywords" content="fintech, airtime, data, bills, betting, payments, nigeria, 9psb" />
+  <meta name="author" content="Triple A-Ahal Global Concept" />
+  
+  <!-- Open Graph / Social Media -->
+  <meta property="og:title" content="TAAGC Fintech" />
+  <meta property="og:description" content="Your trusted partner for airtime, data, bill payments, and banking services" />
+  <meta property="og:type" content="website" />
+  <meta property="og:url" content="https://fintech.taagc.website" />
+  <meta property="og:image" content="%PUBLIC_URL%/og-image.jpg" />
+  
+  <!-- Twitter Card -->
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="TAAGC Fintech" />
+  <meta name="twitter:description" content="Your trusted partner for airtime, data, bill payments, and banking services" />
+  
+  <!-- PWA -->
+  <link rel="apple-touch-icon" href="%PUBLIC_URL%/logo192.png" />
+  <link rel="manifest" href="%PUBLIC_URL%/manifest.json" />
+  
+  <title>TAAGC Fintech - Powered by 9PSB</title>
+  
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  
+  <!-- Font Awesome -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  
+  <!-- Tailwind CSS via CDN (for static HTML) -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            primary: {
+              50: '#eff6ff',
+              100: '#dbeafe',
+              200: '#bfdbfe',
+              300: '#93c5fd',
+              400: '#60a5fa',
+              500: '#3b82f6',
+              600: '#2563eb',
+              700: '#1d4ed8',
+              800: '#1e40af',
+              900: '#1e3a8a',
+            }
+          },
+          fontFamily: {
+            sans: ['Inter', 'sans-serif'],
+          }
+        }
+      }
+    }
+  </script>
+  
+  <!-- Custom CSS -->
+  <style>
+    body {
+      font-family: 'Inter', sans-serif;
+    }
+    .btn-primary {
+      @apply bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors duration-200 font-medium;
+    }
+    .btn-secondary {
+      @apply bg-gray-200 text-gray-800 px-4 py-2 rounded-lg hover:bg-gray-300 transition-colors duration-200 font-medium;
+    }
+    .btn-outline {
+      @apply border-2 border-blue-600 text-blue-600 px-4 py-2 rounded-lg hover:bg-blue-50 transition-colors duration-200 font-medium;
+    }
+    .input-field {
+      @apply w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none;
+    }
+    .card {
+      @apply bg-white p-6 rounded-xl shadow-lg;
+    }
+    .dashboard-card {
+      @apply bg-gradient-to-r from-blue-600 to-blue-700 text-white p-6 rounded-xl shadow-lg;
+    }
+    .animate-spin {
+      animation: spin 1s linear infinite;
+    }
+    @keyframes spin {
+      from { transform: rotate(0deg); }
+      to { transform: rotate(360deg); }
+    }
+    .toast {
+      @apply fixed bottom-4 right-4 bg-gray-900 text-white px-4 py-3 rounded-lg shadow-lg transform transition-transform duration-300 z-50;
+    }
+    .toast.success { @apply bg-green-600; }
+    .toast.error { @apply bg-red-600; }
+    .toast.info { @apply bg-blue-600; }
+  </style>
+</head>
+<body class="bg-gray-50">
+  <noscript>You need to enable JavaScript to run this app.</noscript>
+  <div id="root"></div>
+</body>
+</html>
