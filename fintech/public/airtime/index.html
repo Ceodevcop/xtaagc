@@ -210,3 +210,12 @@
       if (phone) {
         document.querySelector('input[type="tel"]').value = phone;
       }
+    }
+
+    document.getElementById('airtimeForm').addEventListener('submit', function(e) {
+      e.preventDefault();
+      alert('Airtime purchase successful! Check your phone shortly.');
+    });
+  </script>
+</body>
+</html>
