@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Fund Betting - TAAGC Fintech</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body class="bg-gray-100">
+  <div class="flex h-screen">
+    <!-- Sidebar -->
+    <div class="w-64 bg-white shadow-lg fixed h-full">
+      <div class="p-4 border-b">
+        <h2 class="text-xl font-bold text-blue-600">TAAGC Fintech</h2>
+        <p class="text-sm text-gray-600">Welcome back, Ahmad!</p>
+      </div>
+      
+      <div class="p-4">
+        <a href="/dashboard.html" class="sidebar-item">
+          <i class="fas fa-home w-5"></i>
+          <span>Dashboard</span>
+        </a>
+        <a href="/wallet.html" class="sidebar-item">
+          <i class="fas fa-wallet w-5"></i>
+          <span>Wallet</span>
+        </a>
+        <a href="/airtime.html" class="sidebar-item">
+          <i class="fas fa-phone w-5"></i>
+          <span>Airtime</span>
+        </a>
+        <a href="/bills.html" class="sidebar-item">
+          <i class="fas fa-bolt w-5"></i>
+          <span>Bills</span>
+        </a>
+        <a href="/betting.html" class="sidebar-item active">
+          <i class="fas fa-trophy w-5"></i>
+          <span>Betting</span>
+        </a>
+        <a href="/transactions.html" class="sidebar-item">
+          <i class="fas fa-exchange-alt w-5"></i>
+          <span>Transactions</span>
+        </a>
+        <a href="/profile.html" class="sidebar-item">
+          <i class="fas fa-user w-5"></i>
+          <span>Profile</span>
+        </a>
+        <div class="sidebar-item text-red-600">
+          <i class="fas fa-sign-out-alt w-5"></i>
+          <span>Logout</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Main Content -->
+    <div class="ml-64 flex-1 p-8 overflow-auto">
+      <h1 class="text-3xl font-bold mb-8">Fund Betting Account</h1>
+
+      <!-- Commission Alert -->
+      <div class="bg-purple-50 border-l-4 border-purple-500 p-4 mb-6">
+        <div class="flex items-center">
+          <i class="fas fa-info-circle text-purple-600 mr-3"></i>
+          <p class="text-purple-700">
+            <span class="font-bold">Commission Alert:</span> Earn up to 0.86% on every betting funding!
+          </p>
+        </div>
+      </div>
+
+      <!-- Betting Form -->
+      <div class="bg-white p-8 rounded-xl shadow-sm max-w-2xl">
+        <!-- Provider Selection -->
+        <div class="mb-6">
+          <label class="block text-sm font-medium mb-3">Select Betting Provider</label>
+          <div class="grid grid-cols-2 md:grid-cols-3 gap-3">
+            <label class="border rounded-lg p-4 text-center cursor-pointer hover:border-purple-500 has-[:checked]:border-purple-600 has-[:checked]:bg-purple-50">
+              <input type="radio" name="provider" value="Bet9ja" class="hidden" checked>
+              <img src="https://via.placeholder.com/80x40/FF6B00/ffffff?text=Bet9ja" class="h-8 mx-auto mb-2">
+              <span class="text-xs text-green-600">0.34% (₦850 cap)</span>
+            </label>
+            
+            <label class="border rounded-lg p-4 text-center cursor-pointer hover:border-purple-500">
+              <input type="radio" name="provider" value="BetKing" class="hidden">
+              <img src="https://via.placeholder.com/80x40/FF0000/ffffff?text=BetKing" class="h-8 mx-auto mb-2">
+              <span class="text-xs text-green-600">0.86% (₦860 cap)</span>
+            </label>
+            
+            <label class="border rounded-lg p-4 text-center cursor-pointer hover:border-purple-500">
+              <input type="radio" name="provider" value="1xBet" class="hidden">
+              <img src="https://via.placeholder.com/80x40/00FF00/000000?text=1xBet" class="h-8 mx-auto mb-2">
+              <span class="text-xs text-green-600">0.30%</span>
+            </label>
+            
+            <label class="border rounded-lg p-4 text-center cursor-pointer hover:border-purple-500">
+              <input type="radio" name="provider" value="NairaBet" class="hidden">
+              <img src="https://via.placeholder.com/80x40/0000FF/ffffff?text=NairaBet" class="h-8 mx-auto mb-2">
+              <span class="text-xs text-green-600">0.13%</span>
+            </label>
+            
+            <label class="border rounded-lg p-4 text-center cursor-pointer hover:border-purple-500">
+              <input type="radio" name="provider" value="MerryBet" class="hidden">
+              <img src="https://via.placeholder.com/80x40/FF00FF/ffffff?text=MerryBet" class="h-8 mx-auto mb-2">
+              <span class="text-xs text-green-600">0.13%</span>
+            </label>
+            
+            <label class="border rounded-lg p-4 text-center cursor-pointer hover:border-purple-500">
+              <input type="radio" name="provider" value="SportyBet" class="hidden">
+              <img src="https://via.placeholder.com/80x40/00FFFF/000000?text=SportyBet" class="h-8 mx-auto mb-2">
+              <span class="text-xs text-green-600">0.30%</span>
+            </label>
+          </div>
+        </div>
+
+        <!-- Customer ID -->
+        <div class="mb-4">
+          <label class="block text-sm font-medium mb-2">Customer ID / Username</label>
+          <input type="text" id="customerId" class="w-full p-3 border rounded-lg" placeholder="Enter your betting ID" required>
+        </div>
+
+        <!-- Amount -->
+        <div class="mb-4">
+          <label class="block text-sm font-medium mb-2">Amount (₦)</label>
+          <input type="number" id="amount" class="w-full p-3 border rounded-lg" placeholder="1000" min="100" required onkeyup="calculateCommission()">
+        </div>
+
+        <!-- Commission Preview -->
+        <div id="commissionBox" class="bg-purple-50 p-4 rounded-lg mb-4 hidden">
+          <p class="text-sm text-purple-800">
+            <span class="font-bold">Commission Preview:</span> You will earn 
+            <span id="commissionAmount" class="font-bold">₦0.00</span>
+          </p>
+        </div>
+
+        <!-- Quick Amounts -->
+        <div class="mb-6">
+          <label class="block text-sm font-medium mb-2">Quick Select</label>
+          <div class="flex gap-2">
+            <button type="button" class="flex-1 bg-gray-100 p-2 rounded hover:bg-gray-200" onclick="setAmount(1000)">₦1,000</button>
+            <button type="button" class="flex-1 bg-gray-100 p-2 rounded hover:bg-gray-200" onclick="setAmount(2000)">₦2,000</button>
+            <button type="button" class="flex-1 bg-gray-100 p-2 rounded hover:bg-gray-200" onclick="setAmount(5000)">₦5,000</button>
+            <button type="button" class="flex-1 bg-gray-100 p-2 rounded hover:bg-gray-200" onclick="setAmount(10000)">₦10,000</button>
+          </div>
+        </div>
+
+        <!-- Submit Button -->
+        <button onclick="processBetting()" class="w-full bg-purple-600 text-white py-4 rounded-lg font-bold text-lg hover:bg-purple-700">
+          Fund Betting Account
+        </button>
+
+        <!-- Recent Funding -->
+        <div class="mt-8 pt-6 border-t">
+          <h3 class="font-bold mb-4">Recent Funding</h3>
+          <div class="space-y-3">
+            <div class="flex justify-between items-center p-3 bg-gray-50 rounded">
+              <div class="flex items-center space-x-3">
+                <img src="https://via.placeholder.com/30x30/FF6B00/ffffff?text=B9" class="rounded">
+                <div>
+                  <p class="font-medium">Bet9ja - 12345678</p>
+                  <p class="text-xs text-gray-500">Today, 2:30 PM</p>
+                </div>
+              </div>
+              <div class="text-right">
+                <p class="font-medium">₦2,000</p>
+                <p class="text-xs text-green-600">+₦6.80</p>
+              </div>
+            </div>
+            
+            <div class="flex justify-between items-center p-3 bg-gray-50 rounded">
+              <div class="flex items-center space-x-3">
+                <img src="https://via.placeholder.com/30x30/FF0000/ffffff?text=BK" class="rounded">
+                <div>
+                  <p class="font-medium">BetKing - 87654321</p>
+                  <p class="text-xs text-gray-500">Yesterday</p>
+                </div>
+              </div>
+              <div class="text-right">
+                <p class="font-medium">₦5,000</p>
+                <p class="text-xs text-green-600">+₦43.00</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Provider Info -->
+      <div class="mt-6 bg-blue-50 p-4 rounded-lg">
+        <h3 class="font-bold mb-2">Supported Providers</h3>
+        <div class="grid grid-cols-4 gap-2 text-sm">
+          <span>✓ Bet9ja</span>
+          <span>✓ BetKing</span>
+          <span>✓ 1xBet</span>
+          <span>✓ NairaBet</span>
+          <span>✓ MerryBet</span>
+          <span>✓ SportyBet</span>
+          <span>✓ BetLand</span>
+          <span>✓ CloudBet</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    function calculateCommission() {
+      const amount = parseFloat(document.getElementById('amount').value) || 0;
+      const provider = document.querySelector('input[name="provider"]:checked')?.value;
+      
+      if (amount && provider) {
+        const rates = {
+          'Bet9ja': { rate: 0.0034, cap: 850 },
+          'BetKing': { rate: 0.0086, cap: 860 },
+          '1xBet': { rate: 0.003, cap: null },
+          'NairaBet': { rate: 0.0013, cap: null },
+          'MerryBet': { rate: 0.0013, cap: null },
+          'SportyBet': { rate: 0.003, cap: null }
+        };
+        
+        let commission = amount * rates[provider].rate;
+        if (rates[provider].cap && commission > rates[provider].cap) {
+          commission = rates[provider].cap;
+        }
+        
+        document.getElementById('commissionAmount').textContent = `₦${commission.toFixed(2)}`;
+        document.getElementById('commissionBox').classList.remove('hidden');
+      }
+    }
+
+    function setAmount(amount) {
+      document.getElementById('amount').value = amount;
+      calculateCommission();
+    }
+
+    function processBetting() {
+      const provider = document.querySelector('input[name="provider"]:checked')?.value;
+      const customerId = document.getElementById('customerId').value;
+      const amount = document.getElementById('amount').value;
+      
+      if (!customerId) {
+        alert('Please enter your betting customer ID');
+        return;
+      }
+      
+      if (!amount || amount < 100) {
+        alert('Please enter a valid amount (minimum ₦100)');
+        return;
+      }
+      
+      alert(`Successfully funded ₦${amount} to ${provider} account ${customerId}`);
+      document.getElementById('customerId').value = '';
+      document.getElementById('amount').value = '';
+      document.getElementById('commissionBox').classList.add('hidden');
+    }
+  </script>
+</body>
+</html>
