@@ -1,0 +1,384 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Register - TAAGC Fintech (Live)</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <!-- Firebase SDKs -->
+  <script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-firestore-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-functions-compat.js"></script>
+  <style>
+    body { font-family: 'Inter', sans-serif; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); }
+    .register-card { @apply bg-white p-8 rounded-2xl shadow-2xl max-w-md w-full; }
+    .input-field { @apply w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent outline-none; }
+    .btn-register { @apply w-full bg-gradient-to-r from-purple-600 to-blue-600 text-white py-3 rounded-lg font-bold hover:from-purple-700 hover:to-blue-700 transition; }
+    .step-indicator { @apply flex items-center justify-center mb-8; }
+    .step { @apply w-8 h-8 rounded-full flex items-center justify-center text-sm font-medium; }
+    .step.active { @apply bg-purple-600 text-white; }
+    .step.completed { @apply bg-green-500 text-white; }
+    .step-line { @apply flex-1 h-1 mx-2 bg-gray-300; }
+    .step-line.active { @apply bg-green-500; }
+    .toast { @apply fixed bottom-4 right-4 bg-gray-900 text-white px-4 py-3 rounded-lg shadow-lg z-50; }
+    .toast.success { @apply bg-green-600; }
+    .toast.error { @apply bg-red-600; }
+  </style>
+</head>
+<body class="min-h-screen flex items-center justify-center p-4">
+  <!-- Loading Spinner -->
+  <div id="loading-spinner" class="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center hidden">
+    <div class="bg-white p-6 rounded-lg text-center">
+      <div class="animate-spin rounded-full h-12 w-12 border-4 border-purple-600 border-t-transparent mx-auto mb-4"></div>
+      <p class="text-gray-700">Processing registration...</p>
+    </div>
+  </div>
+
+  <!-- Toast Container -->
+  <div id="toast-container" class="fixed bottom-4 right-4 z-50"></div>
+
+  <div class="register-card">
+    <!-- Logo -->
+    <div class="text-center mb-6">
+      <a href="/" class="inline-flex items-center space-x-2">
+        <div class="w-10 h-10 bg-gradient-to-br from-purple-600 to-blue-600 rounded-lg flex items-center justify-center">
+          <span class="text-white font-bold text-xl">T</span>
+        </div>
+        <span class="text-xl font-bold text-gray-800">TAAGC Fintech</span>
+      </a>
+      <p class="text-sm text-gray-600 mt-2">Create your account - It's free!</p>
+    </div>
+
+    <!-- Step Indicator -->
+    <div class="step-indicator" id="step-indicator">
+      <div class="step active" id="step1">1</div>
+      <div class="step-line" id="line1"></div>
+      <div class="step" id="step2">2</div>
+      <div class="step-line" id="line2"></div>
+      <div class="step" id="step3">3</div>
+    </div>
+
+    <!-- Step 1: Phone Number -->
+    <div id="step1-form" class="space-y-4">
+      <h2 class="text-2xl font-bold text-center">Enter Phone Number</h2>
+      <p class="text-sm text-gray-600 text-center">You'll receive an OTP for verification</p>
+      
+      <div>
+        <label class="block mb-2 font-medium">Phone Number</label>
+        <div class="relative">
+          <i class="fas fa-phone absolute left-3 top-3 text-gray-400"></i>
+          <input type="tel" id="phone" class="input-field pl-10" placeholder="08012345678" required>
+        </div>
+      </div>
+
+      <div id="recaptcha-container"></div>
+
+      <button onclick="sendOTP()" class="btn-register">
+        <i class="fas fa-paper-plane mr-2"></i>Send OTP
+      </button>
+    </div>
+
+    <!-- Step 2: Verify OTP -->
+    <div id="step2-form" class="space-y-4 hidden">
+      <h2 class="text-2xl font-bold text-center">Verify OTP</h2>
+      <p class="text-sm text-gray-600 text-center">Enter the 6-digit code sent to <span id="display-phone" class="font-bold"></span></p>
+      
+      <div>
+        <label class="block mb-2 font-medium">OTP Code</label>
+        <div class="flex gap-2">
+          <input type="text" id="otp1" class="w-12 h-12 text-center text-xl font-bold border rounded-lg" maxlength="1" onkeyup="moveToNext(this, 'otp2')">
+          <input type="text" id="otp2" class="w-12 h-12 text-center text-xl font-bold border rounded-lg" maxlength="1" onkeyup="moveToNext(this, 'otp3')">
+          <input type="text" id="otp3" class="w-12 h-12 text-center text-xl font-bold border rounded-lg" maxlength="1" onkeyup="moveToNext(this, 'otp4')">
+          <input type="text" id="otp4" class="w-12 h-12 text-center text-xl font-bold border rounded-lg" maxlength="1" onkeyup="moveToNext(this, 'otp5')">
+          <input type="text" id="otp5" class="w-12 h-12 text-center text-xl font-bold border rounded-lg" maxlength="1" onkeyup="moveToNext(this, 'otp6')">
+          <input type="text" id="otp6" class="w-12 h-12 text-center text-xl font-bold border rounded-lg" maxlength="1">
+        </div>
+      </div>
+
+      <div class="flex items-center justify-between">
+        <button onclick="resendOTP()" class="text-purple-600 hover:underline text-sm">
+          <i class="fas fa-redo-alt mr-1"></i>Resend OTP
+        </button>
+        <span id="timer" class="text-sm text-gray-500">60s</span>
+      </div>
+
+      <button onclick="verifyOTP()" class="btn-register">
+        <i class="fas fa-check-circle mr-2"></i>Verify OTP
+      </button>
+    </div>
+
+    <!-- Step 3: Personal Information -->
+    <div id="step3-form" class="space-y-4 hidden">
+      <h2 class="text-2xl font-bold text-center">Complete Profile</h2>
+      <p class="text-sm text-gray-600 text-center">Tell us a bit about yourself</p>
+      
+      <div>
+        <label class="block mb-2 font-medium">Full Name</label>
+        <input type="text" id="fullName" class="input-field" placeholder="John Doe" required>
+      </div>
+
+      <div>
+        <label class="block mb-2 font-medium">Email (Optional)</label>
+        <input type="email" id="email" class="input-field" placeholder="john@example.com">
+      </div>
+
+      <div>
+        <label class="block mb-2 font-medium">Account Type</label>
+        <select id="role" class="input-field">
+          <option value="customer">Customer</option>
+          <option value="agent">Agent (₦400,000 registration fee)</option>
+          <option value="slp">Service Location Partner</option>
+        </select>
+      </div>
+
+      <div id="agent-fields" class="hidden">
+        <div>
+          <label class="block mb-2 font-medium">Business Name</label>
+          <input type="text" id="businessName" class="input-field" placeholder="Your Business Name">
+        </div>
+        <div>
+          <label class="block mb-2 font-medium">Business Address</label>
+          <input type="text" id="businessAddress" class="input-field" placeholder="Business Address">
+        </div>
+      </div>
+
+      <button onclick="completeRegistration()" class="btn-register">
+        <i class="fas fa-user-check mr-2"></i>Complete Registration
+      </button>
+    </div>
+
+    <!-- Login Link -->
+    <p class="text-center mt-6 text-gray-600">
+      Already have an account? 
+      <a href="/login.html" class="text-purple-600 hover:underline font-medium">Login here</a>
+    </p>
+  </div>
+
+  <script>
+    // Firebase configuration
+    const firebaseConfig = {
+      apiKey: "AIzaSyAysDaLRza0-SLnp778K9eZ8XBAa7hRu58",
+      authDomain: "fintech-ad170.firebaseapp.com",
+      projectId: "fintech-ad170",
+      storageBucket: "fintech-ad170.firebasestorage.app",
+      messagingSenderId: "110922302396",
+      appId: "1:110922302396:web:558751ccf7c45a70b761b9",
+      measurementId: "G-6GGYPJME1V"
+    };
+
+    // Initialize Firebase
+    firebase.initializeApp(firebaseConfig);
+    const auth = firebase.auth();
+    const db = firebase.firestore();
+    const functions = firebase.functions();
+
+    // Use phone auth
+    auth.useDeviceLanguage();
+
+    let confirmationResult = null;
+    let phoneNumber = '';
+
+    // Move to next OTP input
+    window.moveToNext = function(current, nextId) {
+      if (current.value.length === 1) {
+        document.getElementById(nextId)?.focus();
+      }
+    };
+
+    // Send OTP
+    window.sendOTP = async function() {
+      const phone = document.getElementById('phone').value;
+      if (!phone || phone.length < 11) {
+        showToast('Please enter a valid phone number', 'error');
+        return;
+      }
+
+      showLoading(true);
+      try {
+        window.recaptchaVerifier = new firebase.auth.RecaptchaVerifier('recaptcha-container', {
+          size: 'invisible'
+        });
+
+        phoneNumber = '+234' + phone.slice(-10); // Format to Nigerian number
+        confirmationResult = await auth.signInWithPhoneNumber(phoneNumber, window.recaptchaVerifier);
+        
+        document.getElementById('display-phone').textContent = phone;
+        document.getElementById('step1-form').classList.add('hidden');
+        document.getElementById('step2-form').classList.remove('hidden');
+        
+        // Update step indicator
+        document.getElementById('step1').classList.remove('active');
+        document.getElementById('step1').classList.add('completed');
+        document.getElementById('line1').classList.add('active');
+        document.getElementById('step2').classList.add('active');
+        
+        startTimer();
+        showToast('OTP sent successfully!', 'success');
+      } catch (error) {
+        showToast('Error: ' + error.message, 'error');
+      } finally {
+        showLoading(false);
+      }
+    };
+
+    // Timer for OTP
+    function startTimer() {
+      let timeLeft = 60;
+      const timerElement = document.getElementById('timer');
+      const interval = setInterval(() => {
+        timeLeft--;
+        timerElement.textContent = timeLeft + 's';
+        if (timeLeft <= 0) {
+          clearInterval(interval);
+          timerElement.innerHTML = '<button onclick="resendOTP()" class="text-purple-600">Resend</button>';
+        }
+      }, 1000);
+    }
+
+    // Resend OTP
+    window.resendOTP = async function() {
+      try {
+        showLoading(true);
+        confirmationResult = await auth.signInWithPhoneNumber(phoneNumber, window.recaptchaVerifier);
+        showToast('OTP resent!', 'success');
+        startTimer();
+      } catch (error) {
+        showToast('Error: ' + error.message, 'error');
+      } finally {
+        showLoading(false);
+      }
+    };
+
+    // Verify OTP
+    window.verifyOTP = async function() {
+      const otp = Array.from({length: 6}, (_, i) => document.getElementById(`otp${i+1}`).value).join('');
+      
+      if (otp.length !== 6) {
+        showToast('Please enter the 6-digit OTP', 'error');
+        return;
+      }
+
+      showLoading(true);
+      try {
+        const result = await confirmationResult.confirm(otp);
+        
+        // Check if user exists in Firestore
+        const userDoc = await db.collection('users').doc(result.user.uid).get();
+        
+        if (userDoc.exists) {
+          // User exists, redirect to dashboard
+          window.location.href = '/dashboard.html';
+        } else {
+          // New user, go to profile completion
+          document.getElementById('step2-form').classList.add('hidden');
+          document.getElementById('step3-form').classList.remove('hidden');
+          
+          document.getElementById('step2').classList.remove('active');
+          document.getElementById('step2').classList.add('completed');
+          document.getElementById('line2').classList.add('active');
+          document.getElementById('step3').classList.add('active');
+        }
+      } catch (error) {
+        showToast('Invalid OTP. Please try again.', 'error');
+      } finally {
+        showLoading(false);
+      }
+    };
+
+    // Show/hide agent fields
+    document.getElementById('role').addEventListener('change', function() {
+      const agentFields = document.getElementById('agent-fields');
+      agentFields.style.display = this.value === 'customer' ? 'none' : 'block';
+    });
+
+    // Complete registration
+    window.completeRegistration = async function() {
+      const fullName = document.getElementById('fullName').value;
+      const email = document.getElementById('email').value;
+      const role = document.getElementById('role').value;
+      const businessName = document.getElementById('businessName')?.value;
+      const businessAddress = document.getElementById('businessAddress')?.value;
+
+      if (!fullName) {
+        showToast('Please enter your full name', 'error');
+        return;
+      }
+
+      showLoading(true);
+      try {
+        const user = auth.currentUser;
+        
+        // Create user profile in Firestore
+        const userData = {
+          uid: user.uid,
+          fullName,
+          email: email || '',
+          phone: user.phoneNumber,
+          role,
+          kycStatus: 'pending',
+          walletBalance: 0,
+          totalCommission: 0,
+          createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+          updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+        };
+
+        if (role !== 'customer') {
+          userData.businessName = businessName;
+          userData.businessAddress = businessAddress;
+          userData.agentCode = `AG${Date.now()}`;
+        }
+
+        await db.collection('users').doc(user.uid).set(userData);
+
+        // Create wallet via cloud function
+        const createWallet = functions.httpsCallable('createWallet');
+        await createWallet({
+          userId: user.uid,
+          email: email || '',
+          phone: user.phoneNumber
+        });
+
+        showToast('Registration successful! Redirecting...', 'success');
+        setTimeout(() => {
+          window.location.href = '/dashboard.html';
+        }, 2000);
+      } catch (error) {
+        showToast('Error: ' + error.message, 'error');
+      } finally {
+        showLoading(false);
+      }
+    };
+
+    // Helper functions
+    function showLoading(show) {
+      document.getElementById('loading-spinner').classList.toggle('hidden', !show);
+    }
+
+    function showToast(message, type) {
+      const container = document.getElementById('toast-container');
+      const toast = document.createElement('div');
+      toast.className = `toast ${type}`;
+      toast.innerHTML = message;
+      container.appendChild(toast);
+      setTimeout(() => {
+        toast.style.transform = 'translateX(400px)';
+        setTimeout(() => container.removeChild(toast), 300);
+      }, 3000);
+    }
+
+    // Check if already logged in
+    auth.onAuthStateChanged((user) => {
+      if (user) {
+        // Check if profile exists
+        db.collection('users').doc(user.uid).get().then((doc) => {
+          if (doc.exists) {
+            window.location.href = '/dashboard.html';
+          }
+        });
+      }
+    });
+  </script>
+</body>
+</html>
