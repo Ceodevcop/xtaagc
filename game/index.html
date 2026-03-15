@@ -1,40 +1,1549 @@
-<!-- In your existing header navigation -->
-<div class="nav-links">
-    <a href="/">Home</a>
-    <a href="/online-games">Games</a>
-    <a href="/tournaments">Tournaments</a>
-    <a href="/wallet">Wallet</a>
-    <a href="/marketplace">Market</a>
-    <a href="/xtp-ecosystem" class="xtp-nav-item">
-        <i class="fas fa-crown" style="color: gold;"></i> XTP Ecosystem
-    </a>
-</div>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TAAGC GAMES - Play & Earn with XTP Ecosystem</title>
+    <meta name="description" content="Play 200+ free online games. Earn XTP points, trade in marketplace, rent bots, and join tournaments.">
+    
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    
+    <!-- Firebase -->
+    <script type="module" src="/xtp-ecosystem/api/xtp-firebase.js"></script>
+    
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
 
-<!-- Add XTP balance indicator in header -->
-<div class="xtp-mini-widget" onclick="window.location.href='/xtp-ecosystem'">
-    <i class="fas fa-coins" style="color: gold;"></i>
-    <span id="headerXTP">10,000</span> XTP
-</div>
+        :root {
+            --primary: #667eea;
+            --primary-dark: #5a67d8;
+            --secondary: #764ba2;
+            --secondary-dark: #6b46c1;
+            --success: #10b981;
+            --warning: #f59e0b;
+            --danger: #ef4444;
+            --info: #3b82f6;
+            --dark: #1a1a1a;
+            --light: #f3f4f6;
+            --gray: #9ca3af;
+            --white: #ffffff;
+            --gradient: linear-gradient(135deg, var(--primary), var(--secondary));
+            --gradient-hover: linear-gradient(135deg, var(--primary-dark), var(--secondary-dark));
+            
+            /* XTP Colors */
+            --xtp-gold: #fbbf24;
+            --xtp-bronze: #b45309;
+            --xtp-silver: #9ca3af;
+            --xtp-rare: #3b82f6;
+            --xtp-epic: #8b5cf6;
+            --xtp-legendary: #f59e0b;
+            --xtp-mythic: #ef4444;
+        }
 
-<style>
-.xtp-nav-item {
-    background: linear-gradient(135deg, #667eea, #764ba2);
-    color: white !important;
-    padding: 0.5rem 1rem;
-    border-radius: 50px;
-    font-weight: bold;
-}
+        body {
+            background: linear-gradient(135deg, #667eea10 0%, #764ba210 100%);
+            color: #333;
+            min-height: 100vh;
+        }
 
-.xtp-mini-widget {
-    background: linear-gradient(135deg, #fbbf24, #f59e0b);
-    color: #1a1a1a;
-    padding: 0.3rem 1rem;
-    border-radius: 50px;
-    display: flex;
-    align-items: center;
-    gap: 0.3rem;
-    cursor: pointer;
-    font-weight: bold;
-    margin-left: 1rem;
-}
-</style>
+        /* Header */
+        .header {
+            background: rgba(255, 255, 255, 0.98);
+            backdrop-filter: blur(10px);
+            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            border-bottom: 3px solid transparent;
+            background-image: linear-gradient(white, white), var(--gradient);
+            background-origin: border-box;
+            background-clip: padding-box, border-box;
+        }
+
+        .nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem 5%;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .logo {
+            font-size: 2rem;
+            font-weight: 800;
+            background: var(--gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .logo i {
+            font-size: 2.2rem;
+            background: var(--gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 2rem;
+            align-items: center;
+        }
+
+        .nav-links a {
+            text-decoration: none;
+            color: #333;
+            font-weight: 600;
+            transition: all 0.3s;
+            position: relative;
+        }
+
+        .nav-links a:hover {
+            color: var(--primary);
+        }
+
+        .nav-links a.active {
+            color: var(--primary);
+        }
+
+        .nav-links a.active::after {
+            content: '';
+            position: absolute;
+            bottom: -5px;
+            left: 0;
+            width: 100%;
+            height: 2px;
+            background: var(--gradient);
+        }
+
+        .xtp-nav-item {
+            background: linear-gradient(135deg, var(--xtp-gold), #fbbf24);
+            color: #1a1a1a !important;
+            padding: 0.5rem 1.5rem;
+            border-radius: 50px;
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .xtp-nav-item i {
+            color: #1a1a1a;
+        }
+
+        .balance-widget {
+            background: var(--success);
+            color: white;
+            padding: 0.5rem 1.5rem;
+            border-radius: 50px;
+            display: flex;
+            align-items: center;
+            gap: 0.8rem;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s;
+        }
+
+        .balance-widget:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(16,185,129,0.3);
+        }
+
+        .xtp-mini-widget {
+            background: linear-gradient(135deg, var(--xtp-gold), #fbbf24);
+            color: #1a1a1a;
+            padding: 0.5rem 1.2rem;
+            border-radius: 50px;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            cursor: pointer;
+            font-weight: bold;
+            margin-left: 1rem;
+            transition: all 0.3s;
+        }
+
+        .xtp-mini-widget:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(251,191,36,0.3);
+        }
+
+        /* Category Navigation */
+        .categories {
+            background: white;
+            padding: 1rem 5%;
+            border-bottom: 1px solid #e5e7eb;
+            position: sticky;
+            top: 80px;
+            z-index: 999;
+        }
+
+        .category-scroll {
+            display: flex;
+            gap: 2rem;
+            overflow-x: auto;
+            padding: 0.5rem 0;
+            max-width: 1400px;
+            margin: 0 auto;
+            scrollbar-width: thin;
+            scrollbar-color: var(--primary) #e5e7eb;
+        }
+
+        .category-scroll::-webkit-scrollbar {
+            height: 5px;
+        }
+
+        .category-scroll::-webkit-scrollbar-track {
+            background: #e5e7eb;
+            border-radius: 10px;
+        }
+
+        .category-scroll::-webkit-scrollbar-thumb {
+            background: var(--gradient);
+            border-radius: 10px;
+        }
+
+        .category-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 0.5rem;
+            color: #666;
+            text-decoration: none;
+            font-size: 0.9rem;
+            transition: all 0.3s;
+            min-width: 80px;
+            padding: 0.5rem;
+            border-radius: 10px;
+        }
+
+        .category-item:hover {
+            color: var(--primary);
+            transform: translateY(-2px);
+            background: #f8fafc;
+        }
+
+        .category-item.active {
+            color: var(--primary);
+            font-weight: 600;
+            background: linear-gradient(135deg, #667eea10, #764ba210);
+        }
+
+        .category-icon {
+            width: 50px;
+            height: 50px;
+            background: var(--gradient);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 1.5rem;
+            transition: all 0.3s;
+        }
+
+        .category-item:hover .category-icon {
+            transform: scale(1.1);
+        }
+
+        /* Main Content */
+        .main-content {
+            max-width: 1400px;
+            margin: 2rem auto;
+            padding: 0 5%;
+        }
+
+        /* Hero Banner */
+        .hero-banner {
+            background: var(--gradient);
+            border-radius: 30px;
+            padding: 3rem;
+            color: white;
+            margin-bottom: 2rem;
+            position: relative;
+            overflow: hidden;
+            cursor: pointer;
+            transition: all 0.3s;
+            box-shadow: 0 20px 40px rgba(102,126,234,0.3);
+        }
+
+        .hero-banner:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 30px 50px rgba(102,126,234,0.4);
+        }
+
+        .hero-content {
+            position: relative;
+            z-index: 2;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .hero-text h1 {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+        }
+
+        .hero-text p {
+            font-size: 1.2rem;
+            opacity: 0.95;
+            margin-bottom: 2rem;
+        }
+
+        .hero-stats {
+            display: flex;
+            gap: 2rem;
+        }
+
+        .hero-stat {
+            text-align: center;
+            background: rgba(255,255,255,0.2);
+            backdrop-filter: blur(10px);
+            padding: 1rem 2rem;
+            border-radius: 15px;
+            border: 1px solid rgba(255,255,255,0.3);
+        }
+
+        .hero-stat .number {
+            font-size: 2rem;
+            font-weight: 800;
+            display: block;
+        }
+
+        .hero-badge {
+            position: absolute;
+            top: 2rem;
+            right: 2rem;
+            background: var(--warning);
+            color: var(--dark);
+            padding: 0.5rem 1.5rem;
+            border-radius: 50px;
+            font-weight: 700;
+            animation: pulse 2s infinite;
+        }
+
+        /* XTP Features Banner */
+        .xtp-features-banner {
+            background: linear-gradient(135deg, #1a1a1a, #2d2d2d);
+            border-radius: 30px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            color: white;
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 1rem;
+        }
+
+        .xtp-feature-item {
+            text-align: center;
+            padding: 1rem;
+            border-right: 1px solid rgba(255,255,255,0.1);
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .xtp-feature-item:last-child {
+            border-right: none;
+        }
+
+        .xtp-feature-item:hover {
+            transform: translateY(-5px);
+            background: rgba(255,255,255,0.1);
+            border-radius: 15px;
+        }
+
+        .xtp-feature-icon {
+            font-size: 2rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .xtp-feature-title {
+            font-weight: bold;
+            margin-bottom: 0.3rem;
+        }
+
+        .xtp-feature-value {
+            color: var(--xtp-gold);
+            font-size: 0.9rem;
+        }
+
+        /* Promo Banners Grid */
+        .promo-banners {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 1.5rem;
+            margin-bottom: 3rem;
+        }
+
+        .promo-banner {
+            background: white;
+            border-radius: 20px;
+            padding: 2rem 1rem;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            border: 2px solid transparent;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .promo-banner:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 20px 40px rgba(102,126,234,0.2);
+            border-color: var(--primary);
+        }
+
+        .promo-banner i {
+            font-size: 3rem;
+            background: var(--gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 1rem;
+        }
+
+        .promo-banner h3 {
+            font-size: 1.3rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .promo-banner p {
+            color: #666;
+            font-size: 0.9rem;
+        }
+
+        .promo-badge {
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            padding: 0.2rem 0.8rem;
+            border-radius: 20px;
+            font-size: 0.7rem;
+            font-weight: 600;
+        }
+
+        .xtp-badge {
+            background: var(--xtp-gold);
+            color: #1a1a1a;
+        }
+
+        /* Section Title */
+        .section-title {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin: 2rem 0 1.5rem;
+        }
+
+        .section-title h2 {
+            font-size: 2rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .section-title h2 span {
+            background: var(--gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .view-all {
+            color: var(--primary);
+            text-decoration: none;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            transition: all 0.3s;
+            padding: 0.5rem 1rem;
+            border-radius: 50px;
+            background: #f8fafc;
+        }
+
+        .view-all:hover {
+            background: var(--gradient);
+            color: white;
+            transform: translateX(5px);
+        }
+
+        /* Games Grid */
+        .games-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .game-card {
+            background: white;
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.08);
+            transition: all 0.3s;
+            cursor: pointer;
+            text-decoration: none;
+            color: inherit;
+            border: 2px solid transparent;
+        }
+
+        .game-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 20px 30px rgba(102,126,234,0.15);
+            border-color: var(--primary);
+        }
+
+        .game-thumbnail {
+            aspect-ratio: 1/1;
+            background: linear-gradient(135deg, #667eea20, #764ba220);
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 3rem;
+        }
+
+        .game-badge {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: var(--gradient);
+            color: white;
+            padding: 0.2rem 0.8rem;
+            border-radius: 20px;
+            font-size: 0.7rem;
+            font-weight: 600;
+        }
+
+        .xtp-earnings-badge {
+            position: absolute;
+            bottom: 10px;
+            right: 10px;
+            background: var(--xtp-gold);
+            color: #1a1a1a;
+            padding: 0.2rem 0.8rem;
+            border-radius: 20px;
+            font-size: 0.7rem;
+            font-weight: bold;
+        }
+
+        .game-info {
+            padding: 1rem;
+        }
+
+        .game-title {
+            font-weight: 600;
+            margin-bottom: 0.3rem;
+            font-size: 1rem;
+        }
+
+        .game-meta {
+            display: flex;
+            justify-content: space-between;
+            color: #666;
+            font-size: 0.8rem;
+        }
+
+        /* XTP Bot Rental Section */
+        .bot-rental-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 1.5rem;
+            margin: 2rem 0;
+        }
+
+        .bot-card {
+            background: white;
+            border-radius: 20px;
+            padding: 1.5rem;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            transition: all 0.3s;
+            cursor: pointer;
+            border: 2px solid transparent;
+        }
+
+        .bot-card:hover {
+            transform: translateY(-5px);
+            border-color: var(--primary);
+        }
+
+        .bot-icon {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .bot-name {
+            font-size: 1.2rem;
+            font-weight: bold;
+            margin-bottom: 0.5rem;
+        }
+
+        .bot-cost {
+            color: var(--primary);
+            font-weight: bold;
+            font-size: 1.3rem;
+            margin: 0.5rem 0;
+        }
+
+        .bot-roi {
+            background: var(--success);
+            color: white;
+            padding: 0.2rem 0.8rem;
+            border-radius: 50px;
+            display: inline-block;
+            font-size: 0.8rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .bot-min-balance {
+            color: #666;
+            font-size: 0.9rem;
+            margin-top: 0.5rem;
+        }
+
+        /* Tournament Cards */
+        .tournament-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .tournament-card {
+            background: white;
+            border-radius: 20px;
+            padding: 1.5rem;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            cursor: pointer;
+            transition: all 0.3s;
+            border: 2px solid transparent;
+            position: relative;
+        }
+
+        .tournament-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 20px 40px rgba(102,126,234,0.2);
+            border-color: var(--primary);
+        }
+
+        .tournament-prize {
+            font-size: 1.8rem;
+            color: var(--warning);
+            font-weight: 800;
+            margin: 0.5rem 0;
+        }
+
+        .tournament-entry {
+            display: inline-block;
+            background: var(--gradient);
+            color: white;
+            padding: 0.3rem 1rem;
+            border-radius: 10px;
+            font-size: 0.9rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .xtp-prize {
+            color: var(--xtp-gold);
+            font-weight: bold;
+        }
+
+        /* NFT Preview Section */
+        .nft-preview {
+            background: linear-gradient(135deg, #1a1a1a, #2d2d2d);
+            border-radius: 30px;
+            padding: 2rem;
+            margin: 2rem 0;
+            color: white;
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 2rem;
+            align-items: center;
+        }
+
+        .nft-rarity-showcase {
+            display: flex;
+            gap: 1rem;
+        }
+
+        .nft-dot {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            cursor: pointer;
+            transition: transform 0.3s;
+        }
+
+        .nft-dot:hover {
+            transform: scale(1.2);
+        }
+
+        .nft-common { background: #9ca3af; }
+        .nft-rare { background: #3b82f6; }
+        .nft-epic { background: #8b5cf6; }
+        .nft-legendary { background: #f59e0b; }
+        .nft-mythic { background: #ef4444; }
+
+        /* Marketplace Preview */
+        .marketplace-preview {
+            background: white;
+            border-radius: 20px;
+            padding: 2rem;
+            margin: 2rem 0;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            cursor: pointer;
+            transition: all 0.3s;
+            border: 2px solid transparent;
+        }
+
+        .marketplace-preview:hover {
+            transform: translateY(-5px);
+            border-color: var(--primary);
+        }
+
+        .marketplace-stats {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 2rem;
+            text-align: center;
+        }
+
+        .marketplace-stat .value {
+            font-size: 1.8rem;
+            font-weight: 800;
+            color: var(--primary);
+        }
+
+        /* Wallet Preview */
+        .wallet-preview {
+            background: var(--gradient);
+            border-radius: 20px;
+            padding: 2rem;
+            color: white;
+            margin: 2rem 0;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .wallet-preview:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 30px 50px rgba(102,126,234,0.4);
+        }
+
+        .wallet-balance {
+            font-size: 3rem;
+            font-weight: 800;
+            margin: 1rem 0;
+        }
+
+        /* Footer */
+        .footer {
+            background: var(--dark);
+            color: white;
+            padding: 4rem 5% 2rem;
+            margin-top: 4rem;
+        }
+
+        .footer-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 2rem;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .footer-section h3 {
+            margin-bottom: 1.5rem;
+            position: relative;
+            padding-bottom: 0.5rem;
+        }
+
+        .footer-section h3::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 50px;
+            height: 2px;
+            background: var(--gradient);
+        }
+
+        .footer-section ul {
+            list-style: none;
+        }
+
+        .footer-section ul li {
+            margin-bottom: 0.8rem;
+        }
+
+        .footer-section ul li a {
+            color: #999;
+            text-decoration: none;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .footer-section ul li a:hover {
+            color: white;
+            transform: translateX(5px);
+        }
+
+        .footer-bottom {
+            text-align: center;
+            padding-top: 3rem;
+            margin-top: 3rem;
+            border-top: 1px solid #333;
+            color: #999;
+        }
+
+        /* Game Modal */
+        .game-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.95);
+            z-index: 2000;
+        }
+
+        .game-modal.active {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .game-modal-content {
+            width: 90%;
+            height: 90%;
+            background: white;
+            border-radius: 20px;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .close-modal {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background: var(--danger);
+            color: white;
+            border: none;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            font-size: 1.5rem;
+            cursor: pointer;
+            z-index: 2001;
+            transition: all 0.3s;
+        }
+
+        .close-modal:hover {
+            transform: rotate(90deg);
+        }
+
+        .game-frame {
+            width: 100%;
+            height: 100%;
+            border: none;
+        }
+
+        /* Responsive */
+        @media (max-width: 1024px) {
+            .promo-banners {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            .xtp-features-banner {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            .xtp-feature-item {
+                border-right: none;
+                border-bottom: 1px solid rgba(255,255,255,0.1);
+            }
+        }
+
+        @media (max-width: 768px) {
+            .nav {
+                flex-direction: column;
+                gap: 1rem;
+            }
+            .nav-links {
+                flex-wrap: wrap;
+                justify-content: center;
+            }
+            .hero-content {
+                flex-direction: column;
+                text-align: center;
+            }
+            .hero-stats {
+                flex-direction: column;
+                gap: 1rem;
+            }
+            .promo-banners {
+                grid-template-columns: 1fr;
+            }
+            .games-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            .marketplace-stats {
+                grid-template-columns: 1fr;
+                gap: 1rem;
+            }
+            .nft-preview {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+        }
+
+        @keyframes slideIn {
+            from { transform: translateX(100%); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <div class="header">
+        <div class="nav">
+            <a href="/" class="logo">
+                <i class="fas fa-gamepad"></i> TAAGC GAMES
+            </a>
+            
+            <div class="nav-links">
+                <a href="/" class="active">Home</a>
+                <a href="/online-games">Games</a>
+                <a href="/tournaments">Tournaments</a>
+                <a href="/marketplace">Market</a>
+                <a href="/wallet">Wallet</a>
+                <a href="/xtp-ecosystem" class="xtp-nav-item">
+                    <i class="fas fa-crown"></i> XTP Ecosystem
+                </a>
+            </div>
+            
+            <div style="display: flex; align-items: center;">
+                <div class="balance-widget" onclick="window.location.href='/wallet'">
+                    <i class="fas fa-wallet"></i>
+                    <span id="walletBalance">2,500</span> PTS
+                </div>
+                
+                <div class="xtp-mini-widget" onclick="window.location.href='/xtp-ecosystem'">
+                    <i class="fas fa-coins" style="color: #1a1a1a;"></i>
+                    <span id="xtpBalance">10,000</span> XTP
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Category Navigation -->
+    <div class="categories">
+        <div class="category-scroll">
+            <a href="/" class="category-item active">
+                <div class="category-icon"><i class="fas fa-home"></i></div>
+                <span>Home</span>
+            </a>
+            <a href="/online-games" class="category-item">
+                <div class="category-icon"><i class="fas fa-globe"></i></div>
+                <span>Online</span>
+                <span style="font-size: 0.7rem; color: var(--success);">124 games</span>
+            </a>
+            <a href="/racing-games" class="category-item">
+                <div class="category-icon"><i class="fas fa-car"></i></div>
+                <span>Racing</span>
+                <span style="font-size: 0.7rem; color: var(--success);">48 games</span>
+            </a>
+            <a href="/football-games" class="category-item">
+                <div class="category-icon"><i class="fas fa-futbol"></i></div>
+                <span>Football</span>
+                <span style="font-size: 0.7rem; color: var(--success);">32 games</span>
+            </a>
+            <a href="/multiplayer-games" class="category-item">
+                <div class="category-icon"><i class="fas fa-users"></i></div>
+                <span>Multiplayer</span>
+                <span style="font-size: 0.7rem; color: var(--success);">28 games</span>
+            </a>
+            <a href="/tournaments" class="category-item">
+                <div class="category-icon"><i class="fas fa-trophy"></i></div>
+                <span>Tournaments</span>
+                <span style="font-size: 0.7rem; color: var(--warning);">12 live</span>
+            </a>
+            <a href="/xtp-ecosystem" class="category-item">
+                <div class="category-icon" style="background: linear-gradient(135deg, #fbbf24, #f59e0b);">
+                    <i class="fas fa-coins"></i>
+                </div>
+                <span>XTP</span>
+                <span style="font-size: 0.7rem; color: var(--xtp-gold);">Earn</span>
+            </a>
+            <a href="/wallet" class="category-item">
+                <div class="category-icon"><i class="fas fa-wallet"></i></div>
+                <span>Wallet</span>
+                <span style="font-size: 0.7rem; color: var(--primary);">2.5k pts</span>
+            </a>
+            <a href="/marketplace" class="category-item">
+                <div class="category-icon"><i class="fas fa-store"></i></div>
+                <span>Market</span>
+                <span style="font-size: 0.7rem; color: var(--primary);">42 trades</span>
+            </a>
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <div class="main-content">
+        <!-- Hero Banner -->
+        <div class="hero-banner" onclick="window.location.href='/xtp-ecosystem'">
+            <div class="hero-content">
+                <div class="hero-text">
+                    <h1>🚀 XTP Ecosystem Launch</h1>
+                    <p>1 BILLION XTP • 7 Ways to Earn • 0.5 XTP/hour Bot Rentals</p>
+                    <div class="hero-stats">
+                        <div class="hero-stat">
+                            <span class="number">1B</span>
+                            <span>Total Supply</span>
+                        </div>
+                        <div class="hero-stat">
+                            <span class="number">7</span>
+                            <span>Earning Ways</span>
+                        </div>
+                        <div class="hero-stat">
+                            <span class="number">599K%</span>
+                            <span>Arbitrage</span>
+                        </div>
+                    </div>
+                </div>
+                <div style="font-size: 5rem;">
+                    <i class="fas fa-crown" style="color: gold;"></i>
+                </div>
+            </div>
+            <span class="hero-badge">🔥 LIVE NOW</span>
+        </div>
+
+        <!-- XTP Features Banner -->
+        <div class="xtp-features-banner">
+            <div class="xtp-feature-item" onclick="window.location.href='/xtp-ecosystem/shop'">
+                <div class="xtp-feature-icon">💰</div>
+                <div class="xtp-feature-title">D2C Shop</div>
+                <div class="xtp-feature-value">Save 30%</div>
+            </div>
+            <div class="xtp-feature-item" onclick="window.location.href='/xtp-ecosystem/missions'">
+                <div class="xtp-feature-icon">🎯</div>
+                <div class="xtp-feature-title">Daily Missions</div>
+                <div class="xtp-feature-value">Earn 50 XTP/day</div>
+            </div>
+            <div class="xtp-feature-item" onclick="window.location.href='/xtp-ecosystem/creator'">
+                <div class="xtp-feature-icon">🤝</div>
+                <div class="xtp-feature-title">Creator Network</div>
+                <div class="xtp-feature-value">30% Commission</div>
+            </div>
+            <div class="xtp-feature-item" onclick="window.location.href='/xtp-ecosystem/subscribe'">
+                <div class="xtp-feature-icon">📅</div>
+                <div class="xtp-feature-title">Subscriptions</div>
+                <div class="xtp-feature-value">50% Bot Discount</div>
+            </div>
+            <div class="xtp-feature-item" onclick="window.location.href='/xtp-ecosystem/nft'">
+                <div class="xtp-feature-icon">💎</div>
+                <div class="xtp-feature-title">NFT Bots</div>
+                <div class="xtp-feature-value">Own & Rent</div>
+            </div>
+            <div class="xtp-feature-item" onclick="window.location.href='/xtp-ecosystem/events'">
+                <div class="xtp-feature-icon">🎪</div>
+                <div class="xtp-feature-title">Events</div>
+                <div class="xtp-feature-value">500K XTP Prizes</div>
+            </div>
+            <div class="xtp-feature-item" onclick="window.location.href='/xtp-ecosystem/partners'">
+                <div class="xtp-feature-icon">🤵</div>
+                <div class="xtp-feature-title">Partnerships</div>
+                <div class="xtp-feature-value">Sponsorships</div>
+            </div>
+            <div class="xtp-feature-item" onclick="window.location.href='/xtp-ecosystem'">
+                <div class="xtp-feature-icon">📊</div>
+                <div class="xtp-feature-title">Your XTP</div>
+                <div class="xtp-feature-value" id="headerXTP">10,000</div>
+            </div>
+        </div>
+
+        <!-- Promo Banners -->
+        <div class="promo-banners">
+            <div class="promo-banner" onclick="window.location.href='/xtp-ecosystem/shop'">
+                <i class="fas fa-coins"></i>
+                <h3>Buy XTP Direct</h3>
+                <p>Save 30% vs in-app</p>
+                <span class="promo-badge xtp-badge">+20% BONUS</span>
+            </div>
+            <div class="promo-banner" onclick="window.location.href='/xtp-ecosystem/nft'">
+                <i class="fas fa-robot"></i>
+                <h3>NFT Bots</h3>
+                <p>Own & earn passive</p>
+                <span class="promo-badge" style="background: var(--xtp-legendary);">NEW</span>
+            </div>
+            <div class="promo-banner" onclick="window.location.href='/xtp-ecosystem/missions'">
+                <i class="fas fa-tasks"></i>
+                <h3>Daily Missions</h3>
+                <p>Earn free XTP</p>
+                <span class="promo-badge" style="background: var(--success);">CLAIM</span>
+            </div>
+            <div class="promo-banner" onclick="window.location.href='/xtp-ecosystem/subscribe'">
+                <i class="fas fa-crown"></i>
+                <h3>Gold Pass</h3>
+                <p>50% bot discount</p>
+                <span class="promo-badge" style="background: var(--xtp-gold);">5,000 XTP</span>
+            </div>
+        </div>
+
+        <!-- Bot Rental Section -->
+        <div class="section-title">
+            <h2>🤖 <span>Rent Bots with XTP</span> <span style="font-size: 1rem; color: var(--xtp-gold);">0.5 XTP/hour</span></h2>
+            <a href="/xtp-ecosystem" class="view-all">View All Bots <i class="fas fa-arrow-right"></i></a>
+        </div>
+        <div class="bot-rental-grid" id="botRentalGrid">
+            <!-- Micro Scanner Bot -->
+            <div class="bot-card" onclick="rentBot('micro_scanner')">
+                <div class="bot-icon">🔍</div>
+                <div class="bot-name">Micro Scanner</div>
+                <div class="bot-cost">100 XTP/24h</div>
+                <span class="bot-roi">5-15% daily</span>
+                <div class="bot-min-balance">Min: 500 XTP</div>
+            </div>
+            <!-- Grid Lite Bot -->
+            <div class="bot-card" onclick="rentBot('grid_lite')">
+                <div class="bot-icon">📊</div>
+                <div class="bot-name">Grid Lite</div>
+                <div class="bot-cost">250 XTP/24h</div>
+                <span class="bot-roi">3-10% daily</span>
+                <div class="bot-min-balance">Min: 1,000 XTP</div>
+            </div>
+            <!-- AI Micro Bot -->
+            <div class="bot-card" onclick="rentBot('ai_micro')">
+                <div class="bot-icon">🤖</div>
+                <div class="bot-name">AI Micro</div>
+                <div class="bot-cost">500 XTP/24h</div>
+                <span class="bot-roi">8-20% daily</span>
+                <div class="bot-min-balance">Min: 2,000 XTP</div>
+            </div>
+            <!-- Arbitrage Micro Bot -->
+            <div class="bot-card" onclick="rentBot('arb_micro')">
+                <div class="bot-icon">💱</div>
+                <div class="bot-name">Arbitrage Micro</div>
+                <div class="bot-cost">1,000 XTP/24h</div>
+                <span class="bot-roi">10-25% daily</span>
+                <div class="bot-min-balance">Min: 5,000 XTP</div>
+            </div>
+        </div>
+
+        <!-- Online Games Section -->
+        <div class="section-title">
+            <h2>🎮 <span>Online Games</span> <span style="font-size: 1rem; color: #666;">Earn XTP while playing</span></h2>
+            <a href="/online-games" class="view-all">View All <i class="fas fa-arrow-right"></i></a>
+        </div>
+        <div class="games-grid" id="onlineGames"></div>
+
+        <!-- NFT Preview Section -->
+        <div class="nft-preview" onclick="window.location.href='/xtp-ecosystem/nft'">
+            <div>
+                <h2 style="font-size: 2rem; margin-bottom: 1rem;">💎 NFT Bot Marketplace</h2>
+                <p style="margin-bottom: 2rem; opacity: 0.9;">Own unique trading bots as NFTs. Trade them, rent them, earn passive income!</p>
+                <div class="nft-rarity-showcase">
+                    <div class="nft-dot nft-common" title="Common - 1,000 XTP">C</div>
+                    <div class="nft-dot nft-rare" title="Rare - 5,000 XTP">R</div>
+                    <div class="nft-dot nft-epic" title="Epic - 25,000 XTP">E</div>
+                    <div class="nft-dot nft-legendary" title="Legendary - 100,000 XTP">L</div>
+                    <div class="nft-dot nft-mythic" title="Mythic - 1,000,000 XTP">M</div>
+                </div>
+                <div style="margin-top: 2rem;">
+                    <span style="background: rgba(255,255,255,0.2); padding: 0.5rem 1rem; border-radius: 50px;">
+                        🎨 5,234 Minted • 💰 4.8M Volume
+                    </span>
+                </div>
+            </div>
+            <div style="text-align: center;">
+                <div style="font-size: 6rem;">🤖</div>
+                <button class="btn-primary" style="background: white; color: #1a1a1a;">Mint Your NFT →</button>
+            </div>
+        </div>
+
+        <!-- Racing Games Section -->
+        <div class="section-title">
+            <h2>🏎️ <span>Racing Games</span></h2>
+            <a href="/racing-games" class="view-all">View All <i class="fas fa-arrow-right"></i></a>
+        </div>
+        <div class="games-grid" id="racingGames"></div>
+
+        <!-- Marketplace Preview -->
+        <div class="marketplace-preview" onclick="window.location.href='/marketplace'">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem;">
+                <h2>🛒 P2P Marketplace</h2>
+                <span class="view-all" style="background: transparent;">Trade Now <i class="fas fa-arrow-right"></i></span>
+            </div>
+            <div class="marketplace-stats">
+                <div class="marketplace-stat">
+                    <div class="value" id="marketRate">$0.0102</div>
+                    <div>XTP/USD Rate</div>
+                </div>
+                <div class="marketplace-stat">
+                    <div class="value" id="ngnRate">₦0.25</div>
+                    <div>XTP/NGN Rate</div>
+                </div>
+                <div class="marketplace-stat">
+                    <div class="value" id="arbitrage">599K%</div>
+                    <div>Arbitrage</div>
+                </div>
+                <div class="marketplace-stat">
+                    <div class="value" id="volume24h">125K</div>
+                    <div>24h Volume</div>
+                </div>
+            </div>
+            <div style="margin-top: 1rem; color: #666;">
+                <i class="fas fa-circle" style="color: var(--success); font-size: 0.5rem;"></i> 
+                234 active orders • Buy at ₦0.25, sell at $1.00
+            </div>
+        </div>
+
+        <!-- Football Games Section -->
+        <div class="section-title">
+            <h2>⚽ <span>Football Games</span></h2>
+            <a href="/football-games" class="view-all">View All <i class="fas fa-arrow-right"></i></a>
+        </div>
+        <div class="games-grid" id="footballGames"></div>
+
+        <!-- Tournaments Section -->
+        <div class="section-title">
+            <h2>🏆 <span>Active Tournaments</span> <span style="font-size: 1rem; color: var(--warning);">Win XTP</span></h2>
+            <a href="/tournaments" class="view-all">View All <i class="fas fa-arrow-right"></i></a>
+        </div>
+        <div class="tournament-grid" id="tournaments"></div>
+
+        <!-- Multiplayer Games Section -->
+        <div class="section-title">
+            <h2>👥 <span>Multiplayer Games</span></h2>
+            <a href="/multiplayer-games" class="view-all">View All <i class="fas fa-arrow-right"></i></a>
+        </div>
+        <div class="games-grid" id="multiplayerGames"></div>
+
+        <!-- Wallet Preview -->
+        <div class="wallet-preview" onclick="window.location.href='/wallet'">
+            <div style="display: flex; justify-content: space-between; align-items: center;">
+                <div>
+                    <h2>💼 Your Assets</h2>
+                    <div class="wallet-balance" id="walletPreviewBalance">2,500 PTS</div>
+                    <div style="font-size: 1.5rem; margin-top: 0.5rem;">
+                        <span style="background: rgba(255,255,255,0.2); padding: 0.3rem 1rem; border-radius: 50px;">
+                            <i class="fas fa-coins" style="color: gold;"></i> 
+                            <span id="walletXTP">10,000</span> XTP
+                        </span>
+                    </div>
+                </div>
+                <div style="text-align: right;">
+                    <div style="font-size: 1.2rem;">≈ $12,500 USD</div>
+                    <div style="font-size: 0.9rem; opacity: 0.8;">≈ ₦3,125 NGN</div>
+                </div>
+            </div>
+            <div class="wallet-actions" style="display: flex; gap: 1rem; margin-top: 2rem;">
+                <button class="wallet-btn" onclick="event.stopPropagation(); window.location.href='https://pay.taagc.website'">
+                    <i class="fas fa-plus-circle"></i> Add Funds
+                </button>
+                <button class="wallet-btn" onclick="event.stopPropagation(); window.location.href='/xtp-ecosystem/shop'">
+                    <i class="fas fa-coins"></i> Buy XTP
+                </button>
+                <button class="wallet-btn" onclick="event.stopPropagation(); window.location.href='/xtp-ecosystem'">
+                    <i class="fas fa-crown"></i> XTP Hub
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="footer-grid">
+            <div class="footer-section">
+                <h3>TAAGC GAMES</h3>
+                <p style="color: #999; line-height: 1.6;">Play 200+ free online games. Earn XTP points, trade in marketplace, and rent bots.</p>
+                <div style="margin-top: 1rem; display: flex; gap: 1rem;">
+                    <a href="#" style="color: white; font-size: 1.5rem;"><i class="fab fa-telegram"></i></a>
+                    <a href="#" style="color: white; font-size: 1.5rem;"><i class="fab fa-discord"></i></a>
+                    <a href="#" style="color: white; font-size: 1.5rem;"><i class="fab fa-twitter"></i></a>
+                    <a href="#" style="color: white; font-size: 1.5rem;"><i class="fab fa-youtube"></i></a>
+                </div>
+            </div>
+            
+            <div class="footer-section">
+                <h3>Games</h3>
+                <ul>
+                    <li><a href="/online-games"><i class="fas fa-chevron-right"></i> Online Games (124)</a></li>
+                    <li><a href="/racing-games"><i class="fas fa-chevron-right"></i> Racing Games (48)</a></li>
+                    <li><a href="/football-games"><i class="fas fa-chevron-right"></i> Football Games (32)</a></li>
+                    <li><a href="/multiplayer-games"><i class="fas fa-chevron-right"></i> Multiplayer Games (28)</a></li>
+                </ul>
+            </div>
+            
+            <div class="footer-section">
+                <h3>XTP Ecosystem</h3>
+                <ul>
+                    <li><a href="/xtp-ecosystem/shop"><i class="fas fa-chevron-right"></i> D2C Shop</a></li>
+                    <li><a href="/xtp-ecosystem/missions"><i class="fas fa-chevron-right"></i> Daily Missions</a></li>
+                    <li><a href="/xtp-ecosystem/creator"><i class="fas fa-chevron-right"></i> Creator Network</a></li>
+                    <li><a href="/xtp-ecosystem/subscribe"><i class="fas fa-chevron-right"></i> Subscriptions</a></li>
+                    <li><a href="/xtp-ecosystem/nft"><i class="fas fa-chevron-right"></i> NFT Marketplace</a></li>
+                    <li><a href="/xtp-ecosystem/events"><i class="fas fa-chevron-right"></i> Events & Merch</a></li>
+                </ul>
+            </div>
+            
+            <div class="footer-section">
+                <h3>Features</h3>
+                <ul>
+                    <li><a href="/tournaments"><i class="fas fa-chevron-right"></i> Tournaments (12 Live)</a></li>
+                    <li><a href="/marketplace"><i class="fas fa-chevron-right"></i> P2P Marketplace</a></li>
+                    <li><a href="/wallet"><i class="fas fa-chevron-right"></i> Wallet System</a></li>
+                    <li><a href="/xtp-ecosystem"><i class="fas fa-chevron-right"></i> XTP Ecosystem</a></li>
+                </ul>
+            </div>
+        </div>
+        
+        <div class="footer-bottom">
+            <p>&copy; 2026 TAAGC GAMES. All rights reserved. | Powered by XTP Ecosystem</p>
+            <p style="margin-top: 0.5rem; font-size: 0.9rem;">
+                1 XTP = $1 USD = ₦0.25 NGN • 1B Total Supply • 7 Earning Ways
+            </p>
+        </div>
+    </footer>
+
+    <!-- Game Modal -->
+    <div id="gameModal" class="game-modal">
+        <div class="game-modal-content">
+            <button class="close-modal" onclick="closeGame()">&times;</button>
+            <iframe id="gameFrame" class="game-frame" allowfullscreen></iframe>
+        </div>
+    </div>
+
+    <script type="module">
+        // Games Database
+        const games = {
+            online: [
+                { id: 1, title: "8 Ball Pool", thumbnail: "🎱", players: "2.3K", xtpEarn: "10 XTP/game", url: "https://games.taagc.website/embed/8ball" },
+                { id: 2, title: "Chess Master", thumbnail: "♟️", players: "1.5K", xtpEarn: "5 XTP/game", url: "https://games.taagc.website/embed/chess" },
+                { id: 3, title: "Sudoku", thumbnail: "🔢", players: "3K", xtpEarn: "3 XTP/game", url: "https://games.taagc.website/embed/sudoku" },
+                { id: 4, title: "Solitaire", thumbnail: "🃏", players: "2.8K", xtpEarn: "4 XTP/game", url: "https://games.taagc.website/embed/solitaire" },
+                { id: 5, title: "Mahjong", thumbnail: "🀄", players: "1.9K", xtpEarn: "6 XTP/game", url: "https://games.taagc.website/embed/mahjong" },
+                { id: 6, title: "Checkers", thumbnail: "⬛", players: "1.2K", xtpEarn: "5 XTP/game", url: "https://games.taagc.website/embed/checkers" }
+            ],
+            racing: [
+                { id: 7, title: "Moto X3M", thumbnail: "🏍️", players: "5K", xtpEarn: "15 XTP/game", url: "https://games.taagc.website/embed/motox3m" },
+                { id: 8, title: "Madalin Cars", thumbnail: "🏎️", players: "4.2K", xtpEarn: "12 XTP/game", url: "https://games.taagc.website/embed/madalin" },
+                { id: 9, title: "Drift Hunters", thumbnail: "🚗", players: "3.9K", xtpEarn: "10 XTP/game", url: "https://games.taagc.website/embed/drift" },
+                { id: 10, title: "Traffic Rider", thumbnail: "🏍️", players: "3.4K", xtpEarn: "8 XTP/game", url: "https://games.taagc.website/embed/traffic" },
+                { id: 11, title: "Highway Racer", thumbnail: "🚗", players: "2.8K", xtpEarn: "10 XTP/game", url: "https://games.taagc.website/embed/highway" },
+                { id: 12, title: "Monster Truck", thumbnail: "🚚", players: "2.3K", xtpEarn: "15 XTP/game", url: "https://games.taagc.website/embed/monster" }
+            ],
+            football: [
+                { id: 13, title: "Penalty Shooters", thumbnail: "⚽", players: "6K", xtpEarn: "20 XTP/game", url: "https://games.taagc.website/embed/penalty" },
+                { id: 14, title: "Football Masters", thumbnail: "🥅", players: "4.5K", xtpEarn: "15 XTP/game", url: "https://games.taagc.website/embed/footballmasters" },
+                { id: 15, title: "Heads Arena", thumbnail: "👨", players: "3.2K", xtpEarn: "10 XTP/game", url: "https://games.taagc.website/embed/heads" },
+                { id: 16, title: "Soccer Skills", thumbnail: "⭐", players: "5.5K", xtpEarn: "12 XTP/game", url: "https://games.taagc.website/embed/skills" },
+                { id: 17, title: "World Cup 2024", thumbnail: "🏆", players: "4.8K", xtpEarn: "25 XTP/game", url: "https://games.taagc.website/embed/worldcup" },
+                { id: 18, title: "Street Soccer", thumbnail: "🏃", players: "3.1K", xtpEarn: "8 XTP/game", url: "https://games.taagc.website/embed/street" }
+            ],
+            multiplayer: [
+                { id: 19, title: "Shell Shockers", thumbnail: "🥚", players: "8K", xtpEarn: "30 XTP/game", url: "https://games.taagc.website/embed/shellshock" },
+                { id: 20, title: "Slither.io", thumbnail: "🐍", players: "12K", xtpEarn: "20 XTP/game", url: "https://games.taagc.website/embed/slither" },
+                { id: 21, title: "Agar.io", thumbnail: "🟣", players: "15K", xtpEarn: "15 XTP/game", url: "https://games.taagc.website/embed/agar" },
+                { id: 22, title: "Paper.io", thumbnail: "📄", players: "9K", xtpEarn: "10 XTP/game", url: "https://games.taagc.website/embed/paper" },
+                { id: 23, title: "Wormax.io", thumbnail: "🪱", players: "7K", xtpEarn: "12 XTP/game", url: "https://games.taagc.website/embed/wormax" },
+                { id: 24, title: "Zombs Royale", thumbnail: "🧟", players: "10K", xtpEarn: "25 XTP/game", url: "https://games.taagc.website/embed/zombs" }
+            ]
+        };
+
+        // Tournaments Database
+        const tournaments = [
+            { id: 1, title: "8 Ball Pool Championship", game: "🎱", prize: "10,000 XTP", entry: "100 XTP", current: 128, max: 256, time: "2h left" },
+            { id: 2, title: "Racing Grand Prix", game: "🏎️", prize: "15,000 XTP", entry: "200 XTP", current: 45, max: 128, time: "5h left" },
+            { id: 3, title: "Football Cup", game: "⚽", prize: "20,000 XTP", entry: "150 XTP", current: 64, max: 128, time: "3h left" },
+            { id: 4, title: "Battle Royale", game: "🔫", prize: "50,000 XTP", entry: "500 XTP", current: 89, max: 100, time: "1h left" }
+        ];
+
+        // Render Games
+        function renderGames() {
+            renderCategory('onlineGames', games.online);
+            renderCategory('racingGames', games.racing);
+            renderCategory('footballGames', games.football);
+            renderCategory('multiplayerGames', games.multiplayer);
+            
+            // Render Tournaments
+            const tournamentHtml = tournaments.map(t => `
+                <div class="tournament-card" onclick="joinTournament(${t.id})">
+                    <div style="font-size: 2rem; text-align: center;">${t.game}</div>
+                    <h3>${t.title}</h3>
+                    <div class="tournament-prize xtp-prize">🏆 ${t.prize}</div>
+                    <div class="tournament-entry">Entry: ${t.entry}</div>
+                    <div style="margin: 1rem 0;">
+                        <div style="display: flex; justify-content: space-between;">
+                            <span>${t.current} players</span>
+                            <span>${t.max} max</span>
+                        </div>
+                        <div class="progress-bar" style="height: 8px; background: #e5e7eb; border-radius: 4px; margin-top: 0.5rem;">
+                            <div class="progress-fill" style="width: ${(t.current/t.max)*100}%; height: 100%; background: var(--gradient); border-radius: 4px;"></div>
+                        </div>
+                    </div>
+                    <div style="display: flex; justify-content: space-between; align-items: center;">
+                        <span>⏰ ${t.time}</span>
+                        <button class="btn-small" onclick="event.stopPropagation(); joinTournament(${t.id})">Join</button>
+                    </div>
+                </div>
+            `).join('');
+            
+            document.getElementById('tournaments').innerHTML = tournamentHtml;
+        }
+
+        function renderCategory(elementId, gamesList) {
+            const html = gamesList.map(game => `
+                <div class="game-card" onclick="playGame('${game.url}', '${game.title}')">
+                    <div class="game-thumbnail">
+                        <span>${game.thumbnail}</span>
+                        <span class="game-badge">${game.players}</span>
+                        <span class="xtp-earnings-badge">${game.xtpEarn}</span>
+                    </div>
+                    <div class="game-info">
+                        <div class="game-title">${game.title}</div>
+                        <div class="game-meta">
+                            <span><i class="fas fa-users"></i> ${game.players}</span>
+                            <span><i class="fas fa-coins" style="color: gold;"></i> Earn</span>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+            
+            document.getElementById(elementId).innerHTML = html;
+        }
+
+        // Play Game Function
+        window.playGame = function(url, title) {
+            document.getElementById('gameFrame').src = url;
+            document.getElementById('gameModal').classList.add('active');
+            document.title = `Playing ${title} - TAAGC Games`;
+            
+            // Award XTP for playing (in production, this would call your backend)
+            setTimeout(() => {
+                if (window.XTPDatabase) {
+                    // Award random XTP for playing
+                    const xtpEarned = Math.floor(Math.random() * 10) + 5;
+                    alert(`🎮 You earned ${xtpEarned} XTP for playing ${title}!`);
+                }
+            }, 30000); // After 30 seconds of play
+        }
+
+        window.closeGame = function() {
+            document.getElementById('gameModal').classList.remove('active');
+            document.getElementById('gameFrame').src = '';
+            document.title = 'TAAGC GAMES - Play & Earn with XTP Ecosystem';
+        }
+
+        // Rent Bot Function
+        window.rentBot = function(botId) {
+            const user = firebase.auth?.().currentUser;
+            if (!user) {
+                alert('Please login first');
+                window.location.href = '/xtp-ecosystem';
+                return;
+            }
+            
+            const botPrices = {
+                micro_scanner: 100,
+                grid_lite: 250,
+                ai_micro: 500,
+                arb_micro: 1000
+            };
+            
+            if (confirm(`Rent this bot for 24 hours for ${botPrices[botId]} XTP?`)) {
+                alert(`Bot rented! Check /xtp-ecosystem to monitor your bot.`);
+                window.location.href = '/xtp-ecosystem';
+            }
+        }
+
+        // Join Tournament
+        window.joinTournament = function(id) {
+            const user = firebase.auth?.().currentUser;
+            if (!user) {
+                alert('Please login first');
+                return;
+            }
+            
+            const tournament = tournaments.find(t => t.id === id);
+            alert(`Joining ${tournament.title} for ${tournament.entry}`);
+            // In production, this would call your backend
+        }
+
+        // Update Live Stats
+        function updateLiveStats() {
+            // Simulate market updates
+            const rate = (0.0095 + Math.random() * 0.002).toFixed(4);
+            document.getElementById('marketRate').textContent = '$' + rate;
+            
+            // Update arbitrage percentage
+            const arb = (599000 + Math.random() * 2000).toFixed(0);
+            document.getElementById('arbitrage').textContent = arb + '%';
+            
+            // Update volume
+            const volume = (120000 + Math.floor(Math.random() * 10000)).toLocaleString();
+            document.getElementById('volume24h').textContent = volume;
+        }
+
+        // Load Firebase Data
+        async function loadFirebaseData() {
+            if (window.XTPDatabase && window.firebaseAuth?.currentUser) {
+                const user = window.firebaseAuth.currentUser;
+                const userData = await window.XTPDatabase.users.getUser(user.uid);
+                
+                // Update XTP displays
+                document.querySelectorAll('#xtpBalance, #headerXTP, #walletXTP').forEach(el => {
+                    if (el) el.textContent = (userData.xtpBalance || 10000).toLocaleString();
+                });
+                
+                // Update wallet displays
+                document.querySelectorAll('#walletBalance, #walletPreviewBalance').forEach(el => {
+                    if (el) el.textContent = (userData.xtpBalance || 10000).toLocaleString();
+                });
+            }
+        }
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', () => {
+            renderGames();
+            setInterval(updateLiveStats, 10000);
+            
+            // Check for Firebase auth
+            if (window.firebaseAuth) {
+                window.firebaseAuth.onAuthStateChanged((user) => {
+                    if (user) {
+                        loadFirebaseData();
+                    }
+                });
+            }
+        });
+
+        // Close modal with ESC
+        document.addEventListener('keydown', (e) => {
+            if(e.key === 'Escape' && document.getElementById('gameModal').classList.contains('active')) {
+                closeGame();
+            }
+        });
+    </script>
+</body>
+</html>
