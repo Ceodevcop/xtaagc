@@ -1,0 +1,338 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Settings - TRIPLE A AHAL GLOBAL CONCEPT</title>
+    <link rel="stylesheet" href="/css/style.css">
+    <link rel="stylesheet" href="/css/dashboard.css">
+    <link rel="stylesheet" href="/css/settings.css">
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
+</head>
+<body>
+    <div class="dashboard">
+        <aside class="sidebar">
+            <!-- Same sidebar -->
+        </aside>
+
+        <main class="main-content">
+            <header class="dashboard-header">
+                <h1>Settings</h1>
+            </header>
+
+            <div class="settings-container">
+                <!-- Settings Navigation -->
+                <div class="settings-nav">
+                    <button class="settings-nav-item active" onclick="showSettingsSection('account')">
+                        <span class="icon">👤</span>
+                        Account
+                    </button>
+                    <button class="settings-nav-item" onclick="showSettingsSection('security')">
+                        <span class="icon">🔒</span>
+                        Security
+                    </button>
+                    <button class="settings-nav-item" onclick="showSettingsSection('notifications')">
+                        <span class="icon">🔔</span>
+                        Notifications
+                    </button>
+                    <button class="settings-nav-item" onclick="showSettingsSection('privacy')">
+                        <span class="icon">🛡️</span>
+                        Privacy
+                    </button>
+                    <button class="settings-nav-item" onclick="showSettingsSection('limits')">
+                        <span class="icon">📊</span>
+                        Limits
+                    </button>
+                    <button class="settings-nav-item" onclick="showSettingsSection('api')">
+                        <span class="icon">🔌</span>
+                        API Access
+                    </button>
+                </div>
+
+                <!-- Settings Content -->
+                <div class="settings-content">
+                    <!-- Account Settings -->
+                    <div class="settings-section active" id="accountSection">
+                        <h2>Account Settings</h2>
+                        
+                        <div class="settings-card">
+                            <h3>Account Information</h3>
+                            <div class="info-row">
+                                <span>Account Type</span>
+                                <span class="badge" id="accountType">Individual</span>
+                            </div>
+                            <div class="info-row">
+                                <span>Member Since</span>
+                                <span id="memberSince">Loading...</span>
+                            </div>
+                            <div class="info-row">
+                                <span>Account Status</span>
+                                <span class="badge success" id="accountStatus">Active</span>
+                            </div>
+                        </div>
+
+                        <div class="settings-card">
+                            <h3>Email Preferences</h3>
+                            <label class="checkbox">
+                                <input type="checkbox" id="marketingEmails" checked>
+                                <span>Receive marketing emails</span>
+                            </label>
+                            <label class="checkbox">
+                                <input type="checkbox" id="transactionEmails" checked>
+                                <span>Transaction notifications</span>
+                            </label>
+                            <label class="checkbox">
+                                <input type="checkbox" id="securityEmails" checked>
+                                <span>Security alerts</span>
+                            </label>
+                        </div>
+
+                        <div class="settings-card">
+                            <h3>Delete Account</h3>
+                            <p class="warning-text">Once you delete your account, there is no going back. Please be certain.</p>
+                            <button class="btn btn-danger" onclick="confirmDeleteAccount()">Delete Account</button>
+                        </div>
+                    </div>
+
+                    <!-- Security Settings -->
+                    <div class="settings-section" id="securitySection">
+                        <h2>Security Settings</h2>
+                        
+                        <div class="settings-card">
+                            <h3>Password</h3>
+                            <p>Last changed: <span id="lastPasswordChange">Never</span></p>
+                            <button class="btn btn-outline" onclick="changePassword()">Change Password</button>
+                        </div>
+
+                        <div class="settings-card">
+                            <h3>Two-Factor Authentication (2FA)</h3>
+                            <div class="twofa-status">
+                                <span class="status" id="twoFAStatus">Disabled</span>
+                                <button class="btn btn-primary" onclick="setupTwoFA()">Enable 2FA</button>
+                            </div>
+                        </div>
+
+                        <div class="settings-card">
+                            <h3>Biometric Login</h3>
+                            <label class="switch">
+                                <input type="checkbox" id="biometricLogin">
+                                <span class="slider"></span>
+                                <span>Enable fingerprint/face login</span>
+                            </label>
+                        </div>
+
+                        <div class="settings-card">
+                            <h3>Login History</h3>
+                            <div class="login-history" id="loginHistory">
+                                <!-- History loaded via JS -->
+                            </div>
+                            <button class="btn btn-link" onclick="viewAllLogins()">View All</button>
+                        </div>
+
+                        <div class="settings-card">
+                            <h3>Trusted Devices</h3>
+                            <div class="devices-list" id="devicesList">
+                                <!-- Devices loaded via JS -->
+                            </div>
+                            <button class="btn btn-link" onclick="manageDevices()">Manage Devices</button>
+                        </div>
+                    </div>
+
+                    <!-- Notification Settings -->
+                    <div class="settings-section" id="notificationsSection">
+                        <h2>Notification Settings</h2>
+                        
+                        <div class="settings-card">
+                            <h3>Push Notifications</h3>
+                            <label class="switch">
+                                <input type="checkbox" id="pushEnabled" checked>
+                                <span class="slider"></span>
+                                <span>Enable push notifications</span>
+                            </label>
+                        </div>
+
+                        <div class="settings-card">
+                            <h3>Email Notifications</h3>
+                            <label class="checkbox">
+                                <input type="checkbox" id="emailTransactions" checked>
+                                <span>Transaction confirmations</span>
+                            </label>
+                            <label class="checkbox">
+                                <input type="checkbox" id="emailSecurity" checked>
+                                <span>Security alerts</span>
+                            </label>
+                            <label class="checkbox">
+                                <input type="checkbox" id="emailPromotions" checked>
+                                <span>Promotions and offers</span>
+                            </label>
+                        </div>
+
+                        <div class="settings-card">
+                            <h3>SMS Notifications</h3>
+                            <label class="checkbox">
+                                <input type="checkbox" id="smsTransactions">
+                                <span>Transaction alerts via SMS</span>
+                            </label>
+                            <label class="checkbox">
+                                <input type="checkbox" id="smsSecurity" checked>
+                                <span>Security codes via SMS</span>
+                            </label>
+                        </div>
+
+                        <div class="settings-card">
+                            <h3>Quiet Hours</h3>
+                            <div class="time-range">
+                                <input type="time" id="quietStart" value="22:00">
+                                <span>to</span>
+                                <input type="time" id="quietEnd" value="08:00">
+                            </div>
+                            <p class="hint">Don't send notifications during these hours</p>
+                        </div>
+                    </div>
+
+                    <!-- Privacy Settings -->
+                    <div class="settings-section" id="privacySection">
+                        <h2>Privacy Settings</h2>
+                        
+                        <div class="settings-card">
+                            <h3>Data Sharing</h3>
+                            <label class="switch">
+                                <input type="checkbox" id="shareAnalytics" checked>
+                                <span class="slider"></span>
+                                <span>Share anonymous usage data to improve services</span>
+                            </label>
+                        </div>
+
+                        <div class="settings-card">
+                            <h3>Profile Visibility</h3>
+                            <select id="profileVisibility" class="form-select">
+                                <option value="private">Private</option>
+                                <option value="contacts">Contacts Only</option>
+                                <option value="public">Public</option>
+                            </select>
+                        </div>
+
+                        <div class="settings-card">
+                            <h3>Transaction Privacy</h3>
+                            <label class="checkbox">
+                                <input type="checkbox" id="hideAmounts">
+                                <span>Hide transaction amounts in notifications</span>
+                            </label>
+                        </div>
+
+                        <div class="settings-card">
+                            <h3>Download Your Data</h3>
+                            <p>Get a copy of all your personal data</p>
+                            <button class="btn btn-outline" onclick="downloadData()">Request Data Export</button>
+                        </div>
+                    </div>
+
+                    <!-- Account Limits -->
+                    <div class="settings-section" id="limitsSection">
+                        <h2>Account Limits</h2>
+                        
+                        <div class="limits-grid">
+                            <div class="limit-card">
+                                <h4>Daily Transaction Limit</h4>
+                                <div class="limit-value" id="dailyLimit">$10,000</div>
+                                <div class="limit-used" id="dailyUsed">$0 used today</div>
+                                <div class="progress-bar">
+                                    <div class="progress" id="dailyProgress" style="width: 0%"></div>
+                                </div>
+                            </div>
+
+                            <div class="limit-card">
+                                <h4>Monthly Transaction Limit</h4>
+                                <div class="limit-value" id="monthlyLimit">$50,000</div>
+                                <div class="limit-used" id="monthlyUsed">$0 used this month</div>
+                                <div class="progress-bar">
+                                    <div class="progress" id="monthlyProgress" style="width: 0%"></div>
+                                </div>
+                            </div>
+
+                            <div class="limit-card">
+                                <h4>Card Spending Limit</h4>
+                                <div class="limit-value" id="cardLimit">$5,000</div>
+                                <button class="btn btn-link" onclick="adjustCardLimits()">Adjust Limits</button>
+                            </div>
+
+                            <div class="limit-card">
+                                <h4>Withdrawal Limit</h4>
+                                <div class="limit-value" id="withdrawalLimit">$2,000</div>
+                                <button class="btn btn-link" onclick="adjustWithdrawalLimits()">Adjust Limits</button>
+                            </div>
+                        </div>
+
+                        <div class="settings-card">
+                            <h3>KYC Level</h3>
+                            <div class="kyc-level" id="kycLevel">
+                                <span class="badge">Level 1</span>
+                                <span>Verified</span>
+                            </div>
+                            <button class="btn btn-outline" onclick="upgradeKYC()">Upgrade KYC Level</button>
+                        </div>
+                    </div>
+
+                    <!-- API Access -->
+                    <div class="settings-section" id="apiSection">
+                        <h2>API Access</h2>
+                        
+                        <div class="settings-card">
+                            <h3>API Keys</h3>
+                            <div class="api-key-display">
+                                <code id="apiKey">••••••••••••••••</code>
+                                <button class="btn btn-icon" onclick="copyApiKey()">📋</button>
+                            </div>
+                            <button class="btn btn-outline" onclick="generateNewApiKey()">Generate New Key</button>
+                        </div>
+
+                        <div class="settings-card">
+                            <h3>Webhook Endpoints</h3>
+                            <div id="webhooksList">
+                                <!-- Webhooks loaded via JS -->
+                            </div>
+                            <button class="btn btn-primary" onclick="addWebhook()">Add Webhook</button>
+                        </div>
+
+                        <div class="settings-card">
+                            <h3>API Documentation</h3>
+                            <p>Access our comprehensive API documentation</p>
+                            <a href="/docs/api" class="btn btn-link">View Documentation →</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Change Password Modal -->
+    <div class="modal" id="passwordModal">
+        <div class="modal-content">
+            <h3>Change Password</h3>
+            <form id="changePasswordForm">
+                <div class="form-group">
+                    <label>Current Password</label>
+                    <input type="password" id="currentPassword" class="form-input" required>
+                </div>
+                <div class="form-group">
+                    <label>New Password</label>
+                    <input type="password" id="newPassword" class="form-input" required>
+                </div>
+                <div class="form-group">
+                    <label>Confirm New Password</label>
+                    <input type="password" id="confirmNewPassword" class="form-input" required>
+                </div>
+                <button type="submit" class="btn btn-primary">Update Password</button>
+            </form>
+        </div>
+    </div>
+
+    <div class="toast" id="toast"></div>
+
+    <script src="/js/firebase-config.js"></script>
+    <script src="/js/firebase-init.js"></script>
+    <script src="/js/settings.js"></script>
+</body>
+</html>
