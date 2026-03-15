@@ -13,6 +13,9 @@
     <!-- Firebase -->
     <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-firestore-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-auth-compat.js"></script>
+    <!-- Universal Auth -->
+    <script src="/assets/js/taagc-auth.js"></script>
     <style>
         * {
             margin: 0;
@@ -26,23 +29,72 @@
             padding: 20px;
         }
         .payment-wrapper {
-            max-width: 1200px;
+            max-width: 1400px;
             margin: 0 auto;
         }
-        /* Main header with banner image - exact 889x299 size */
+        /* Top Bar with User Info */
+        .top-bar {
+            background: white;
+            border-radius: 60px 60px 0 0;
+            padding: 15px 35px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            border-bottom: 4px solid #e09f2c;
+        }
+        .user-welcome {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+        .user-badge {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            background: #f0f6fd;
+            padding: 8px 20px;
+            border-radius: 60px;
+        }
+        .user-avatar {
+            width: 35px;
+            height: 35px;
+            border-radius: 50%;
+            background: #e09f2c;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            color: #0a1f30;
+        }
+        .currency-selector {
+            background: #f0f6fd;
+            border-radius: 60px;
+            padding: 5px;
+            display: inline-flex;
+            border: 2px solid #e09f2c;
+        }
+        .currency-option {
+            padding: 8px 20px;
+            border-radius: 60px;
+            cursor: pointer;
+            font-weight: 600;
+        }
+        .currency-option.active {
+            background: #e09f2c;
+            color: #0a1f30;
+        }
+        /* Main header with banner */
         .payment-header {
             background: white;
-            border-radius: 40px 40px 0 0;
             padding: 30px 35px 20px;
-            position: relative;
-            overflow: hidden;
         }
         .banner-container {
             width: 889px;
             height: 299px;
             border-radius: 30px;
             overflow: hidden;
-            margin: 0 auto 25px auto;  /* centered */
+            margin: 0 auto 25px auto;
             box-shadow: 0 20px 35px -10px #00000080;
             border: 3px solid #e09f2c;
         }
@@ -61,7 +113,23 @@
             display: inline-block;
             font-weight: 700;
             font-size: 1.1rem;
-            margin-bottom: 15px;
+        }
+        .stats-bar {
+            display: flex;
+            gap: 30px;
+            margin-top: 20px;
+            padding-top: 20px;
+            border-top: 2px dashed #d0e2f2;
+        }
+        .stat-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            color: #0a1f30;
+        }
+        .stat-value {
+            font-weight: 700;
+            color: #e09f2c;
         }
         .payment-grid {
             display: grid;
@@ -71,7 +139,6 @@
             background: white;
             border-radius: 0 0 40px 40px;
         }
-        /* main payment card */
         .payment-card {
             background: #f8fcff;
             border-radius: 30px;
@@ -95,22 +162,31 @@
             color: white;
             font-size: 1.5rem;
         }
-        .bonus-card {
+        .balance-card {
             background: linear-gradient(145deg, #f9f1e0, #f5e5cc);
             border-radius: 30px;
             padding: 25px;
-            text-align: center;
             border: 3px solid #e09f2c;
             margin-bottom: 25px;
         }
-        .bonus-amount {
-            font-size: 3.5rem;
-            font-weight: 800;
-            color: #0e3b5a;
+        .balance-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin: 10px 0;
         }
-        .bonus-amount span {
+        .balance-label {
+            font-weight: 600;
+            color: #0a1f30;
+        }
+        .balance-amount {
+            font-size: 2rem;
+            font-weight: 700;
             color: #e09f2c;
-            font-size: 1.5rem;
+        }
+        .balance-amount small {
+            font-size: 0.9rem;
+            color: #6b8ca8;
         }
         .timer-section {
             background: #0a2538;
@@ -130,7 +206,7 @@
         }
         .payment-methods {
             display: grid;
-            grid-template-columns: repeat(3, 1fr);
+            grid-template-columns: repeat(4, 1fr);
             gap: 15px;
             margin: 25px 0;
         }
@@ -150,6 +226,49 @@
         .method-icon {
             font-size: 2rem;
             margin-bottom: 10px;
+        }
+        .method-name {
+            font-size: 0.9rem;
+            font-weight: 600;
+        }
+        .amount-input {
+            margin: 20px 0;
+        }
+        .amount-input label {
+            display: block;
+            margin-bottom: 10px;
+            font-weight: 600;
+            color: #0a1f30;
+        }
+        .amount-input input {
+            width: 100%;
+            padding: 15px 20px;
+            border-radius: 60px;
+            border: 2px solid #d0e2f2;
+            font-size: 1.2rem;
+        }
+        .amount-input input:focus {
+            outline: none;
+            border-color: #e09f2c;
+        }
+        .quick-amounts {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 10px;
+            margin: 15px 0;
+        }
+        .quick-amount {
+            background: white;
+            border: 2px solid #d0e2f2;
+            border-radius: 60px;
+            padding: 10px;
+            text-align: center;
+            cursor: pointer;
+            font-weight: 600;
+        }
+        .quick-amount:hover {
+            border-color: #e09f2c;
+            background: #e09f2c20;
         }
         #card-element {
             background: white;
@@ -173,7 +292,6 @@
         .pay-button:hover {
             background: #cf8f1f;
         }
-        /* right sidebar */
         .sidebar {
             display: flex;
             flex-direction: column;
@@ -184,6 +302,24 @@
             border-radius: 30px;
             padding: 25px;
             border: 2px solid #e0ebf5;
+        }
+        .quick-links {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            margin-top: 15px;
+        }
+        .quick-link {
+            background: #f0f6fd;
+            border-radius: 60px;
+            padding: 12px;
+            text-align: center;
+            text-decoration: none;
+            color: #0a1f30;
+            font-weight: 600;
+        }
+        .quick-link:hover {
+            background: #e09f2c;
         }
         .transaction-log {
             background: #0a2538;
@@ -198,35 +334,83 @@
             border-bottom: 1px solid #1e405b;
             font-size: 0.9rem;
         }
+        .naira-badge {
+            background: #008751;
+            color: white;
+            padding: 4px 12px;
+            border-radius: 60px;
+            font-size: 0.8rem;
+            margin-left: 10px;
+        }
+        .exchange-rate {
+            background: #e3f0fa;
+            border-radius: 60px;
+            padding: 8px 15px;
+            font-size: 0.9rem;
+            margin: 10px 0;
+        }
         .footer {
             text-align: center;
             padding: 25px;
             color: #8ba9c6;
         }
-        .banner-note {
-            text-align: center;
+        .auth-status {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background: #0a1f30;
+            color: #e09f2c;
+            padding: 8px 16px;
+            border-radius: 60px;
             font-size: 0.8rem;
-            color: #6b8ca8;
-            margin-top: 5px;
+            z-index: 1000;
         }
     </style>
 </head>
 <body>
 <div class="payment-wrapper">
-    <!-- HEADER WITH BANNER IMAGE - EXACT 889x299 -->
+    <!-- TOP BAR WITH USER INFO -->
+    <div class="top-bar">
+        <div class="user-welcome" id="user-welcome">
+            <div class="user-badge">
+                <div class="user-avatar" id="user-avatar">👤</div>
+                <span id="user-name">Loading...</span>
+            </div>
+        </div>
+        <div>
+            <div class="currency-selector" id="currency-selector">
+                <span class="currency-option active" data-currency="USD">USD $</span>
+                <span class="currency-option" data-currency="NGN">NGN ₦</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- HEADER WITH BANNER -->
     <div class="payment-header">
         <div class="banner-container">
-            <!-- Banner with exact dimensions 889x299 -->
             <img src="/assets/images/payment-banner.png" 
                  alt="TAAGC payment banner" 
                  width="889" 
                  height="299"
-                 onerror="this.src='https://via.placeholder.com/889x299/e09f2c/0a1f30?text=TAAGC+Secure+Payment+%7C+Pay+%242+Get+%243'; this.onerror=null;">
+                 onerror="this.src='https://via.placeholder.com/889x299/e09f2c/0a1f30?text=TAAGC+Secure+Payment'; this.onerror=null;">
         </div>
-        <div class="banner-note">
-            <i class="fas fa-check-circle" style="color:#e09f2c;"></i> banner: 889 x 299 pixels · official TAAGC branding
+        <span class="subdomain-badge"><i class="fas fa-lock"></i> pay.taacg.website · multi-currency</span>
+        
+        <!-- Stats Bar -->
+        <div class="stats-bar">
+            <div class="stat-item">
+                <i class="fas fa-users"></i>
+                <span><span class="stat-value">50K+</span> users</span>
+            </div>
+            <div class="stat-item">
+                <i class="fas fa-globe"></i>
+                <span><span class="stat-value">25+</span> countries</span>
+            </div>
+            <div class="stat-item">
+                <i class="fas fa-bolt"></i>
+                <span><span class="stat-value">24/7</span> support</span>
+            </div>
         </div>
-        <span class="subdomain-badge"><i class="fas fa-lock"></i> pay.taacg.website · official gateway</span>
     </div>
 
     <!-- MAIN PAYMENT GRID -->
@@ -237,119 +421,400 @@
                 <div class="lock-icon"><i class="fas fa-shield-alt"></i></div>
                 <div>
                     <h2>complete your payment</h2>
-                    <p style="color:#4f6f8f;">$2.00 + $1.00 bonus · 48h deadline</p>
+                    <p style="color:#4f6f8f;" id="payment-subtitle">$2.00 + $1.00 bonus · 48h deadline</p>
                 </div>
             </div>
 
-            <!-- bonus card -->
-            <div class="bonus-card">
-                <div class="bonus-amount">$2.00 <span>+ $1.00</span></div>
-                <p style="font-size:1.1rem;">pay $2 now · get $3 in your wallet</p>
+            <!-- Balance Card -->
+            <div class="balance-card" id="balance-card">
+                <div class="balance-row">
+                    <span class="balance-label">USD Balance</span>
+                    <span class="balance-amount" id="usd-balance">$0.00</span>
+                </div>
+                <div class="balance-row">
+                    <span class="balance-label">NGN Balance <span class="naira-badge">NGN</span></span>
+                    <span class="balance-amount" id="ngn-balance">₦0.00</span>
+                </div>
+                <div class="exchange-rate" id="exchange-rate">
+                    ₦1 = $0.00065 · $1 = ₦1,540
+                </div>
             </div>
 
-            <!-- timer -->
+            <!-- Timer -->
             <div class="timer-section">
-                <span><i class="fas fa-hourglass-half"></i> time remaining</span>
+                <span><i class="fas fa-hourglass-half"></i> bonus deadline</span>
                 <span class="timer-display" id="timer">47:59:59</span>
             </div>
 
-            <!-- payment methods -->
+            <!-- Payment Methods -->
             <div class="payment-methods" id="paymentMethods">
                 <div class="method-card selected" data-method="card" id="methodCard">
                     <div class="method-icon"><i class="fas fa-credit-card"></i></div>
-                    <div>card</div>
+                    <div class="method-name">Card</div>
                 </div>
                 <div class="method-card" data-method="paypal" id="methodPaypal">
                     <div class="method-icon"><i class="fab fa-paypal"></i></div>
-                    <div>paypal</div>
+                    <div class="method-name">PayPal</div>
                 </div>
                 <div class="method-card" data-method="crypto" id="methodCrypto">
                     <div class="method-icon"><i class="fab fa-bitcoin"></i></div>
-                    <div>crypto</div>
+                    <div class="method-name">Crypto</div>
+                </div>
+                <div class="method-card" data-method="bank" id="methodBank">
+                    <div class="method-icon"><i class="fas fa-university"></i></div>
+                    <div class="method-name">Bank Transfer</div>
                 </div>
             </div>
 
-            <!-- stripe card element -->
-            <div id="card-element"></div>
-
-            <!-- paypal button container -->
-            <div id="paypal-button-container" style="display: none;"></div>
-
-            <!-- crypto payment info -->
-            <div id="crypto-info" style="display: none; text-align: center; padding: 20px;">
-                <p style="background:#0a2538; color:#e09f2c; padding:15px; border-radius:15px; font-family:monospace; word-break:break-all;">
-                    bc1qxy2kgdygjrsqtzq2n0yrf2493p83kkfjhx0wlh
-                </p>
-                <p>send $2 USDT (TRC20) to above address</p>
-                <p style="font-size:0.8rem; color:#6b8ca8;">network: Ethereum/BSC · confirmations: 12</p>
+            <!-- Amount Input -->
+            <div class="amount-input">
+                <label><i class="fas fa-dollar-sign"></i> Enter Amount (<span id="currency-symbol">$</span>)</label>
+                <input type="number" id="payment-amount" value="2.00" min="1" step="0.01">
+                <div class="quick-amounts">
+                    <div class="quick-amount" data-amount="10">$10</div>
+                    <div class="quick-amount" data-amount="25">$25</div>
+                    <div class="quick-amount" data-amount="50">$50</div>
+                    <div class="quick-amount" data-amount="100">$100</div>
+                </div>
             </div>
 
-            <!-- pay button (for card only) -->
-            <button class="pay-button" id="cardPayButton"><i class="fas fa-bolt"></i> pay $2 with card</button>
+            <!-- Stripe Card Element -->
+            <div id="card-element"></div>
 
-            <!-- transaction status -->
+            <!-- PayPal Container -->
+            <div id="paypal-button-container" style="display: none;"></div>
+
+            <!-- Crypto Info -->
+            <div id="crypto-info" style="display: none; text-align: center; padding: 20px;">
+                <p style="background:#0a2538; color:#e09f2c; padding:15px; border-radius:15px; font-family:monospace; word-break:break-all;" id="crypto-address">
+                    bc1qxy2kgdygjrsqtzq2n0yrf2493p83kkfjhx0wlh
+                </p>
+                <p id="crypto-instructions">send USDT (TRC20) to above address</p>
+            </div>
+
+            <!-- Bank Info -->
+            <div id="bank-info" style="display: none; text-align: center; padding: 20px;">
+                <p style="background:#0a2538; color:#e09f2c; padding:15px; border-radius:15px;">
+                    <strong>Bank Name:</strong> GTBank<br>
+                    <strong>Account Name:</strong> TAAGC Global<br>
+                    <strong>Account Number:</strong> 0123456789<br>
+                    <strong>Sort Code:</strong> 011234567
+                </p>
+            </div>
+
+            <!-- Pay Button -->
+            <button class="pay-button" id="payButton"><i class="fas fa-bolt"></i> pay now</button>
+
+            <!-- Transaction Status -->
             <div id="transaction-status" style="margin-top:20px;"></div>
         </div>
 
-        <!-- RIGHT: INFO SIDEBAR -->
+        <!-- RIGHT: SIDEBAR -->
         <div class="sidebar">
+            <!-- Wallet Info -->
+            <div class="info-card">
+                <h3 style="margin-bottom:15px;"><i class="fas fa-wallet"></i> your wallet</h3>
+                <div style="margin-bottom:15px;">
+                    <div style="display:flex; justify-content:space-between;">
+                        <span>USD:</span>
+                        <span id="sidebar-usd">$0.00</span>
+                    </div>
+                    <div style="display:flex; justify-content:space-between;">
+                        <span>NGN:</span>
+                        <span id="sidebar-ngn">₦0.00</span>
+                    </div>
+                </div>
+                <div class="quick-links">
+                    <a href="/wallet" class="quick-link"><i class="fas fa-eye"></i> view</a>
+                    <a href="/withdraw" class="quick-link"><i class="fas fa-arrow-up"></i> withdraw</a>
+                </div>
+            </div>
+
+            <!-- Payment Summary -->
             <div class="info-card">
                 <h3 style="margin-bottom:15px;"><i class="fas fa-receipt"></i> payment summary</h3>
-                <div style="display:flex; justify-content:space-between; margin:10px 0;">
-                    <span>amount:</span>
-                    <span>$2.00</span>
-                </div>
-                <div style="display:flex; justify-content:space-between; margin:10px 0;">
-                    <span>bonus:</span>
-                    <span style="color:#e09f2c;">+$1.00</span>
-                </div>
-                <div style="display:flex; justify-content:space-between; margin:10px 0; font-weight:700; font-size:1.2rem; border-top:2px dashed #d0e2f2; padding-top:10px;">
-                    <span>total:</span>
-                    <span>$3.00</span>
+                <div id="payment-summary">
+                    <div style="display:flex; justify-content:space-between; margin:10px 0;">
+                        <span>amount:</span>
+                        <span id="summary-amount">$2.00</span>
+                    </div>
+                    <div style="display:flex; justify-content:space-between; margin:10px 0;">
+                        <span>bonus:</span>
+                        <span style="color:#e09f2c;" id="summary-bonus">+$1.00</span>
+                    </div>
+                    <div style="display:flex; justify-content:space-between; margin:10px 0; font-weight:700; border-top:2px dashed #d0e2f2; padding-top:10px;">
+                        <span>total:</span>
+                        <span id="summary-total">$3.00</span>
+                    </div>
                 </div>
             </div>
 
-            <div class="info-card">
-                <h3 style="margin-bottom:15px;"><i class="fas fa-gift"></i> first 100 bonus</h3>
-                <p>• pay $2, get $3 total</p>
-                <p>• 48h to complete payment</p>
-                <p>• instant bonus credit</p>
-                <p>• all payment methods accepted</p>
-            </div>
-
-            <!-- live transaction log -->
+            <!-- Live Transaction Log -->
             <div class="transaction-log" id="transactionLog">
                 <div class="log-entry"><i class="fas fa-circle" style="color:#e09f2c;"></i> ready to process</div>
-                <div class="log-entry"><i class="fas fa-circle" style="color:#e09f2c;"></i> banner: 889x299 loaded</div>
             </div>
         </div>
     </div>
 
     <div class="footer">
-        <i class="fas fa-shield-alt"></i> 256-bit SSL · pci compliant · all transactions secure · banner size: 889x299
+        <i class="fas fa-shield-alt"></i> 256-bit SSL · pci compliant · multi-currency support (USD/NGN)
     </div>
 </div>
 
+<div class="auth-status" id="auth-status">checking...</div>
+
 <script>
-    // Firebase config
-    const firebaseConfig = {
-        apiKey: "AIzaSyAI1MrcP977UgRLQoePxl64JOSyj9v4WpI",
-        authDomain: "xtaagc.firebaseapp.com",
-        projectId: "xtaagc",
-        storageBucket: "xtaagc.firebasestorage.app",
-        messagingSenderId: "256073982437",
-        appId: "1:256073982437:web:8da63bb7acc86c0ca98f0c"
-    };
-    
-    firebase.initializeApp(firebaseConfig);
-    const db = firebase.firestore();
-    
-    // URL params
-    const urlParams = new URLSearchParams(window.location.search);
-    const userId = urlParams.get('uid') || 'user_' + Date.now();
-    const paymentId = urlParams.get('id') || 'PAY_' + Date.now();
-    
-    // Timer (48h)
+    // ============================================
+    // CONFIGURATION
+    // ============================================
+    const exchangeRate = 1540; // 1 USD = 1540 NGN
+    let currentCurrency = 'USD';
+    let currentUser = null;
+    let userBalance = { usd: 0, ngn: 0 };
+
+    // ============================================
+    // AUTH STATE HANDLER
+    // ============================================
+    auth.onAuthStateChanged(async (user) => {
+        if (user) {
+            currentUser = user;
+            document.getElementById('auth-status').innerHTML = `🔓 ${window.location.hostname} · ${user.email}`;
+            
+            // Load user data
+            await loadUserData(user);
+            updateUserUI(user);
+        } else {
+            document.getElementById('auth-status').innerHTML = `🔒 ${window.location.hostname} · not logged in`;
+            // Show guest view
+            document.getElementById('user-name').textContent = 'Guest';
+            document.getElementById('user-avatar').textContent = '👤';
+        }
+    });
+
+    async function loadUserData(user) {
+        try {
+            const userDoc = await db.collection('users').doc(user.uid).get();
+            if (userDoc.exists) {
+                const data = userDoc.data();
+                userBalance = data.wallet?.balances || { usd: 0, ngn: 0 };
+                updateBalances();
+            }
+        } catch (error) {
+            console.error('Error loading user data:', error);
+        }
+    }
+
+    function updateUserUI(user) {
+        const displayName = user.displayName || user.email.split('@')[0];
+        const initial = displayName.charAt(0).toUpperCase();
+        document.getElementById('user-name').textContent = displayName;
+        document.getElementById('user-avatar').textContent = initial;
+    }
+
+    function updateBalances() {
+        document.getElementById('usd-balance').textContent = `$${userBalance.usd?.toFixed(2) || '0.00'}`;
+        document.getElementById('ngn-balance').textContent = `₦${(userBalance.ngn || 0).toFixed(2)}`;
+        document.getElementById('sidebar-usd').textContent = `$${userBalance.usd?.toFixed(2) || '0.00'}`;
+        document.getElementById('sidebar-ngn').textContent = `₦${(userBalance.ngn || 0).toFixed(2)}`;
+    }
+
+    // ============================================
+    // CURRENCY HANDLER
+    // ============================================
+    document.querySelectorAll('.currency-option').forEach(opt => {
+        opt.addEventListener('click', function() {
+            document.querySelectorAll('.currency-option').forEach(o => o.classList.remove('active'));
+            this.classList.add('active');
+            currentCurrency = this.dataset.currency;
+            updateCurrencyDisplay();
+        });
+    });
+
+    function updateCurrencyDisplay() {
+        const amount = parseFloat(document.getElementById('payment-amount').value) || 2;
+        const symbol = currentCurrency === 'USD' ? '$' : '₦';
+        document.getElementById('currency-symbol').textContent = symbol;
+        
+        if (currentCurrency === 'NGN') {
+            const ngnAmount = amount * exchangeRate;
+            document.getElementById('payment-subtitle').innerHTML = `₦${ngnAmount.toFixed(2)} + ₦${(ngnAmount/2).toFixed(2)} bonus · 48h deadline`;
+            document.getElementById('summary-amount').textContent = `₦${ngnAmount.toFixed(2)}`;
+            document.getElementById('summary-bonus').textContent = `+₦${(ngnAmount/2).toFixed(2)}`;
+            document.getElementById('summary-total').textContent = `₦${(ngnAmount * 1.5).toFixed(2)}`;
+        } else {
+            document.getElementById('payment-subtitle').innerHTML = `$${amount.toFixed(2)} + $${(amount/2).toFixed(2)} bonus · 48h deadline`;
+            document.getElementById('summary-amount').textContent = `$${amount.toFixed(2)}`;
+            document.getElementById('summary-bonus').textContent = `+$${(amount/2).toFixed(2)}`;
+            document.getElementById('summary-total').textContent = `$${(amount * 1.5).toFixed(2)}`;
+        }
+    }
+
+    // ============================================
+    // PAYMENT METHODS
+    // ============================================
+    const stripe = Stripe('pk_test_your_key');
+    const elements = stripe.elements();
+    const cardElement = elements.create('card');
+    cardElement.mount('#card-element');
+
+    const methods = document.querySelectorAll('.method-card');
+    methods.forEach(m => {
+        m.addEventListener('click', () => {
+            methods.forEach(mth => mth.classList.remove('selected'));
+            m.classList.add('selected');
+            
+            const method = m.dataset.method;
+            document.getElementById('card-element').style.display = method === 'card' ? 'block' : 'none';
+            document.getElementById('paypal-button-container').style.display = method === 'paypal' ? 'block' : 'none';
+            document.getElementById('crypto-info').style.display = method === 'crypto' ? 'block' : 'none';
+            document.getElementById('bank-info').style.display = method === 'bank' ? 'block' : 'none';
+            document.getElementById('payButton').style.display = method === 'card' ? 'block' : 'none';
+            
+            if (method === 'paypal') initPayPal();
+        });
+    });
+
+    // ============================================
+    // PAYPAL INTEGRATION
+    // ============================================
+    function initPayPal() {
+        if (window.paypal) {
+            paypal.Buttons({
+                createOrder: function(data, actions) {
+                    const amount = document.getElementById('payment-amount').value || 2;
+                    return actions.order.create({
+                        purchase_units: [{
+                            amount: { 
+                                value: amount.toString(),
+                                currency_code: 'USD'
+                            },
+                            description: 'TAAGC payment'
+                        }]
+                    });
+                },
+                onApprove: function(data, actions) {
+                    return actions.order.capture().then(async function(details) {
+                        await processPayment('paypal', details);
+                    });
+                }
+            }).render('#paypal-button-container');
+        }
+    }
+
+    // ============================================
+    // CARD PAYMENT
+    // ============================================
+    document.getElementById('payButton').addEventListener('click', async () => {
+        const amount = parseFloat(document.getElementById('payment-amount').value) || 2;
+        
+        const { paymentMethod, error } = await stripe.createPaymentMethod({
+            type: 'card',
+            card: cardElement
+        });
+        
+        if (error) {
+            showStatus('❌ ' + error.message, 'error');
+        } else {
+            await processPayment('card', { 
+                paymentMethod: paymentMethod.id,
+                amount: amount,
+                currency: currentCurrency 
+            });
+        }
+    });
+
+    // ============================================
+    // QUICK AMOUNT BUTTONS
+    // ============================================
+    document.querySelectorAll('.quick-amount').forEach(btn => {
+        btn.addEventListener('click', function() {
+            const amount = this.dataset.amount;
+            document.getElementById('payment-amount').value = amount;
+            updateCurrencyDisplay();
+        });
+    });
+
+    document.getElementById('payment-amount').addEventListener('input', updateCurrencyDisplay);
+
+    // ============================================
+    // PAYMENT PROCESSING
+    // ============================================
+    async function processPayment(method, details) {
+        showStatus('⏳ processing payment...', 'info');
+        addLogEntry(`${method} payment initiated`);
+
+        try {
+            const paymentId = 'PAY_' + Date.now();
+            const amount = parseFloat(document.getElementById('payment-amount').value) || 2;
+            
+            // Save to Firebase
+            await db.collection('payments').doc(paymentId).set({
+                paymentId: paymentId,
+                userId: currentUser?.uid || 'guest',
+                userEmail: currentUser?.email || 'guest',
+                method: method,
+                amount: amount,
+                currency: currentCurrency,
+                bonus: amount * 0.5,
+                total: amount * 1.5,
+                status: 'completed',
+                details: details,
+                timestamp: firebase.firestore.FieldValue.serverTimestamp()
+            });
+
+            // Update user balance if logged in
+            if (currentUser) {
+                const userRef = db.collection('users').doc(currentUser.uid);
+                if (currentCurrency === 'USD') {
+                    await userRef.update({
+                        'wallet.balances.usd': firebase.firestore.FieldValue.increment(amount * 1.5)
+                    });
+                } else {
+                    await userRef.update({
+                        'wallet.balances.ngn': firebase.firestore.FieldValue.increment(amount * 1.5 * exchangeRate)
+                    });
+                }
+            }
+
+            showStatus('✅ payment successful! bonus added', 'success');
+            addLogEntry(`payment completed: $${amount} + $${amount/2} bonus`);
+            
+            // Reload user data
+            if (currentUser) {
+                await loadUserData(currentUser);
+            }
+
+        } catch (error) {
+            showStatus('❌ ' + error.message, 'error');
+            addLogEntry(`payment failed: ${error.message}`);
+        }
+    }
+
+    // ============================================
+    // UTILITY FUNCTIONS
+    // ============================================
+    function showStatus(msg, type) {
+        const colors = {
+            success: '#d4edda',
+            error: '#f8d7da',
+            info: '#fff3cd'
+        };
+        document.getElementById('transaction-status').innerHTML = 
+            `<div style="background:${colors[type]}; padding:15px; border-radius:15px;">${msg}</div>`;
+    }
+
+    function addLogEntry(msg) {
+        const log = document.getElementById('transactionLog');
+        const entry = document.createElement('div');
+        entry.className = 'log-entry';
+        entry.innerHTML = `<i class="fas fa-circle" style="color:#e09f2c;"></i> ${msg}`;
+        log.appendChild(entry);
+        log.scrollTop = log.scrollHeight;
+    }
+
+    // ============================================
+    // TIMER
+    // ============================================
     const deadline = Date.now() + 48 * 60 * 60 * 1000;
     setInterval(() => {
         const now = Date.now();
@@ -360,144 +825,17 @@
         document.getElementById('timer').innerText = 
             `${h.toString().padStart(2,'0')}:${m.toString().padStart(2,'0')}:${s.toString().padStart(2,'0')}`;
     }, 1000);
-    
-    // Stripe setup
-    const stripe = Stripe('pk_test_your_key');
-    const elements = stripe.elements();
-    const cardElement = elements.create('card');
-    cardElement.mount('#card-element');
-    
-    // Method switching
-    const methods = document.querySelectorAll('.method-card');
-    methods.forEach(m => {
-        m.addEventListener('click', () => {
-            methods.forEach(mth => mth.classList.remove('selected'));
-            m.classList.add('selected');
-            
-            const method = m.dataset.method;
-            document.getElementById('card-element').style.display = method === 'card' ? 'block' : 'none';
-            document.getElementById('cardPayButton').style.display = method === 'card' ? 'block' : 'none';
-            document.getElementById('paypal-button-container').style.display = method === 'paypal' ? 'block' : 'none';
-            document.getElementById('crypto-info').style.display = method === 'crypto' ? 'block' : 'none';
-            
-            if (method === 'paypal') initPayPal();
-        });
-    });
-    
-    // PayPal integration
-    function initPayPal() {
-        if (window.paypal) {
-            paypal.Buttons({
-                createOrder: function(data, actions) {
-                    return actions.order.create({
-                        purchase_units: [{
-                            amount: { 
-                                value: '2.00',
-                                currency_code: 'USD'
-                            },
-                            description: 'TAAGC first 100 bonus payment'
-                        }]
-                    });
-                },
-                onApprove: function(data, actions) {
-                    return actions.order.capture().then(async function(details) {
-                        await db.collection('payments').doc(data.orderID).set({
-                            userId: userId,
-                            method: 'paypal',
-                            amount: 2.00,
-                            bonus: 1.00,
-                            status: 'completed',
-                            paypalDetails: details,
-                            timestamp: firebase.firestore.FieldValue.serverTimestamp()
-                        });
-                        
-                        showStatus('✅ payment successful! $1 bonus added');
-                        addLogEntry(`paypal payment: ${data.orderID}`);
-                        
-                        // Update user bonus
-                        await db.collection('users').doc(userId).set({
-                            bonusPaid: true,
-                            bonusAmount: 3.00,
-                            lastPayment: data.orderID
-                        }, { merge: true });
-                    });
-                },
-                onError: function(err) {
-                    showStatus('❌ paypal error: ' + err.message);
-                    addLogEntry(`paypal error: ${err.message}`);
-                }
-            }).render('#paypal-button-container');
-        }
-    }
-    
-    // Card payment
-    document.getElementById('cardPayButton').addEventListener('click', async () => {
-        const { paymentMethod, error } = await stripe.createPaymentMethod({
-            type: 'card',
-            card: cardElement
-        });
-        
-        if (error) {
-            showStatus('❌ ' + error.message);
-        } else {
-            await db.collection('payments').doc(paymentId).set({
-                userId: userId,
-                method: 'card',
-                amount: 2.00,
-                bonus: 1.00,
-                status: 'processing',
-                paymentMethodId: paymentMethod.id,
-                timestamp: firebase.firestore.FieldValue.serverTimestamp()
-            });
-            
-            showStatus('⏳ payment processing...');
-            addLogEntry(`card payment: ${paymentMethod.id.substring(0,10)}...`);
-            
-            // Simulate success (in production, webhook confirms)
-            setTimeout(async () => {
-                showStatus('✅ payment successful! $1 bonus added');
-                await db.collection('payments').doc(paymentId).update({
-                    status: 'completed'
-                });
-                await db.collection('users').doc(userId).set({
-                    bonusPaid: true,
-                    bonusAmount: 3.00
-                }, { merge: true });
-                addLogEntry('bonus $1 credited');
-            }, 3000);
-        }
-    });
-    
-    function showStatus(msg) {
-        document.getElementById('transaction-status').innerHTML = 
-            `<div style="background:#e3f0fa; padding:15px; border-radius:15px;">${msg}</div>`;
-    }
-    
-    function addLogEntry(msg) {
-        const log = document.getElementById('transactionLog');
-        const entry = document.createElement('div');
-        entry.className = 'log-entry';
-        entry.innerHTML = `<i class="fas fa-circle" style="color:#e09f2c;"></i> ${msg}`;
-        log.appendChild(entry);
-        log.scrollTop = log.scrollHeight;
-    }
-    
-    // Save payment record
-    db.collection('payments').doc(paymentId).set({
-        userId: userId,
-        amount: 2.00,
-        bonus: 1.00,
-        status: 'pending',
-        deadline: new Date(deadline),
-        createdAt: firebase.firestore.FieldValue.serverTimestamp()
-    });
-    
-    addLogEntry(`payment started: ${paymentId.substring(0,8)}...`);
-    addLogEntry(`banner: 889x299 loaded`);
-    
-    // Banner loaded successfully
+
+    // ============================================
+    // INITIALIZATION
+    // ============================================
+    addLogEntry('payment gateway ready');
+    addLogEntry('multi-currency: USD/NGN');
+    updateCurrencyDisplay();
+
+    // Banner load event
     document.querySelector('.banner-container img').addEventListener('load', function() {
-        addLogEntry('✅ banner image loaded (889x299)');
+        addLogEntry('✅ banner loaded (889x299)');
     });
 </script>
 </body>
