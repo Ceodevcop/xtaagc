@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login - TRIPLE A AHAL GLOBAL CONCEPT</title>
+    <link rel="stylesheet" href="/css/style.css">
+    <link rel="stylesheet" href="/css/auth.css">
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
+</head>
+<body class="auth-page">
+    <div class="auth-container">
+        <div class="auth-card">
+            <div class="auth-header">
+                <img src="/assets/images/logo.svg" alt="TRIPLE A" width="48">
+                <h1>Welcome Back</h1>
+                <p>Sign in to your TRIPLE A AHAL GLOBAL CONCEPT account</p>
+            </div>
+
+            <form id="loginForm" class="auth-form">
+                <div class="form-group">
+                    <label for="email">Email Address</label>
+                    <div class="input-with-icon">
+                        <span class="icon">📧</span>
+                        <input type="email" id="email" class="form-input" 
+                               placeholder="you@example.com" required>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="password">Password</label>
+                    <div class="input-with-icon">
+                        <span class="icon">🔒</span>
+                        <input type="password" id="password" class="form-input" 
+                               placeholder="••••••••" required>
+                    </div>
+                </div>
+
+                <div class="form-options">
+                    <label class="checkbox">
+                        <input type="checkbox" id="rememberMe">
+                        <span>Remember me</span>
+                    </label>
+                    <a href="/forgot-password/" class="forgot-link">Forgot password?</a>
+                </div>
+
+                <button type="submit" class="btn btn-primary btn-block" id="loginBtn">
+                    Sign In
+                </button>
+
+                <div class="auth-divider">
+                    <span>or continue with</span>
+                </div>
+
+                <div class="social-login">
+                    <button type="button" class="social-btn" id="googleLogin">
+                        <img src="/assets/images/google.svg" alt="Google" width="20">
+                        Google
+                    </button>
+                    <button type="button" class="social-btn" id="appleLogin">
+                        <img src="/assets/images/apple.svg" alt="Apple" width="20">
+                        Apple
+                    </button>
+                </div>
+
+                <p class="auth-footer">
+                    Don't have an account? 
+                    <a href="/register/">Create Account</a>
+                </p>
+            </form>
+
+            <div class="auth-domain">fintech.taagc.website</div>
+        </div>
+    </div>
+
+    <div class="toast" id="toast"></div>
+
+    <script src="/js/firebase-config.js"></script>
+    <script src="/js/auth.js"></script>
+</body>
+</html>
