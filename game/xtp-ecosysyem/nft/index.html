@@ -1,0 +1,405 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>XTP NFT Bots - Own, Trade, Rent</title>
+    <link rel="stylesheet" href="/assets/css/style.css">
+    <style>
+        .nft-banner {
+            background: linear-gradient(135deg, #9333ea, #7e22ce);
+            color: white;
+            padding: 3rem;
+            border-radius: 20px;
+            margin-bottom: 2rem;
+            text-align: center;
+        }
+
+        .rarity-grid {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 1.5rem;
+            margin: 3rem 0;
+        }
+
+        .rarity-card {
+            background: white;
+            border-radius: 20px;
+            padding: 2rem 1rem;
+            text-align: center;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            transition: transform 0.3s;
+        }
+
+        .rarity-card:hover {
+            transform: translateY(-10px);
+        }
+
+        .common { border-top: 5px solid #9ca3af; }
+        .rare { border-top: 5px solid #3b82f6; }
+        .epic { border-top: 5px solid #8b5cf6; }
+        .legendary { border-top: 5px solid #f59e0b; }
+        .mythic { border-top: 5px solid #ef4444; }
+
+        .nft-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 2rem;
+            margin: 2rem 0;
+        }
+
+        .nft-card {
+            background: white;
+            border-radius: 20px;
+            overflow: hidden;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            transition: all 0.3s;
+            cursor: pointer;
+        }
+
+        .nft-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 20px 40px rgba(139,92,246,0.3);
+        }
+
+        .nft-image {
+            height: 200px;
+            background: linear-gradient(135deg, #667eea20, #764ba220);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 4rem;
+            position: relative;
+        }
+
+        .rarity-badge {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            padding: 0.3rem 1rem;
+            border-radius: 50px;
+            font-size: 0.8rem;
+            font-weight: bold;
+        }
+
+        .common-badge { background: #9ca3af; color: white; }
+        .rare-badge { background: #3b82f6; color: white; }
+        .epic-badge { background: #8b5cf6; color: white; }
+        .legendary-badge { background: #f59e0b; color: white; }
+        .mythic-badge { background: #ef4444; color: white; }
+
+        .nft-details {
+            padding: 1.5rem;
+        }
+
+        .nft-name {
+            font-size: 1.3rem;
+            font-weight: bold;
+            margin-bottom: 0.5rem;
+        }
+
+        .nft-stats {
+            display: flex;
+            justify-content: space-between;
+            margin: 1rem 0;
+            color: #666;
+        }
+
+        .nft-price {
+            font-size: 1.5rem;
+            color: var(--primary);
+            font-weight: bold;
+        }
+
+        .rental-badge {
+            background: var(--success);
+            color: white;
+            padding: 0.2rem 1rem;
+            border-radius: 50px;
+            font-size: 0.8rem;
+            display: inline-block;
+        }
+
+        .marketplace-stats {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 1.5rem;
+            margin: 3rem 0;
+        }
+
+        .filter-bar {
+            display: flex;
+            gap: 1rem;
+            margin: 2rem 0;
+            flex-wrap: wrap;
+        }
+
+        .filter-btn {
+            padding: 0.5rem 1.5rem;
+            border: 2px solid #e5e7eb;
+            background: white;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .filter-btn.active {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: white;
+            border-color: transparent;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <div class="nav">
+            <a href="/" class="logo">TAAGC GAMES</a>
+            <div class="nav-links">
+                <a href="/">Home</a>
+                <a href="/xtp-ecosystem">XTP Ecosystem</a>
+                <a href="/xtp-ecosystem/nft" class="active">NFT Bots</a>
+            </div>
+            <div class="balance-widget">
+                <i class="fas fa-coins"></i>
+                <span id="xtpBalance">10,000</span> XTP
+            </div>
+        </div>
+    </div>
+
+    <div class="main-content">
+        <!-- Hero Banner -->
+        <div class="nft-banner">
+            <h1>💎 XTP NFT Bot Marketplace</h1>
+            <p style="font-size: 1.3rem; max-width: 600px; margin: 1rem auto;">
+                Own unique trading bots as NFTs. Trade them, rent them, earn passive income!
+            </p>
+            <div style="margin-top: 2rem;">
+                <span style="background: rgba(255,255,255,0.2); padding: 0.5rem 1.5rem; border-radius: 50px;">
+                    🎨 10,000 Total NFTs • 💰 5M XTP Volume • 🔥 2,345 Owners
+                </span>
+            </div>
+        </div>
+
+        <!-- Rarity Overview -->
+        <div class="rarity-grid">
+            <div class="rarity-card common">
+                <div style="font-size: 2rem;">⚪</div>
+                <h3>Common</h3>
+                <div>5,000 Available</div>
+                <div>1,000 XTP</div>
+                <div class="rental-badge">70% Rental Income</div>
+            </div>
+            <div class="rarity-card rare">
+                <div style="font-size: 2rem;">🔵</div>
+                <h3>Rare</h3>
+                <div>3,000 Available</div>
+                <div>5,000 XTP</div>
+                <div class="rental-badge">75% Rental Income</div>
+            </div>
+            <div class="rarity-card epic">
+                <div style="font-size: 2rem;">🟣</div>
+                <h3>Epic</h3>
+                <div>1,500 Available</div>
+                <div>25,000 XTP</div>
+                <div class="rental-badge">80% Rental Income</div>
+            </div>
+            <div class="rarity-card legendary">
+                <div style="font-size: 2rem;">🟡</div>
+                <h3>Legendary</h3>
+                <div>400 Available</div>
+                <div>100,000 XTP</div>
+                <div class="rental-badge">85% Rental Income</div>
+            </div>
+            <div class="rarity-card mythic">
+                <div style="font-size: 2rem;">🔴</div>
+                <h3>Mythic</h3>
+                <div>100 Available</div>
+                <div>1,000,000 XTP</div>
+                <div class="rental-badge">90% Rental Income + Profit Share</div>
+            </div>
+        </div>
+
+        <!-- Marketplace Stats -->
+        <div class="marketplace-stats">
+            <div class="stat-card">
+                <div class="stat-value">10,000</div>
+                <div>Total NFTs</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value">5,234</div>
+                <div>Minted</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value">4.8M</div>
+                <div>Trading Volume</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value">234</div>
+                <div>Active Rentals</div>
+            </div>
+        </div>
+
+        <!-- Filter Bar -->
+        <div class="filter-bar">
+            <button class="filter-btn active">All NFTs</button>
+            <button class="filter-btn">Common</button>
+            <button class="filter-btn">Rare</button>
+            <button class="filter-btn">Epic</button>
+            <button class="filter-btn">Legendary</button>
+            <button class="filter-btn">Mythic</button>
+            <button class="filter-btn">For Sale</button>
+            <button class="filter-btn">For Rent</button>
+        </div>
+
+        <!-- NFT Grid -->
+        <div class="nft-grid" id="nftGrid">
+            <!-- Loaded via JavaScript -->
+        </div>
+
+        <!-- Your NFTs Section -->
+        <div style="background: white; border-radius: 20px; padding: 2rem; margin: 3rem 0;">
+            <h2>👤 Your NFT Collection</h2>
+            
+            <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 2rem; margin: 2rem 0;">
+                <div class="stat-card">
+                    <div class="stat-value">3</div>
+                    <div>NFTs Owned</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value">12,500 XTP</div>
+                    <div>Total Value</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value">1,250 XTP</div>
+                    <div>Rental Income</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value">2</div>
+                    <div>Active Rentals</div>
+                </div>
+            </div>
+
+            <div class="nft-grid">
+                <!-- Sample owned NFTs -->
+                <div class="nft-card">
+                    <div class="nft-image">
+                        🤖
+                        <span class="rarity-badge rare-badge">Rare</span>
+                    </div>
+                    <div class="nft-details">
+                        <div class="nft-name">Arbitrage Bot #123</div>
+                        <div class="nft-stats">
+                            <span>⚡ Power: 65</span>
+                            <span>📈 ROI: +12%</span>
+                        </div>
+                        <div class="nft-price">5,000 XTP</div>
+                        <div style="display: flex; gap: 0.5rem; margin-top: 1rem;">
+                            <button class="btn-small" style="flex: 1;">List for Sale</button>
+                            <button class="btn-small" style="flex: 1;">Set Rental</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Mint New NFT -->
+        <div style="background: linear-gradient(135deg, #1a1a1a, #2d2d2d); color: white; border-radius: 20px; padding: 2rem; margin: 3rem 0;">
+            <h2>🎨 Mint New NFT Bot</h2>
+            <p>Create your own unique trading bot NFT</p>
+            
+            <div style="display: grid; grid-template-columns: repeat(5, 1fr); gap: 1rem; margin-top: 2rem;">
+                <button class="btn-primary" onclick="mintNFT('common')" style="background: #9ca3af;">
+                    Common - 1,000 XTP
+                </button>
+                <button class="btn-primary" onclick="mintNFT('rare')" style="background: #3b82f6;">
+                    Rare - 5,000 XTP
+                </button>
+                <button class="btn-primary" onclick="mintNFT('epic')" style="background: #8b5cf6;">
+                    Epic - 25,000 XTP
+                </button>
+                <button class="btn-primary" onclick="mintNFT('legendary')" style="background: #f59e0b;">
+                    Legendary - 100,000 XTP
+                </button>
+                <button class="btn-primary" onclick="mintNFT('mythic')" style="background: #ef4444;">
+                    Mythic - 1,000,000 XTP
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Sample NFT data
+        const nfts = [
+            { id: 1, name: 'Arbitrage Bot #123', rarity: 'rare', image: '🤖', price: 5000, power: 65, roi: '+12%', owner: '0x1234...' },
+            { id: 2, name: 'Grid Master #456', rarity: 'common', image: '📊', price: 1000, power: 45, roi: '+8%', owner: '0x5678...' },
+            { id: 3, name: 'AI Trader #789', rarity: 'epic', image: '🧠', price: 25000, power: 82, roi: '+18%', owner: '0x9012...' },
+            { id: 4, name: 'Scalper Pro #234', rarity: 'legendary', image: '⚡', price: 100000, power: 94, roi: '+25%', owner: '0x3456...' },
+            { id: 5, name: 'Mega Whale #567', rarity: 'mythic', image: '🐋', price: 1000000, power: 99, roi: '+35%', owner: '0x7890...' },
+            { id: 6, name: 'Copy Cat #890', rarity: 'rare', image: '🐱', price: 5000, power: 58, roi: '+10%', owner: '0x1357...' }
+        ];
+
+        function renderNFTs() {
+            const html = nfts.map(nft => `
+                <div class="nft-card" onclick="viewNFT(${nft.id})">
+                    <div class="nft-image">
+                        ${nft.image}
+                        <span class="rarity-badge ${nft.rarity}-badge">${nft.rarity.charAt(0).toUpperCase() + nft.rarity.slice(1)}</span>
+                    </div>
+                    <div class="nft-details">
+                        <div class="nft-name">${nft.name}</div>
+                        <div class="nft-stats">
+                            <span>⚡ Power: ${nft.power}</span>
+                            <span>📈 ${nft.roi}</span>
+                        </div>
+                        <div class="nft-price">${nft.price.toLocaleString()} XTP</div>
+                        <div style="font-size: 0.8rem; color: #666; margin-top: 0.5rem;">
+                            Owner: ${nft.owner}
+                        </div>
+                        <div style="display: flex; gap: 0.5rem; margin-top: 1rem;">
+                            <button class="btn-small" style="flex: 1;" onclick="event.stopPropagation(); buyNFT(${nft.id})">Buy</button>
+                            <button class="btn-small" style="flex: 1;" onclick="event.stopPropagation(); rentNFT(${nft.id})">Rent</button>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+            
+            document.getElementById('nftGrid').innerHTML = html;
+        }
+
+        function mintNFT(rarity) {
+            const user = firebase.auth().currentUser;
+            if (!user) {
+                alert('Please login first');
+                return;
+            }
+
+            const prices = {
+                common: 1000,
+                rare: 5000,
+                epic: 25000,
+                legendary: 100000,
+                mythic: 1000000
+            };
+
+            if (confirm(`Mint ${rarity} NFT for ${prices[rarity].toLocaleString()} XTP?`)) {
+                alert(`Minting ${rarity} NFT...`);
+                // Process minting
+            }
+        }
+
+        function buyNFT(id) {
+            alert(`Processing purchase of NFT #${id}`);
+        }
+
+        function rentNFT(id) {
+            alert(`Processing rental of NFT #${id}`);
+        }
+
+        function viewNFT(id) {
+            window.location.href = `/xtp-ecosystem/nft/${id}`;
+        }
+
+        renderNFTs();
+    </script>
+</body>
+</html>
