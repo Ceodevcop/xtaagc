@@ -1,0 +1,328 @@
+/* KYC Verification Page Styles */
+.kyc-container {
+    max-width: 800px;
+    margin: 0 auto;
+}
+
+.kyc-status-banner {
+    background: white;
+    border-radius: 1rem;
+    padding: 1.5rem;
+    margin-bottom: 2rem;
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+    border-left: 4px solid var(--gray-300);
+    box-shadow: var(--shadow);
+}
+
+.kyc-status-banner.verified {
+    border-left-color: var(--success);
+    background: linear-gradient(135deg, rgba(72, 187, 120, 0.1), transparent);
+}
+
+.kyc-status-banner.pending {
+    border-left-color: var(--warning);
+    background: linear-gradient(135deg, rgba(236, 201, 75, 0.1), transparent);
+}
+
+.status-icon {
+    font-size: 2.5rem;
+}
+
+.status-info h3 {
+    margin-bottom: 0.25rem;
+    color: var(--gray-800);
+}
+
+.status-info p {
+    color: var(--gray-600);
+    font-size: 0.875rem;
+}
+
+.verification-steps {
+    background: white;
+    border-radius: 1rem;
+    padding: 2rem;
+    margin-bottom: 2rem;
+    box-shadow: var(--shadow);
+}
+
+.verification-steps h2 {
+    margin-bottom: 1.5rem;
+    color: var(--gray-800);
+}
+
+.steps-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.step-card {
+    border: 1px solid var(--gray-200);
+    border-radius: 0.75rem;
+    overflow: hidden;
+}
+
+.step-card.active {
+    border-color: var(--brand-purple);
+    box-shadow: 0 0 0 1px var(--brand-purple);
+}
+
+.step-card.completed {
+    border-color: var(--success);
+    background: linear-gradient(135deg, rgba(72, 187, 120, 0.05), transparent);
+}
+
+.step-header {
+    padding: 1.5rem;
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    cursor: pointer;
+    background: white;
+}
+
+.step-number {
+    width: 2rem;
+    height: 2rem;
+    background: var(--gray-200);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 600;
+    color: var(--gray-600);
+}
+
+.step-card.active .step-number {
+    background: var(--brand-purple);
+    color: white;
+}
+
+.step-card.completed .step-number {
+    background: var(--success);
+    color: white;
+}
+
+.step-header h3 {
+    flex: 1;
+    margin: 0;
+    font-size: 1rem;
+}
+
+.step-status {
+    font-size: 0.75rem;
+    padding: 0.25rem 0.75rem;
+    background: var(--gray-100);
+    border-radius: 2rem;
+    color: var(--gray-600);
+}
+
+.step-card.active .step-status {
+    background: var(--brand-purple);
+    color: white;
+}
+
+.step-card.completed .step-status {
+    background: var(--success);
+    color: white;
+}
+
+.step-content {
+    padding: 1.5rem;
+    border-top: 1px solid var(--gray-200);
+    background: var(--gray-50);
+}
+
+.document-requirements {
+    background: white;
+    border-radius: 0.5rem;
+    padding: 1rem;
+    margin-bottom: 1.5rem;
+    border: 1px solid var(--gray-200);
+}
+
+.document-requirements h4 {
+    margin-bottom: 0.5rem;
+    color: var(--gray-700);
+}
+
+.document-requirements ul {
+    list-style: none;
+    padding: 0;
+}
+
+.document-requirements li {
+    padding: 0.25rem 0;
+    color: var(--gray-600);
+    font-size: 0.875rem;
+}
+
+.upload-section {
+    margin-bottom: 1.5rem;
+}
+
+.upload-section h4 {
+    margin-bottom: 0.5rem;
+    color: var(--gray-700);
+    font-size: 0.875rem;
+}
+
+.file-upload-area {
+    border: 2px dashed var(--gray-300);
+    border-radius: 0.5rem;
+    padding: 2rem;
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.2s;
+    background: white;
+}
+
+.file-upload-area:hover {
+    border-color: var(--brand-purple);
+    background: linear-gradient(135deg, rgba(107, 70, 193, 0.05), rgba(66, 153, 225, 0.05));
+}
+
+.file-upload-area .icon {
+    font-size: 2rem;
+    display: block;
+    margin-bottom: 0.5rem;
+}
+
+.file-upload-area .hint {
+    display: block;
+    font-size: 0.75rem;
+    color: var(--gray-400);
+    margin-top: 0.5rem;
+}
+
+.verification-benefits {
+    margin-bottom: 2rem;
+}
+
+.verification-benefits h3 {
+    margin-bottom: 1rem;
+    color: var(--gray-800);
+}
+
+.benefits-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    gap: 1rem;
+}
+
+.benefit-item {
+    background: white;
+    border-radius: 0.75rem;
+    padding: 1.5rem;
+    text-align: center;
+    border: 1px solid var(--gray-200);
+}
+
+.benefit-item .icon {
+    font-size: 2rem;
+    display: block;
+    margin-bottom: 0.5rem;
+}
+
+.benefit-item h4 {
+    margin-bottom: 0.25rem;
+    color: var(--gray-800);
+    font-size: 1rem;
+}
+
+.benefit-item p {
+    color: var(--gray-500);
+    font-size: 0.75rem;
+}
+
+.verification-levels {
+    background: white;
+    border-radius: 1rem;
+    padding: 2rem;
+    box-shadow: var(--shadow);
+}
+
+.verification-levels h3 {
+    margin-bottom: 1.5rem;
+    color: var(--gray-800);
+}
+
+.levels-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1rem;
+}
+
+.level-card {
+    padding: 1.5rem;
+    border: 1px solid var(--gray-200);
+    border-radius: 0.75rem;
+    position: relative;
+}
+
+.level-card.completed {
+    background: linear-gradient(135deg, rgba(72, 187, 120, 0.1), transparent);
+    border-color: var(--success);
+}
+
+.level-card.current {
+    border-color: var(--brand-purple);
+    box-shadow: 0 0 0 2px rgba(107, 70, 193, 0.2);
+}
+
+.level-card h4 {
+    margin-bottom: 0.25rem;
+    color: var(--gray-800);
+}
+
+.level-card p {
+    color: var(--gray-500);
+    font-size: 0.75rem;
+    margin-bottom: 1rem;
+}
+
+.level-card ul {
+    list-style: none;
+    padding: 0;
+}
+
+.level-card li {
+    padding: 0.25rem 0;
+    font-size: 0.75rem;
+    color: var(--gray-600);
+}
+
+.level-card.completed li {
+    color: var(--success);
+}
+
+.level-card.current::after {
+    content: 'Current';
+    position: absolute;
+    top: -0.5rem;
+    right: 1rem;
+    background: var(--brand-purple);
+    color: white;
+    padding: 0.125rem 0.75rem;
+    border-radius: 2rem;
+    font-size: 0.75rem;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .kyc-status-banner {
+        flex-direction: column;
+        text-align: center;
+    }
+    
+    .levels-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .benefits-grid {
+        grid-template-columns: 1fr 1fr;
+    }
+}
