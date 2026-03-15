@@ -11,11 +11,13 @@
     <!-- PayPal (real) -->
     <script src="https://www.paypal.com/sdk/js?client-id=YOUR_PAYPAL_CLIENT_ID&currency=USD&intent=capture&components=buttons,funding-eligibility"></script>
     <!-- Firebase -->
-    <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-firestore-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
     <!-- Universal Auth -->
     <script src="/assets/js/taagc-auth.js"></script>
+    <!-- Currency Rates -->
+    <script src="/assets/js/currency-rates.js"></script>
     <style>
         * {
             margin: 0;
@@ -113,6 +115,38 @@
             display: inline-block;
             font-weight: 700;
             font-size: 1.1rem;
+        }
+        .live-rates-ticker {
+            background: #0a2538;
+            color: white;
+            padding: 12px 25px;
+            border-radius: 60px;
+            margin-top: 15px;
+            display: flex;
+            gap: 30px;
+            flex-wrap: wrap;
+            border: 2px solid #e09f2c;
+        }
+        .rate-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .rate-flag {
+            font-size: 1.2rem;
+        }
+        .rate-value {
+            font-weight: 600;
+            color: #e09f2c;
+        }
+        .rate-change {
+            font-size: 0.8rem;
+        }
+        .rate-change.positive {
+            color: #4caf50;
+        }
+        .rate-change.negative {
+            color: #f44336;
         }
         .stats-bar {
             display: flex;
@@ -253,7 +287,7 @@
         }
         .quick-amounts {
             display: grid;
-            grid-template-columns: repeat(4, 1fr);
+            grid-template-columns: repeat(5, 1fr);
             gap: 10px;
             margin: 15px 0;
         }
@@ -265,6 +299,7 @@
             text-align: center;
             cursor: pointer;
             font-weight: 600;
+            transition: 0.2s;
         }
         .quick-amount:hover {
             border-color: #e09f2c;
@@ -348,6 +383,14 @@
             padding: 8px 15px;
             font-size: 0.9rem;
             margin: 10px 0;
+            display: flex;
+            justify-content: space-between;
+        }
+        .refresh-btn {
+            background: transparent;
+            border: none;
+            color: #e09f2c;
+            cursor: pointer;
         }
         .footer {
             text-align: center;
@@ -381,6 +424,8 @@
             <div class="currency-selector" id="currency-selector">
                 <span class="currency-option active" data-currency="USD">USD $</span>
                 <span class="currency-option" data-currency="NGN">NGN ₦</span>
+                <span class="currency-option" data-currency="EUR">EUR €</span>
+                <span class="currency-option" data-currency="GBP">GBP £</span>
             </div>
         </div>
     </div>
@@ -394,21 +439,51 @@
                  height="299"
                  onerror="this.src='https://via.placeholder.com/889x299/e09f2c/0a1f30?text=TAAGC+Secure+Payment'; this.onerror=null;">
         </div>
-        <span class="subdomain-badge"><i class="fas fa-lock"></i> pay.taacg.website · multi-currency</span>
+        <span class="subdomain-badge"><i class="fas fa-lock"></i> pay.taacg.website · live rates</span>
         
+        <!-- LIVE RATES TICKER -->
+        <div class="live-rates-ticker" id="live-rates-ticker">
+            <div class="rate-item">
+                <span class="rate-flag">🇺🇸</span>
+                <span>USD</span>
+                <span class="rate-value" id="rate-usd">1.0000</span>
+            </div>
+            <div class="rate-item">
+                <span class="rate-flag">🇳🇬</span>
+                <span>NGN</span>
+                <span class="rate-value" id="rate-ngn">1,540.00</span>
+                <span class="rate-change positive" id="change-ngn">▲ 0.5%</span>
+            </div>
+            <div class="rate-item">
+                <span class="rate-flag">🇪🇺</span>
+                <span>EUR</span>
+                <span class="rate-value" id="rate-eur">0.92</span>
+            </div>
+            <div class="rate-item">
+                <span class="rate-flag">🇬🇧</span>
+                <span>GBP</span>
+                <span class="rate-value" id="rate-gbp">0.79</span>
+            </div>
+            <div class="rate-item">
+                <span class="rate-flag">₿</span>
+                <span>BTC</span>
+                <span class="rate-value" id="rate-btc">0.000015</span>
+            </div>
+        </div>
+
         <!-- Stats Bar -->
         <div class="stats-bar">
             <div class="stat-item">
                 <i class="fas fa-users"></i>
-                <span><span class="stat-value">50K+</span> users</span>
+                <span><span class="stat-value" id="stat-users">50K+</span> users</span>
             </div>
             <div class="stat-item">
-                <i class="fas fa-globe"></i>
-                <span><span class="stat-value">25+</span> countries</span>
+                <i class="fas fa-exchange-alt"></i>
+                <span><span class="stat-value" id="stat-transactions">10K+</span> transactions</span>
             </div>
             <div class="stat-item">
                 <i class="fas fa-bolt"></i>
-                <span><span class="stat-value">24/7</span> support</span>
+                <span><span class="stat-value" id="stat-live">Live</span> rates</span>
             </div>
         </div>
     </div>
@@ -436,7 +511,10 @@
                     <span class="balance-amount" id="ngn-balance">₦0.00</span>
                 </div>
                 <div class="exchange-rate" id="exchange-rate">
-                    ₦1 = $0.00065 · $1 = ₦1,540
+                    <span>Loading rates...</span>
+                    <button class="refresh-btn" onclick="currencyRates.fetchAllRates()">
+                        <i class="fas fa-sync-alt"></i>
+                    </button>
                 </div>
             </div>
 
@@ -462,7 +540,7 @@
                 </div>
                 <div class="method-card" data-method="bank" id="methodBank">
                     <div class="method-icon"><i class="fas fa-university"></i></div>
-                    <div class="method-name">Bank Transfer</div>
+                    <div class="method-name">Bank</div>
                 </div>
             </div>
 
@@ -475,6 +553,7 @@
                     <div class="quick-amount" data-amount="25">$25</div>
                     <div class="quick-amount" data-amount="50">$50</div>
                     <div class="quick-amount" data-amount="100">$100</div>
+                    <div class="quick-amount" data-amount="500">$500</div>
                 </div>
             </div>
 
@@ -490,14 +569,15 @@
                     bc1qxy2kgdygjrsqtzq2n0yrf2493p83kkfjhx0wlh
                 </p>
                 <p id="crypto-instructions">send USDT (TRC20) to above address</p>
+                <p style="font-size:0.8rem; color:#6b8ca8;" id="crypto-rate">1 USDT = $1.00 USD</p>
             </div>
 
             <!-- Bank Info -->
             <div id="bank-info" style="display: none; text-align: center; padding: 20px;">
                 <p style="background:#0a2538; color:#e09f2c; padding:15px; border-radius:15px;">
-                    <strong>Bank Name:</strong> GTBank<br>
-                    <strong>Account Name:</strong> TAAGC Global<br>
-                    <strong>Account Number:</strong> 0123456789<br>
+                    <strong>Bank:</strong> GTBank<br>
+                    <strong>Account:</strong> TAAGC Global<br>
+                    <strong>Number:</strong> 0123456789<br>
                     <strong>Sort Code:</strong> 011234567
                 </p>
             </div>
@@ -522,6 +602,10 @@
                     <div style="display:flex; justify-content:space-between;">
                         <span>NGN:</span>
                         <span id="sidebar-ngn">₦0.00</span>
+                    </div>
+                    <div style="display:flex; justify-content:space-between;">
+                        <span>EUR:</span>
+                        <span id="sidebar-eur">€0.00</span>
                     </div>
                 </div>
                 <div class="quick-links">
@@ -551,13 +635,14 @@
 
             <!-- Live Transaction Log -->
             <div class="transaction-log" id="transactionLog">
-                <div class="log-entry"><i class="fas fa-circle" style="color:#e09f2c;"></i> ready to process</div>
+                <div class="log-entry"><i class="fas fa-circle" style="color:#e09f2c;"></i> system ready</div>
+                <div class="log-entry"><i class="fas fa-circle" style="color:#e09f2c;"></i> live rates active</div>
             </div>
         </div>
     </div>
 
     <div class="footer">
-        <i class="fas fa-shield-alt"></i> 256-bit SSL · pci compliant · multi-currency support (USD/NGN)
+        <i class="fas fa-shield-alt"></i> 256-bit SSL · pci compliant · live rates from Firebase
     </div>
 </div>
 
@@ -565,12 +650,11 @@
 
 <script>
     // ============================================
-    // CONFIGURATION
+    // INITIALIZATION
     // ============================================
-    const exchangeRate = 1540; // 1 USD = 1540 NGN
-    let currentCurrency = 'USD';
     let currentUser = null;
-    let userBalance = { usd: 0, ngn: 0 };
+    let userBalance = { usd: 0, ngn: 0, eur: 0 };
+    let currentCurrency = 'USD';
 
     // ============================================
     // AUTH STATE HANDLER
@@ -585,7 +669,6 @@
             updateUserUI(user);
         } else {
             document.getElementById('auth-status').innerHTML = `🔒 ${window.location.hostname} · not logged in`;
-            // Show guest view
             document.getElementById('user-name').textContent = 'Guest';
             document.getElementById('user-avatar').textContent = '👤';
         }
@@ -596,7 +679,7 @@
             const userDoc = await db.collection('users').doc(user.uid).get();
             if (userDoc.exists) {
                 const data = userDoc.data();
-                userBalance = data.wallet?.balances || { usd: 0, ngn: 0 };
+                userBalance = data.wallet?.balances || { usd: 0, ngn: 0, eur: 0 };
                 updateBalances();
             }
         } catch (error) {
@@ -613,10 +696,52 @@
 
     function updateBalances() {
         document.getElementById('usd-balance').textContent = `$${userBalance.usd?.toFixed(2) || '0.00'}`;
-        document.getElementById('ngn-balance').textContent = `₦${(userBalance.ngn || 0).toFixed(2)}`;
         document.getElementById('sidebar-usd').textContent = `$${userBalance.usd?.toFixed(2) || '0.00'}`;
-        document.getElementById('sidebar-ngn').textContent = `₦${(userBalance.ngn || 0).toFixed(2)}`;
+        
+        if (window.currentRates) {
+            const ngnBalance = (userBalance.usd || 0) * window.currentRates.NGN;
+            document.getElementById('ngn-balance').textContent = `₦${ngnBalance.toFixed(2)}`;
+            document.getElementById('sidebar-ngn').textContent = `₦${ngnBalance.toFixed(2)}`;
+            
+            const eurBalance = (userBalance.usd || 0) * window.currentRates.EUR;
+            document.getElementById('sidebar-eur').textContent = `€${eurBalance.toFixed(2)}`;
+        }
     }
+
+    // ============================================
+    // CURRENCY RATES INTEGRATION
+    // ============================================
+    currencyRates.subscribe((rates) => {
+        window.currentRates = rates;
+        
+        // Update rate displays
+        document.getElementById('rate-usd').textContent = rates.USD.toFixed(4);
+        document.getElementById('rate-ngn').textContent = rates.NGN.toFixed(2);
+        document.getElementById('rate-eur').textContent = rates.EUR.toFixed(4);
+        document.getElementById('rate-gbp').textContent = rates.GBP.toFixed(4);
+        document.getElementById('rate-btc').textContent = rates.BTC.toFixed(6);
+        
+        // Update exchange rate display
+        document.getElementById('exchange-rate').innerHTML = `
+            <span>₦1 = $${(1/rates.NGN).toFixed(6)} · $1 = ₦${rates.NGN.toFixed(2)}</span>
+            <button class="refresh-btn" onclick="currencyRates.fetchAllRates()">
+                <i class="fas fa-sync-alt"></i>
+            </button>
+        `;
+        
+        // Update crypto rate
+        document.getElementById('crypto-rate').innerHTML = `1 USDT = $${rates.USDT?.toFixed(2) || '1.00'} USD`;
+        
+        // Update balances with new rates
+        if (currentUser) {
+            updateBalances();
+        }
+        
+        // Update payment summary with current currency
+        updateCurrencyDisplay();
+        
+        addLogEntry(`rates updated: USD/NGN ${rates.NGN.toFixed(2)}`);
+    });
 
     // ============================================
     // CURRENCY HANDLER
@@ -632,21 +757,40 @@
 
     function updateCurrencyDisplay() {
         const amount = parseFloat(document.getElementById('payment-amount').value) || 2;
-        const symbol = currentCurrency === 'USD' ? '$' : '₦';
-        document.getElementById('currency-symbol').textContent = symbol;
+        const rates = window.currentRates || { NGN: 1540, EUR: 0.92, GBP: 0.79 };
         
-        if (currentCurrency === 'NGN') {
-            const ngnAmount = amount * exchangeRate;
-            document.getElementById('payment-subtitle').innerHTML = `₦${ngnAmount.toFixed(2)} + ₦${(ngnAmount/2).toFixed(2)} bonus · 48h deadline`;
-            document.getElementById('summary-amount').textContent = `₦${ngnAmount.toFixed(2)}`;
-            document.getElementById('summary-bonus').textContent = `+₦${(ngnAmount/2).toFixed(2)}`;
-            document.getElementById('summary-total').textContent = `₦${(ngnAmount * 1.5).toFixed(2)}`;
-        } else {
-            document.getElementById('payment-subtitle').innerHTML = `$${amount.toFixed(2)} + $${(amount/2).toFixed(2)} bonus · 48h deadline`;
-            document.getElementById('summary-amount').textContent = `$${amount.toFixed(2)}`;
-            document.getElementById('summary-bonus').textContent = `+$${(amount/2).toFixed(2)}`;
-            document.getElementById('summary-total').textContent = `$${(amount * 1.5).toFixed(2)}`;
+        let convertedAmount = amount;
+        let symbol = '$';
+        let currencyCode = 'USD';
+        
+        switch(currentCurrency) {
+            case 'NGN':
+                convertedAmount = amount * rates.NGN;
+                symbol = '₦';
+                currencyCode = 'NGN';
+                break;
+            case 'EUR':
+                convertedAmount = amount * rates.EUR;
+                symbol = '€';
+                currencyCode = 'EUR';
+                break;
+            case 'GBP':
+                convertedAmount = amount * rates.GBP;
+                symbol = '£';
+                currencyCode = 'GBP';
+                break;
+            default:
+                convertedAmount = amount;
+                symbol = '$';
+                currencyCode = 'USD';
         }
+        
+        document.getElementById('currency-symbol').textContent = symbol;
+        document.getElementById('payment-subtitle').innerHTML = 
+            `${symbol}${convertedAmount.toFixed(2)} + ${symbol}${(convertedAmount/2).toFixed(2)} bonus · 48h deadline`;
+        document.getElementById('summary-amount').textContent = `${symbol}${convertedAmount.toFixed(2)}`;
+        document.getElementById('summary-bonus').textContent = `+${symbol}${(convertedAmount/2).toFixed(2)}`;
+        document.getElementById('summary-total').textContent = `${symbol}${(convertedAmount * 1.5).toFixed(2)}`;
     }
 
     // ============================================
@@ -671,6 +815,7 @@
             document.getElementById('payButton').style.display = method === 'card' ? 'block' : 'none';
             
             if (method === 'paypal') initPayPal();
+            addLogEntry(`payment method: ${method}`);
         });
     });
 
@@ -746,34 +891,40 @@
         try {
             const paymentId = 'PAY_' + Date.now();
             const amount = parseFloat(document.getElementById('payment-amount').value) || 2;
+            const rates = window.currentRates || { NGN: 1540 };
             
-            // Save to Firebase
-            await db.collection('payments').doc(paymentId).set({
+            // Calculate amounts in all currencies
+            const paymentData = {
                 paymentId: paymentId,
                 userId: currentUser?.uid || 'guest',
                 userEmail: currentUser?.email || 'guest',
                 method: method,
                 amount: amount,
                 currency: currentCurrency,
+                rates: rates,
+                amounts: {
+                    USD: amount,
+                    NGN: amount * rates.NGN,
+                    EUR: amount * (rates.EUR || 0.92),
+                    GBP: amount * (rates.GBP || 0.79)
+                },
                 bonus: amount * 0.5,
                 total: amount * 1.5,
                 status: 'completed',
                 details: details,
                 timestamp: firebase.firestore.FieldValue.serverTimestamp()
-            });
+            };
+
+            // Save to Firebase
+            await db.collection('payments').doc(paymentId).set(paymentData);
 
             // Update user balance if logged in
             if (currentUser) {
                 const userRef = db.collection('users').doc(currentUser.uid);
-                if (currentCurrency === 'USD') {
-                    await userRef.update({
-                        'wallet.balances.usd': firebase.firestore.FieldValue.increment(amount * 1.5)
-                    });
-                } else {
-                    await userRef.update({
-                        'wallet.balances.ngn': firebase.firestore.FieldValue.increment(amount * 1.5 * exchangeRate)
-                    });
-                }
+                await userRef.update({
+                    'wallet.balances.usd': firebase.firestore.FieldValue.increment(amount * 1.5),
+                    'wallet.lastTransaction': firebase.firestore.FieldValue.serverTimestamp()
+                });
             }
 
             showStatus('✅ payment successful! bonus added', 'success');
@@ -827,10 +978,27 @@
     }, 1000);
 
     // ============================================
+    // LOAD STATS FROM FIREBASE
+    // ============================================
+    async function loadStats() {
+        try {
+            const usersSnap = await db.collection('users').count().get();
+            document.getElementById('stat-users').textContent = (usersSnap.data().count || 0).toLocaleString();
+            
+            const paymentsSnap = await db.collection('payments').count().get();
+            document.getElementById('stat-transactions').textContent = (paymentsSnap.data().count || 0).toLocaleString();
+        } catch (error) {
+            console.error('Error loading stats:', error);
+        }
+    }
+    
+    loadStats();
+
+    // ============================================
     // INITIALIZATION
     // ============================================
     addLogEntry('payment gateway ready');
-    addLogEntry('multi-currency: USD/NGN');
+    addLogEntry('live rates active');
     updateCurrencyDisplay();
 
     // Banner load event
