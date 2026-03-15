@@ -2,19 +2,19 @@
 <html lang="en">
 <head>
   <meta charset="utf-8" />
-  <link rel="icon" href="%PUBLIC_URL%/favicon.ico" />
+  <link rel="icon" href="/favicon.ico" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta name="theme-color" content="#2563eb" />
-  <meta name="description" content="TAAGC Fintech - Your trusted partner for airtime, data, bill payments, and banking services. Powered by 9PSB." />
-  <meta name="keywords" content="fintech, airtime, data, bills, betting, payments, nigeria, 9psb" />
+  <meta name="description" content="TAAGC Fintech - Your trusted partner for airtime, data, bill payments, and banking services. Powered by 9PSB and Firebase." />
+  <meta name="keywords" content="fintech, airtime, data, bills, betting, payments, nigeria, 9psb, firebase" />
   <meta name="author" content="Triple A-Ahal Global Concept" />
   
   <!-- Open Graph / Social Media -->
-  <meta property="og:title" content="TAAGC Fintech" />
+  <meta property="og:title" content="TAAGC Fintech - Powered by 9PSB & Firebase" />
   <meta property="og:description" content="Your trusted partner for airtime, data, bill payments, and banking services" />
   <meta property="og:type" content="website" />
   <meta property="og:url" content="https://fintech.taagc.website" />
-  <meta property="og:image" content="%PUBLIC_URL%/og-image.jpg" />
+  <meta property="og:image" content="/og-image.jpg" />
   
   <!-- Twitter Card -->
   <meta name="twitter:card" content="summary_large_image" />
@@ -22,10 +22,10 @@
   <meta name="twitter:description" content="Your trusted partner for airtime, data, bill payments, and banking services" />
   
   <!-- PWA -->
-  <link rel="apple-touch-icon" href="%PUBLIC_URL%/logo192.png" />
-  <link rel="manifest" href="%PUBLIC_URL%/manifest.json" />
+  <link rel="apple-touch-icon" href="/logo192.png" />
+  <link rel="manifest" href="/manifest.json" />
   
-  <title>TAAGC Fintech - Powered by 9PSB</title>
+  <title>TAAGC Fintech - Powered by 9PSB & Firebase</title>
   
   <!-- Fonts -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -35,7 +35,15 @@
   <!-- Font Awesome -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   
-  <!-- Tailwind CSS via CDN (for static HTML) -->
+  <!-- Firebase SDKs -->
+  <script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-firestore-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-storage-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-analytics-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-functions-compat.js"></script>
+  
+  <!-- Tailwind CSS via CDN -->
   <script src="https://cdn.tailwindcss.com"></script>
   <script>
     tailwind.config = {
@@ -53,10 +61,39 @@
               700: '#1d4ed8',
               800: '#1e40af',
               900: '#1e3a8a',
+            },
+            '9psb': {
+              50: '#e6f0ff',
+              100: '#b3d1ff',
+              200: '#80b2ff',
+              300: '#4d93ff',
+              400: '#1a75ff',
+              500: '#0066ff',
+              600: '#0052cc',
+              700: '#003d99',
+              800: '#002966',
+              900: '#001433'
             }
           },
           fontFamily: {
             sans: ['Inter', 'sans-serif'],
+          },
+          animation: {
+            'pulse-slow': 'pulse 3s cubic-bezier(0.4, 0, 0.6, 1) infinite',
+            'bounce-slow': 'bounce 2s infinite',
+            'gradient': 'gradient 3s ease infinite',
+          },
+          keyframes: {
+            gradient: {
+              '0%, 100%': {
+                'background-size': '200% 200%',
+                'background-position': 'left center'
+              },
+              '50%': {
+                'background-size': '200% 200%',
+                'background-position': 'right center'
+              }
+            }
           }
         }
       }
@@ -74,6 +111,9 @@
     .btn-secondary {
       @apply bg-gray-200 text-gray-800 px-4 py-2 rounded-lg hover:bg-gray-300 transition-colors duration-200 font-medium;
     }
+    .btn-9psb {
+      @apply bg-[#0066ff] text-white px-4 py-2 rounded-lg hover:bg-[#0052cc] transition-colors duration-200 font-medium;
+    }
     .btn-outline {
       @apply border-2 border-blue-600 text-blue-600 px-4 py-2 rounded-lg hover:bg-blue-50 transition-colors duration-200 font-medium;
     }
@@ -85,6 +125,11 @@
     }
     .dashboard-card {
       @apply bg-gradient-to-r from-blue-600 to-blue-700 text-white p-6 rounded-xl shadow-lg;
+    }
+    .gradient-bg {
+      background: linear-gradient(-45deg, #2563eb, #1e40af, #0066ff, #3b82f6);
+      background-size: 400% 400%;
+      animation: gradient 15s ease infinite;
     }
     .animate-spin {
       animation: spin 1s linear infinite;
@@ -99,10 +144,490 @@
     .toast.success { @apply bg-green-600; }
     .toast.error { @apply bg-red-600; }
     .toast.info { @apply bg-blue-600; }
+    
+    /* Partnership banners */
+    .partnership-banner {
+      @apply bg-gradient-to-r from-blue-600 via-blue-700 to-blue-800 text-white p-6 rounded-2xl shadow-xl relative overflow-hidden;
+    }
+    .partnership-banner::before {
+      content: '';
+      position: absolute;
+      top: -50%;
+      right: -50%;
+      width: 200%;
+      height: 200%;
+      background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 70%);
+      animation: rotate 20s linear infinite;
+    }
+    @keyframes rotate {
+      from { transform: rotate(0deg); }
+      to { transform: rotate(360deg); }
+    }
   </style>
 </head>
 <body class="bg-gray-50">
-  <noscript>You need to enable JavaScript to run this app.</noscript>
-  <div id="root"></div>
+  <!-- Loading Spinner -->
+  <div id="loading-spinner" class="fixed inset-0 bg-white z-50 flex items-center justify-center hidden">
+    <div class="animate-spin rounded-full h-16 w-16 border-4 border-blue-600 border-t-transparent"></div>
+  </div>
+
+  <!-- Toast Container -->
+  <div id="toast-container" class="fixed bottom-4 right-4 z-50"></div>
+
+  <!-- Navigation -->
+  <nav class="bg-white shadow-lg sticky top-0 z-40">
+    <div class="container mx-auto px-4">
+      <div class="flex justify-between items-center h-16">
+        <!-- Logo -->
+        <a href="/" class="flex items-center space-x-2 group">
+          <div class="w-10 h-10 bg-gradient-to-br from-blue-600 to-blue-800 rounded-lg flex items-center justify-center transform group-hover:scale-110 transition-transform">
+            <span class="text-white font-bold text-xl">T</span>
+          </div>
+          <div>
+            <span class="text-xl font-bold text-blue-600">TAAGC</span>
+            <span class="text-gray-600">Fintech</span>
+          </div>
+        </a>
+
+        <!-- Desktop Navigation -->
+        <div class="hidden md:flex items-center space-x-6">
+          <a href="/" class="text-blue-600 font-medium border-b-2 border-blue-600">Home</a>
+          <a href="/about.html" class="text-gray-700 hover:text-blue-600">About</a>
+          <a href="/services.html" class="text-gray-700 hover:text-blue-600">Services</a>
+          <a href="/agent-terms.html" class="text-gray-700 hover:text-blue-600">Become an Agent</a>
+          <a href="/contact.html" class="text-gray-700 hover:text-blue-600">Contact</a>
+        </div>
+
+        <!-- User Menu (Dynamic based on auth state) -->
+        <div class="hidden md:flex items-center space-x-4" id="user-menu">
+          <!-- Will be populated by JavaScript -->
+          <div class="animate-pulse bg-gray-200 h-10 w-24 rounded"></div>
+        </div>
+
+        <!-- Mobile menu button -->
+        <button id="mobile-menu-btn" class="md:hidden p-2 rounded-md text-gray-700">
+          <i class="fas fa-bars text-2xl"></i>
+        </button>
+      </div>
+
+      <!-- Mobile Navigation -->
+      <div id="mobile-menu" class="hidden md:hidden py-4 border-t">
+        <a href="/" class="block px-4 py-2 text-blue-600 font-medium">Home</a>
+        <a href="/about.html" class="block px-4 py-2 text-gray-700 hover:bg-gray-100">About</a>
+        <a href="/services.html" class="block px-4 py-2 text-gray-700 hover:bg-gray-100">Services</a>
+        <a href="/agent-terms.html" class="block px-4 py-2 text-gray-700 hover:bg-gray-100">Become an Agent</a>
+        <a href="/contact.html" class="block px-4 py-2 text-gray-700 hover:bg-gray-100">Contact</a>
+        <div id="mobile-user-menu" class="border-t mt-2 pt-2">
+          <!-- Will be populated by JavaScript -->
+        </div>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Hero Section with Firebase Status -->
+  <section class="gradient-bg text-white py-20 relative overflow-hidden">
+    <div class="absolute inset-0 bg-black opacity-10"></div>
+    <div class="container mx-auto px-4 text-center relative z-10">
+      <div class="flex justify-center mb-6">
+        <img src="https://via.placeholder.com/80x80/ffffff/2563eb?text=9PSB" alt="9PSB" class="h-16 w-16 rounded-full border-4 border-white shadow-lg mx-2">
+        <img src="https://via.placeholder.com/80x80/ffffff/2563eb?text=Firebase" alt="Firebase" class="h-16 w-16 rounded-full border-4 border-white shadow-lg mx-2">
+      </div>
+      <h1 class="text-5xl md:text-6xl font-bold mb-6 animate-pulse-slow">
+        Welcome to <span class="text-yellow-300">TAAGC Fintech</span>
+      </h1>
+      <p class="text-xl md:text-2xl mb-8 max-w-3xl mx-auto opacity-90">
+        Your trusted partner for airtime, data, bill payments, and banking services. 
+        Powered by <strong class="text-yellow-300">9 Payment Service Bank</strong> and 
+        <strong class="text-yellow-300">Firebase</strong>.
+      </p>
+      
+      <!-- Firebase Connection Status -->
+      <div id="firebase-status" class="inline-flex items-center bg-white/20 backdrop-blur-lg rounded-full px-4 py-2 mb-8">
+        <div class="w-3 h-3 bg-yellow-400 rounded-full animate-pulse mr-2"></div>
+        <span>Connecting to Firebase...</span>
+      </div>
+      
+      <div class="space-x-4">
+        <a href="/register" class="btn-primary text-lg px-8 py-3 bg-yellow-500 hover:bg-yellow-600 text-gray-900">
+          <i class="fas fa-rocket mr-2"></i>Get Started
+        </a>
+        <a href="/login" class="btn-outline text-lg px-8 py-3 border-white text-white hover:bg-white hover:text-blue-600">
+          <i class="fas fa-sign-in-alt mr-2"></i>Login
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- Partnership Banner - 9PSB -->
+  <div class="container mx-auto px-4 -mt-12 relative z-20">
+    <div class="partnership-banner">
+      <div class="flex flex-col md:flex-row items-center justify-between relative z-10">
+        <div class="flex items-center space-x-4 mb-4 md:mb-0">
+          <div class="bg-white/20 p-4 rounded-xl backdrop-blur">
+            <i class="fas fa-handshake text-4xl text-yellow-300"></i>
+          </div>
+          <div>
+            <h3 class="text-2xl font-bold">Official Partner of 9 Payment Service Bank</h3>
+            <p class="text-blue-100">Nigeria's first CBN-licensed Payment Service Bank</p>
+          </div>
+        </div>
+        <div class="flex space-x-4">
+          <div class="bg-white/20 px-4 py-2 rounded-lg backdrop-blur">
+            <span class="font-mono">RC: BN8514665</span>
+          </div>
+          <div class="bg-white/20 px-4 py-2 rounded-lg backdrop-blur">
+            <span class="font-mono">9PSB: RC1671909</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Firebase Stats Banner -->
+  <div class="container mx-auto px-4 mt-6">
+    <div class="bg-gradient-to-r from-yellow-500 to-yellow-600 text-gray-900 p-4 rounded-xl shadow-lg">
+      <div class="flex flex-wrap items-center justify-between">
+        <div class="flex items-center space-x-4">
+          <i class="fas fa-database text-3xl"></i>
+          <div>
+            <span class="font-bold">Firebase Realtime:</span>
+            <span id="firebase-stats" class="ml-2">Loading stats...</span>
+          </div>
+        </div>
+        <div class="flex space-x-2">
+          <span class="bg-white/30 px-3 py-1 rounded-full text-sm">Project: fintech-ad170</span>
+          <span class="bg-white/30 px-3 py-1 rounded-full text-sm">Region: us-central1</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Features Grid -->
+  <div class="container mx-auto px-4 py-16">
+    <h2 class="text-3xl font-bold text-center mb-12">Our Services</h2>
+    <div class="grid md:grid-cols-3 gap-8">
+      <!-- Banking Services (BSA) -->
+      <div class="bg-white p-6 rounded-xl shadow-lg hover:shadow-xl transition transform hover:-translate-y-1">
+        <div class="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mb-4">
+          <i class="fas fa-wallet text-2xl text-blue-600"></i>
+        </div>
+        <h3 class="text-xl font-bold mb-2">Wallet-as-a-Service</h3>
+        <p class="text-gray-600 mb-3">NUBAN-compliant wallets for seamless fund management</p>
+        <p class="text-sm text-green-600 font-semibold">Powered by 9PSB Banking API</p>
+      </div>
+
+      <!-- Airtime Services (PSA) -->
+      <div class="bg-white p-6 rounded-xl shadow-lg hover:shadow-xl transition transform hover:-translate-y-1">
+        <div class="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mb-4">
+          <i class="fas fa-phone text-2xl text-green-600"></i>
+        </div>
+        <h3 class="text-xl font-bold mb-2">Airtime & Data</h3>
+        <p class="text-gray-600 mb-3">Instant recharge for all networks with up to 7.71% commission</p>
+        <div class="flex space-x-2">
+          <span class="bg-gray-100 px-2 py-1 rounded text-xs">MTN</span>
+          <span class="bg-gray-100 px-2 py-1 rounded text-xs">GLO</span>
+          <span class="bg-gray-100 px-2 py-1 rounded text-xs">Airtel</span>
+          <span class="bg-gray-100 px-2 py-1 rounded text-xs">9mobile</span>
+        </div>
+      </div>
+
+      <!-- Bill Payments -->
+      <div class="bg-white p-6 rounded-xl shadow-lg hover:shadow-xl transition transform hover:-translate-y-1">
+        <div class="w-16 h-16 bg-yellow-100 rounded-full flex items-center justify-center mb-4">
+          <i class="fas fa-bolt text-2xl text-yellow-600"></i>
+        </div>
+        <h3 class="text-xl font-bold mb-2">Bill Payments</h3>
+        <p class="text-gray-600 mb-3">Pay electricity bills across all DISCOs in Nigeria</p>
+        <p class="text-sm text-green-600 font-semibold">1.29% commission on most DISCOs</p>
+      </div>
+
+      <!-- Betting Funding -->
+      <div class="bg-white p-6 rounded-xl shadow-lg hover:shadow-xl transition transform hover:-translate-y-1">
+        <div class="w-16 h-16 bg-purple-100 rounded-full flex items-center justify-center mb-4">
+          <i class="fas fa-trophy text-2xl text-purple-600"></i>
+        </div>
+        <h3 class="text-xl font-bold mb-2">Betting Funding</h3>
+        <p class="text-gray-600 mb-3">Fund all major betting platforms instantly</p>
+        <div class="flex space-x-2">
+          <span class="bg-gray-100 px-2 py-1 rounded text-xs">Bet9ja</span>
+          <span class="bg-gray-100 px-2 py-1 rounded text-xs">BetKing</span>
+          <span class="bg-gray-100 px-2 py-1 rounded text-xs">1xBet</span>
+        </div>
+      </div>
+
+      <!-- Agent Banking (SLOMA) -->
+      <div class="bg-white p-6 rounded-xl shadow-lg hover:shadow-xl transition transform hover:-translate-y-1">
+        <div class="w-16 h-16 bg-red-100 rounded-full flex items-center justify-center mb-4">
+          <i class="fas fa-store text-2xl text-red-600"></i>
+        </div>
+        <h3 class="text-xl font-bold mb-2">Agent Network</h3>
+        <p class="text-gray-600 mb-3">Join our agent network with 50+ POS terminals</p>
+        <p class="text-sm text-green-600 font-semibold">₦400,000 investment - 50 terminals</p>
+      </div>
+
+      <!-- Firebase Cloud -->
+      <div class="bg-white p-6 rounded-xl shadow-lg hover:shadow-xl transition transform hover:-translate-y-1">
+        <div class="w-16 h-16 bg-orange-100 rounded-full flex items-center justify-center mb-4">
+          <i class="fas fa-cloud text-2xl text-orange-600"></i>
+        </div>
+        <h3 class="text-xl font-bold mb-2">Firebase Powered</h3>
+        <p class="text-gray-600 mb-3">Real-time updates, secure authentication, cloud functions</p>
+        <p class="text-sm text-orange-600 font-semibold">Project: fintech-ad170</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Commission Rates Banner -->
+  <div class="bg-blue-50 py-12">
+    <div class="container mx-auto px-4">
+      <h2 class="text-3xl font-bold text-center mb-8">Commission Rates (From PSA Agreement)</h2>
+      <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-4">
+        <div class="bg-white p-4 rounded-lg shadow text-center">
+          <h3 class="font-bold text-blue-600">MTN/Airtel</h3>
+          <p class="text-2xl font-bold">3.00%</p>
+        </div>
+        <div class="bg-white p-4 rounded-lg shadow text-center">
+          <h3 class="font-bold text-blue-600">Glo</h3>
+          <p class="text-2xl font-bold">4.29%</p>
+        </div>
+        <div class="bg-white p-4 rounded-lg shadow text-center">
+          <h3 class="font-bold text-blue-600">9mobile</h3>
+          <p class="text-2xl font-bold">7.71%</p>
+        </div>
+        <div class="bg-white p-4 rounded-lg shadow text-center">
+          <h3 class="font-bold text-blue-600">Electricity</h3>
+          <p class="text-2xl font-bold">0.86-1.29%</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Firebase Integration Section -->
+  <div class="container mx-auto px-4 py-16">
+    <h2 class="text-3xl font-bold text-center mb-8">Powered by Firebase</h2>
+    <div class="grid md:grid-cols-4 gap-6">
+      <div class="text-center">
+        <div class="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-3">
+          <i class="fas fa-user-lock text-2xl text-blue-600"></i>
+        </div>
+        <h3 class="font-bold">Authentication</h3>
+        <p class="text-sm text-gray-600">Phone number OTP login</p>
+      </div>
+      <div class="text-center">
+        <div class="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-3">
+          <i class="fas fa-database text-2xl text-green-600"></i>
+        </div>
+        <h3 class="font-bold">Firestore</h3>
+        <p class="text-sm text-gray-600">Real-time data sync</p>
+      </div>
+      <div class="text-center">
+        <div class="w-16 h-16 bg-yellow-100 rounded-full flex items-center justify-center mx-auto mb-3">
+          <i class="fas fa-cloud-upload-alt text-2xl text-yellow-600"></i>
+        </div>
+        <h3 class="font-bold">Storage</h3>
+        <p class="text-sm text-gray-600">KYC document storage</p>
+      </div>
+      <div class="text-center">
+        <div class="w-16 h-16 bg-purple-100 rounded-full flex items-center justify-center mx-auto mb-3">
+          <i class="fas fa-code text-2xl text-purple-600"></i>
+        </div>
+        <h3 class="font-bold">Functions</h3>
+        <p class="text-sm text-gray-600">9PSB API integration</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- CTA Section -->
+  <div class="bg-gradient-to-r from-blue-600 to-blue-800 text-white py-16">
+    <div class="container mx-auto px-4 text-center">
+      <h2 class="text-3xl font-bold mb-4">Ready to start earning?</h2>
+      <p class="text-xl mb-8 opacity-90">Join TAAGC Fintech today and enjoy the best commission rates</p>
+      <div class="space-x-4">
+        <a href="/register" class="bg-yellow-500 text-gray-900 px-8 py-3 rounded-lg font-semibold hover:bg-yellow-400 transition">
+          <i class="fas fa-user-plus mr-2"></i>Create Account
+        </a>
+        <a href="/agent-terms.html" class="border-2 border-white text-white px-8 py-3 rounded-lg font-semibold hover:bg-white hover:text-blue-600 transition">
+          <i class="fas fa-handshake mr-2"></i>Become an Agent
+        </a>
+      </div>
+    </div>
+  </div>
+
+  <!-- Footer -->
+  <footer class="bg-gray-900 text-white">
+    <div class="container mx-auto px-4 py-12">
+      <div class="grid md:grid-cols-4 gap-8">
+        <div>
+          <h3 class="text-lg font-semibold mb-4">TAAGC Fintech</h3>
+          <p class="text-gray-400 text-sm">Powered by 9 Payment Service Bank and Firebase. Providing innovative financial solutions to Nigerians.</p>
+          <p class="text-gray-400 text-sm mt-2">RC: BN8514665 | Project: fintech-ad170</p>
+        </div>
+        <div>
+          <h3 class="text-lg font-semibold mb-4">Quick Links</h3>
+          <ul class="space-y-2 text-sm text-gray-400">
+            <li><a href="/about.html" class="hover:text-white">About Us</a></li>
+            <li><a href="/services.html" class="hover:text-white">Services</a></li>
+            <li><a href="/agent-terms.html" class="hover:text-white">Become an Agent</a></li>
+            <li><a href="/contact.html" class="hover:text-white">Contact</a></li>
+          </ul>
+        </div>
+        <div>
+          <h3 class="text-lg font-semibold mb-4">Support</h3>
+          <ul class="space-y-2 text-sm text-gray-400">
+            <li><a href="/faq.html" class="hover:text-white">FAQ</a></li>
+            <li><a href="/support.html" class="hover:text-white">Customer Support</a></li>
+            <li><a href="/privacy.html" class="hover:text-white">Privacy Policy</a></li>
+            <li><a href="/terms.html" class="hover:text-white">Terms of Service</a></li>
+          </ul>
+        </div>
+        <div>
+          <h3 class="text-lg font-semibold mb-4">Contact</h3>
+          <ul class="space-y-2 text-sm text-gray-400">
+            <li><i class="fas fa-map-marker-alt w-5 inline"></i> No.2 Gubi Village, Bauchi</li>
+            <li><i class="fas fa-phone w-5 inline"></i> 08023566143</li>
+            <li><i class="fas fa-envelope w-5 inline"></i> priahmz@gmail.com</li>
+            <li><i class="fas fa-database w-5 inline"></i> dev.cxxp@gmail.com</li>
+          </ul>
+        </div>
+      </div>
+      <div class="border-t border-gray-800 mt-8 pt-8 text-center text-sm text-gray-400">
+        <p>&copy; 2025 Triple A-Ahal Global Concept. All rights reserved.</p>
+        <p class="mt-2">Licensed by Central Bank of Nigeria. NDPR Compliant. Powered by Firebase.</p>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Firebase Configuration and Initialization -->
+  <script>
+    // Your Firebase configuration
+    const firebaseConfig = {
+      apiKey: "AIzaSyAysDaLRza0-SLnp778K9eZ8XBAa7hRu58",
+      authDomain: "fintech-ad170.firebaseapp.com",
+      projectId: "fintech-ad170",
+      storageBucket: "fintech-ad170.firebasestorage.app",
+      messagingSenderId: "110922302396",
+      appId: "1:110922302396:web:558751ccf7c45a70b761b9",
+      measurementId: "G-6GGYPJME1V"
+    };
+
+    // Initialize Firebase
+    try {
+      firebase.initializeApp(firebaseConfig);
+      
+      // Initialize Analytics
+      const analytics = firebase.analytics();
+      analytics.logEvent('page_view', { page_title: 'Home', page_path: '/' });
+      
+      // Update Firebase status
+      document.getElementById('firebase-status').innerHTML = `
+        <div class="w-3 h-3 bg-green-400 rounded-full animate-pulse mr-2"></div>
+        <span>Connected to Firebase (${firebaseConfig.projectId})</span>
+      `;
+      
+      // Update stats
+      document.getElementById('firebase-stats').innerHTML = `
+        <span class="font-mono bg-white/30 px-2 py-1 rounded">Auth Ready</span>
+        <span class="font-mono bg-white/30 px-2 py-1 rounded ml-2">Firestore Ready</span>
+        <span class="font-mono bg-white/30 px-2 py-1 rounded ml-2">Functions Ready</span>
+      `;
+      
+      console.log('Firebase initialized successfully');
+    } catch (error) {
+      console.error('Firebase initialization error:', error);
+      document.getElementById('firebase-status').innerHTML = `
+        <div class="w-3 h-3 bg-red-400 rounded-full mr-2"></div>
+        <span>Firebase connection failed: ${error.message}</span>
+      `;
+    }
+
+    // Auth state observer
+    firebase.auth().onAuthStateChanged((user) => {
+      const userMenu = document.getElementById('user-menu');
+      const mobileUserMenu = document.getElementById('mobile-user-menu');
+      
+      if (user) {
+        // User is signed in
+        userMenu.innerHTML = `
+          <a href="/dashboard.html" class="flex items-center space-x-2">
+            <div class="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center">
+              <i class="fas fa-user text-blue-600"></i>
+            </div>
+            <span class="text-sm text-gray-700">${user.phoneNumber || 'User'}</span>
+          </a>
+          <button onclick="logout()" class="flex items-center space-x-1 text-gray-700 hover:text-red-600">
+            <i class="fas fa-sign-out-alt"></i>
+            <span>Logout</span>
+          </button>
+        `;
+        
+        mobileUserMenu.innerHTML = `
+          <a href="/dashboard.html" class="block px-4 py-2 text-gray-700 hover:bg-gray-100">
+            <i class="fas fa-tachometer-alt mr-2"></i>Dashboard
+          </a>
+          <button onclick="logout()" class="block w-full text-left px-4 py-2 text-red-600 hover:bg-gray-100">
+            <i class="fas fa-sign-out-alt mr-2"></i>Logout
+          </button>
+        `;
+      } else {
+        // User is signed out
+        userMenu.innerHTML = `
+          <a href="/login" class="text-gray-700 hover:text-blue-600">Login</a>
+          <a href="/register" class="btn-primary">Register</a>
+        `;
+        
+        mobileUserMenu.innerHTML = `
+          <a href="/login" class="block px-4 py-2 text-gray-700 hover:bg-gray-100">
+            <i class="fas fa-sign-in-alt mr-2"></i>Login
+          </a>
+          <a href="/register" class="block px-4 py-2 text-blue-600 hover:bg-gray-100">
+            <i class="fas fa-user-plus mr-2"></i>Register
+          </a>
+        `;
+      }
+    });
+
+    // Logout function
+    window.logout = function() {
+      firebase.auth().signOut().then(() => {
+        showToast('Logged out successfully', 'success');
+        window.location.href = '/';
+      }).catch((error) => {
+        showToast('Error logging out: ' + error.message, 'error');
+      });
+    };
+
+    // Toast notification function
+    function showToast(message, type = 'info') {
+      const container = document.getElementById('toast-container');
+      const toast = document.createElement('div');
+      toast.className = `toast ${type}`;
+      toast.innerHTML = message;
+      container.appendChild(toast);
+      
+      setTimeout(() => {
+        toast.style.transform = 'translateX(400px)';
+        setTimeout(() => {
+          container.removeChild(toast);
+        }, 300);
+      }, 3000);
+    }
+
+    // Mobile menu toggle
+    document.getElementById('mobile-menu-btn').addEventListener('click', function() {
+      const menu = document.getElementById('mobile-menu');
+      menu.classList.toggle('hidden');
+      this.querySelector('i').classList.toggle('fa-bars');
+      this.querySelector('i').classList.toggle('fa-times');
+    });
+
+    // Show loading spinner on navigation
+    document.querySelectorAll('a').forEach(link => {
+      link.addEventListener('click', function(e) {
+        if (this.href && !this.href.includes('#') && this.href !== window.location.href) {
+          document.getElementById('loading-spinner').classList.remove('hidden');
+        }
+      });
+    });
+  </script>
 </body>
 </html>
