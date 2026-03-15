@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>XTP Shop - Buy Direct, Save 30%</title>
+    <link rel="stylesheet" href="/assets/css/style.css">
+    <style>
+        .shop-banner {
+            background: linear-gradient(135deg, #10b981, #059669);
+            color: white;
+            padding: 2rem;
+            border-radius: 20px;
+            margin-bottom: 2rem;
+        }
+
+        .product-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+            margin: 2rem 0;
+        }
+
+        .product-card {
+            background: white;
+            border-radius: 15px;
+            padding: 2rem;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            text-align: center;
+            transition: transform 0.3s;
+        }
+
+        .product-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .product-amount {
+            font-size: 2rem;
+            font-weight: bold;
+            color: var(--primary);
+        }
+
+        .product-price {
+            font-size: 1.5rem;
+            color: #666;
+        }
+
+        .bonus-badge {
+            background: var(--success);
+            color: white;
+            padding: 0.2rem 1rem;
+            border-radius: 50px;
+            display: inline-block;
+            margin: 0.5rem 0;
+        }
+
+        .comparison-table {
+            background: white;
+            border-radius: 15px;
+            padding: 2rem;
+            margin: 2rem 0;
+        }
+
+        .app-warning {
+            background: #fef3c7;
+            border-left: 4px solid #f59e0b;
+            padding: 1rem;
+            border-radius: 10px;
+            margin: 2rem 0;
+        }
+
+        .affiliate-section {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: white;
+            padding: 2rem;
+            border-radius: 20px;
+            margin: 2rem 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <div class="nav">
+            <a href="/" class="logo">TAAGC GAMES</a>
+            <div class="nav-links">
+                <a href="/">Home</a>
+                <a href="/xtp-ecosystem">XTP Ecosystem</a>
+                <a href="/xtp-ecosystem/shop" class="active">Shop</a>
+            </div>
+            <div class="balance-widget">
+                <i class="fas fa-coins"></i>
+                <span id="xtpBalance">10,000</span> XTP
+            </div>
+        </div>
+    </div>
+
+    <div class="main-content">
+        <!-- Shop Banner -->
+        <div class="shop-banner">
+            <h1>💰 XTP Official Shop</h1>
+            <p>Buy direct and save 30% compared to in-app purchases!</p>
+            <div class="app-warning">
+                ⚡ Apple/Google take 30% of in-app purchases. Buy here and get **bonus XTP** instead!
+            </div>
+        </div>
+
+        <!-- XTP Packs -->
+        <h2>XTP Packs</h2>
+        <div class="product-grid">
+            <div class="product-card">
+                <div class="product-amount">100 XTP</div>
+                <div class="product-price">$100</div>
+                <div class="bonus-badge">+0 Bonus</div>
+                <button class="btn-primary" onclick="purchase('xtp_100')">Buy Now</button>
+            </div>
+            <div class="product-card">
+                <div class="product-amount">500 XTP</div>
+                <div class="product-price">$500</div>
+                <div class="bonus-badge">+25 BONUS</div>
+                <button class="btn-primary" onclick="purchase('xtp_500')">Buy Now</button>
+            </div>
+            <div class="product-card">
+                <div class="product-amount">1,000 XTP</div>
+                <div class="product-price">$1,000</div>
+                <div class="bonus-badge">+100 BONUS</div>
+                <button class="btn-primary" onclick="purchase('xtp_1000')">Buy Now</button>
+            </div>
+            <div class="product-card">
+                <div class="product-amount">5,000 XTP</div>
+                <div class="product-price">$5,000</div>
+                <div class="bonus-badge">+750 BONUS</div>
+                <button class="btn-primary" onclick="purchase('xtp_5000')">Buy Now</button>
+            </div>
+            <div class="product-card">
+                <div class="product-amount">10,000 XTP</div>
+                <div class="product-price">$10,000</div>
+                <div class="bonus-badge">+2,000 BONUS</div>
+                <button class="btn-primary" onclick="purchase('xtp_10000')">Buy Now</button>
+            </div>
+        </div>
+
+        <!-- Merchandise -->
+        <h2>🎁 Official Merchandise</h2>
+        <div class="product-grid">
+            <div class="product-card">
+                <div>👕</div>
+                <h3>XTP T-Shirt</h3>
+                <div class="product-price">$25</div>
+                <button class="btn-primary" onclick="purchase('merch_tshirt')">Buy Now</button>
+            </div>
+            <div class="product-card">
+                <div>🧥</div>
+                <h3>XTP Hoodie</h3>
+                <div class="product-price">$50</div>
+                <button class="btn-primary" onclick="purchase('merch_hoodie')">Buy Now</button>
+            </div>
+            <div class="product-card">
+                <div>🧢</div>
+                <h3>XTP Cap</h3>
+                <div class="product-price">$15</div>
+                <button class="btn-primary" onclick="purchase('merch_cap')">Buy Now</button>
+            </div>
+        </div>
+
+        <!-- Creator Affiliate Section -->
+        <div class="affiliate-section">
+            <h2>🤝 Creator Program</h2>
+            <p>Are you a content creator? Get your own affiliate link and earn 30% commission!</p>
+            <div style="display: flex; gap: 1rem;">
+                <input type="text" id="affiliateCode" placeholder="Your affiliate link" readonly style="flex: 1; padding: 1rem;">
+                <button class="btn-primary" onclick="generateAffiliateLink()">Generate My Link</button>
+            </div>
+        </div>
+
+        <!-- Price Comparison -->
+        <div class="comparison-table">
+            <h3>💰 Price Comparison</h3>
+            <table style="width: 100%;">
+                <tr>
+                    <th>Purchase Method</th>
+                    <th>Platform Fee</th>
+                    <th>Your Cost for $100</th>
+                    <th>You Get</th>
+                </tr>
+                <tr>
+                    <td>Apple/Google In-App</td>
+                    <td>30%</td>
+                    <td>$100</td>
+                    <td>70 XTP</td>
+                </tr>
+                <tr>
+                    <td>XTP Direct Shop</td>
+                    <td>3%</td>
+                    <td>$100</td>
+                    <td>97 XTP</td>
+                </tr>
+                <tr>
+                    <td colspan="4" style="color: var(--success);">You save 27% buying direct!</td>
+                </tr>
+            </table>
+        </div>
+    </div>
+
+    <script>
+        async function purchase(productId) {
+            const user = firebase.auth().currentUser;
+            if (!user) {
+                alert('Please login first');
+                return;
+            }
+
+            // Process payment through Appcharge or crypto
+            // This would integrate with your payment processor
+            alert(`Processing purchase of ${productId}`);
+        }
+
+        async function generateAffiliateLink() {
+            const user = firebase.auth().currentUser;
+            if (!user) return;
+
+            // Generate unique affiliate code
+            const code = `XTP_${user.uid}_${Date.now().toString(36)}`;
+            document.getElementById('affiliateCode').value = `https://game.taagc.website/xtp-ecosystem/shop?ref=${code}`;
+        }
+    </script>
+</body>
+</html>
