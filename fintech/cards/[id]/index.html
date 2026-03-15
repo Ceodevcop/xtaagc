@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Card Details - TRIPLE A AHAL GLOBAL CONCEPT</title>
+    <link rel="stylesheet" href="/css/style.css">
+    <link rel="stylesheet" href="/css/dashboard.css">
+    <link rel="stylesheet" href="/css/cards.css">
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
+</head>
+<body>
+    <div class="dashboard">
+        <aside class="sidebar">
+            <!-- Same sidebar as above -->
+            <div class="sidebar-header">
+                <img src="/assets/images/logo.svg" alt="TRIPLE A" width="32">
+                <div class="sidebar-brand">
+                    <span class="brand-triplea">TRIPLE A</span>
+                    <span class="brand-ahal">AHAL GLOBAL</span>
+                </div>
+            </div>
+            <nav class="sidebar-nav">
+                <a href="/dashboard/" class="nav-item">📊 Dashboard</a>
+                <a href="/cards/" class="nav-item active">💳 Cards</a>
+                <a href="/transactions/" class="nav-item">📝 Transactions</a>
+                <a href="/transfer/" class="nav-item">💸 Transfers</a>
+                <a href="/profile/" class="nav-item">👤 Profile</a>
+                <a href="/settings/" class="nav-item">⚙️ Settings</a>
+            </nav>
+        </aside>
+
+        <main class="main-content">
+            <header class="dashboard-header">
+                <div class="header-left">
+                    <button class="back-btn" onclick="history.back()">← Back</button>
+                    <h1 id="cardTitle">Card Details</h1>
+                </div>
+            </header>
+
+            <!-- Card Display -->
+            <div class="card-detail-container">
+                <div class="card-large" id="cardDisplay">
+                    <!-- Card will be rendered here -->
+                </div>
+
+                <!-- Card Actions -->
+                <div class="card-actions-grid" id="cardActions">
+                    <button class="action-btn" onclick="fundCard()">
+                        <span class="icon">💰</span>
+                        <span>Fund Card</span>
+                    </button>
+                    <button class="action-btn" onclick="withdrawCard()">
+                        <span class="icon">💸</span>
+                        <span>Withdraw</span>
+                    </button>
+                    <button class="action-btn" onclick="showCardDetails()">
+                        <span class="icon">📋</span>
+                        <span>Details</span>
+                    </button>
+                    <button class="action-btn" onclick="toggleFreeze()">
+                        <span class="icon">❄️</span>
+                        <span id="freezeBtnText">Freeze</span>
+                    </button>
+                    <button class="action-btn" onclick="showQRCode()">
+                        <span class="icon">📱</span>
+                        <span>Add to Wallet</span>
+                    </button>
+                    <button class="action-btn" onclick="downloadStatement()">
+                        <span class="icon">📄</span>
+                        <span>Statement</span>
+                    </button>
+                </div>
+
+                <!-- Card Information Tabs -->
+                <div class="card-tabs">
+                    <div class="tabs-header">
+                        <button class="tab-btn active" onclick="switchTab('transactions')">Transactions</button>
+                        <button class="tab-btn" onclick="switchTab('merchants')">Merchants</button>
+                        <button class="tab-btn" onclick="switchTab('settings')">Settings</button>
+                        <button class="tab-btn" onclick="switchTab('security')">Security</button>
+                    </div>
+
+                    <!-- Transactions Tab -->
+                    <div class="tab-content active" id="transactionsTab">
+                        <div class="transaction-filters">
+                            <input type="text" placeholder="Search transactions..." class="search-input">
+                            <select class="filter-select">
+                                <option>All Types</option>
+                                <option>Purchases</option>
+                                <option>Funds</option>
+                                <option>Withdrawals</option>
+                            </select>
+                        </div>
+                        <div class="transaction-list" id="cardTransactions">
+                            <div class="loading-spinner">Loading transactions...</div>
+                        </div>
+                    </div>
+
+                    <!-- Merchants Tab -->
+                    <div class="tab-content" id="merchantsTab">
+                        <div class="merchants-header">
+                            <h3>Authorized Merchants</h3>
+                            <button class="btn btn-primary" onclick="addMerchant()">+ Add Merchant</button>
+                        </div>
+                        <div class="merchants-list" id="merchantsList">
+                            <!-- Merchants will be loaded here -->
+                        </div>
+                    </div>
+
+                    <!-- Settings Tab -->
+                    <div class="tab-content" id="settingsTab">
+                        <div class="settings-form">
+                            <div class="form-group">
+                                <label>Daily Spending Limit</label>
+                                <input type="number" id="spendingLimit" class="form-input">
+                            </div>
+                            <div class="form-group">
+                                <label>Card Name/Nickname</label>
+                                <input type="text" id="cardNickname" class="form-input">
+                            </div>
+                            <div class="form-group">
+                                <label class="switch">
+                                    <input type="checkbox" id="onlinePayments">
+                                    <span class="slider"></span>
+                                    <span>Online Payments</span>
+                                </label>
+                            </div>
+                            <div class="form-group">
+                                <label class="switch">
+                                    <input type="checkbox" id="internationalPayments">
+                                    <span class="slider"></span>
+                                    <span>International Payments</span>
+                                </label>
+                            </div>
+                            <button class="btn btn-primary" onclick="saveCardSettings()">Save Settings</button>
+                        </div>
+                    </div>
+
+                    <!-- Security Tab -->
+                    <div class="tab-content" id="securityTab">
+                        <div class="security-info">
+                            <div class="security-item">
+                                <span class="icon">🔒</span>
+                                <div>
+                                    <h4>CVV Required</h4>
+                                    <p>Always required for online transactions</p>
+                                </div>
+                                <span class="badge success">Active</span>
+                            </div>
+                            <div class="security-item">
+                                <span class="icon">🛡️</span>
+                                <div>
+                                    <h4>3D Secure</h4>
+                                    <p>Extra authentication for online payments</p>
+                                </div>
+                                <span class="badge success">Enabled</span>
+                            </div>
+                            <div class="security-item">
+                                <span class="icon">📱</span>
+                                <div>
+                                    <h4>Mobile Wallet</h4>
+                                    <p>Added to Apple Pay & Google Pay</p>
+                                </div>
+                                <span class="badge">Active</span>
+                            </div>
+                            <button class="btn btn-outline" onclick="reportLostCard()">Report Lost/Stolen</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- QR Code Modal -->
+    <div class="modal" id="qrModal">
+        <div class="modal-content">
+            <span class="close" onclick="closeModal()">&times;</span>
+            <h3>Add to Wallet</h3>
+            <div id="qrCode"></div>
+            <p>Scan with your phone camera</p>
+        </div>
+    </div>
+
+    <div class="toast" id="toast"></div>
+
+    <script src="/js/firebase-config.js"></script>
+    <script src="/js/firebase-init.js"></script>
+    <script src="/js/card-details.js"></script>
+</body>
+</html>
