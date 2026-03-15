@@ -1,0 +1,40 @@
+<!-- In your existing header navigation -->
+<div class="nav-links">
+    <a href="/">Home</a>
+    <a href="/online-games">Games</a>
+    <a href="/tournaments">Tournaments</a>
+    <a href="/wallet">Wallet</a>
+    <a href="/marketplace">Market</a>
+    <a href="/xtp-ecosystem" class="xtp-nav-item">
+        <i class="fas fa-crown" style="color: gold;"></i> XTP Ecosystem
+    </a>
+</div>
+
+<!-- Add XTP balance indicator in header -->
+<div class="xtp-mini-widget" onclick="window.location.href='/xtp-ecosystem'">
+    <i class="fas fa-coins" style="color: gold;"></i>
+    <span id="headerXTP">10,000</span> XTP
+</div>
+
+<style>
+.xtp-nav-item {
+    background: linear-gradient(135deg, #667eea, #764ba2);
+    color: white !important;
+    padding: 0.5rem 1rem;
+    border-radius: 50px;
+    font-weight: bold;
+}
+
+.xtp-mini-widget {
+    background: linear-gradient(135deg, #fbbf24, #f59e0b);
+    color: #1a1a1a;
+    padding: 0.3rem 1rem;
+    border-radius: 50px;
+    display: flex;
+    align-items: center;
+    gap: 0.3rem;
+    cursor: pointer;
+    font-weight: bold;
+    margin-left: 1rem;
+}
+</style>
