@@ -1,0 +1,160 @@
+/* Transfer Page Styles */
+.transfer-container {
+    max-width: 800px;
+    margin: 0 auto;
+}
+
+.transfer-tabs {
+    display: flex;
+    gap: 1rem;
+    margin-bottom: 2rem;
+    border-bottom: 1px solid var(--gray-200);
+    padding-bottom: 1rem;
+}
+
+.tab-btn {
+    padding: 0.75rem 1.5rem;
+    background: none;
+    border: none;
+    border-radius: 0.5rem;
+    cursor: pointer;
+    font-weight: 500;
+    color: var(--gray-600);
+    transition: all 0.2s;
+}
+
+.tab-btn:hover {
+    background: var(--gray-50);
+    color: var(--brand-purple);
+}
+
+.tab-btn.active {
+    background: var(--gradient-primary);
+    color: white;
+}
+
+.tab-pane {
+    display: none;
+}
+
+.tab-pane.active {
+    display: block;
+}
+
+.form-section {
+    background: white;
+    border-radius: 1rem;
+    padding: 1.5rem;
+    margin-bottom: 1.5rem;
+    box-shadow: var(--shadow);
+}
+
+.form-section h3 {
+    margin-bottom: 1.5rem;
+    color: var(--gray-700);
+    font-size: 1.125rem;
+}
+
+.form-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+    margin-bottom: 1rem;
+}
+
+.balance-display {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: var(--brand-purple);
+    font-family: 'Courier New', monospace;
+}
+
+.transfer-summary {
+    background: var(--gray-50);
+    border-radius: 0.5rem;
+    padding: 1.5rem;
+    margin: 1.5rem 0;
+}
+
+.summary-row {
+    display: flex;
+    justify-content: space-between;
+    padding: 0.5rem 0;
+    color: var(--gray-600);
+}
+
+.summary-row.total {
+    border-top: 1px solid var(--gray-300);
+    margin-top: 0.5rem;
+    padding-top: 1rem;
+    font-weight: 700;
+    color: var(--gray-800);
+    font-size: 1.125rem;
+}
+
+.exchange-rate-card {
+    background: var(--gradient-primary);
+    border-radius: 1rem;
+    padding: 1.5rem;
+    color: white;
+    margin-bottom: 1.5rem;
+}
+
+.recipient-amount {
+    font-size: 2rem;
+    font-weight: 700;
+    margin-top: 0.5rem;
+    font-family: 'Courier New', monospace;
+}
+
+.beneficiaries-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1.5rem;
+}
+
+.beneficiary-card {
+    background: white;
+    border-radius: 0.75rem;
+    padding: 1rem;
+    margin-bottom: 0.75rem;
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    cursor: pointer;
+    transition: all 0.2s;
+    border: 1px solid var(--gray-200);
+}
+
+.beneficiary-card:hover {
+    border-color: var(--brand-purple);
+    box-shadow: var(--shadow);
+}
+
+.beneficiary-avatar {
+    width: 3rem;
+    height: 3rem;
+    background: var(--gradient-primary);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-weight: 600;
+}
+
+.beneficiary-info {
+    flex: 1;
+}
+
+.beneficiary-name {
+    font-weight: 600;
+    color: var(--gray-800);
+    margin-bottom: 0.25rem;
+}
+
+.beneficiary-detail {
+    font-size: 0.875rem;
+    color: var(--gray-500);
+}
