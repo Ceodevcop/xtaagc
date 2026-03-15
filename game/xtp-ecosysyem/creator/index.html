@@ -1,0 +1,372 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>XTP Creator Network - Earn 30% Commission</title>
+    <link rel="stylesheet" href="/assets/css/style.css">
+    <style>
+        .creator-banner {
+            background: linear-gradient(135deg, #8b5cf6, #6366f1);
+            color: white;
+            padding: 3rem;
+            border-radius: 20px;
+            margin-bottom: 2rem;
+            text-align: center;
+        }
+
+        .commission-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 2rem;
+            margin: 3rem 0;
+        }
+
+        .tier-card {
+            background: white;
+            border-radius: 20px;
+            padding: 2rem;
+            text-align: center;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            transition: transform 0.3s;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .tier-card:hover {
+            transform: translateY(-10px);
+        }
+
+        .tier-card.popular::before {
+            content: "🔥 MOST POPULAR";
+            position: absolute;
+            top: 20px;
+            right: -30px;
+            background: var(--warning);
+            color: white;
+            padding: 0.3rem 3rem;
+            transform: rotate(45deg);
+            font-size: 0.8rem;
+            font-weight: bold;
+        }
+
+        .tier-icon {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+        }
+
+        .tier-name {
+            font-size: 1.8rem;
+            font-weight: bold;
+            margin-bottom: 0.5rem;
+        }
+
+        .tier-commission {
+            font-size: 2.5rem;
+            color: var(--success);
+            font-weight: bold;
+            margin: 1rem 0;
+        }
+
+        .tier-requirements {
+            background: #f3f4f6;
+            padding: 1rem;
+            border-radius: 10px;
+            margin: 1rem 0;
+        }
+
+        .benefits-list {
+            list-style: none;
+            padding: 0;
+            text-align: left;
+        }
+
+        .benefits-list li {
+            padding: 0.5rem 0;
+            border-bottom: 1px solid #e5e7eb;
+        }
+
+        .benefits-list li:before {
+            content: "✅ ";
+            color: var(--success);
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 1.5rem;
+            margin: 3rem 0;
+        }
+
+        .creator-cta {
+            background: linear-gradient(135deg, #10b981, #059669);
+            color: white;
+            padding: 3rem;
+            border-radius: 20px;
+            text-align: center;
+            margin: 3rem 0;
+        }
+
+        .referral-link-box {
+            background: #1a1a1a;
+            color: white;
+            padding: 1rem;
+            border-radius: 10px;
+            font-family: monospace;
+            font-size: 1.2rem;
+            display: flex;
+            gap: 1rem;
+            align-items: center;
+        }
+
+        .copy-btn {
+            background: var(--primary);
+            color: white;
+            border: none;
+            padding: 0.5rem 2rem;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <div class="nav">
+            <a href="/" class="logo">TAAGC GAMES</a>
+            <div class="nav-links">
+                <a href="/">Home</a>
+                <a href="/xtp-ecosystem">XTP Ecosystem</a>
+                <a href="/xtp-ecosystem/creator" class="active">Creator Network</a>
+            </div>
+            <div class="balance-widget">
+                <i class="fas fa-coins"></i>
+                <span id="xtpBalance">10,000</span> XTP
+            </div>
+        </div>
+    </div>
+
+    <div class="main-content">
+        <!-- Hero Banner -->
+        <div class="creator-banner">
+            <h1>🤝 XTP Creator Network</h1>
+            <p style="font-size: 1.3rem; max-width: 600px; margin: 1rem auto;">
+                Join the fastest growing gaming creator program. Earn up to 30% commission on every sale!
+            </p>
+            <div style="margin-top: 2rem;">
+                <span style="background: rgba(255,255,255,0.2); padding: 0.5rem 1.5rem; border-radius: 50px;">
+                    🚀 500+ Active Creators • 💰 2.5M XTP Paid Out
+                </span>
+            </div>
+        </div>
+
+        <!-- Quick Stats -->
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-value">500+</div>
+                <div>Active Creators</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value">2.5M</div>
+                <div>XTP Paid Out</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value">30%</div>
+                <div>Max Commission</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value">150K</div>
+                <div>Audience Reach</div>
+            </div>
+        </div>
+
+        <!-- Commission Tiers -->
+        <h2 style="text-align: center; margin: 3rem 0;">Creator Tiers</h2>
+        <div class="commission-grid">
+            <!-- Streamer Tier -->
+            <div class="tier-card">
+                <div class="tier-icon">🎮</div>
+                <div class="tier-name">Streamer</div>
+                <div class="tier-commission">20%</div>
+                <div class="tier-requirements">
+                    <strong>Requirements:</strong><br>
+                    500+ followers<br>
+                    Active on Twitch/YouTube
+                </div>
+                <ul class="benefits-list">
+                    <li>Custom referral links</li>
+                    <li>Basic analytics</li>
+                    <li>Weekly payouts</li>
+                    <li>Discord role</li>
+                </ul>
+                <button class="btn-primary" style="width: 100%;">Apply Now</button>
+            </div>
+
+            <!-- Content Creator Tier - Popular -->
+            <div class="tier-card popular">
+                <div class="tier-icon">📹</div>
+                <div class="tier-name">Content Creator</div>
+                <div class="tier-commission">25%</div>
+                <div class="tier-requirements">
+                    <strong>Requirements:</strong><br>
+                    5,000+ followers<br>
+                    High engagement rate
+                </div>
+                <ul class="benefits-list">
+                    <li>Early access to features</li>
+                    <li>Promo codes for audience</li>
+                    <li>Advanced analytics</li>
+                    <li>Monthly bonus potential</li>
+                </ul>
+                <button class="btn-primary" style="width: 100%;">Apply Now</button>
+            </div>
+
+            <!-- Affiliate Partner Tier -->
+            <div class="tier-card">
+                <div class="tier-icon">🤵</div>
+                <div class="tier-name">Affiliate Partner</div>
+                <div class="tier-commission">30%</div>
+                <div class="tier-requirements">
+                    <strong>Requirements:</strong><br>
+                    20,000+ followers<br>
+                    Proven sales track record
+                </div>
+                <ul class="benefits-list">
+                    <li>Dedicated account manager</li>
+                    <li>Exclusive events access</li>
+                    <li>Co-branded opportunities</li>
+                    <li>Revenue share bonuses</li>
+                </ul>
+                <button class="btn-primary" style="width: 100%;">Apply Now</button>
+            </div>
+        </div>
+
+        <!-- Your Creator Dashboard (if logged in) -->
+        <div style="background: white; border-radius: 20px; padding: 2rem; margin: 3rem 0;">
+            <h2>📊 Your Creator Dashboard</h2>
+            
+            <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 2rem; margin: 2rem 0;">
+                <div>
+                    <div style="font-size: 2rem; color: var(--primary);">1,234</div>
+                    <div>Total Referrals</div>
+                </div>
+                <div>
+                    <div style="font-size: 2rem; color: var(--success);">45,678 XTP</div>
+                    <div>Total Earnings</div>
+                </div>
+                <div>
+                    <div style="font-size: 2rem; color: var(--warning);">3,456 XTP</div>
+                    <div>Pending</div>
+                </div>
+            </div>
+
+            <div class="referral-link-box">
+                <span style="flex: 1;" id="referralLink">https://game.taagc.website/?ref=CREATOR123</span>
+                <button class="copy-btn" onclick="copyReferral()">Copy Link</button>
+            </div>
+
+            <div style="margin-top: 2rem;">
+                <h3>Recent Conversions</h3>
+                <table style="width: 100%;">
+                    <tr>
+                        <th>User</th>
+                        <th>Purchase</th>
+                        <th>Commission</th>
+                        <th>Date</th>
+                    </tr>
+                    <tr>
+                        <td>@cryptoking</td>
+                        <td>1,000 XTP</td>
+                        <td>250 XTP</td>
+                        <td>2 hours ago</td>
+                    </tr>
+                    <tr>
+                        <td>@gamermom</td>
+                        <td>500 XTP</td>
+                        <td>125 XTP</td>
+                        <td>5 hours ago</td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+
+        <!-- Sub-affiliate Network -->
+        <div style="background: linear-gradient(135deg, #1a1a1a, #2d2d2d); color: white; border-radius: 20px; padding: 2rem; margin: 3rem 0;">
+            <h2>🌐 Build Your Team</h2>
+            <p>Recruit sub-affiliates and earn 10% of THEIR commissions!</p>
+            
+            <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 2rem; margin-top: 2rem;">
+                <div>
+                    <div style="font-size: 2rem;">12</div>
+                    <div>Your Team Members</div>
+                </div>
+                <div>
+                    <div style="font-size: 2rem;">45,000 XTP</div>
+                    <div>Team Volume</div>
+                </div>
+                <div>
+                    <div style="font-size: 2rem;">4,500 XTP</div>
+                    <div>Team Bonus Earned</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Marketing Kit -->
+        <div style="background: white; border-radius: 20px; padding: 2rem; margin: 3rem 0;">
+            <h2>📦 Creator Marketing Kit</h2>
+            <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 1rem; margin-top: 2rem;">
+                <div class="feature-card" style="text-align: center;">
+                    <div style="font-size: 2rem;">🖼️</div>
+                    <h4>Banners</h4>
+                    <button class="btn-small">Download</button>
+                </div>
+                <div class="feature-card" style="text-align: center;">
+                    <div style="font-size: 2rem;">🎥</div>
+                    <h4>Videos</h4>
+                    <button class="btn-small">Download</button>
+                </div>
+                <div class="feature-card" style="text-align: center;">
+                    <div style="font-size: 2rem;">📝</div>
+                    <h4>Templates</h4>
+                    <button class="btn-small">Download</button>
+                </div>
+                <div class="feature-card" style="text-align: center;">
+                    <div style="font-size: 2rem;">📊</div>
+                    <h4>Analytics</h4>
+                    <button class="btn-small">View</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Call to Action -->
+        <div class="creator-cta">
+            <h2 style="font-size: 2.5rem;">Ready to start earning?</h2>
+            <p style="font-size: 1.2rem; margin: 1rem 0;">Join 500+ creators already earning with XTP</p>
+            <button class="btn-primary" style="background: white; color: #10b981; font-size: 1.3rem; padding: 1rem 3rem;">
+                Apply to Creator Program →
+            </button>
+        </div>
+    </div>
+
+    <script>
+        function copyReferral() {
+            const link = document.getElementById('referralLink');
+            navigator.clipboard.writeText(link.textContent);
+            alert('Referral link copied!');
+        }
+
+        // Load creator data from Firebase
+        async function loadCreatorData() {
+            const user = firebase.auth().currentUser;
+            if (!user) return;
+
+            const creatorRef = firebase.database().ref(`creators/${user.uid}`);
+            creatorRef.on('value', (snapshot) => {
+                const data = snapshot.val() || {};
+                // Update dashboard with real data
+            });
+        }
+
+        loadCreatorData();
+    </script>
+</body>
+</html>
