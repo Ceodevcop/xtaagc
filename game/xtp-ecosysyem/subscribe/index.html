@@ -1,0 +1,435 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>XTP Subscription Passes - Unlock Premium Benefits</title>
+    <link rel="stylesheet" href="/assets/css/style.css">
+    <style>
+        .subscription-banner {
+            background: linear-gradient(135deg, #3b82f6, #1e40af);
+            color: white;
+            padding: 3rem;
+            border-radius: 20px;
+            margin-bottom: 2rem;
+            text-align: center;
+        }
+
+        .pricing-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 2rem;
+            margin: 3rem 0;
+        }
+
+        .pricing-card {
+            background: white;
+            border-radius: 20px;
+            padding: 2rem;
+            text-align: center;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            transition: transform 0.3s;
+            position: relative;
+            border: 2px solid transparent;
+        }
+
+        .pricing-card:hover {
+            transform: translateY(-10px);
+            border-color: var(--primary);
+        }
+
+        .pricing-card.recommended {
+            border: 2px solid var(--warning);
+            transform: scale(1.05);
+        }
+
+        .pricing-card.recommended::before {
+            content: "🏆 BEST VALUE";
+            position: absolute;
+            top: -12px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: var(--warning);
+            color: white;
+            padding: 0.3rem 2rem;
+            border-radius: 50px;
+            font-size: 0.9rem;
+            font-weight: bold;
+        }
+
+        .pass-name {
+            font-size: 2rem;
+            font-weight: bold;
+            margin: 1rem 0;
+        }
+
+        .pass-price {
+            font-size: 3rem;
+            font-weight: 800;
+            color: var(--primary);
+            margin: 1rem 0;
+        }
+
+        .pass-price small {
+            font-size: 1rem;
+            color: #666;
+        }
+
+        .savings-badge {
+            background: var(--success);
+            color: white;
+            padding: 0.3rem 1rem;
+            border-radius: 50px;
+            display: inline-block;
+            margin: 1rem 0;
+        }
+
+        .feature-list {
+            list-style: none;
+            padding: 0;
+            margin: 2rem 0;
+            text-align: left;
+        }
+
+        .feature-list li {
+            padding: 0.8rem 0;
+            border-bottom: 1px solid #e5e7eb;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .feature-list li:before {
+            content: "✓";
+            color: var(--success);
+            font-weight: bold;
+            margin-right: 0.5rem;
+        }
+
+        .feature-list li.disabled {
+            color: #ccc;
+        }
+
+        .feature-list li.disabled:before {
+            content: "✗";
+            color: #ccc;
+        }
+
+        .subscribe-btn {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: white;
+            border: none;
+            padding: 1rem 2rem;
+            border-radius: 50px;
+            font-size: 1.2rem;
+            font-weight: bold;
+            cursor: pointer;
+            width: 100%;
+            transition: all 0.3s;
+        }
+
+        .subscribe-btn:hover {
+            transform: scale(1.05);
+            box-shadow: 0 10px 20px rgba(102,126,234,0.3);
+        }
+
+        .comparison-section {
+            background: white;
+            border-radius: 20px;
+            padding: 2rem;
+            margin: 3rem 0;
+            overflow-x: auto;
+        }
+
+        .comparison-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .comparison-table th,
+        .comparison-table td {
+            padding: 1rem;
+            text-align: center;
+            border-bottom: 1px solid #e5e7eb;
+        }
+
+        .comparison-table th {
+            background: #f8fafc;
+            font-weight: bold;
+        }
+
+        .calculator-section {
+            background: linear-gradient(135deg, #f3f4f6, #ffffff);
+            border-radius: 20px;
+            padding: 2rem;
+            margin: 3rem 0;
+        }
+
+        .calc-input {
+            padding: 1rem;
+            border: 2px solid #e5e7eb;
+            border-radius: 10px;
+            width: 200px;
+            margin-right: 1rem;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <div class="nav">
+            <a href="/" class="logo">TAAGC GAMES</a>
+            <div class="nav-links">
+                <a href="/">Home</a>
+                <a href="/xtp-ecosystem">XTP Ecosystem</a>
+                <a href="/xtp-ecosystem/subscribe" class="active">Subscription</a>
+            </div>
+            <div class="balance-widget">
+                <i class="fas fa-coins"></i>
+                <span id="xtpBalance">10,000</span> XTP
+            </div>
+        </div>
+    </div>
+
+    <div class="main-content">
+        <!-- Hero Banner -->
+        <div class="subscription-banner">
+            <h1>📅 XTP Subscription Passes</h1>
+            <p style="font-size: 1.3rem; max-width: 600px; margin: 1rem auto;">
+                Unlock premium benefits, massive discounts, and exclusive features
+            </p>
+            <div style="margin-top: 2rem;">
+                <span style="background: rgba(255,255,255,0.2); padding: 0.5rem 1.5rem; border-radius: 50px;">
+                    ⭐ 1,234 Active Subscribers • 💰 500K XTP in Benefits
+                </span>
+            </div>
+        </div>
+
+        <!-- Pricing Tiers -->
+        <div class="pricing-grid">
+            <!-- Bronze Pass -->
+            <div class="pricing-card">
+                <div style="font-size: 3rem;">🥉</div>
+                <div class="pass-name">Bronze Pass</div>
+                <div class="pass-price">500 <small>XTP/month</small></div>
+                <div class="savings-badge">Save 10% on bots</div>
+                
+                <ul class="feature-list">
+                    <li>10% discount on all bot rentals</li>
+                    <li>1 daily spin (worth ~150 XTP/month)</li>
+                    <li>Basic support</li>
+                    <li class="disabled">Priority support</li>
+                    <li class="disabled">Exclusive bots</li>
+                    <li class="disabled">Profit sharing</li>
+                </ul>
+
+                <div style="background: #f3f4f6; padding: 1rem; border-radius: 10px; margin: 1rem 0;">
+                    <strong>Value: 650 XTP/month</strong><br>
+                    <small>You save 150 XTP!</small>
+                </div>
+
+                <button class="subscribe-btn" onclick="subscribe('bronze')">Subscribe Now</button>
+            </div>
+
+            <!-- Silver Pass - Recommended -->
+            <div class="pricing-card recommended">
+                <div style="font-size: 3rem;">🥈</div>
+                <div class="pass-name">Silver Pass</div>
+                <div class="pass-price">2,000 <small>XTP/month</small></div>
+                <div class="savings-badge">Save 25% on bots</div>
+                
+                <ul class="feature-list">
+                    <li>25% discount on all bot rentals</li>
+                    <li>3 daily spins (worth ~450 XTP/month)</li>
+                    <li>Priority support</li>
+                    <li>Access to exclusive bots</li>
+                    <li class="disabled">Profit sharing</li>
+                </ul>
+
+                <div style="background: #f3f4f6; padding: 1rem; border-radius: 10px; margin: 1rem 0;">
+                    <strong>Value: 2,800 XTP/month</strong><br>
+                    <small>You save 800 XTP!</small>
+                </div>
+
+                <button class="subscribe-btn" onclick="subscribe('silver')">Subscribe Now</button>
+            </div>
+
+            <!-- Gold Pass -->
+            <div class="pricing-card">
+                <div style="font-size: 3rem;">🥇</div>
+                <div class="pass-name">Gold Pass</div>
+                <div class="pass-price">5,000 <small>XTP/month</small></div>
+                <div class="savings-badge">Save 50% on bots + Profit Share</div>
+                
+                <ul class="feature-list">
+                    <li>50% discount on all bot rentals</li>
+                    <li>5 daily spins (worth ~750 XTP/month)</li>
+                    <li>VIP priority support</li>
+                    <li>Access to all exclusive bots</li>
+                    <li>10% profit sharing from platform</li>
+                </ul>
+
+                <div style="background: #f3f4f6; padding: 1rem; border-radius: 10px; margin: 1rem 0;">
+                    <strong>Value: 7,500+ XTP/month</strong><br>
+                    <small>Plus profit sharing!</small>
+                </div>
+
+                <button class="subscribe-btn" onclick="subscribe('gold')">Subscribe Now</button>
+            </div>
+        </div>
+
+        <!-- Feature Comparison -->
+        <div class="comparison-section">
+            <h2>📊 Detailed Comparison</h2>
+            <table class="comparison-table">
+                <thead>
+                    <tr>
+                        <th>Feature</th>
+                        <th>Free</th>
+                        <th>Bronze</th>
+                        <th>Silver</th>
+                        <th>Gold</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>Bot Rental Discount</td>
+                        <td>0%</td>
+                        <td>10%</td>
+                        <td>25%</td>
+                        <td>50%</td>
+                    </tr>
+                    <tr>
+                        <td>Daily Spins</td>
+                        <td>0</td>
+                        <td>1</td>
+                        <td>3</td>
+                        <td>5</td>
+                    </tr>
+                    <tr>
+                        <td>Monthly Spin Value</td>
+                        <td>0</td>
+                        <td>150 XTP</td>
+                        <td>450 XTP</td>
+                        <td>750 XTP</td>
+                    </tr>
+                    <tr>
+                        <td>Support Level</td>
+                        <td>Basic</td>
+                        <td>Basic</td>
+                        <td>Priority</td>
+                        <td>VIP</td>
+                    </tr>
+                    <tr>
+                        <td>Exclusive Bots</td>
+                        <td>❌</td>
+                        <td>❌</td>
+                        <td>✅</td>
+                        <td>✅</td>
+                    </tr>
+                    <tr>
+                        <td>Profit Sharing</td>
+                        <td>❌</td>
+                        <td>❌</td>
+                        <td>❌</td>
+                        <td>10%</td>
+                    </tr>
+                    <tr>
+                        <td>Monthly Fee</td>
+                        <td>0</td>
+                        <td>500 XTP</td>
+                        <td>2,000 XTP</td>
+                        <td>5,000 XTP</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <!-- ROI Calculator -->
+        <div class="calculator-section">
+            <h2>📈 Subscription ROI Calculator</h2>
+            <p>See how much you can save with each pass</p>
+
+            <div style="display: flex; gap: 2rem; align-items: center; margin: 2rem 0;">
+                <div>
+                    <label>Monthly Bot Usage (hours):</label>
+                    <input type="number" id="botHours" class="calc-input" value="100">
+                </div>
+                <button class="btn-primary" onclick="calculateROI()">Calculate</button>
+            </div>
+
+            <div id="roiResults" style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 1rem;">
+                <!-- Filled by JavaScript -->
+            </div>
+        </div>
+
+        <!-- Current Subscribers -->
+        <div style="background: white; border-radius: 20px; padding: 2rem; margin: 3rem 0;">
+            <h2>👥 What Subscribers Say</h2>
+            <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 2rem;">
+                <div class="testimonial">
+                    <div style="color: gold;">⭐⭐⭐⭐⭐</div>
+                    <p>"Silver Pass saved me over 3,000 XTP this month!"</p>
+                    <p><strong>- CryptoTrader</strong></p>
+                </div>
+                <div class="testimonial">
+                    <div style="color: gold;">⭐⭐⭐⭐⭐</div>
+                    <p>"Gold Pass profit sharing paid for itself in week 1"</p>
+                    <p><strong>- WhaleInvestor</strong></p>
+                </div>
+                <div class="testimonial">
+                    <div style="color: gold;">⭐⭐⭐⭐</div>
+                    <p>"Daily spins alone make Bronze worth it"</p>
+                    <p><strong>- DailyPlayer</strong></p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function calculateROI() {
+            const hours = document.getElementById('botHours').value;
+            const hourlyRate = 0.5; // XTP per hour
+            
+            const results = document.getElementById('roiResults');
+            
+            const calculations = [
+                { tier: 'Bronze', fee: 500, discount: 0.10 },
+                { tier: 'Silver', fee: 2000, discount: 0.25 },
+                { tier: 'Gold', fee: 5000, discount: 0.50 }
+            ];
+
+            let html = '';
+            for (const calc of calculations) {
+                const botCost = hours * hourlyRate * 30; // monthly bot cost
+                const savings = botCost * calc.discount;
+                const netBenefit = savings + (calc.tier === 'Gold' ? 1000 : calc.tier === 'Silver' ? 450 : 150) - calc.fee;
+                
+                html += `
+                    <div class="stat-card">
+                        <div class="stat-value">${calc.tier}</div>
+                        <div>Monthly Savings: ${savings.toFixed(0)} XTP</div>
+                        <div>Net Benefit: <strong style="color: ${netBenefit > 0 ? 'green' : 'red'}">${netBenefit.toFixed(0)} XTP</strong></div>
+                        <div>ROI: ${((netBenefit/calc.fee)*100).toFixed(0)}%</div>
+                    </div>
+                `;
+            }
+            
+            results.innerHTML = html;
+        }
+
+        function subscribe(tier) {
+            const user = firebase.auth().currentUser;
+            if (!user) {
+                alert('Please login first');
+                return;
+            }
+
+            // Process subscription
+            alert(`Processing ${tier} subscription...`);
+        }
+
+        // Initial calculation
+        calculateROI();
+    </script>
+</body>
+</html>
