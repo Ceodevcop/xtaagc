@@ -1,0 +1,303 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Our Services - TAAGC Fintech</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    body { font-family: 'Inter', sans-serif; }
+    .service-card {
+      transition: transform 0.3s ease;
+    }
+    .service-card:hover {
+      transform: translateY(-5px);
+    }
+  </style>
+</head>
+<body class="bg-gray-50">
+  <!-- Navigation -->
+  <nav class="bg-white shadow-lg sticky top-0 z-50">
+    <div class="container mx-auto px-4">
+      <div class="flex justify-between items-center h-16">
+        <a href="/" class="flex items-center space-x-2">
+          <span class="text-xl font-bold text-blue-600">TAAGC</span>
+          <span class="text-gray-600">Fintech</span>
+        </a>
+        <div class="hidden md:flex space-x-6">
+          <a href="/" class="text-gray-700 hover:text-blue-600">Home</a>
+          <a href="/about.html" class="text-gray-700 hover:text-blue-600">About</a>
+          <a href="/services.html" class="text-blue-600 font-medium">Services</a>
+          <a href="/agent-terms.html" class="text-gray-700 hover:text-blue-600">Become an Agent</a>
+          <a href="/contact.html" class="text-gray-700 hover:text-blue-600">Contact</a>
+        </div>
+        <div class="space-x-4">
+          <a href="/login" class="text-gray-700 hover:text-blue-600">Login</a>
+          <a href="/register" class="btn-primary">Register</a>
+        </div>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Hero -->
+  <section class="bg-gradient-to-r from-blue-600 to-blue-800 text-white py-20">
+    <div class="container mx-auto px-4 text-center">
+      <h1 class="text-5xl font-bold mb-6">Our Services</h1>
+      <p class="text-xl max-w-3xl mx-auto opacity-90">Comprehensive financial solutions tailored to your needs</p>
+    </div>
+  </section>
+
+  <!-- Main Content -->
+  <div class="container mx-auto px-4 py-16 max-w-6xl">
+    <!-- Banking Services (BSA) -->
+    <h2 class="text-3xl font-bold mb-8">Banking Services</h2>
+    <div class="grid md:grid-cols-2 gap-8 mb-16">
+      <div class="bg-white p-8 rounded-xl shadow-lg service-card">
+        <div class="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mb-6">
+          <i class="fas fa-wallet text-2xl text-blue-600"></i>
+        </div>
+        <h3 class="text-2xl font-bold mb-3">Wallet-as-a-Service</h3>
+        <p class="text-gray-600 mb-4">NUBAN-compliant wallets for seamless fund management</p>
+        <ul class="space-y-2 text-gray-700">
+          <li><i class="fas fa-check text-green-500 mr-2"></i> Instant wallet creation</li>
+          <li><i class="fas fa-check text-green-500 mr-2"></i> Receive funds from any bank</li>
+          <li><i class="fas fa-check text-green-500 mr-2"></i> Real-time balance updates</li>
+          <li><i class="fas fa-check text-green-500 mr-2"></i> Transaction history</li>
+        </ul>
+        <div class="mt-4 p-3 bg-blue-50 rounded">
+          <span class="font-semibold">Fee:</span> Waived
+        </div>
+      </div>
+
+      <div class="bg-white p-8 rounded-xl shadow-lg service-card">
+        <div class="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mb-6">
+          <i class="fas fa-building-columns text-2xl text-green-600"></i>
+        </div>
+        <h3 class="text-2xl font-bold mb-3">Virtual Accounts</h3>
+        <p class="text-gray-600 mb-4">Dynamic and static accounts for collections</p>
+        <ul class="space-y-2 text-gray-700">
+          <li><i class="fas fa-check text-green-500 mr-2"></i> Pay with Transfer</li>
+          <li><i class="fas fa-check text-green-500 mr-2"></i> Flexible account numbers</li>
+          <li><i class="fas fa-check text-green-500 mr-2"></i> Automated reconciliation</li>
+          <li><i class="fas fa-check text-green-500 mr-2"></i> Webhook notifications</li>
+        </ul>
+        <div class="mt-4 p-3 bg-blue-50 rounded">
+          <span class="font-semibold">Fee:</span> 0.5% (₦100 cap)
+        </div>
+      </div>
+
+      <div class="bg-white p-8 rounded-xl shadow-lg service-card">
+        <div class="w-16 h-16 bg-purple-100 rounded-full flex items-center justify-center mb-6">
+          <i class="fas fa-arrow-right-arrow-left text-2xl text-purple-600"></i>
+        </div>
+        <h3 class="text-2xl font-bold mb-3">Disbursement Solutions</h3>
+        <p class="text-gray-600 mb-4">Bulk payments to multiple beneficiaries</p>
+        <ul class="space-y-2 text-gray-700">
+          <li><i class="fas fa-check text-green-500 mr-2"></i> Single and bulk payouts</li>
+          <li><i class="fas fa-check text-green-500 mr-2"></i> Wallet to bank transfers</li>
+          <li><i class="fas fa-check text-green-500 mr-2"></i> Float to wallet transfers</li>
+          <li><i class="fas fa-check text-green-500 mr-2"></i> Real-time processing</li>
+        </ul>
+        <div class="mt-4 p-3 bg-blue-50 rounded">
+          <span class="font-semibold">Fee:</span> ₦10.75 per transaction
+        </div>
+      </div>
+
+      <div class="bg-white p-8 rounded-xl shadow-lg service-card">
+        <div class="w-16 h-16 bg-yellow-100 rounded-full flex items-center justify-center mb-6">
+          <i class="fas fa-credit-card text-2xl text-yellow-600"></i>
+        </div>
+        <h3 class="text-2xl font-bold mb-3">Payment Gateway</h3>
+        <p class="text-gray-600 mb-4">Accept card payments online</p>
+        <ul class="space-y-2 text-gray-700">
+          <li><i class="fas fa-check text-green-500 mr-2"></i> Visa, Mastercard support</li>
+          <li><i class="fas fa-check text-green-500 mr-2"></i> 3D Secure authentication</li>
+          <li><i class="fas fa-check text-green-500 mr-2"></i> PCI DSS compliant</li>
+          <li><i class="fas fa-check text-green-500 mr-2"></i> Fraud protection</li>
+        </ul>
+        <div class="mt-4 p-3 bg-blue-50 rounded">
+          <span class="font-semibold">Fee:</span> 1.5% (₦2,000 cap)
+        </div>
+      </div>
+    </div>
+
+    <!-- Value Added Services (PSA) -->
+    <h2 class="text-3xl font-bold mb-8">Value Added Services</h2>
+    <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-6 mb-16">
+      <!-- Airtime -->
+      <div class="bg-white p-6 rounded-xl shadow-lg service-card">
+        <div class="w-12 h-12 bg-green-100 rounded-full flex items-center justify-center mb-4">
+          <i class="fas fa-phone text-xl text-green-600"></i>
+        </div>
+        <h3 class="text-xl font-bold mb-3">Airtime Recharge</h3>
+        <p class="text-gray-600 mb-3">Instant top-up for all networks</p>
+        <div class="space-y-2 text-sm">
+          <div class="flex justify-between"><span>MTN</span><span class="font-bold text-green-600">3.00%</span></div>
+          <div class="flex justify-between"><span>Airtel</span><span class="font-bold text-green-600">3.00%</span></div>
+          <div class="flex justify-between"><span>Glo</span><span class="font-bold text-green-600">4.29%</span></div>
+          <div class="flex justify-between"><span>9mobile</span><span class="font-bold text-green-600">7.71%</span></div>
+        </div>
+      </div>
+
+      <!-- Data -->
+      <div class="bg-white p-6 rounded-xl shadow-lg service-card">
+        <div class="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center mb-4">
+          <i class="fas fa-wifi text-xl text-blue-600"></i>
+        </div>
+        <h3 class="text-xl font-bold mb-3">Data Bundles</h3>
+        <p class="text-gray-600 mb-3">Affordable data plans</p>
+        <div class="space-y-2 text-sm">
+          <div class="flex justify-between"><span>MTN</span><span class="font-bold text-blue-600">3.00%</span></div>
+          <div class="flex justify-between"><span>Airtel</span><span class="font-bold text-blue-600">3.00%</span></div>
+          <div class="flex justify-between"><span>Glo</span><span class="font-bold text-blue-600">4.29%</span></div>
+          <div class="flex justify-between"><span>9mobile</span><span class="font-bold text-blue-600">7.71%</span></div>
+        </div>
+      </div>
+
+      <!-- Bills -->
+      <div class="bg-white p-6 rounded-xl shadow-lg service-card">
+        <div class="w-12 h-12 bg-yellow-100 rounded-full flex items-center justify-center mb-4">
+          <i class="fas fa-bolt text-xl text-yellow-600"></i>
+        </div>
+        <h3 class="text-xl font-bold mb-3">Bill Payments</h3>
+        <p class="text-gray-600 mb-3">Pay electricity bills</p>
+        <div class="space-y-1 text-sm">
+          <div class="flex justify-between"><span>AEDC</span><span class="font-bold text-yellow-600">1.29%</span></div>
+          <div class="flex justify-between"><span>EEDC</span><span class="font-bold text-yellow-600">1.29%</span></div>
+          <div class="flex justify-between"><span>KAEDC</span><span class="font-bold text-yellow-600">1.29%</span></div>
+          <div class="flex justify-between"><span>PHED</span><span class="font-bold text-yellow-600">1.29%</span></div>
+          <div class="flex justify-between"><span>IBEDC</span><span class="font-bold text-yellow-600">0.86%</span></div>
+        </div>
+      </div>
+
+      <!-- Betting -->
+      <div class="bg-white p-6 rounded-xl shadow-lg service-card">
+        <div class="w-12 h-12 bg-purple-100 rounded-full flex items-center justify-center mb-4">
+          <i class="fas fa-trophy text-xl text-purple-600"></i>
+        </div>
+        <h3 class="text-xl font-bold mb-3">Betting Funding</h3>
+        <p class="text-gray-600 mb-3">Fund your betting accounts</p>
+        <div class="space-y-1 text-sm">
+          <div class="flex justify-between"><span>Bet9ja</span><span class="font-bold text-purple-600">0.34%</span></div>
+          <div class="flex justify-between"><span>BetKing</span><span class="font-bold text-purple-600">0.86%</span></div>
+          <div class="flex justify-between"><span>1xBet</span><span class="font-bold text-purple-600">0.30%</span></div>
+          <div class="flex justify-between"><span>NairaBet</span><span class="font-bold text-purple-600">0.13%</span></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Agent Services (SLOMA) -->
+    <h2 class="text-3xl font-bold mb-8">Agent Banking Services</h2>
+    <div class="bg-white p-8 rounded-xl shadow-lg mb-16">
+      <div class="grid md:grid-cols-3 gap-6">
+        <div class="text-center">
+          <div class="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
+            <i class="fas fa-arrow-down text-2xl text-green-600"></i>
+          </div>
+          <h3 class="font-bold mb-2">Cash-In</h3>
+          <p class="text-sm text-gray-600">Deposit cash to customer wallets</p>
+          <p class="text-xs text-gray-500 mt-2">No commission</p>
+        </div>
+        <div class="text-center">
+          <div class="w-16 h-16 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-4">
+            <i class="fas fa-arrow-up text-2xl text-red-600"></i>
+          </div>
+          <h3 class="font-bold mb-2">Cash-Out</h3>
+          <p class="text-sm text-gray-600">Withdraw cash for customers</p>
+          <p class="text-xs text-green-600 mt-2">0.04% (₦25 cap)</p>
+        </div>
+        <div class="text-center">
+          <div class="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-4">
+            <i class="fas fa-arrow-right-arrow-left text-2xl text-blue-600"></i>
+          </div>
+          <h3 class="font-bold mb-2">Transfers</h3>
+          <p class="text-sm text-gray-600">Send money to other accounts</p>
+          <p class="text-xs text-green-600 mt-2">₦4.00 flat</p>
+        </div>
+      </div>
+
+      <div class="mt-8 p-4 bg-blue-50 rounded-lg">
+        <h4 class="font-semibold mb-2">Agent Commission Structure</h4>
+        <div class="grid grid-cols-2 gap-4 text-sm">
+          <div>Bills Payment: <span class="font-bold">25%</span></div>
+          <div>Airtime/Data: <span class="font-bold">25%</span></div>
+          <div>Account Opening: <span class="font-bold">₦50-₦120</span></div>
+          <div>Micro-payment: <span class="font-bold">₦1.40</span></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Why Choose Us -->
+    <h2 class="text-3xl font-bold text-center mb-8">Why Choose TAAGC Fintech</h2>
+    <div class="grid md:grid-cols-4 gap-6 mb-16">
+      <div class="text-center">
+        <div class="text-4xl font-bold text-blue-600 mb-2">24/7</div>
+        <p class="text-gray-600">Service Availability</p>
+      </div>
+      <div class="text-center">
+        <div class="text-4xl font-bold text-blue-600 mb-2">99.9%</div>
+        <p class="text-gray-600">Uptime Guarantee</p>
+      </div>
+      <div class="text-center">
+        <div class="text-4xl font-bold text-blue-600 mb-2">256-bit</div>
+        <p class="text-gray-600">Encryption</p>
+      </div>
+      <div class="text-center">
+        <div class="text-4xl font-bold text-blue-600 mb-2">CBN</div>
+        <p class="text-gray-600">Licensed Partner</p>
+      </div>
+    </div>
+
+    <!-- CTA -->
+    <div class="bg-gradient-to-r from-blue-600 to-blue-800 text-white p-12 rounded-2xl text-center">
+      <h2 class="text-3xl font-bold mb-4">Ready to Use Our Services?</h2>
+      <p class="text-xl mb-8">Create an account in minutes and start transacting</p>
+      <div class="space-x-4">
+        <a href="/register" class="bg-white text-blue-600 px-8 py-3 rounded-lg font-semibold hover:bg-gray-100">Get Started</a>
+        <a href="/contact.html" class="border-2 border-white text-white px-8 py-3 rounded-lg font-semibold hover:bg-white hover:text-blue-600">Contact Sales</a>
+      </div>
+    </div>
+  </div>
+
+  <!-- Footer (same as about.html) -->
+  <footer class="bg-gray-900 text-white">
+    <div class="container mx-auto px-4 py-12">
+      <div class="grid md:grid-cols-4 gap-8">
+        <div>
+          <h3 class="text-lg font-semibold mb-4">TAAGC Fintech</h3>
+          <p class="text-gray-400 text-sm">Powered by 9 Payment Service Bank. Providing innovative financial solutions to Nigerians.</p>
+        </div>
+        <div>
+          <h3 class="text-lg font-semibold mb-4">Quick Links</h3>
+          <ul class="space-y-2 text-sm text-gray-400">
+            <li><a href="/about.html" class="hover:text-white">About Us</a></li>
+            <li><a href="/services.html" class="hover:text-white">Services</a></li>
+            <li><a href="/agent-terms.html" class="hover:text-white">Become an Agent</a></li>
+            <li><a href="/contact.html" class="hover:text-white">Contact</a></li>
+          </ul>
+        </div>
+        <div>
+          <h3 class="text-lg font-semibold mb-4">Support</h3>
+          <ul class="space-y-2 text-sm text-gray-400">
+            <li><a href="/faq.html" class="hover:text-white">FAQ</a></li>
+            <li><a href="/privacy.html" class="hover:text-white">Privacy Policy</a></li>
+            <li><a href="/terms.html" class="hover:text-white">Terms of Service</a></li>
+          </ul>
+        </div>
+        <div>
+          <h3 class="text-lg font-semibold mb-4">Contact</h3>
+          <ul class="space-y-2 text-sm text-gray-400">
+            <li><i class="fas fa-map-marker-alt w-5 inline"></i> No.2 Gubi Village, Bauchi</li>
+            <li><i class="fas fa-phone w-5 inline"></i> 08023566143</li>
+            <li><i class="fas fa-envelope w-5 inline"></i> priahmz@gmail.com</li>
+          </ul>
+        </div>
+      </div>
+      <div class="border-t border-gray-800 mt-8 pt-8 text-center text-sm text-gray-400">
+        <p>&copy; 2025 Triple A-Ahal Global Concept. All rights reserved.</p>
+      </div>
+    </div>
+  </footer>
+</body>
+</html>
