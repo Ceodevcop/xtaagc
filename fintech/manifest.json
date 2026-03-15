@@ -1,0 +1,77 @@
+{
+  "name": "TRIPLE A AHAL GLOBAL CONCEPT",
+  "short_name": "Taagc FinTech",
+  "description": "Next Generation Fintech Innovation - Secure Payments, Digital Investment, Global Finance",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#6B46C1",
+  "theme_color": "#4299E1",
+  "orientation": "portrait",
+  "icons": [
+    {
+      "src": "/assets/images/icon-72x72.png",
+      "sizes": "72x72",
+      "type": "image/png"
+    },
+    {
+      "src": "/assets/images/icon-96x96.png",
+      "sizes": "96x96",
+      "type": "image/png"
+    },
+    {
+      "src": "/assets/images/icon-128x128.png",
+      "sizes": "128x128",
+      "type": "image/png"
+    },
+    {
+      "src": "/assets/images/icon-144x144.png",
+      "sizes": "144x144",
+      "type": "image/png"
+    },
+    {
+      "src": "/assets/images/icon-152x152.png",
+      "sizes": "152x152",
+      "type": "image/png"
+    },
+    {
+      "src": "/assets/images/icon-192x192.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "/assets/images/icon-384x384.png",
+      "sizes": "384x384",
+      "type": "image/png"
+    },
+    {
+      "src": "/assets/images/icon-512x512.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ],
+  "splash_pages": null,
+  "prefer_related_applications": false,
+  "shortcuts": [
+    {
+      "name": "Dashboard",
+      "short_name": "Dashboard",
+      "description": "View your financial dashboard",
+      "url": "/dashboard/",
+      "icons": [{ "src": "/assets/images/icon-192x192.png", "sizes": "192x192" }]
+    },
+    {
+      "name": "Cards",
+      "short_name": "Cards",
+      "description": "Manage your cards",
+      "url": "/cards/",
+      "icons": [{ "src": "/assets/images/icon-192x192.png", "sizes": "192x192" }]
+    },
+    {
+      "name": "Transfer",
+      "short_name": "Transfer",
+      "description": "Send money",
+      "url": "/transfer/",
+      "icons": [{ "src": "/assets/images/icon-192x192.png", "sizes": "192x192" }]
+    }
+  ]
+}
