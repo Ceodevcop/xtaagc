@@ -120,4 +120,47 @@ export default function Commission() {
             <option value="week">Week</option>
             <option value="month">Month</option>
           </select>
-        </div
+        </div>
+        <div className="h-80">
+          <ResponsiveContainer width="100%" height="100%">
+            <LineChart data={chartData}>
+              <CartesianGrid strokeDasharray="3 3" />
+              <XAxis dataKey="date" />
+              <YAxis />
+              <Tooltip />
+              <Line type="monotone" dataKey="amount" stroke="#2563eb" strokeWidth={2} />
+            </LineChart>
+          </ResponsiveContainer>
+        </div>
+      </div>
+
+      {/* Transaction List */}
+      <div className="card">
+        <h2 className="text-xl font-semibold mb-4">Commission History</h2>
+        <div className="space-y-3">
+          {transactions.length > 0 ? (
+            transactions.map((tx) => (
+              <div key={tx.id} className="flex items-center justify-between p-3 border rounded-lg">
+                <div>
+                  <p className="font-medium capitalize">{tx.type}</p>
+                  <p className="text-sm text-gray-500">
+                    {format(tx.date, 'dd MMM yyyy, hh:mm a')}
+                  </p>
+                  {tx.customerPhone && (
+                    <p className="text-xs text-gray-400">{tx.customerPhone}</p>
+                  )}
+                </div>
+                <div className="text-right">
+                  <p className="text-sm text-gray-600">Amount: ₦{tx.amount?.toLocaleString()}</p>
+                  <p className="text-green-600 font-medium">+₦{tx.commission?.toFixed(2)}</p>
+                </div>
+              </div>
+            ))
+          ) : (
+            <p className="text-center text-gray-500 py-8">No commission history yet</p>
+          )}
+        </div>
+      </div>
+    </div>
+  );
+}
