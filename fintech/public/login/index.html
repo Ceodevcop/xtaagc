@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Login - TAAGC Fintech (Live)</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <!-- Firebase SDKs -->
+  <script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-firestore-compat.js"></script>
+  <style>
+    body { font-family: 'Inter', sans-serif; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); }
+    .login-card { @apply bg-white p-8 rounded-2xl shadow-2xl max-w-md w-full; }
+    .input-field { @apply w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none; }
+    .btn-login { @apply w-full bg-gradient-to-r from-blue-600 to-purple-600 text-white py-3 rounded-lg font-bold hover:from-blue-700 hover:to-purple-700 transition; }
+    .toast { @apply fixed bottom-4 right-4 bg-gray-900 text-white px-4 py-3 rounded-lg shadow-lg z-50; }
+    .toast.success { @apply bg-green-600; }
+    .toast.error { @apply bg-red-600; }
+  </style>
+</head>
+<body class="min-h-screen flex items-center justify-center p-4">
+  <!-- Loading Spinner -->
+  <div id="loading-spinner" class="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center hidden">
+    <div class="bg-white p-6 rounded-lg text-center">
+      <div class="animate-spin rounded-full h-12 w-12 border-4 border-blue-600 border-t-transparent mx-auto mb-4"></div>
+      <p class="text-gray-700">Logging in...</p>
+    </div>
+  </div>
+
+  <!-- Toast Container -->
+  <div id="toast-container" class="fixed bottom-4 right-4 z-50"></div>
+
+  <div class="login-card">
+    <!-- Logo -->
+    <div class="text-center mb-6">
+      <a href="/" class="inline-flex items-center space-x-2">
+        <div class="w-10 h-10 bg-gradient-to-br from-blue-600 to-purple-600 rounded-lg flex items-center justify-center">
+          <span class="text-white font-bold text-xl">T</span>
+        </div>
+        <span class="text-xl font-bold text-gray-800">TAAGC Fintech</span>
+      </a>
+      <p class="text-sm text-gray-600 mt-2">Welcome back! Login to your account</p>
+    </div>
+
+    <!-- Login Form -->
+    <div id="login-form" class="space-y-4">
+      <div>
+        <label class="block mb-2 font-medium">Phone Number</label>
+        <div class="relative">
+          <i class="fas fa-phone absolute left-3 top-3 text-gray-400"></i>
+          <input type="tel" id="phone" class="input-field pl-10" placeholder="08012345678" required>
+        </div>
+      </div>
+
+      <div id="recaptcha-container"></div>
+
+      <button onclick="sendOTP()" class="btn-login">
+        <i class="fas fa-paper-plane mr-2"></i>Send OTP
+      </button>
+    </div>
+
+    <!-- OTP Verification Form -->
+    <div id="otp-form" class="space-y-4 hidden">
+      <h2 class="text-2xl font-bold text-center">Enter OTP</h2>
+      <p class="text-sm text-gray-600 text-center">Code sent to <span id="display-phone" class="font-bold"></span></p>
+      
+      <div>
+        <label class="block mb-2 font-medium">6-Digit OTP</label>
+        <div class="flex gap-2 justify-center">
+          <input type="text" id="otp1" class="w-12 h-12 text-center text-xl font-bold border rounded-lg" maxlength="1" onkeyup="moveToNext(this, 'otp2')">
+          <input type="text" id="otp2" class="w-12 h-12 text-center text-xl font-bold border rounded-lg" maxlength="1" onkeyup="moveToNext(this, 'otp3')">
+          <input type="text" id="otp3" class="w-12 h-12 text-center text-xl font-bold border rounded-lg" maxlength="1" onkeyup="moveToNext(this, 'otp4')">
+          <input type="text" id="otp4" class="w-12 h-12 text-center text-xl font-bold border rounded-lg" maxlength="1" onkeyup="moveToNext(this, 'otp5')">
+          <input type="text" id="otp5" class="w-12 h-12 text-center text-xl font-bold border rounded-lg" maxlength="1" onkeyup="moveToNext(this, 'otp6')">
+          <input type="text" id="otp6" class="w-12 h-12 text-center text-xl font-bold border rounded-lg" maxlength="1">
+        </div>
+      </div>
+
+      <div class="flex items-center justify-between">
+        <button onclick="resendOTP()" class="text-blue-600 hover:underline text-sm">
+          <i class="fas fa-redo-alt mr-1"></i>Resend OTP
+        </button>
+        <span id="timer" class="text-sm text-gray-500">60s</span>
+      </div>
+
+      <button onclick="verifyOTP()" class="btn-login">
+        <i class="fas fa-check-circle mr-2"></i>Verify & Login
+      </button>
+
+      <button onclick="backToPhone()" class="w-full text-gray-600 hover:text-gray-800 text-sm">
+        <i class="fas fa-arrow-left mr-1"></i>Use different number
+      </button>
+    </div>
+
+    <!-- Register Link -->
+    <p class="text-center mt-6 text-gray-600">
+      Don't have an account? 
+      <a href="/register.html" class="text-blue-600 hover:underline font-medium">Register here</a>
+    </p>
+
+    <!-- Demo Credentials -->
+    <div class="mt-6 p-4 bg-blue-50 rounded-lg">
+      <p class="text-sm text-blue-800 font-medium mb-2"><i class="fas fa-info-circle mr-1"></i>Demo Accounts:</p>
+      <p class="text-xs text-blue-600">Customer: 08012345678</p>
+      <p class="text-xs text-blue-600">Agent: 08087654321</p>
+    </div>
+  </div>
+
+  <script>
+    // Firebase configuration
+    const firebaseConfig = {
+      apiKey: "AIzaSyAysDaLRza0-SLnp778K9eZ8XBAa7hRu58",
+      authDomain: "fintech-ad170.firebaseapp.com",
+      projectId: "fintech-ad170",
+      storageBucket: "fintech-ad170.firebasestorage.app",
+      messagingSenderId: "110922302396",
+      appId: "1:110922302396:web:558751ccf7c45a70b761b9",
+      measurementId: "G-6GGYPJME1V"
+    };
+
+    // Initialize Firebase
+    firebase.initializeApp(firebaseConfig);
+    const auth = firebase.auth();
+    const db = firebase.firestore();
+
+    auth.useDeviceLanguage();
+
+    let confirmationResult = null;
+    let phoneNumber = '';
+
+    // Move to next OTP input
+    window.moveToNext = function(current, nextId) {
+      if (current.value.length === 1) {
+        document.getElementById(nextId)?.focus();
+      }
+    };
+
+    // Send OTP
+    window.sendOTP = async function() {
+      const phone = document.getElementById('phone').value;
+      if (!phone || phone.length < 11) {
+        showToast('Please enter a valid phone number', 'error');
+        return;
+      }
+
+      showLoading(true);
+      try {
+        window.recaptchaVerifier = new firebase.auth.RecaptchaVerifier('recaptcha-container', {
+          size: 'invisible'
+        });
+
+        phoneNumber = '+234' + phone.slice(-10); // Format to Nigerian number
+        confirmationResult = await auth.signInWithPhoneNumber(phoneNumber, window.recaptchaVerifier);
+        
+        document.getElementById('display-phone').textContent = phone;
+        document.getElementById('login-form').classList.add('hidden');
+        document.getElementById('otp-form').classList.remove('hidden');
+        
+        startTimer();
+        showToast('OTP sent successfully!', 'success');
+      } catch (error) {
+        showToast('Error: ' + error.message, 'error');
+      } finally {
+        showLoading(false);
+      }
+    };
+
+    // Timer for OTP
+    function startTimer() {
+      let timeLeft = 60;
+      const timerElement = document.getElementById('timer');
+      const interval = setInterval(() => {
+        timeLeft--;
+        timerElement.textContent = timeLeft + 's';
+        if (timeLeft <= 0) {
+          clearInterval(interval);
+          timerElement.innerHTML = '<button onclick="resendOTP()" class="text-blue-600">Resend</button>';
+        }
+      }, 1000);
+    }
+
+    // Resend OTP
+    window.resendOTP = async function() {
+      try {
+        showLoading(true);
+        confirmationResult = await auth.signInWithPhoneNumber(phoneNumber, window.recaptchaVerifier);
+        showToast('OTP resent!', 'success');
+        startTimer();
+      } catch (error) {
+        showToast('Error: ' + error.message, 'error');
+      } finally {
+        showLoading(false);
+      }
+    };
+
+    // Verify OTP
+    window.verifyOTP = async function() {
+      const otp = Array.from({length: 6}, (_, i) => document.getElementById(`otp${i+1}`).value).join('');
+      
+      if (otp.length !== 6) {
+        showToast('Please enter the 6-digit OTP', 'error');
+        return;
+      }
+
+      showLoading(true);
+      try {
+        const result = await confirmationResult.confirm(otp);
+        
+        // Check if user profile exists
+        const userDoc = await db.collection('users').doc(result.user.uid).get();
+        
+        if (userDoc.exists) {
+          showToast('Login successful! Redirecting...', 'success');
+          setTimeout(() => {
+            window.location.href = '/dashboard.html';
+          }, 1500);
+        } else {
+          // New user - redirect to complete registration
+          window.location.href = '/register.html?step=profile';
+        }
+      } catch (error) {
+        showToast('Invalid OTP. Please try again.', 'error');
+      } finally {
+        showLoading(false);
+      }
+    };
+
+    // Back to phone input
+    window.backToPhone = function() {
+      document.getElementById('otp-form').classList.add('hidden');
+      document.getElementById('login-form').classList.remove('hidden');
+      // Clear OTP inputs
+      for (let i = 1; i <= 6; i++) {
+        document.getElementById(`otp${i}`).value = '';
+      }
+    };
+
+    // Helper functions
+    function showLoading(show) {
+      document.getElementById('loading-spinner').classList.toggle('hidden', !show);
+    }
+
+    function showToast(message, type) {
+      const container = document.getElementById('toast-container');
+      const toast = document.createElement('div');
+      toast.className = `toast ${type}`;
+      toast.innerHTML = message;
+      container.appendChild(toast);
+      setTimeout(() => {
+        toast.style.transform = 'translateX(400px)';
+        setTimeout(() => container.removeChild(toast), 300);
+      }, 3000);
+    }
+
+    // Check if already logged in
+    auth.onAuthStateChanged((user) => {
+      if (user) {
+        db.collection('users').doc(user.uid).get().then((doc) => {
+          if (doc.exists) {
+            window.location.href = '/dashboard.html';
+          }
+        });
+      }
+    });
+  </script>
+</body>
+</html>
