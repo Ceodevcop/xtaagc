@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Transactions - TRIPLE A AHAL GLOBAL CONCEPT</title>
+    <link rel="stylesheet" href="/css/style.css">
+    <link rel="stylesheet" href="/css/dashboard.css">
+    <link rel="stylesheet" href="/css/transactions.css">
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
+</head>
+<body>
+    <div class="dashboard">
+        <aside class="sidebar">
+            <!-- Same sidebar -->
+            <div class="sidebar-header">
+                <img src="/assets/images/logo.svg" alt="TRIPLE A" width="32">
+                <div class="sidebar-brand">
+                    <span class="brand-triplea">TRIPLE A</span>
+                    <span class="brand-ahal">AHAL GLOBAL</span>
+                </div>
+            </div>
+            <nav class="sidebar-nav">
+                <a href="/dashboard/" class="nav-item">📊 Dashboard</a>
+                <a href="/cards/" class="nav-item">💳 Cards</a>
+                <a href="/transactions/" class="nav-item active">📝 Transactions</a>
+                <a href="/transfer/" class="nav-item">💸 Transfers</a>
+                <a href="/profile/" class="nav-item">👤 Profile</a>
+                <a href="/settings/" class="nav-item">⚙️ Settings</a>
+            </nav>
+        </aside>
+
+        <main class="main-content">
+            <header class="dashboard-header">
+                <h1>Transactions</h1>
+                <div class="header-actions">
+                    <button class="btn btn-outline" onclick="exportTransactions()">
+                        📥 Export
+                    </button>
+                    <button class="btn btn-outline" onclick="filterTransactions()">
+                        🔍 Filter
+                    </button>
+                </div>
+            </header>
+
+            <!-- Transaction Summary -->
+            <div class="transaction-summary">
+                <div class="summary-card">
+                    <span class="label">Total Spent</span>
+                    <span class="value" id="totalSpent">$0.00</span>
+                </div>
+                <div class="summary-card">
+                    <span class="label">Total Received</span>
+                    <span class="value" id="totalReceived">$0.00</span>
+                </div>
+                <div class="summary-card">
+                    <span class="label">This Month</span>
+                    <span class="value" id="monthlySpent">$0.00</span>
+                </div>
+                <div class="summary-card">
+                    <span class="label">Transactions</span>
+                    <span class="value" id="transactionCount">0</span>
+                </div>
+            </div>
+
+            <!-- Filters -->
+            <div class="filters-bar" id="filtersBar" style="display: none;">
+                <select id="typeFilter">
+                    <option value="">All Types</option>
+                    <option value="purchase">Purchases</option>
+                    <option value="fund">Funds</option>
+                    <option value="withdraw">Withdrawals</option>
+                    <option value="transfer">Transfers</option>
+                </select>
+                <select id="cardFilter">
+                    <option value="">All Cards</option>
+                </select>
+                <input type="date" id="dateFrom">
+                <input type="date" id="dateTo">
+                <button class="btn btn-primary" onclick="applyFilters()">Apply</button>
+                <button class="btn btn-outline" onclick="resetFilters()">Reset</button>
+            </div>
+
+            <!-- Transactions List -->
+            <div class="transactions-container">
+                <div class="transactions-header">
+                    <div class="date-group">Today</div>
+                </div>
+                <div class="transactions-list" id="transactionsList">
+                    <div class="loading-spinner">Loading transactions...</div>
+                </div>
+            </div>
+
+            <!-- Pagination -->
+            <div class="pagination">
+                <button class="page-btn" id="prevPage" disabled>← Previous</button>
+                <span class="page-info" id="pageInfo">Page 1 of 1</span>
+                <button class="page-btn" id="nextPage" disabled>Next →</button>
+            </div>
+        </main>
+    </div>
+
+    <div class="toast" id="toast"></div>
+
+    <script src="/js/firebase-config.js"></script>
+    <script src="/js/firebase-init.js"></script>
+    <script src="/js/transactions.js"></script>
+</body>
+</html>
