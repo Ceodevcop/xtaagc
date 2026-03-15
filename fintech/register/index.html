@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Register - TRIPLE A AHAL GLOBAL CONCEPT</title>
+    <link rel="stylesheet" href="/css/style.css">
+    <link rel="stylesheet" href="/css/auth.css">
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
+</head>
+<body class="auth-page">
+    <div class="auth-container">
+        <div class="auth-card">
+            <div class="auth-header">
+                <img src="/assets/images/logo.svg" alt="TRIPLE A" width="48">
+                <h1>Create Account</h1>
+                <p>Join TRIPLE A AHAL GLOBAL CONCEPT today</p>
+            </div>
+
+            <form id="registerForm" class="auth-form">
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="firstName">First Name</label>
+                        <input type="text" id="firstName" class="form-input" 
+                               placeholder="John" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="lastName">Last Name</label>
+                        <input type="text" id="lastName" class="form-input" 
+                               placeholder="Doe" required>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="email">Email Address</label>
+                    <div class="input-with-icon">
+                        <span class="icon">📧</span>
+                        <input type="email" id="email" class="form-input" 
+                               placeholder="you@example.com" required>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="phone">Phone Number</label>
+                    <div class="input-with-icon">
+                        <span class="icon">📱</span>
+                        <input type="tel" id="phone" class="form-input" 
+                               placeholder="+1 234 567 8900" required>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="password">Password</label>
+                    <div class="input-with-icon">
+                        <span class="icon">🔒</span>
+                        <input type="password" id="password" class="form-input" 
+                               placeholder="Create a strong password" required>
+                    </div>
+                    <div class="password-strength" id="passwordStrength">
+                        <div class="strength-bar"></div>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="confirmPassword">Confirm Password</label>
+                    <div class="input-with-icon">
+                        <span class="icon">🔒</span>
+                        <input type="password" id="confirmPassword" class="form-input" 
+                               placeholder="Confirm your password" required>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="checkbox">
+                        <input type="checkbox" id="terms" required>
+                        <span>I agree to the <a href="/terms" target="_blank">Terms of Service</a> 
+                              and <a href="/privacy" target="_blank">Privacy Policy</a></span>
+                    </label>
+                </div>
+
+                <button type="submit" class="btn btn-primary btn-block" id="registerBtn">
+                    Create Account
+                </button>
+
+                <div class="auth-divider">
+                    <span>or sign up with</span>
+                </div>
+
+                <div class="social-login">
+                    <button type="button" class="social-btn" id="googleRegister">
+                        <img src="/assets/images/google.svg" alt="Google" width="20">
+                        Google
+                    </button>
+                    <button type="button" class="social-btn" id="appleRegister">
+                        <img src="/assets/images/apple.svg" alt="Apple" width="20">
+                        Apple
+                    </button>
+                </div>
+
+                <p class="auth-footer">
+                    Already have an account? 
+                    <a href="/login/">Sign In</a>
+                </p>
+            </form>
+
+            <div class="auth-domain">fintech.taagc.website</div>
+        </div>
+    </div>
+
+    <div class="toast" id="toast"></div>
+
+    <script src="/js/firebase-config.js"></script>
+    <script src="/js/register.js"></script>
+</body>
+</html>
