@@ -1,3 +1,4 @@
+// firebase.json (complete)
 {
   "hosting": {
     "public": ".",
@@ -10,6 +11,10 @@
       {
         "source": "**",
         "destination": "/index.html"
+      },
+      {
+        "source": "/api/**",
+        "function": "api"
       }
     ],
     "headers": [
@@ -30,6 +35,19 @@
             "value": "max-age=3600"
           }
         ]
+      },
+      {
+        "source": "/manifest.json",
+        "headers": [
+          {
+            "key": "Cache-Control",
+            "value": "max-age=3600"
+          },
+          {
+            "key": "Content-Type",
+            "value": "application/manifest+json"
+          }
+        ]
       }
     ]
   },
@@ -39,5 +57,9 @@
   },
   "storage": {
     "rules": "storage.rules"
+  },
+  "functions": {
+    "source": "functions",
+    "runtime": "nodejs18"
   }
 }
