@@ -1,0 +1,30 @@
+{
+  "name": "taagc-fintech",
+  "version": "1.0.0",
+  "description": "TAAGC Fintech Platform - Powered by 9PSB",
+  "main": "index.js",
+  "scripts": {
+    "start": "firebase emulators:start",
+    "deploy": "firebase deploy",
+    "deploy:hosting": "firebase deploy --only hosting",
+    "deploy:functions": "firebase deploy --only functions",
+    "deploy:firestore": "firebase deploy --only firestore",
+    "deploy:storage": "firebase deploy --only storage",
+    "logs": "firebase functions:log",
+    "serve": "firebase serve"
+  },
+  "keywords": [
+    "fintech",
+    "payments",
+    "nigeria",
+    "9psb",
+    "airtime",
+    "bills",
+    "betting"
+  ],
+  "author": "Triple A-Ahal Global Concept",
+  "license": "ISC",
+  "devDependencies": {
+    "firebase-tools": "^13.0.0"
+  }
+}
