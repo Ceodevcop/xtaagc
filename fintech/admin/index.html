@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard - TRIPLE A AHAL GLOBAL CONCEPT</title>
+    <link rel="stylesheet" href="/css/style.css">
+    <link rel="stylesheet" href="/css/admin.css">
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body class="admin-body">
+    <div class="admin-container">
+        <!-- Sidebar -->
+        <aside class="admin-sidebar">
+            <div class="sidebar-header">
+                <img src="/assets/images/logo.svg" alt="TRIPLE A" width="40">
+                <h2>Admin Panel</h2>
+            </div>
+            
+            <nav class="admin-nav">
+                <a href="#dashboard" class="nav-item active" onclick="showSection('dashboard')">
+                    <span class="icon">📊</span> Dashboard
+                </a>
+                <a href="#users" class="nav-item" onclick="showSection('users')">
+                    <span class="icon">👥</span> Users
+                </a>
+                <a href="#transactions" class="nav-item" onclick="showSection('transactions')">
+                    <span class="icon">💳</span> Transactions
+                </a>
+                <a href="#cards" class="nav-item" onclick="showSection('cards')">
+                    <span class="icon">💳</span> Cards
+                </a>
+                <a href="#kyc" class="nav-item" onclick="showSection('kyc')">
+                    <span class="icon">✓</span> KYC Reviews
+                </a>
+                <a href="#compliance" class="nav-item" onclick="showSection('compliance')">
+                    <span class="icon">⚖️</span> Compliance
+                </a>
+                <a href="#reports" class="nav-item" onclick="showSection('reports')">
+                    <span class="icon">📈</span> Reports
+                </a>
+                <a href="#settings" class="nav-item" onclick="showSection('settings')">
+                    <span class="icon">⚙️</span> Settings
+                </a>
+            </nav>
+            
+            <div class="sidebar-footer">
+                <div class="admin-user">
+                    <span class="avatar">A</span>
+                    <div>
+                        <strong>Admin User</strong>
+                        <small>Super Admin</small>
+                    </div>
+                </div>
+                <button class="logout-btn" onclick="adminLogout()">Logout</button>
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="admin-main">
+            <!-- Dashboard Section -->
+            <section id="dashboardSection" class="admin-section active">
+                <header class="section-header">
+                    <h1>Dashboard Overview</h1>
+                    <div class="date-range">
+                        <select id="dateRange">
+                            <option value="today">Today</option>
+                            <option value="week">This Week</option>
+                            <option value="month" selected>This Month</option>
+                            <option value="year">This Year</option>
+                        </select>
+                    </div>
+                </header>
+
+                <!-- Stats Cards -->
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-icon">👥</div>
+                        <div class="stat-details">
+                            <span class="stat-label">Total Users</span>
+                            <span class="stat-value" id="totalUsers">0</span>
+                            <span class="stat-change positive">+12%</span>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon">💳</div>
+                        <div class="stat-details">
+                            <span class="stat-label">Total Cards</span>
+                            <span class="stat-value" id="totalCards">0</span>
+                            <span class="stat-change positive">+8%</span>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon">💰</div>
+                        <div class="stat-details">
+                            <span class="stat-label">Total Balance</span>
+                            <span class="stat-value" id="totalBalance">$0</span>
+                            <span class="stat-change positive">+15%</span>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon">📊</div>
+                        <div class="stat-details">
+                            <span class="stat-label">Transactions</span>
+                            <span class="stat-value" id="totalTransactions">0</span>
+                            <span class="stat-change positive">+23%</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Charts -->
+                <div class="charts-grid">
+                    <div class="chart-card">
+                        <h3>Revenue Overview</h3>
+                        <canvas id="revenueChart"></canvas>
+                    </div>
+                    <div class="chart-card">
+                        <h3>User Growth</h3>
+                        <canvas id="userGrowthChart"></canvas>
+                    </div>
+                </div>
+
+                <!-- Recent Activity -->
+                <div class="recent-activity">
+                    <h3>Recent Activity</h3>
+                    <div class="activity-list" id="recentActivity">
+                        <!-- Loaded via JS -->
+                    </div>
+                </div>
+            </section>
+
+            <!-- Users Section -->
+            <section id="usersSection" class="admin-section">
+                <header class="section-header">
+                    <h1>User Management</h1>
+                    <div class="header-actions">
+                        <input type="text" placeholder="Search users..." class="search-input" id="userSearch">
+                        <button class="btn btn-primary" onclick="exportUsers()">Export</button>
+                    </div>
+                </header>
+
+                <div class="users-table-container">
+                    <table class="users-table">
+                        <thead>
+                            <tr>
+                                <th>User</th>
+                                <th>Email</th>
+                                <th>KYC Level</th>
+                                <th>Cards</th>
+                                <th>Balance</th>
+                                <th>Status</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="usersTableBody">
+                            <!-- Loaded via JS -->
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="pagination">
+                    <button class="page-btn" onclick="prevUsersPage()">←</button>
+                    <span id="usersPageInfo">Page 1 of 10</span>
+                    <button class="page-btn" onclick="nextUsersPage()">→</button>
+                </div>
+            </section>
+
+            <!-- KYC Reviews Section -->
+            <section id="kycSection" class="admin-section">
+                <header class="section-header">
+                    <h1>KYC Verification Reviews</h1>
+                    <div class="filters">
+                        <select id="kycFilter">
+                            <option value="pending">Pending</option>
+                            <option value="verified">Verified</option>
+                            <option value="rejected">Rejected</option>
+                            <option value="all">All</option>
+                        </select>
+                    </div>
+                </header>
+
+                <div class="kyc-queue" id="kycQueue">
+                    <!-- Loaded via JS -->
+                </div>
+            </section>
+
+            <!-- Compliance Section -->
+            <section id="complianceSection" class="admin-section">
+                <header class="section-header">
+                    <h1>Compliance Monitoring</h1>
+                </header>
+
+                <div class="compliance-dashboard">
+                    <div class="alert-card warning">
+                        <h3>Suspicious Transactions</h3>
+                        <div class="alert-list" id="suspiciousTransactions">
+                            <!-- Loaded via JS -->
+                        </div>
+                    </div>
+
+                    <div class="alert-card info">
+                        <h3>Sanctions Screening</h3>
+                        <div class="alert-list" id="sanctionsAlerts">
+                            <!-- Loaded via JS -->
+                        </div>
+                    </div>
+
+                    <div class="audit-log">
+                        <h3>Audit Log</h3>
+                        <div class="audit-list" id="auditLog">
+                            <!-- Loaded via JS -->
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <!-- User Details Modal -->
+    <div class="modal" id="userModal">
+        <div class="modal-content large">
+            <span class="close" onclick="closeUserModal()">&times;</span>
+            <div id="userDetails"></div>
+        </div>
+    </div>
+
+    <script src="/js/firebase-config.js"></script>
+    <script src="/js/firebase-init.js"></script>
+    <script src="/js/admin.js"></script>
+</body>
+</html>
