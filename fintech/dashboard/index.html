@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard - TRIPLE A AHAL GLOBAL CONCEPT</title>
+    <link rel="stylesheet" href="/css/style.css">
+    <link rel="stylesheet" href="/css/dashboard.css">
+    <link rel="stylesheet" href="/css/cards.css">
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
+</head>
+<body>
+    <div class="dashboard">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <img src="/assets/images/logo.svg" alt="TRIPLE A" width="32">
+                <div class="sidebar-brand">
+                    <span class="brand-triplea">TRIPLE A</span>
+                    <span class="brand-ahal">AHAL GLOBAL</span>
+                </div>
+            </div>
+            
+            <nav class="sidebar-nav">
+                <a href="/dashboard/" class="nav-item active">
+                    <span class="icon">📊</span>
+                    <span>Dashboard</span>
+                </a>
+                <a href="/cards/" class="nav-item">
+                    <span class="icon">💳</span>
+                    <span>Cards</span>
+                </a>
+                <a href="/transactions/" class="nav-item">
+                    <span class="icon">📝</span>
+                    <span>Transactions</span>
+                </a>
+                <a href="/transfer/" class="nav-item">
+                    <span class="icon">💸</span>
+                    <span>Transfers</span>
+                </a>
+                <a href="/profile/" class="nav-item">
+                    <span class="icon">👤</span>
+                    <span>Profile</span>
+                </a>
+                <a href="/kyc/" class="nav-item">
+                    <span class="icon">✓</span>
+                    <span>KYC Verification</span>
+                </a>
+                <a href="/settings/" class="nav-item">
+                    <span class="icon">⚙️</span>
+                    <span>Settings</span>
+                </a>
+            </nav>
+            
+            <div class="sidebar-footer">
+                <a href="/support/" class="nav-item">
+                    <span class="icon">❓</span>
+                    <span>Support</span>
+                </a>
+                <button class="nav-item" id="sidebarLogout">
+                    <span class="icon">🚪</span>
+                    <span>Logout</span>
+                </button>
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Header -->
+            <header class="dashboard-header">
+                <div class="header-left">
+                    <h1>Virtual Dollar Cards</h1>
+                    <button class="icon-btn" id="toggleBalance">
+                        <span class="icon">👁️</span>
+                    </button>
+                </div>
+                
+                <div class="header-right">
+                    <button class="icon-btn" id="downloadBtn">
+                        <span class="icon">📥</span>
+                    </button>
+                    <button class="icon-btn" id="settingsBtn">
+                        <span class="icon">⚙️</span>
+                    </button>
+                    <div class="user-avatar" id="userAvatar">MA</div>
+                </div>
+            </header>
+
+            <!-- Cards Grid -->
+            <div class="cards-grid" id="cardsGrid">
+                <!-- Cards will be loaded here from Firebase -->
+                <div class="loading-spinner">Loading cards...</div>
+            </div>
+
+            <!-- Total Balance Card -->
+            <div class="total-balance-card" id="totalBalanceCard">
+                <div class="balance-label">Total Balance (All Cards)</div>
+                <div class="balance-amount" id="totalBalance">$0.00</div>
+                <div class="balance-stats">
+                    <span class="stat">📈 +2.5% today</span>
+                    <span class="stat">🌍 Multi-currency</span>
+                </div>
+            </div>
+
+            <!-- Quick Actions -->
+            <div class="quick-actions">
+                <h3>Quick Actions</h3>
+                <div class="actions-grid">
+                    <button class="action-card" onclick="window.location.href='/card-issue/'">
+                        <span class="icon">➕</span>
+                        <span>New Card</span>
+                    </button>
+                    <button class="action-card" onclick="window.location.href='/transfer/'">
+                        <span class="icon">💸</span>
+                        <span>Send Money</span>
+                    </button>
+                    <button class="action-card" onclick="window.location.href='/cards/'">
+                        <span class="icon">💰</span>
+                        <span>Fund Card</span>
+                    </button>
+                    <button class="action-card" onclick="window.location.href='/transactions/'">
+                        <span class="icon">📊</span>
+                        <span>View All</span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Recent Transactions -->
+            <div class="recent-transactions">
+                <div class="section-header">
+                    <h3>Recent Transactions</h3>
+                    <a href="/transactions/" class="view-all">View all →</a>
+                </div>
+                <div class="transaction-list" id="transactionList">
+                    <!-- Transactions will be loaded here from Firebase -->
+                    <div class="loading-spinner">Loading transactions...</div>
+                </div>
+            </div>
+
+            <!-- Promotional Banner -->
+            <div class="promo-banner">
+                <h2>Get virtual USD cards that work.</h2>
+                <p>Create virtual cards for online payments, subscriptions, and more</p>
+                <button class="btn btn-light" onclick="window.location.href='/card-issue/'">Learn More</button>
+            </div>
+        </main>
+    </div>
+
+    <!-- Toast Notification -->
+    <div class="toast" id="toast"></div>
+
+    <script src="/js/firebase-config.js"></script>
+    <script src="/js/firebase-init.js"></script>
+    <script src="/js/dashboard.js"></script>
+</body>
+</html>
