@@ -3,161 +3,609 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Register - TAAGC Fintech (Live)</title>
-  <script src="https://cdn.tailwindcss.com"></script>
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-  <!-- Firebase SDKs -->
+  <title>Create Account | TAAGC Fintech - Advanced Digital Banking</title>
+  
+  <!-- SEO Meta -->
+  <meta name="description" content="Join TAAGC Fintech - Nigeria's most advanced digital banking platform. Create your account in minutes with secure OTP verification.">
+  <meta name="keywords" content="fintech registration, open account, digital banking, nigeria, 9psb">
+  
+  <!-- Open Graph -->
+  <meta property="og:title" content="Create Account | TAAGC Fintech">
+  <meta property="og:description" content="Join the future of banking in Nigeria">
+  <meta property="og:image" content="https://fintech.taagc.website/og-register.jpg">
+  <meta property="og:url" content="https://fintech.taagc.website/register.html">
+  
+  <!-- Fonts & Icons -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Space+Grotesk:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  
+  <!-- AOS Animation -->
+  <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+  
+  <!-- Firebase SDK -->
   <script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-auth-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-firestore-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-functions-compat.js"></script>
+  
+  <!-- Tailwind -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  
   <style>
-    body { font-family: 'Inter', sans-serif; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); }
-    .register-card { @apply bg-white p-8 rounded-2xl shadow-2xl max-w-md w-full; }
-    .input-field { @apply w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent outline-none; }
-    .btn-register { @apply w-full bg-gradient-to-r from-purple-600 to-blue-600 text-white py-3 rounded-lg font-bold hover:from-purple-700 hover:to-blue-700 transition; }
-    .step-indicator { @apply flex items-center justify-center mb-8; }
-    .step { @apply w-8 h-8 rounded-full flex items-center justify-center text-sm font-medium; }
-    .step.active { @apply bg-purple-600 text-white; }
-    .step.completed { @apply bg-green-500 text-white; }
-    .step-line { @apply flex-1 h-1 mx-2 bg-gray-300; }
-    .step-line.active { @apply bg-green-500; }
-    .toast { @apply fixed bottom-4 right-4 bg-gray-900 text-white px-4 py-3 rounded-lg shadow-lg z-50; }
-    .toast.success { @apply bg-green-600; }
-    .toast.error { @apply bg-red-600; }
+    /* Advanced Styling */
+    :root {
+      --primary: #6366f1;
+      --primary-dark: #4f46e5;
+      --secondary: #8b5cf6;
+      --accent: #ec4899;
+      --dark: #0f172a;
+      --light: #f8fafc;
+    }
+    
+    body {
+      font-family: 'Inter', sans-serif;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      min-height: 100vh;
+      position: relative;
+      overflow-x: hidden;
+    }
+    
+    /* Animated Background */
+    .gradient-bg {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: -1;
+      background: linear-gradient(-45deg, #ee7752, #e73c7e, #23a6d5, #23d5ab);
+      background-size: 400% 400%;
+      animation: gradient 15s ease infinite;
+    }
+    
+    @keyframes gradient {
+      0% { background-position: 0% 50%; }
+      50% { background-position: 100% 50%; }
+      100% { background-position: 0% 50%; }
+    }
+    
+    /* Floating Orbs */
+    .orb {
+      position: absolute;
+      border-radius: 50%;
+      background: rgba(255, 255, 255, 0.1);
+      backdrop-filter: blur(5px);
+      animation: float 20s infinite;
+    }
+    
+    .orb-1 {
+      width: 300px;
+      height: 300px;
+      top: -150px;
+      right: -150px;
+      background: radial-gradient(circle, rgba(99,102,241,0.2) 0%, rgba(139,92,246,0.1) 100%);
+    }
+    
+    .orb-2 {
+      width: 400px;
+      height: 400px;
+      bottom: -200px;
+      left: -200px;
+      background: radial-gradient(circle, rgba(236,72,153,0.2) 0%, rgba(139,92,246,0.1) 100%);
+      animation-delay: -5s;
+    }
+    
+    .orb-3 {
+      width: 200px;
+      height: 200px;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      background: radial-gradient(circle, rgba(99,102,241,0.15) 0%, transparent 70%);
+      animation: pulse 4s ease-in-out infinite;
+    }
+    
+    @keyframes float {
+      0%, 100% { transform: translate(0, 0) rotate(0deg); }
+      33% { transform: translate(30px, -30px) rotate(120deg); }
+      66% { transform: translate(-20px, 20px) rotate(240deg); }
+    }
+    
+    @keyframes pulse {
+      0%, 100% { transform: translate(-50%, -50%) scale(1); opacity: 0.5; }
+      50% { transform: translate(-50%, -50%) scale(1.2); opacity: 0.8; }
+    }
+    
+    /* Glassmorphism Card */
+    .glass-card {
+      background: rgba(255, 255, 255, 0.95);
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+      border-radius: 2rem;
+      transition: transform 0.3s, box-shadow 0.3s;
+    }
+    
+    .glass-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 35px 60px -15px rgba(0, 0, 0, 0.3);
+    }
+    
+    /* Input Fields */
+    .input-group {
+      position: relative;
+      margin-bottom: 1.5rem;
+    }
+    
+    .input-group input,
+    .input-group select {
+      width: 100%;
+      padding: 1rem 1rem 1rem 3rem;
+      border: 2px solid #e2e8f0;
+      border-radius: 1rem;
+      font-size: 1rem;
+      transition: all 0.3s;
+      background: white;
+    }
+    
+    .input-group input:focus,
+    .input-group select:focus {
+      border-color: var(--primary);
+      box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.1);
+      outline: none;
+    }
+    
+    .input-group i {
+      position: absolute;
+      left: 1rem;
+      top: 50%;
+      transform: translateY(-50%);
+      color: #94a3b8;
+      font-size: 1.25rem;
+      transition: color 0.3s;
+    }
+    
+    .input-group input:focus + i,
+    .input-group select:focus + i {
+      color: var(--primary);
+    }
+    
+    /* OTP Input */
+    .otp-group {
+      display: flex;
+      gap: 0.75rem;
+      justify-content: center;
+    }
+    
+    .otp-input {
+      width: 4rem;
+      height: 4rem;
+      text-align: center;
+      font-size: 1.5rem;
+      font-weight: bold;
+      border: 2px solid #e2e8f0;
+      border-radius: 1rem;
+      transition: all 0.3s;
+    }
+    
+    .otp-input:focus {
+      border-color: var(--primary);
+      box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.1);
+      outline: none;
+    }
+    
+    /* Progress Steps */
+    .step-indicator {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 2rem;
+    }
+    
+    .step {
+      width: 3rem;
+      height: 3rem;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: bold;
+      transition: all 0.3s;
+    }
+    
+    .step.active {
+      background: linear-gradient(135deg, var(--primary), var(--secondary));
+      color: white;
+      transform: scale(1.1);
+    }
+    
+    .step.completed {
+      background: #10b981;
+      color: white;
+    }
+    
+    .step-line {
+      flex: 1;
+      height: 2px;
+      background: #e2e8f0;
+      margin: 0 0.5rem;
+      transition: all 0.3s;
+    }
+    
+    .step-line.active {
+      background: linear-gradient(90deg, var(--primary), var(--secondary));
+    }
+    
+    /* Button Styles */
+    .btn-primary {
+      background: linear-gradient(135deg, var(--primary), var(--secondary));
+      color: white;
+      padding: 1rem 2rem;
+      border-radius: 1rem;
+      font-weight: 600;
+      font-size: 1.125rem;
+      width: 100%;
+      transition: all 0.3s;
+      position: relative;
+      overflow: hidden;
+    }
+    
+    .btn-primary::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+      transition: left 0.5s;
+    }
+    
+    .btn-primary:hover::before {
+      left: 100%;
+    }
+    
+    .btn-primary:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 10px 25px -5px rgba(99, 102, 241, 0.5);
+    }
+    
+    /* Loading Spinner */
+    .loader {
+      width: 48px;
+      height: 48px;
+      border: 5px solid #f3f3f3;
+      border-bottom-color: var(--primary);
+      border-radius: 50%;
+      display: inline-block;
+      animation: rotation 1s linear infinite;
+    }
+    
+    @keyframes rotation {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+    
+    /* Toast Notification */
+    .toast {
+      position: fixed;
+      bottom: 2rem;
+      right: 2rem;
+      padding: 1rem 2rem;
+      background: white;
+      border-radius: 1rem;
+      box-shadow: 0 20px 40px -10px rgba(0, 0, 0, 0.3);
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      transform: translateX(400px);
+      transition: transform 0.3s;
+      z-index: 1000;
+    }
+    
+    .toast.show {
+      transform: translateX(0);
+    }
+    
+    .toast.success { border-left: 4px solid #10b981; }
+    .toast.error { border-left: 4px solid #ef4444; }
+    .toast.info { border-left: 4px solid #3b82f6; }
+    
+    /* Timer Animation */
+    @keyframes countdown {
+      from { stroke-dashoffset: 0; }
+      to { stroke-dashoffset: 301.59; }
+    }
+    
+    .timer-circle {
+      animation: countdown 60s linear forwards;
+    }
+    
+    /* Particle Background */
+    #particles-js {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: -1;
+    }
   </style>
 </head>
-<body class="min-h-screen flex items-center justify-center p-4">
-  <!-- Loading Spinner -->
-  <div id="loading-spinner" class="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center hidden">
-    <div class="bg-white p-6 rounded-lg text-center">
-      <div class="animate-spin rounded-full h-12 w-12 border-4 border-purple-600 border-t-transparent mx-auto mb-4"></div>
-      <p class="text-gray-700">Processing registration...</p>
+<body>
+  <!-- Particle Background -->
+  <div id="particles-js"></div>
+
+  <!-- Animated Orbs -->
+  <div class="orb orb-1"></div>
+  <div class="orb orb-2"></div>
+  <div class="orb orb-3"></div>
+
+  <!-- Loading Overlay -->
+  <div id="loadingOverlay" class="fixed inset-0 bg-dark/90 backdrop-blur-xl z-[1000] flex items-center justify-center transition-opacity duration-500" style="display: none;">
+    <div class="text-center">
+      <div class="loader mx-auto mb-4"></div>
+      <h3 class="text-2xl font-bold text-white mb-2">Processing</h3>
+      <p class="text-white/70" id="loadingMessage">Please wait...</p>
     </div>
   </div>
 
   <!-- Toast Container -->
-  <div id="toast-container" class="fixed bottom-4 right-4 z-50"></div>
+  <div id="toastContainer" class="fixed bottom-4 right-4 z-[1001]"></div>
 
-  <div class="register-card">
-    <!-- Logo -->
-    <div class="text-center mb-6">
-      <a href="/" class="inline-flex items-center space-x-2">
-        <div class="w-10 h-10 bg-gradient-to-br from-purple-600 to-blue-600 rounded-lg flex items-center justify-center">
-          <span class="text-white font-bold text-xl">T</span>
+  <!-- Main Container -->
+  <div class="min-h-screen flex items-center justify-center p-4">
+    <div class="w-full max-w-5xl" data-aos="fade-up" data-aos-duration="1000">
+      <div class="grid lg:grid-cols-2 gap-8 items-center">
+        <!-- Left Side - Branding -->
+        <div class="text-white lg:block hidden" data-aos="fade-right">
+          <div class="mb-8">
+            <div class="flex items-center space-x-3 mb-6">
+              <div class="w-16 h-16 bg-gradient-to-br from-primary to-secondary rounded-2xl flex items-center justify-center">
+                <span class="text-white font-bold text-3xl">T</span>
+              </div>
+              <div>
+                <h1 class="text-3xl font-bold">TAAGC Fintech</h1>
+                <p class="text-white/70">Advanced Digital Banking</p>
+              </div>
+            </div>
+            <h2 class="text-4xl font-bold mb-4 leading-tight">
+              Join the Future of<br>
+              <span class="text-transparent bg-clip-text bg-gradient-to-r from-yellow-300 to-pink-300">Banking in Nigeria</span>
+            </h2>
+            <p class="text-xl text-white/80 mb-8">
+              Experience next-generation financial services with AI-powered insights, 
+              instant transactions, and intelligent wallet management.
+            </p>
+          </div>
+
+          <!-- Features List -->
+          <div class="space-y-4">
+            <div class="flex items-center space-x-3">
+              <div class="w-10 h-10 bg-green-500/20 rounded-full flex items-center justify-center">
+                <i class="fas fa-check text-green-400"></i>
+              </div>
+              <span>Free wallet with NUBAN account</span>
+            </div>
+            <div class="flex items-center space-x-3">
+              <div class="w-10 h-10 bg-blue-500/20 rounded-full flex items-center justify-center">
+                <i class="fas fa-check text-blue-400"></i>
+              </div>
+              <span>Instant airtime & data (up to 7.71% commission)</span>
+            </div>
+            <div class="flex items-center space-x-3">
+              <div class="w-10 h-10 bg-purple-500/20 rounded-full flex items-center justify-center">
+                <i class="fas fa-check text-purple-400"></i>
+              </div>
+              <span>Bill payments for all DISCOs</span>
+            </div>
+            <div class="flex items-center space-x-3">
+              <div class="w-10 h-10 bg-pink-500/20 rounded-full flex items-center justify-center">
+                <i class="fas fa-check text-pink-400"></i>
+              </div>
+              <span>Betting funding (Bet9ja, BetKing, 1xBet)</span>
+            </div>
+            <div class="flex items-center space-x-3">
+              <div class="w-10 h-10 bg-indigo-500/20 rounded-full flex items-center justify-center">
+                <i class="fas fa-check text-indigo-400"></i>
+              </div>
+              <span>Agent banking with POS terminals</span>
+            </div>
+          </div>
+
+          <!-- Stats -->
+          <div class="grid grid-cols-3 gap-4 mt-12">
+            <div>
+              <div class="text-3xl font-bold" id="liveUsers">10k+</div>
+              <p class="text-white/60 text-sm">Active Users</p>
+            </div>
+            <div>
+              <div class="text-3xl font-bold" id="liveTransactions">₦45M+</div>
+              <p class="text-white/60 text-sm">Daily Volume</p>
+            </div>
+            <div>
+              <div class="text-3xl font-bold">24/7</div>
+              <p class="text-white/60 text-sm">Support</p>
+            </div>
+          </div>
         </div>
-        <span class="text-xl font-bold text-gray-800">TAAGC Fintech</span>
-      </a>
-      <p class="text-sm text-gray-600 mt-2">Create your account - It's free!</p>
-    </div>
 
-    <!-- Step Indicator -->
-    <div class="step-indicator" id="step-indicator">
-      <div class="step active" id="step1">1</div>
-      <div class="step-line" id="line1"></div>
-      <div class="step" id="step2">2</div>
-      <div class="step-line" id="line2"></div>
-      <div class="step" id="step3">3</div>
-    </div>
+        <!-- Right Side - Registration Form -->
+        <div class="glass-card p-8 lg:p-10" data-aos="fade-left">
+          <!-- Logo Mobile -->
+          <div class="flex items-center justify-center space-x-2 mb-6 lg:hidden">
+            <div class="w-10 h-10 bg-gradient-to-br from-primary to-secondary rounded-lg flex items-center justify-center">
+              <span class="text-white font-bold text-xl">T</span>
+            </div>
+            <span class="text-xl font-bold text-dark">TAAGC Fintech</span>
+          </div>
 
-    <!-- Step 1: Phone Number -->
-    <div id="step1-form" class="space-y-4">
-      <h2 class="text-2xl font-bold text-center">Enter Phone Number</h2>
-      <p class="text-sm text-gray-600 text-center">You'll receive an OTP for verification</p>
-      
-      <div>
-        <label class="block mb-2 font-medium">Phone Number</label>
-        <div class="relative">
-          <i class="fas fa-phone absolute left-3 top-3 text-gray-400"></i>
-          <input type="tel" id="phone" class="input-field pl-10" placeholder="08012345678" required>
+          <!-- Step Indicator -->
+          <div class="step-indicator" id="stepIndicator">
+            <div class="step active" id="step1">1</div>
+            <div class="step-line" id="line1"></div>
+            <div class="step" id="step2">2</div>
+            <div class="step-line" id="line2"></div>
+            <div class="step" id="step3">3</div>
+          </div>
+
+          <!-- Step 1: Phone Number -->
+          <div id="step1Form" class="space-y-6">
+            <div class="text-center mb-6">
+              <h3 class="text-2xl font-bold text-dark">Create Account</h3>
+              <p class="text-gray-600">Enter your phone number to get started</p>
+            </div>
+
+            <div class="input-group">
+              <input type="tel" id="phone" placeholder="Phone Number" value="080">
+              <i class="fas fa-phone"></i>
+            </div>
+
+            <div class="bg-blue-50 p-4 rounded-xl">
+              <div class="flex items-start space-x-3">
+                <i class="fas fa-shield-alt text-blue-600 mt-1"></i>
+                <div>
+                  <p class="text-sm text-blue-800 font-medium">Secure & Encrypted</p>
+                  <p class="text-xs text-blue-600">Your information is protected with 256-bit encryption</p>
+                </div>
+              </div>
+            </div>
+
+            <div id="recaptcha-container"></div>
+
+            <button onclick="sendOTP()" class="btn-primary" id="sendOtpBtn">
+              <span class="flex items-center justify-center">
+                <i class="fas fa-paper-plane mr-2"></i>
+                Send Verification Code
+              </span>
+            </button>
+
+            <p class="text-center text-gray-500 text-sm">
+              By continuing, you agree to our 
+              <a href="/terms.html" class="text-primary hover:underline">Terms</a> and 
+              <a href="/privacy.html" class="text-primary hover:underline">Privacy Policy</a>
+            </p>
+          </div>
+
+          <!-- Step 2: OTP Verification -->
+          <div id="step2Form" class="space-y-6 hidden">
+            <div class="text-center mb-6">
+              <h3 class="text-2xl font-bold text-dark">Verify Your Number</h3>
+              <p class="text-gray-600">Enter the 6-digit code sent to</p>
+              <p class="font-bold text-dark" id="displayPhone"></p>
+            </div>
+
+            <div class="otp-group">
+              <input type="text" class="otp-input" id="otp1" maxlength="1" onkeyup="moveToNext(this, 'otp2')">
+              <input type="text" class="otp-input" id="otp2" maxlength="1" onkeyup="moveToNext(this, 'otp3')">
+              <input type="text" class="otp-input" id="otp3" maxlength="1" onkeyup="moveToNext(this, 'otp4')">
+              <input type="text" class="otp-input" id="otp4" maxlength="1" onkeyup="moveToNext(this, 'otp5')">
+              <input type="text" class="otp-input" id="otp5" maxlength="1" onkeyup="moveToNext(this, 'otp6')">
+              <input type="text" class="otp-input" id="otp6" maxlength="1">
+            </div>
+
+            <div class="flex items-center justify-between">
+              <button onclick="resendOTP()" class="text-primary hover:underline text-sm font-medium">
+                <i class="fas fa-redo-alt mr-1"></i>Resend Code
+              </button>
+              <div class="flex items-center text-gray-500">
+                <i class="far fa-clock mr-1"></i>
+                <span id="timer">60s</span>
+              </div>
+            </div>
+
+            <button onclick="verifyOTP()" class="btn-primary" id="verifyOtpBtn">
+              <span class="flex items-center justify-center">
+                <i class="fas fa-check-circle mr-2"></i>
+                Verify & Continue
+              </span>
+            </button>
+
+            <button onclick="backToPhone()" class="w-full text-gray-600 hover:text-gray-800 text-sm">
+              <i class="fas fa-arrow-left mr-1"></i>Use different number
+            </button>
+          </div>
+
+          <!-- Step 3: Personal Information -->
+          <div id="step3Form" class="space-y-6 hidden">
+            <div class="text-center mb-6">
+              <h3 class="text-2xl font-bold text-dark">Complete Your Profile</h3>
+              <p class="text-gray-600">Tell us a bit about yourself</p>
+            </div>
+
+            <div class="input-group">
+              <input type="text" id="fullName" placeholder="Full Name">
+              <i class="fas fa-user"></i>
+            </div>
+
+            <div class="input-group">
+              <input type="email" id="email" placeholder="Email Address (Optional)">
+              <i class="fas fa-envelope"></i>
+            </div>
+
+            <div class="input-group">
+              <select id="role">
+                <option value="customer">Personal Account</option>
+                <option value="agent">Agent Account (₦400,000 registration)</option>
+                <option value="slp">Service Location Partner</option>
+              </select>
+              <i class="fas fa-briefcase"></i>
+            </div>
+
+            <!-- Agent Fields -->
+            <div id="agentFields" class="space-y-4 hidden">
+              <div class="input-group">
+                <input type="text" id="businessName" placeholder="Business Name">
+                <i class="fas fa-building"></i>
+              </div>
+              <div class="input-group">
+                <input type="text" id="businessAddress" placeholder="Business Address">
+                <i class="fas fa-map-marker-alt"></i>
+              </div>
+              
+              <!-- Agent Pricing -->
+              <div class="bg-gradient-to-r from-purple-50 to-pink-50 p-4 rounded-xl">
+                <h4 class="font-bold text-dark mb-2">Agent Package Includes:</h4>
+                <ul class="space-y-2 text-sm">
+                  <li class="flex items-center"><i class="fas fa-check text-green-500 mr-2"></i>50 POS Terminals</li>
+                  <li class="flex items-center"><i class="fas fa-check text-green-500 mr-2"></i>Agent Dashboard</li>
+                  <li class="flex items-center"><i class="fas fa-check text-green-500 mr-2"></i>Sub-agent Management</li>
+                  <li class="flex items-center"><i class="fas fa-check text-green-500 mr-2"></i>Commission up to 25%</li>
+                </ul>
+                <p class="text-sm font-bold text-dark mt-2">Investment: ₦400,000 (One-time)</p>
+              </div>
+            </div>
+
+            <button onclick="completeRegistration()" class="btn-primary" id="completeBtn">
+              <span class="flex items-center justify-center">
+                <i class="fas fa-user-check mr-2"></i>
+                Create Account
+              </span>
+            </button>
+          </div>
+
+          <!-- Login Link -->
+          <p class="text-center mt-6 text-gray-600">
+            Already have an account? 
+            <a href="/login.html" class="text-primary hover:underline font-medium">Sign in</a>
+          </p>
         </div>
       </div>
-
-      <div id="recaptcha-container"></div>
-
-      <button onclick="sendOTP()" class="btn-register">
-        <i class="fas fa-paper-plane mr-2"></i>Send OTP
-      </button>
     </div>
-
-    <!-- Step 2: Verify OTP -->
-    <div id="step2-form" class="space-y-4 hidden">
-      <h2 class="text-2xl font-bold text-center">Verify OTP</h2>
-      <p class="text-sm text-gray-600 text-center">Enter the 6-digit code sent to <span id="display-phone" class="font-bold"></span></p>
-      
-      <div>
-        <label class="block mb-2 font-medium">OTP Code</label>
-        <div class="flex gap-2">
-          <input type="text" id="otp1" class="w-12 h-12 text-center text-xl font-bold border rounded-lg" maxlength="1" onkeyup="moveToNext(this, 'otp2')">
-          <input type="text" id="otp2" class="w-12 h-12 text-center text-xl font-bold border rounded-lg" maxlength="1" onkeyup="moveToNext(this, 'otp3')">
-          <input type="text" id="otp3" class="w-12 h-12 text-center text-xl font-bold border rounded-lg" maxlength="1" onkeyup="moveToNext(this, 'otp4')">
-          <input type="text" id="otp4" class="w-12 h-12 text-center text-xl font-bold border rounded-lg" maxlength="1" onkeyup="moveToNext(this, 'otp5')">
-          <input type="text" id="otp5" class="w-12 h-12 text-center text-xl font-bold border rounded-lg" maxlength="1" onkeyup="moveToNext(this, 'otp6')">
-          <input type="text" id="otp6" class="w-12 h-12 text-center text-xl font-bold border rounded-lg" maxlength="1">
-        </div>
-      </div>
-
-      <div class="flex items-center justify-between">
-        <button onclick="resendOTP()" class="text-purple-600 hover:underline text-sm">
-          <i class="fas fa-redo-alt mr-1"></i>Resend OTP
-        </button>
-        <span id="timer" class="text-sm text-gray-500">60s</span>
-      </div>
-
-      <button onclick="verifyOTP()" class="btn-register">
-        <i class="fas fa-check-circle mr-2"></i>Verify OTP
-      </button>
-    </div>
-
-    <!-- Step 3: Personal Information -->
-    <div id="step3-form" class="space-y-4 hidden">
-      <h2 class="text-2xl font-bold text-center">Complete Profile</h2>
-      <p class="text-sm text-gray-600 text-center">Tell us a bit about yourself</p>
-      
-      <div>
-        <label class="block mb-2 font-medium">Full Name</label>
-        <input type="text" id="fullName" class="input-field" placeholder="John Doe" required>
-      </div>
-
-      <div>
-        <label class="block mb-2 font-medium">Email (Optional)</label>
-        <input type="email" id="email" class="input-field" placeholder="john@example.com">
-      </div>
-
-      <div>
-        <label class="block mb-2 font-medium">Account Type</label>
-        <select id="role" class="input-field">
-          <option value="customer">Customer</option>
-          <option value="agent">Agent (₦400,000 registration fee)</option>
-          <option value="slp">Service Location Partner</option>
-        </select>
-      </div>
-
-      <div id="agent-fields" class="hidden">
-        <div>
-          <label class="block mb-2 font-medium">Business Name</label>
-          <input type="text" id="businessName" class="input-field" placeholder="Your Business Name">
-        </div>
-        <div>
-          <label class="block mb-2 font-medium">Business Address</label>
-          <input type="text" id="businessAddress" class="input-field" placeholder="Business Address">
-        </div>
-      </div>
-
-      <button onclick="completeRegistration()" class="btn-register">
-        <i class="fas fa-user-check mr-2"></i>Complete Registration
-      </button>
-    </div>
-
-    <!-- Login Link -->
-    <p class="text-center mt-6 text-gray-600">
-      Already have an account? 
-      <a href="/login.html" class="text-purple-600 hover:underline font-medium">Login here</a>
-    </p>
   </div>
 
+  <!-- Scripts -->
+  <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+  <script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
+
   <script>
-    // Firebase configuration
+    // Initialize AOS
+    AOS.init();
+
+    // Firebase Configuration
     const firebaseConfig = {
       apiKey: "AIzaSyAysDaLRza0-SLnp778K9eZ8XBAa7hRu58",
       authDomain: "fintech-ad170.firebaseapp.com",
@@ -174,11 +622,32 @@
     const db = firebase.firestore();
     const functions = firebase.functions();
 
-    // Use phone auth
+    // Enable phone auth
     auth.useDeviceLanguage();
 
+    // State variables
     let confirmationResult = null;
     let phoneNumber = '';
+    let timerInterval = null;
+
+    // Initialize particles
+    particlesJS('particles-js', {
+      particles: {
+        number: { value: 80, density: { enable: true, value_area: 800 } },
+        color: { value: '#ffffff' },
+        shape: { type: 'circle' },
+        opacity: { value: 0.5, random: false },
+        size: { value: 3, random: true },
+        line_linked: { enable: true, distance: 150, color: '#ffffff', opacity: 0.4, width: 1 },
+        move: { enable: true, speed: 6, direction: 'none', random: false, straight: false, out_mode: 'out', bounce: false }
+      },
+      interactivity: {
+        detect_on: 'canvas',
+        events: { onhover: { enable: true, mode: 'repulse' }, onclick: { enable: true, mode: 'push' }, resize: true },
+        modes: { repulse: { distance: 100, duration: 0.4 }, push: { particles_nb: 4 } }
+      },
+      retina_detect: true
+    });
 
     // Move to next OTP input
     window.moveToNext = function(current, nextId) {
@@ -186,6 +655,16 @@
         document.getElementById(nextId)?.focus();
       }
     };
+
+    // Show/Hide Agent Fields
+    document.getElementById('role').addEventListener('change', function() {
+      const agentFields = document.getElementById('agentFields');
+      if (this.value === 'agent' || this.value === 'slp') {
+        agentFields.classList.remove('hidden');
+      } else {
+        agentFields.classList.add('hidden');
+      }
+    });
 
     // Send OTP
     window.sendOTP = async function() {
@@ -195,27 +674,30 @@
         return;
       }
 
-      showLoading(true);
+      showLoading(true, 'Sending verification code...');
+
       try {
         window.recaptchaVerifier = new firebase.auth.RecaptchaVerifier('recaptcha-container', {
-          size: 'invisible'
+          size: 'invisible',
+          callback: () => {}
         });
 
-        phoneNumber = '+234' + phone.slice(-10); // Format to Nigerian number
+        phoneNumber = '+234' + phone.slice(-10);
         confirmationResult = await auth.signInWithPhoneNumber(phoneNumber, window.recaptchaVerifier);
         
-        document.getElementById('display-phone').textContent = phone;
-        document.getElementById('step1-form').classList.add('hidden');
-        document.getElementById('step2-form').classList.remove('hidden');
+        document.getElementById('displayPhone').textContent = phone;
         
-        // Update step indicator
+        // Update steps
+        document.getElementById('step1Form').classList.add('hidden');
+        document.getElementById('step2Form').classList.remove('hidden');
+        
         document.getElementById('step1').classList.remove('active');
         document.getElementById('step1').classList.add('completed');
         document.getElementById('line1').classList.add('active');
         document.getElementById('step2').classList.add('active');
         
         startTimer();
-        showToast('OTP sent successfully!', 'success');
+        showToast('Verification code sent!', 'success');
       } catch (error) {
         showToast('Error: ' + error.message, 'error');
       } finally {
@@ -223,16 +705,20 @@
       }
     };
 
-    // Timer for OTP
+    // Start timer
     function startTimer() {
       let timeLeft = 60;
       const timerElement = document.getElementById('timer');
-      const interval = setInterval(() => {
+      
+      if (timerInterval) clearInterval(timerInterval);
+      
+      timerInterval = setInterval(() => {
         timeLeft--;
         timerElement.textContent = timeLeft + 's';
+        
         if (timeLeft <= 0) {
-          clearInterval(interval);
-          timerElement.innerHTML = '<button onclick="resendOTP()" class="text-purple-600">Resend</button>';
+          clearInterval(timerInterval);
+          timerElement.innerHTML = '<button onclick="resendOTP()" class="text-primary">Resend</button>';
         }
       }, 1000);
     }
@@ -240,10 +726,10 @@
     // Resend OTP
     window.resendOTP = async function() {
       try {
-        showLoading(true);
+        showLoading(true, 'Resending code...');
         confirmationResult = await auth.signInWithPhoneNumber(phoneNumber, window.recaptchaVerifier);
-        showToast('OTP resent!', 'success');
         startTimer();
+        showToast('Code resent!', 'success');
       } catch (error) {
         showToast('Error: ' + error.message, 'error');
       } finally {
@@ -256,24 +742,24 @@
       const otp = Array.from({length: 6}, (_, i) => document.getElementById(`otp${i+1}`).value).join('');
       
       if (otp.length !== 6) {
-        showToast('Please enter the 6-digit OTP', 'error');
+        showToast('Please enter the 6-digit code', 'error');
         return;
       }
 
-      showLoading(true);
+      showLoading(true, 'Verifying code...');
+
       try {
         const result = await confirmationResult.confirm(otp);
         
-        // Check if user exists in Firestore
+        // Check if user exists
         const userDoc = await db.collection('users').doc(result.user.uid).get();
         
         if (userDoc.exists) {
-          // User exists, redirect to dashboard
           window.location.href = '/dashboard.html';
         } else {
-          // New user, go to profile completion
-          document.getElementById('step2-form').classList.add('hidden');
-          document.getElementById('step3-form').classList.remove('hidden');
+          // Move to profile completion
+          document.getElementById('step2Form').classList.add('hidden');
+          document.getElementById('step3Form').classList.remove('hidden');
           
           document.getElementById('step2').classList.remove('active');
           document.getElementById('step2').classList.add('completed');
@@ -281,36 +767,46 @@
           document.getElementById('step3').classList.add('active');
         }
       } catch (error) {
-        showToast('Invalid OTP. Please try again.', 'error');
+        showToast('Invalid code. Please try again.', 'error');
       } finally {
         showLoading(false);
       }
     };
 
-    // Show/hide agent fields
-    document.getElementById('role').addEventListener('change', function() {
-      const agentFields = document.getElementById('agent-fields');
-      agentFields.style.display = this.value === 'customer' ? 'none' : 'block';
-    });
+    // Back to phone
+    window.backToPhone = function() {
+      document.getElementById('step2Form').classList.add('hidden');
+      document.getElementById('step1Form').classList.remove('hidden');
+      
+      document.getElementById('step1').classList.add('active');
+      document.getElementById('step1').classList.remove('completed');
+      document.getElementById('line1').classList.remove('active');
+      document.getElementById('step2').classList.remove('active');
+      
+      // Clear OTP inputs
+      for (let i = 1; i <= 6; i++) {
+        document.getElementById(`otp${i}`).value = '';
+      }
+      
+      if (timerInterval) clearInterval(timerInterval);
+    };
 
     // Complete registration
     window.completeRegistration = async function() {
       const fullName = document.getElementById('fullName').value;
       const email = document.getElementById('email').value;
       const role = document.getElementById('role').value;
-      const businessName = document.getElementById('businessName')?.value;
-      const businessAddress = document.getElementById('businessAddress')?.value;
 
       if (!fullName) {
         showToast('Please enter your full name', 'error');
         return;
       }
 
-      showLoading(true);
+      showLoading(true, 'Creating your account...');
+
       try {
         const user = auth.currentUser;
         
-        // Create user profile in Firestore
         const userData = {
           uid: user.uid,
           fullName,
@@ -325,22 +821,20 @@
         };
 
         if (role !== 'customer') {
-          userData.businessName = businessName;
-          userData.businessAddress = businessAddress;
-          userData.agentCode = `AG${Date.now()}`;
+          userData.businessName = document.getElementById('businessName').value;
+          userData.businessAddress = document.getElementById('businessAddress').value;
+          userData.agentCode = 'AG' + Date.now();
+          userData.agentStatus = 'pending';
         }
 
         await db.collection('users').doc(user.uid).set(userData);
 
         // Create wallet via cloud function
         const createWallet = functions.httpsCallable('createWallet');
-        await createWallet({
-          userId: user.uid,
-          email: email || '',
-          phone: user.phoneNumber
-        });
+        await createWallet({ userId: user.uid, email, phone: user.phoneNumber });
 
-        showToast('Registration successful! Redirecting...', 'success');
+        showToast('Account created successfully!', 'success');
+        
         setTimeout(() => {
           window.location.href = '/dashboard.html';
         }, 2000);
@@ -351,19 +845,27 @@
       }
     };
 
-    // Helper functions
-    function showLoading(show) {
-      document.getElementById('loading-spinner').classList.toggle('hidden', !show);
+    // Loading overlay
+    function showLoading(show, message = 'Processing...') {
+      const overlay = document.getElementById('loadingOverlay');
+      document.getElementById('loadingMessage').textContent = message;
+      overlay.style.display = show ? 'flex' : 'none';
     }
 
-    function showToast(message, type) {
-      const container = document.getElementById('toast-container');
+    // Toast notification
+    function showToast(message, type = 'info') {
+      const container = document.getElementById('toastContainer');
       const toast = document.createElement('div');
       toast.className = `toast ${type}`;
-      toast.innerHTML = message;
+      toast.innerHTML = `
+        <i class="fas ${type === 'success' ? 'fa-check-circle' : type === 'error' ? 'fa-exclamation-circle' : 'fa-info-circle'}"></i>
+        <span>${message}</span>
+      `;
       container.appendChild(toast);
+      
+      setTimeout(() => toast.classList.add('show'), 100);
       setTimeout(() => {
-        toast.style.transform = 'translateX(400px)';
+        toast.classList.remove('show');
         setTimeout(() => container.removeChild(toast), 300);
       }, 3000);
     }
@@ -371,7 +873,6 @@
     // Check if already logged in
     auth.onAuthStateChanged((user) => {
       if (user) {
-        // Check if profile exists
         db.collection('users').doc(user.uid).get().then((doc) => {
           if (doc.exists) {
             window.location.href = '/dashboard.html';
@@ -379,6 +880,17 @@
         });
       }
     });
+
+    // Load live stats
+    async function loadLiveStats() {
+      try {
+        const usersSnapshot = await db.collection('users').limit(1000).get();
+        document.getElementById('liveUsers').textContent = usersSnapshot.size + '+';
+      } catch (error) {
+        console.error('Error loading stats:', error);
+      }
+    }
+    loadLiveStats();
   </script>
 </body>
 </html>
