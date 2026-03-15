@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Cards - TRIPLE A AHAL GLOBAL CONCEPT</title>
+    <link rel="stylesheet" href="/css/style.css">
+    <link rel="stylesheet" href="/css/dashboard.css">
+    <link rel="stylesheet" href="/css/cards.css">
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
+</head>
+<body>
+    <div class="dashboard">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <img src="/assets/images/logo.svg" alt="TRIPLE A" width="32">
+                <div class="sidebar-brand">
+                    <span class="brand-triplea">TRIPLE A</span>
+                    <span class="brand-ahal">AHAL GLOBAL</span>
+                </div>
+            </div>
+            
+            <nav class="sidebar-nav">
+                <a href="/dashboard/" class="nav-item">
+                    <span class="icon">📊</span>
+                    <span>Dashboard</span>
+                </a>
+                <a href="/cards/" class="nav-item active">
+                    <span class="icon">💳</span>
+                    <span>Cards</span>
+                </a>
+                <a href="/transactions/" class="nav-item">
+                    <span class="icon">📝</span>
+                    <span>Transactions</span>
+                </a>
+                <a href="/transfer/" class="nav-item">
+                    <span class="icon">💸</span>
+                    <span>Transfers</span>
+                </a>
+                <a href="/profile/" class="nav-item">
+                    <span class="icon">👤</span>
+                    <span>Profile</span>
+                </a>
+                <a href="/kyc/" class="nav-item">
+                    <span class="icon">✓</span>
+                    <span>KYC Verification</span>
+                </a>
+                <a href="/settings/" class="nav-item">
+                    <span class="icon">⚙️</span>
+                    <span>Settings</span>
+                </a>
+            </nav>
+            
+            <div class="sidebar-footer">
+                <a href="/support/" class="nav-item">
+                    <span class="icon">❓</span>
+                    <span>Support</span>
+                </a>
+                <button class="nav-item" id="sidebarLogout">
+                    <span class="icon">🚪</span>
+                    <span>Logout</span>
+                </button>
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <header class="dashboard-header">
+                <div class="header-left">
+                    <h1>My Cards</h1>
+                </div>
+                <div class="header-right">
+                    <button class="btn btn-primary" onclick="window.location.href='/card-issue/'">
+                        + Issue New Card
+                    </button>
+                </div>
+            </header>
+
+            <!-- Cards Grid -->
+            <div class="cards-grid" id="cardsGrid">
+                <div class="loading-spinner">Loading your cards...</div>
+            </div>
+
+            <!-- Card Stats -->
+            <div class="cards-stats">
+                <div class="stat-card">
+                    <div class="stat-icon">💰</div>
+                    <div class="stat-details">
+                        <span class="stat-label">Total Balance</span>
+                        <span class="stat-value" id="totalCardsBalance">$0.00</span>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon">💳</div>
+                    <div class="stat-details">
+                        <span class="stat-label">Active Cards</span>
+                        <span class="stat-value" id="activeCardsCount">0</span>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon">📊</div>
+                    <div class="stat-details">
+                        <span class="stat-label">Monthly Spend</span>
+                        <span class="stat-value" id="monthlySpend">$0.00</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Card Features -->
+            <div class="features-section">
+                <h3>Card Features</h3>
+                <div class="features-grid">
+                    <div class="feature-item">
+                        <span class="feature-icon">🌍</span>
+                        <h4>Global Acceptance</h4>
+                        <p>Use your card anywhere in the world</p>
+                    </div>
+                    <div class="feature-item">
+                        <span class="feature-icon">🛡️</span>
+                        <h4>Zero Liability</h4>
+                        <p>Protected from unauthorized charges</p>
+                    </div>
+                    <div class="feature-item">
+                        <span class="feature-icon">⚡</span>
+                        <h4>Instant Issuance</h4>
+                        <p>Get your virtual card immediately</p>
+                    </div>
+                    <div class="feature-item">
+                        <span class="feature-icon">📱</span>
+                        <h4>Mobile Wallet</h4>
+                        <p>Add to Apple Pay & Google Pay</p>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <div class="toast" id="toast"></div>
+
+    <script src="/js/firebase-config.js"></script>
+    <script src="/js/firebase-init.js"></script>
+    <script src="/js/cards.js"></script>
+</body>
+</html>
