@@ -1,0 +1,249 @@
+/* Profile Page Styles */
+.profile-container {
+    max-width: 1000px;
+    margin: 0 auto;
+}
+
+.profile-header {
+    background: white;
+    border-radius: 1rem;
+    padding: 2rem;
+    display: flex;
+    align-items: center;
+    gap: 2rem;
+    margin-bottom: 2rem;
+    box-shadow: var(--shadow);
+    position: relative;
+}
+
+.profile-avatar {
+    position: relative;
+    width: 100px;
+    height: 100px;
+}
+
+.profile-avatar img {
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 3px solid var(--gradient-primary);
+}
+
+.change-avatar {
+    position: absolute;
+    bottom: 0;
+    right: 0;
+    width: 2rem;
+    height: 2rem;
+    background: var(--brand-purple);
+    border: none;
+    border-radius: 50%;
+    color: white;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s;
+}
+
+.change-avatar:hover {
+    transform: scale(1.1);
+    background: var(--brand-purple-dark);
+}
+
+.profile-info {
+    flex: 1;
+}
+
+.profile-info h2 {
+    margin-bottom: 0.5rem;
+    color: var(--gray-800);
+}
+
+.profile-info p {
+    color: var(--gray-600);
+    margin-bottom: 0.25rem;
+}
+
+.profile-tabs {
+    display: flex;
+    gap: 0.5rem;
+    margin-bottom: 2rem;
+    background: white;
+    padding: 0.5rem;
+    border-radius: 0.75rem;
+    box-shadow: var(--shadow);
+}
+
+.profile-tabs .tab-btn {
+    flex: 1;
+    padding: 0.75rem;
+    background: none;
+    border: none;
+    border-radius: 0.5rem;
+    cursor: pointer;
+    font-weight: 500;
+    color: var(--gray-600);
+    transition: all 0.2s;
+}
+
+.profile-tabs .tab-btn:hover {
+    background: var(--gray-50);
+}
+
+.profile-tabs .tab-btn.active {
+    background: var(--gradient-primary);
+    color: white;
+}
+
+.security-section {
+    background: white;
+    border-radius: 1rem;
+    padding: 1.5rem;
+    margin-bottom: 1.5rem;
+    box-shadow: var(--shadow);
+}
+
+.security-section h3 {
+    margin-bottom: 1.5rem;
+    color: var(--gray-700);
+}
+
+.twofa-status {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 1rem;
+    background: var(--gray-50);
+    border-radius: 0.5rem;
+}
+
+.status-badge {
+    padding: 0.25rem 0.75rem;
+    border-radius: 2rem;
+    font-size: 0.875rem;
+    font-weight: 500;
+}
+
+.status-badge:contains('Enabled') {
+    background: var(--success);
+    color: white;
+}
+
+.status-badge:contains('Disabled') {
+    background: var(--gray-300);
+    color: var(--gray-700);
+}
+
+.session-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 1rem;
+    border-bottom: 1px solid var(--gray-200);
+}
+
+.session-item.current {
+    background: var(--primary-50);
+    border-radius: 0.5rem;
+}
+
+.preferences-section {
+    background: white;
+    border-radius: 1rem;
+    padding: 1.5rem;
+    margin-bottom: 1.5rem;
+    box-shadow: var(--shadow);
+}
+
+.preferences-section h3 {
+    margin-bottom: 1.5rem;
+    color: var(--gray-700);
+}
+
+.theme-options {
+    display: flex;
+    gap: 1rem;
+}
+
+.theme-option {
+    flex: 1;
+    padding: 1rem;
+    background: var(--gray-50);
+    border: 2px solid transparent;
+    border-radius: 0.5rem;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.theme-option:hover {
+    background: var(--gray-100);
+}
+
+.theme-option.active {
+    border-color: var(--brand-purple);
+    background: white;
+}
+
+.documents-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1rem;
+    margin-top: 1rem;
+}
+
+.document-card {
+    background: var(--gray-50);
+    border-radius: 0.5rem;
+    padding: 1rem;
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+.document-icon {
+    font-size: 2rem;
+}
+
+.document-info {
+    flex: 1;
+}
+
+.document-name {
+    font-weight: 500;
+    margin-bottom: 0.25rem;
+}
+
+.document-status {
+    font-size: 0.75rem;
+    color: var(--gray-500);
+}
+
+.file-upload {
+    border: 2px dashed var(--gray-300);
+    border-radius: 0.5rem;
+    padding: 2rem;
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.2s;
+    margin: 1rem 0;
+}
+
+.file-upload:hover {
+    border-color: var(--brand-purple);
+    background: var(--primary-50);
+}
+
+.upload-area .icon {
+    font-size: 2rem;
+    display: block;
+    margin-bottom: 0.5rem;
+}
+
+.hint {
+    display: block;
+    font-size: 0.75rem;
+    color: var(--gray-400);
+    margin-top: 0.5rem;
+}
