@@ -1,0 +1,70 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // Helper functions
+    function isAuthenticated() {
+      return request.auth != null;
+    }
+    
+    function isUser(userId) {
+      return isAuthenticated() && request.auth.uid == userId;
+    }
+    
+    function hasKYCLevel(level) {
+      return isAuthenticated() && request.auth.token.kycLevel >= level;
+    }
+    
+    function isAdmin() {
+      return isAuthenticated() && request.auth.token.admin == true;
+    }
+    
+    // Users collection
+    match /users/{userId} {
+      allow read: if isUser(userId) || isAdmin();
+      allow write: if isUser(userId);
+      
+      // Cards subcollection
+      match /cards/{cardId} {
+        allow read: if isUser(userId);
+        allow write: if isUser(userId) && hasKYCLevel(1);
+        
+        // Validate card data
+        allow create: if request.resource.data.keys().hasAll([
+          'cardNumber', 'cardholderName', 'expiryMonth', 
+          'expiryYear', 'balance', 'currency', 'status'
+        ]);
+      }
+      
+      // Transactions subcollection
+      match /transactions/{transactionId} {
+        allow read: if isUser(userId);
+        allow create: if isUser(userId);
+        allow update: if false; // Immutable
+      }
+      
+      // Accounts subcollection
+      match /accounts/{accountId} {
+        allow read: if isUser(userId);
+        allow write: if isUser(userId);
+      }
+      
+      // KYC subcollection
+      match /kyc/{documentId} {
+        allow read: if isUser(userId) || isAdmin();
+        allow write: if isUser(userId);
+      }
+    }
+    
+    // Global collections
+    match /audit/{document} {
+      allow read: if isAdmin();
+      allow create: if isAuthenticated();
+      allow update, delete: if false;
+    }
+    
+    match /exchangeRates/{rate} {
+      allow read: if true;
+      allow write: if isAdmin();
+    }
+  }
+}
