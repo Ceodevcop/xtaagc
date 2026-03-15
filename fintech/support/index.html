@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Support - TRIPLE A AHAL GLOBAL CONCEPT</title>
+    <link rel="stylesheet" href="/css/style.css">
+    <link rel="stylesheet" href="/css/dashboard.css">
+    <link rel="stylesheet" href="/css/support.css">
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
+</head>
+<body>
+    <div class="dashboard">
+        <aside class="sidebar">
+            <!-- Same sidebar -->
+        </aside>
+
+        <main class="main-content">
+            <header class="dashboard-header">
+                <h1>Help & Support</h1>
+            </header>
+
+            <div class="support-container">
+                <!-- Search -->
+                <div class="support-search">
+                    <input type="text" placeholder="Search for help..." class="search-input">
+                    <button class="search-btn">🔍</button>
+                </div>
+
+                <!-- Quick Help Categories -->
+                <div class="help-categories">
+                    <h2>How can we help you?</h2>
+                    <div class="categories-grid">
+                        <div class="category-card" onclick="showFAQ('cards')">
+                            <span class="icon">💳</span>
+                            <h3>Cards</h3>
+                            <p>Card issues, freezing, limits</p>
+                        </div>
+                        <div class="category-card" onclick="showFAQ('payments')">
+                            <span class="icon">💸</span>
+                            <h3>Payments</h3>
+                            <p>Sending and receiving money</p>
+                        </div>
+                        <div class="category-card" onclick="showFAQ('account')">
+                            <span class="icon">👤</span>
+                            <h3>Account</h3>
+                            <p>Profile, security, settings</p>
+                        </div>
+                        <div class="category-card" onclick="showFAQ('verification')">
+                            <span class="icon">✓</span>
+                            <h3>Verification</h3>
+                            <p>KYC, documents, limits</p>
+                        </div>
+                        <div class="category-card" onclick="showFAQ('security')">
+                            <span class="icon">🔒</span>
+                            <h3>Security</h3>
+                            <p>2FA, fraud, privacy</p>
+                        </div>
+                        <div class="category-card" onclick="showFAQ('technical')">
+                            <span class="icon">⚙️</span>
+                            <h3>Technical</h3>
+                            <p>App issues, errors, bugs</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- FAQ Section -->
+                <div class="faq-section" id="faqSection">
+                    <h2>Frequently Asked Questions</h2>
+                    <div class="faq-list" id="faqList">
+                        <!-- FAQs loaded via JS -->
+                    </div>
+                </div>
+
+                <!-- Contact Support -->
+                <div class="contact-section">
+                    <h2>Still need help?</h2>
+                    <div class="contact-options">
+                        <div class="contact-card" onclick="startLiveChat()">
+                            <span class="icon">💬</span>
+                            <h3>Live Chat</h3>
+                            <p>Chat with our support team</p>
+                            <span class="badge success">Available 24/7</span>
+                        </div>
+                        <div class="contact-card" onclick="sendEmail()">
+                            <span class="icon">📧</span>
+                            <h3>Email Support</h3>
+                            <p>Get a response within 24h</p>
+                        </div>
+                        <div class="contact-card" onclick="callSupport()">
+                            <span class="icon">📞</span>
+                            <h3>Phone Support</h3>
+                            <p>+1 (800) 123-4567</p>
+                            <span class="badge">Mon-Fri, 9am-6pm</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Knowledge Base -->
+                <div class="knowledge-base">
+                    <h2>Knowledge Base</h2>
+                    <div class="articles-grid" id="articlesGrid">
+                        <!-- Articles loaded via JS -->
+                    </div>
+                </div>
+
+                <!-- System Status -->
+                <div class="system-status">
+                    <h3>System Status</h3>
+                    <div class="status-indicators">
+                        <div class="status-item">
+                            <span class="status-dot green"></span>
+                            <span>API Services</span>
+                        </div>
+                        <div class="status-item">
+                            <span class="status-dot green"></span>
+                            <span>Card Processing</span>
+                        </div>
+                        <div class="status-item">
+                            <span class="status-dot green"></span>
+                            <span>Payment Gateway</span>
+                        </div>
+                        <div class="status-item">
+                            <span class="status-dot yellow"></span>
+                            <span>Mobile App</span>
+                        </div>
+                    </div>
+                    <a href="/status" class="status-link">View detailed status →</a>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Live Chat Modal -->
+    <div class="chat-modal" id="chatModal" style="display: none;">
+        <div class="chat-header">
+            <h3>Live Chat Support</h3>
+            <button class="close" onclick="closeChat()">&times;</button>
+        </div>
+        <div class="chat-messages" id="chatMessages">
+            <div class="message support">
+                <span class="avatar">🤖</span>
+                <div class="message-content">
+                    Hello! How can we help you today?
+                </div>
+            </div>
+        </div>
+        <div class="chat-input">
+            <input type="text" placeholder="Type your message..." id="chatInput">
+            <button onclick="sendChatMessage()">Send</button>
+        </div>
+    </div>
+
+    <div class="toast" id="toast"></div>
+
+    <script src="/js/firebase-config.js"></script>
+    <script src="/js/firebase-init.js"></script>
+    <script src="/js/support.js"></script>
+</body>
+</html>
