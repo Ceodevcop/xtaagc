@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>XTP Official Shop - Buy Direct, Save More</title>
+    <style>
+        .bonus-badge { background: #10b981; color: white; padding: 2px 8px; border-radius: 12px; }
+        .price-compare { text-decoration: line-through; color: #999; }
+        .app-store-warning { background: #fef3c7; padding: 1rem; border-radius: 8px; }
+    </style>
+</head>
+<body>
+    <div class="app-store-warning">
+        ⚡ **Save 30% by buying direct!** Apple/Google take 30% of in-app purchases.
+        Buy here and get **bonus XTP** instead!
+    </div>
+
+    <div class="product-grid">
+        <!-- XTP Packs -->
+        <div class="product-card" v-for="pack in xtpPacks">
+            <h3>{{ pack.amount }} XTP</h3>
+            <p>Price: ${{ pack.price }}</p>
+            <p v-if="pack.bonus > 0" class="bonus-badge">
+                +{{ pack.bonus }} BONUS XTP
+            </p>
+            <button @click="purchase(pack.id)">Buy Now</button>
+        </div>
+
+        <!-- Creator Affiliate Section -->
+        <div class="creator-section">
+            <h4>Are you a creator?</h4>
+            <p>Get your own affiliate link and earn 20-30% commission!</p>
+            <input type="text" id="affiliateCode" readonly>
+            <button @click="generateAffiliateLink">Generate My Link</button>
+        </div>
+    </div>
+
+    <script>
+        // Vue.js or React component would go here
+        function purchase(productId) {
+            // Handle purchase flow
+        }
+    </script>
+</body>
+</html>
